@@ -119,7 +119,7 @@ class TestHelpers {
         let osName = "ANDROID"
         let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
         let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+        let secureElementId = self.generateRandomSeId()
         let pairing = "2016-02-29T21:42:21.469Z"
 
         user?.createNewDevice(
@@ -188,7 +188,7 @@ class TestHelpers {
 
     func createCreditCard(_ expectation:XCTestExpectation, user:User?, completion:@escaping (_ user:User?, _ creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
-            pan: "9999411111111116", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1",
+            pan: "9999411111111116", expMonth: 12, expYear: 2020, cvv: "434", name: "Jon Doe", street1: "Street 1",
             street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA"
         ) {
             [unowned self](card, error) -> Void in
@@ -253,7 +253,7 @@ class TestHelpers {
         let osName = "ANDROID"
         let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
         let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+        let secureElementId = self.generateRandomSeId()
         let pairing = "2016-02-29T21:42:21.469Z"
 
         self.client.user(id:userId, completion: {
@@ -483,4 +483,7 @@ class TestHelpers {
         return "999941111111" + randomNumbers(4)
     }
 
+    func generateRandomSeId() -> String {
+        return MockPaymentDeviceConnector(paymentDevice: PaymentDevice()).deviceInfo()!.secureElementId ?? ""
+    }
 }
