@@ -573,7 +573,7 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectations(timeout: 45, handler: nil)
+        super.waitForExpectations(timeout: 55, handler: nil)
     }
     
     func testDeactivateCreditCard()
@@ -615,7 +615,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectations(timeout: 35, handler: nil)
+        super.waitForExpectations(timeout: 55, handler: nil)
     }
     
     func testReactivateCreditCardActivatesCard()
