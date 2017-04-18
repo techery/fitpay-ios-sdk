@@ -1,4 +1,4 @@
-# Xcode (from gitignore.io)
+# Xcode
 build/
 *.pbxuser
 !default.pbxuser
@@ -12,15 +12,15 @@ xcuserdata
 *.xccheckout
 *.moved-aside
 DerivedData
-*.hmap
-*.ipa
 *.xcuserstate
+# AppCode etc.
 .idea/
+# Desktop Servies
+.DS_Store
 
 # Carthage
-Carthage/Build/*
+Carthage/Build
 
-# others
-*.swp
-!.gitkeep
-.DS_Store
+# Swift package manager
+.build/
+Packages/
