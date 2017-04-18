@@ -188,8 +188,8 @@ class TestHelpers {
 
     func createCreditCard(_ expectation:XCTestExpectation, user:User?, completion:@escaping (_ user:User?, _ creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
-            pan: "9999411111111116", expMonth: 12, expYear: 2020, cvv: "434", name: "Jon Doe", street1: "Street 1",
-            street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA"
+            pan: "9999545454545454", expMonth: 10, expYear: 2018, cvv: "133", name: "TEST CARD", street1: "1035 Pearl St",
+            street2: "Street 2", street3: "Street 3", city: "Boulder", state: "CO", postalCode: "80302", country: "US"
         ) {
             [unowned self](card, error) -> Void in
 

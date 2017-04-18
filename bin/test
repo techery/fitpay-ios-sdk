@@ -2,11 +2,11 @@
 
 if [ -z "$1" ]; then
     echo "defaulting to iPhone 7 simulator"
-    xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK-Carthage-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7' test | xcpretty
+    set -o pipefail && xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK-Carthage-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7' test | xcpretty
     pod install
-    xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7' test | xcpretty
+    set -o pipefail && xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7' test | xcpretty
 else
-    xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK-Carthage-iOS -sdk iphonesimulator -destination "platform=iOS Simulator,name=$1" test | xcpretty
+    set -o pipefail && xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK-Carthage-iOS -sdk iphonesimulator -destination "platform=iOS Simulator,name=$1" test | xcpretty
     pod install
-    xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK -sdk iphonesimulator -destination "platform=iOS Simulator,name=$1" test | xcpretty
+    set -o pipefail && xcodebuild -workspace FitpaySDK.xcworkspace -scheme FitpaySDK -sdk iphonesimulator -destination "platform=iOS Simulator,name=$1" test | xcpretty
 fi
