@@ -672,7 +672,7 @@ class RestClientTests: XCTestCase
         }
 
         
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 55, handler: nil)
     }
     
     func testCreditCardAcceptTerms()

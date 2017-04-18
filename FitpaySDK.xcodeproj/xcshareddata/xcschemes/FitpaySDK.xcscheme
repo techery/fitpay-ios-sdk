@@ -37,9 +37,14 @@
                BlueprintName = "FitpaySDKTestsPods"
                ReferencedContainer = "container:FitpaySDK.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "PaymentDeviceTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
-            skipped = "NO">
+            skipped = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9B4127CD1CD95A5A00B12187"
