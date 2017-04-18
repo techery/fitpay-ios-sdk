@@ -1,4 +1,7 @@
-# Xcode (from gitignore.io)
+# OS X
+.DS_Store
+
+# Xcode
 build/
 *.pbxuser
 !default.pbxuser
@@ -10,17 +13,16 @@ build/
 !default.perspectivev3
 xcuserdata
 *.xccheckout
+profile
 *.moved-aside
 DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-.idea/
+
+# Bundler
+.bundle
+vendor/
 
 # Carthage
-Carthage/Build/*
-
-# others
-*.swp
-!.gitkeep
-.DS_Store
+Carthage/Build
