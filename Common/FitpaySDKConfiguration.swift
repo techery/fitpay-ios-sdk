@@ -8,7 +8,9 @@
 
 import Foundation
 
-open class FitpaySDKConfiguration {
+internal let log = FitpaySDKLogger.sharedInstance
+
+open class FitpaySDKConfiguration : NSObject{
     open static let defaultConfiguration = FitpaySDKConfiguration()
     
     open var clientId : String
@@ -17,12 +19,16 @@ open class FitpaySDKConfiguration {
     open var baseAPIURL : String
     open var webViewURL : String
     
-    public init() {
+    override public init() {
         self.clientId = ""
         self.redirectUri = BASE_URL
         self.baseAuthURL = AUTHORIZE_BASE_URL
         self.baseAPIURL = API_BASE_URL
         self.webViewURL = BASE_URL
+        
+        super.init()
+        
+        self.setupLogs()
     }
     
     public init(clientId: String, redirectUri: String, baseAuthURL: String, baseAPIURL: String, webViewURL: String = BASE_URL) {
@@ -31,6 +37,14 @@ open class FitpaySDKConfiguration {
         self.baseAuthURL = baseAuthURL
         self.baseAPIURL = baseAPIURL
         self.webViewURL = webViewURL
+        
+        super.init()
+        
+        self.setupLogs()
+    }
+    
+    fileprivate func setupLogs() {
+		log.addOutput(output: ConsoleOutput())
     }
     
     enum EnvironmentLoadingErrors : Error {

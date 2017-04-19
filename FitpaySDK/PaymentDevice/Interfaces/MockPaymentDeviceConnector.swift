@@ -6,6 +6,11 @@
 //  Copyright © 2016 Fitpay. All rights reserved.
 //
 
+public enum TestingType: UInt64 {
+    case partialSimulationMode = 0xBADC0FFEE000
+    case fullSimulationMode    = 0xDEADBEEF0000
+}
+
 open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     weak var paymentDevice : PaymentDevice!
     var responseData : ApduResultMessage!
@@ -15,20 +20,22 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     let maxPacketSize : Int = 20
     let apduSecsTimeout : Double = 5
     var sequenceId: UInt16 = 0
+    var testingType: TestingType
     
     var timeoutTimer : Timer?
     
-    required public init(paymentDevice device:PaymentDevice) {
+    required public init(paymentDevice device:PaymentDevice, testingType: TestingType = .fullSimulationMode) {
         self.paymentDevice = device
+        self.testingType = testingType
     }
     
     open func connect() {
-        print("connecting")
+        log.verbose("connecting")
         DispatchQueue.main.asyncAfter(deadline: getDelayTime(), execute: {
             self.connected = true
             self._nfcState = SecurityNFCState.enabled
             let deviceInfo = self.deviceInfo()
-            print("triggering device data")
+            log.verbose("triggering device data")
             self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo": deviceInfo!])
             self.paymentDevice?.connectionState = ConnectionState.connected
         })
@@ -43,7 +50,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     }
     
     open func isConnected() -> Bool {
-        debugPrint("checking is connected")
+        log.verbose("checking is connected")
         return connected;
     }
     
@@ -70,7 +77,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     open func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
             if let completion = self.paymentDevice.apduResponseHandler {
-                completion(nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
+                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
             }
             return
         }
@@ -84,7 +91,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
             self.paymentDevice.apduResponseHandler = nil
-            apduResponseHandler(packet, nil)
+            apduResponseHandler(packet, nil, nil)
         }
     }
     
@@ -104,7 +111,8 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         deviceInfo.osName = "IOS"
         deviceInfo.licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
         deviceInfo.bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-        deviceInfo.secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+        deviceInfo.secureElementId = self.generateRandomSeId()
+        deviceInfo.casd = "7F218201097F218201049310201608231634158F370493B60000000342038949325F200C434552542E434153442E43549501825F2504201607015F240420210701450CA000000151535043415344005314C0AC3B49223485BE2FCFECBC19CFE14CE01CD9795F378180C0F41E9813FDC0C4522AA72CA6DDFFCFEE5432A01D7FDCF37246C23B138C2C7E5F91431E7E445932A812E0473A713919E594002E257311E67A324F130CA56EDF13FE36616C6EDE85437F30450ADA2549122C0C879B1BF55D1C83FEC7F8AB5CC45DE3A36110226F1A7DC35D86B39445EBBC9325C2F7FDF79FA0410DF55074ABE25F3822905ACD4030B40F9B8BAF35678C439EB7F6862D198BE58CFB053F6BE4A3ECAE148D05"
 
         return deviceInfo;
     }
@@ -124,7 +132,12 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         return dispatchTime
     }
 
-    
+    func generateRandomSeId() -> String {
+        return  testingType.rawValue.hex(charsLength: 12) +
+                "528704504258" +
+                UInt64(Date().timeIntervalSince1970).hex(charsLength: 12) +
+                "FFFF427208236250082462502041FFFF082562502041FFFF"
+    }
     
 }
 

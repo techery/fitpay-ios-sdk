@@ -24,7 +24,7 @@ class PaymentDeviceTests: XCTestCase
     func testConnectToDeviceCheck()
     {
         let expectation = super.expectation(description: "connection to device check")
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
         {
             (event) in
             debugPrint("event: \(event), eventData: \(event.eventData)")
@@ -48,7 +48,7 @@ class PaymentDeviceTests: XCTestCase
     func testDisconnectFromDeviceCheck()
     {
         let expectation = super.expectation(description: "disconnect from device check")
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
         {
             (event) in
             
@@ -59,7 +59,7 @@ class PaymentDeviceTests: XCTestCase
             self.paymentDevice.disconnect()
         })
         
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion:
         {
             _ in
             expectation.fulfill()
@@ -75,7 +75,7 @@ class PaymentDeviceTests: XCTestCase
         let expectation = super.expectation(description: "disconnection from device check")
         
         var newState = SecurityNFCState.disabled
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
         {
             (event) in
             
@@ -87,10 +87,10 @@ class PaymentDeviceTests: XCTestCase
                 newState = SecurityNFCState.enabled
             }
             
-            self.paymentDevice.writeSecurityState(newState)
+            let _ = self.paymentDevice.writeSecurityState(newState)
         })
         
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onSecurityStateChanged, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onSecurityStateChanged, completion:
         {
             (event) -> Void in
             
@@ -103,7 +103,7 @@ class PaymentDeviceTests: XCTestCase
             
             if state == SecurityNFCState.disabled {
                 newState = SecurityNFCState.enabled
-                self.paymentDevice.writeSecurityState(newState)
+                let _ = self.paymentDevice.writeSecurityState(newState)
             } else {
                 expectation.fulfill()
             }
@@ -120,7 +120,7 @@ class PaymentDeviceTests: XCTestCase
         
         let successResponse = Data(bytes: UnsafePointer<UInt8>([0x90, 0x00] as [UInt8]), count: 2)
         
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
         {
             (event) in
             let error = (event.eventData as? [String:Any])?["error"]
@@ -134,7 +134,7 @@ class PaymentDeviceTests: XCTestCase
             let command1 = Mapper<APDUCommand>().map(JSONString: "{ \"commandId\":\"e69e3bc6-bf36-4432-9db0-1f9e19b9d515\",\n         \"groupId\":0,\n         \"sequence\":0,\n         \"command\":\"00A4040008A00000000410101100\",\n         \"type\":\"PUT_DATA\"}")
             self.paymentDevice.sendAPDUCommand(command1!, completion:
                 {
-                    (apduResponse, error) -> Void in
+                    (apduResponse, responseMessage, error) -> Void in
                     
                     XCTAssertNil(error)
                     XCTAssertNotNil(apduResponse)
@@ -142,8 +142,8 @@ class PaymentDeviceTests: XCTestCase
                     let command2 = Mapper<APDUCommand>().map(JSONString: "{ \"commandId\":\"e69e3bc6-bf36-4432-9db0-1f9e19b9d517\",\n         \"groupId\":0,\n         \"sequence\":0,\n         \"command\":\"84E20001B0B12C352E835CBC2CA5CA22A223C6D54F3EDF254EF5E468F34CFD507C889366C307C7C02554BDACCDB9E1250B40962193AD594915018CE9C55FB92D25B0672E9F404A142446C4A18447FEAD7377E67BAF31C47D6B68D1FBE6166CF39094848D6B46D7693166BAEF9225E207F9322E34388E62213EE44184ED892AAF3AD1ECB9C2AE8A1F0DC9A9F19C222CE9F19F2EFE1459BDC2132791E851A090440C67201175E2B91373800920FB61B6E256AC834B9D\",\n         \"type\":\"PUT_DATA\"}")
                     self.paymentDevice.sendAPDUCommand(command2!, completion:
                         {
-                            (apduResponse, error) -> Void in
-                            debugPrint("apduResponse: \(apduResponse)")
+                            (apduResponse, responseMessage, error) -> Void in
+                            debugPrint("apduResponse: \(String(describing: apduResponse))")
                             XCTAssertNil(error)
                             XCTAssertNotNil(apduResponse)
                             XCTAssert(apduResponse!.responseCode == successResponse)
@@ -164,25 +164,25 @@ class PaymentDeviceTests: XCTestCase
         
         SyncManager.sharedInstance.paymentDevice = self.paymentDevice
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDevice)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDevice)
         {
             (event) -> Void in
             print("connecting to device started")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDeviceCompleted)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDeviceCompleted)
         {
             (event) -> Void in
             print("connecting to device finished")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncStarted)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncStarted)
         {
             (event) -> Void in
             print("sync started")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed)
         {
             (event) -> Void in
             print("sync failed", event.eventData)
@@ -194,25 +194,25 @@ class PaymentDeviceTests: XCTestCase
             expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.commitProcessed)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.commitProcessed)
         {
             (event) -> Void in
             print("COMMIT_PROCESSED")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncProgress)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncProgress)
         {
             (event) -> Void in
             print("sync progress", event.eventData)
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.apduCommandsProgress)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.apduCommandsProgress)
         {
             (event) -> Void in
             print("apdu progress", event.eventData)
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted)
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted)
         {
             (event) -> Void in
             print("sync finished", event.eventData)
@@ -221,7 +221,7 @@ class PaymentDeviceTests: XCTestCase
             expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onNotificationReceived, completion:
+        let _ = SyncManager.sharedInstance.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onNotificationReceived, completion:
         {
             (notificationData)->Void in
             print("notification:", notificationData)
@@ -261,7 +261,7 @@ class PaymentDeviceTests: XCTestCase
                 XCTAssertNotNil(user)
                 
 //                user?.createNewDevice("SMART_STRAP", manufacturerName: "Fitpay", deviceName: "TestDevice2", serialNumber: "1.0.1", modelNumber: "1.0.0.0.1", hardwareRevision: "1.0.0.0.0.0.0.0.0.0.1", firmwareRevision: "1.0.851", softwareRevision: "1.0.0.1", systemId: "0x123456FFFE9ABCDE", osName: "ANDROID", licenseKey: "Some key", bdAddress: "", secureElementId: "4215b2c7-9999-1111-b224-388820601642", pairing: "2016-02-29T21:42:21.469Z", completion: { (device, error) -> Void in
-                    SyncManager.sharedInstance.sync(user!)
+                    let _ = SyncManager.sharedInstance.sync(user!)
 //                })
                 
                 

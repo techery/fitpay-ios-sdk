@@ -33,6 +33,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     case receivedCardsWithTowApduCommands
     case apduCommandsProgress
     
+    case commitsReceived
     case commitProcessed
 
     case cardAdded
@@ -67,6 +68,8 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
             return "Received cards with Top of Wallet APDU commands"
         case .apduCommandsProgress:
             return "APDU progress"
+        case .commitsReceived:
+            return "Commits received"
         case .commitProcessed:
             return "Processed commit"
         case .cardAdded:
@@ -95,10 +98,10 @@ open class SyncManager : NSObject {
         return user?.id
     }
     
-    internal let syncStorage : SyncStorage = SyncStorage()
+    internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
-    internal var currentDeviceInfo : DeviceInfo?
+    internal var deviceInfo : DeviceInfo?
 
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     fileprivate var user : User?
@@ -154,20 +157,22 @@ open class SyncManager : NSObject {
      Starts sync process with payment device. 
      If device disconnected, than system tries to connect.
      
-     - parameter user: user from API to whom device belongs to.
+     - parameter user:	 user from API to whom device belongs to.
+     - parameter device: device which we will sync with. If nil then we will use first one with secureElemendId.
      */
-    open func sync(_ user: User) -> NSError? {
-        print("--- [SyncManager] starting sync ---")
+    open func sync(_ user: User, device: DeviceInfo? = nil) -> NSError? {
+        log.debug("SYNC_DATA: Starting sync.")
         if self.isSyncing {
-            print("--- [SyncManager] already syncing so can't sync ---")
+            log.warning("SYNC_DATA: Already syncing so can't sync.")
             return NSError.error(code: SyncManager.ErrorCode.syncAlreadyStarted, domain: SyncManager.self)
         }
         
         self.isSyncing = true
         self.user = user
+        self.deviceInfo = device
         
         if self.paymentDevice!.isConnected {
-            print("--- [SyncManager] validating device connection to sync ---")
+            log.verbose("SYNC_DATA: Validating device connection to sync.")
             self.paymentDevice?.validateConnection(completion: { (isValid, error) in
                 if let error = error {
                     self.syncFinished(error: error)
@@ -200,7 +205,7 @@ open class SyncManager : NSObject {
             return NSError.error(code: SyncManager.ErrorCode.userIsNill, domain: SyncManager.self)
         }
         
-        return sync(user)
+        return sync(user, device: deviceInfo)
     }
     
     /**
@@ -246,7 +251,7 @@ open class SyncManager : NSObject {
     }
     
     internal func syncWithDeviceConnection() {
-        print("--- [SyncManager] no connection to device so connecting before initing sync ---")
+        log.verbose("SYNC_DATA: No connection to device so connecting before initing sync.")
         if let binding = self.deviceConnectedBinding {
             self.paymentDevice!.removeBinding(binding: binding)
         }
@@ -255,32 +260,31 @@ open class SyncManager : NSObject {
             self.paymentDevice!.removeBinding(binding: binding)
         }
         
-        self.deviceConnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-            {
-                [unowned self] (event) in
+        self.deviceConnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
+            [unowned self] (event) in
+
+            let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
+            let error = (event.eventData as? [String:Any])?["error"] as? Error
+
+            guard (error == nil && deviceInfo != nil) else {
                 
-                let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
-                let error = (event.eventData as? [String:Any])?["error"] as? Error
+                self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted, params: ["error": NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self)])
                 
-                guard (error == nil && deviceInfo != nil) else {
-                    
-                    self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted, params: ["error": NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self)])
-                    
-                    self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self))
-                    
-                    return
-                }
+                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self))
                 
-                self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted)
-                
-                self.startSync()
-                
-                if let binding = self.deviceConnectedBinding {
-                    self.paymentDevice!.removeBinding(binding: binding)
-                }
-                
-                self.deviceConnectedBinding = nil
-            })
+                return
+            }
+
+            self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted)
+
+            self.startSync()
+
+            if let binding = self.deviceConnectedBinding {
+                self.paymentDevice!.removeBinding(binding: binding)
+            }
+
+            self.deviceConnectedBinding = nil
+        })
         
         self.deviceDisconnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
             [unowned self] (event) in
@@ -296,7 +300,7 @@ open class SyncManager : NSObject {
             
             self.deviceConnectedBinding = nil
             self.deviceDisconnectedBinding = nil
-            })
+        })
         
         self.paymentDevice!.connect(self.paymentDeviceConnectionTimeoutInSecs)
         
@@ -328,7 +332,7 @@ open class SyncManager : NSObject {
     }
     
     fileprivate func startSync() {
-        print("--- [SyncManager] sync preconditions validated, beginning process ---")
+        log.verbose("SYNC_DATA: Sync preconditions validated, beginning process.")
         
         self.callCompletionForSyncEvent(SyncEventType.syncStarted)
         
@@ -337,38 +341,32 @@ open class SyncManager : NSObject {
             [unowned self] (commits, error) -> Void in
             
             guard (error == nil && commits != nil) else {
-                print("--- [SyncManager] failed to get commits ---")
+                log.error("SYNC_DATA: failed to get commits error: \(String(describing: error)).")
                 self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantFetchCommits, domain: SyncManager.self))
                 return
             }
             
-//            TODO: this is for testing purposes only. It should be removed once actual APDU packages are being received
-//            let cmts:[Commit]
-//            if commits?.count > 0 {
-//                cmts = self.___debug_appendAPDUCommits(commits!)
-//            } else {
-//                cmts = commits!
-//            }
+            self.callCompletionForSyncEvent(.commitsReceived, params: ["commits":commits!])
 
-            print("--- [SyncManager] \(commits?.count) commits successfully retrieved ---")
+            log.debug("SYNC_DATA: \(commits?.count ?? 0) commits successfully retrieved.")
 
             let applayerStarted = self.commitsApplyer.apply(commits!, completion:
             {
                 [unowned self] (error) -> Void in
                 
                 if let _ = error {
-                    print("--- [SyncManager] commit applier returned a failure ---")
+                    log.error("SYNC_DATA: Commit applier returned a failure: \(String(describing: error))")
                     self.syncFinished(error: error)
                     return
                 }
 
-                print("--- [SyncManager] commit applier returned with out errors ---")
+                log.verbose("SYNC_DATA: Commit applier returned with out errors.")
                 
                 self.syncFinished(error: nil)
                 
                 self.getAllCardsWithToWAPDUCommands({ [unowned self] (cards, error) in
                     if let error = error {
-                        print("Can't get offline APDU commands. Error: \(error)")
+                        log.error("SYNC_DATA: Can't get offline APDU commands. Error: \(error)")
                         return
                     }
                     
@@ -384,10 +382,18 @@ open class SyncManager : NSObject {
         }
     }
     
-    fileprivate func findDeviceInfo(_ itrSearchLimit: Int, searchOffset: Int, completion:@escaping (_ deviceInfo: DeviceInfo?, _ error: Error?)->Void) {
-        //TODO: uncomment this once approved
-        //let physicalDeviceInfo = self.paymentDevice.deviceInfo
+    fileprivate func obtainDeviceInfo(completion: @escaping (_ deviceInfo: DeviceInfo?, _ error: Error?)->Void) {
+        // we already have device, return it
+        if self.deviceInfo != nil {
+            completion(self.deviceInfo, nil)
+            return
+        }
         
+        // we should find device because we have no device
+        findDeviceInfo(20, searchOffset: 0, completion: completion)
+    }
+    
+    fileprivate func findDeviceInfo(_ itrSearchLimit: Int, searchOffset: Int, completion: @escaping (_ deviceInfo: DeviceInfo?, _ error: Error?)->Void) {
         user?.listDevices(limit: itrSearchLimit, offset: searchOffset, completion:
         {
             [unowned self] (result, error) -> Void in
@@ -398,8 +404,6 @@ open class SyncManager : NSObject {
             }
             
             for deviceInfo in result!.results! {
-                // TODO: uncomment this once approved
-                // if deviceInfo.serialNumber == physicalDeviceInfo?.serialNumber {
                 if deviceInfo.secureElementId != nil {
                     completion(deviceInfo, nil)
                     return
@@ -416,20 +420,19 @@ open class SyncManager : NSObject {
     }
     
     fileprivate func getCommits(_ completion: @escaping (_ commits: [Commit]?, _ error: Error?)->Void) {
-        findDeviceInfo(20, searchOffset: 0)
-        {
-            (deviceInfo, error) -> Void in
+        obtainDeviceInfo {
+            [weak self] (deviceInfo, error) in
             
-            if let deviceInfo = deviceInfo {
-                self.currentDeviceInfo = deviceInfo
+            if let deviceInfo = deviceInfo, let strongSelf = self {
+                strongSelf.deviceInfo = deviceInfo
 
-                let lastCommitId = self.syncStorage.getLastCommitId(self.currentDeviceInfo!.deviceIdentifier!)
+                let lastCommitId = strongSelf.syncStorage.getLastCommitId(strongSelf.deviceInfo!.deviceIdentifier!)
 
                 deviceInfo.listCommits(commitsAfter: lastCommitId, limit: 20, offset: 0, completion:
                 {
                     (result, error) -> Void in
                     
-                    if let error = error {
+                    guard error == nil else {
                         completion(nil, error)
                         return
                     }
@@ -471,22 +474,20 @@ open class SyncManager : NSObject {
     }
 
     fileprivate func syncFinished(error: Error?) {
-        print("--- [SyncManager] called syncFinished ---")
-        self.currentDeviceInfo?.updateNotificationTokenIfNeeded()
+        self.deviceInfo?.updateNotificationTokenIfNeeded()
         
         self.isSyncing = false
-        self.currentDeviceInfo = nil
 
-        
         if let error = error {
+            log.debug("SYNC_DATA: Sync finished with error: \(error)")
             // TODO: it's a hack, because currently we can move to wallet screen only if we received SyncEventType.syncCompleted
             if (error as NSError).code == PaymentDevice.ErrorCode.tryLater.rawValue {
-                debugPrint("PaymentDevice.ErrorCode.tryLater")
                 callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
             } else {
                 callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": error])
             }
         } else {
+            log.debug("SYNC_DATA: Sync finished successfully")
             callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
         }
         
@@ -503,36 +504,8 @@ open class SyncManager : NSObject {
     }
 
     internal func commitCompleted(_ commitId:String) {
-        print("--- [SyncManager] setting new last commit ID ---")
-        self.syncStorage.setLastCommitId(self.currentDeviceInfo!.deviceIdentifier!, commitId: commitId)
-    }
-    
-    //TODO: delete this once approved
-    // debug
-    fileprivate func ___debug_appendAPDUCommits(_ commits: [Commit]) -> [Commit] {
-        var commit = commits.last!
-        
-        for commitItr in commits {
-            if let _ = commitItr.commitType, let _ = commitItr.payload {
-                commit = commitItr
-                break
-            }
-        }
-        let resourceLink = ResourceLink()
-        resourceLink.href = "https://webapp.fit-pay.com/apduPackages/baff08fb-0b73-5019-8877-7c490a43dc64/confirm"
-        resourceLink.target = "apduResponse"
-        commit.links?.append(resourceLink)
-        
-        commit.commitType = CommitType.APDU_PACKAGE
-        let apduPackage = Mapper<ApduPackage>().map(JSONString: "{  \r\n   \"seIdType\":\"iccid\",\r\n   \"targetDeviceType\":\"fitpay.gandd.model.Device\",\r\n   \"targetDeviceId\":\"72425c1e-3a17-4e1a-b0a4-a41ffcd00a5a\",\r\n   \"packageId\":\"baff08fb-0b73-5019-8877-7c490a43dc64\",\r\n   \"seId\":\"333274689f09352405792e9493356ac880c44444442\",\r\n   \"targetAid\":\"8050200008CF0AFB2A88611AD51C\",\r\n   \"commandApdus\":[  \r\n      {  \r\n         \"commandId\":\"5f2acf6f-536d-4444-9cf4-7c83fdf394bf\",\r\n         \"groupId\":0,\r\n         \"sequence\":0,\r\n         \"command\":\"00E01234567890ABCDEF\",\r\n         \"type\":\"CREATE FILE\"\r\n      },\r\n      {  \r\n         \"commandId\":\"00df5f39-7627-447d-9380-46d8574e0643\",\r\n         \"groupId\":1,\r\n         \"sequence\":1,\r\n         \"command\":\"8050200008CF0AFB2A88611AD51C\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"9c719928-8bb0-459c-b7c0-2bc48ec53f3c\",\r\n         \"groupId\":1,\r\n         \"sequence\":2,\r\n         \"command\":\"84820300106BBC29E6A224522E83A9B26FD456111500\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"b148bea5-6d98-4c83-8a20-575b4edd7a42\",\r\n         \"groupId\":1,\r\n         \"sequence\":3,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"905fc5ab-4b15-4704-889b-2c5ffcfb2d68\",\r\n         \"groupId\":2,\r\n         \"sequence\":4,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"8e87ff12-dfc2-472a-bbf1-5f2e891e864c\",\r\n         \"groupId\":3,\r\n         \"sequence\":5,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      }\r\n   ],\r\n   \"validUntil\":\"2015-12-11T21:22:58.691Z\",\r\n   \"apduPackageUrl\":\"http://localhost:9103/transportservice/v1/apdupackages/baff08fb-0b73-5019-8877-7c490a43dc64\"\r\n}")
-        apduPackage?.validUntilEpoch = 1559862740
-
-        
-        commit.payload?.apduPackage = apduPackage
-        
-        let apduPackages = [commit, commit, commit, commit, commit]
-        
-        return commits + apduPackages
+        log.debug("SYNC_DATA: Setting new last commit ID(\(commitId)).")
+        self.syncStorage.setLastCommitId(self.deviceInfo!.deviceIdentifier!, commitId: commitId)
     }
 }
 

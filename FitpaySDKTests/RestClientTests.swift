@@ -7,6 +7,11 @@ class RestClientTests: XCTestCase
     var clientId = "fp_webapp_pJkVp2Rl"
     let redirectUri = "https://webapp.fit-pay.com"
     let password = "1029"
+    let shouldLoadEnvironmentVariables = true
+    
+    // if shouldLoadEnvironmentVariables == false then we will use next urls:
+	let baseAuthUrl = "https://some.url"
+    let baseApiUrl = "https://some.url/api"
 
     var session:RestSession!
     var client:RestClient!
@@ -21,18 +26,24 @@ class RestClientTests: XCTestCase
         
         // keep running tests in suite
         self.continueAfterFailure = true;
-
     }
 
     override func setUp()
     {
         super.setUp()
-        let config = FitpaySDKConfiguration(clientId:"pagare", redirectUri:"https://demo-qa.pagare.me", baseAuthURL: "https://demo-qa.pagare.me", baseAPIURL: "https://demo-qa.pagare.me/api")
-//        if let error = config.loadEnvironmentVariables() {
-//            print("Can't load config from environment. Error: \(error)")
-//        } else {
+        let config: FitpaySDKConfiguration
+        if shouldLoadEnvironmentVariables {
+            config = FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
+
+            if let error = config.loadEnvironmentVariables() {
+                print("Can't load config from environment. Error: \(error)")
+            } else {
+                clientId = config.clientId
+            }
+        } else {
+            config = FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, baseAuthURL: baseAuthUrl, baseAPIURL: baseApiUrl)
             clientId = config.clientId
-//        }
+        }
         
         self.session = RestSession(configuration: config)
         self.client = RestClient(session: self.session!)
@@ -562,7 +573,7 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 55, handler: nil)
     }
     
     func testDeactivateCreditCard()
@@ -604,7 +615,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 55, handler: nil)
     }
     
     func testReactivateCreditCardActivatesCard()
@@ -661,7 +672,7 @@ class RestClientTests: XCTestCase
         }
 
         
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 55, handler: nil)
     }
     
     func testCreditCardAcceptTerms()
@@ -792,7 +803,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 35, handler: nil)
     }
     
     func testUserListDevisesListsDevices()
@@ -1020,7 +1031,7 @@ class RestClientTests: XCTestCase
             self.testHelper.createEricCard(expectation, pan:"9999411122220\(i)33", expMonth:i, expYear:2019, user: masterUser!) {
                 (user, card) in
 
-                debugPrint("card creation done \(card)")
+                debugPrint("card creation done \(String(describing: card))")
 
                 self.testHelper.acceptTermsForCreditCard(expectation, card:card) {
                     card in
@@ -1378,11 +1389,14 @@ class RestClientTests: XCTestCase
         
         let currentTime = Date().timeIntervalSince1970
         let timeTransform = NSTimeIntervalTransform()
-        let timeAsInt = timeTransform.transformToJSON(currentTime)
+        guard let timeAsInt = timeTransform.transformToJSON(currentTime) else {
+            XCTAssert(false, "Can't get int value for time.")
+            return
+        }
         
         let intMirror = Mirror(reflecting: timeAsInt)
         debugPrint(String(describing: intMirror.subjectType))
-        XCTAssertTrue(String(describing: intMirror.subjectType) == "Optional<Int64>")
+        XCTAssertTrue(String(describing: intMirror.subjectType) == "Int64")
         
         expectation.fulfill()
         

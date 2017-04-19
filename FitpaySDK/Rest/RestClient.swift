@@ -130,14 +130,14 @@ open class RestClient : NSObject
         termsVersion:String?, termsAccepted:String?, origin:String?, originAccountCreated:String?,
         clientId:String, completion:@escaping CreateUserHandler
     ) {
-        debugPrint("request create user: \(email)")
+        log.verbose("request create user: \(email)")
 
         self.preparKeyHeader
             {
                 [unowned self](headers, error) -> Void in
                 if let headers = headers
                 {
-                    debugPrint("got headers: \(headers)")
+                    log.verbose("got headers: \(headers)")
                     var parameters:[String : Any] = [:]
                     if (termsVersion != nil) {
                         parameters += ["termsVersion": termsVersion!]
@@ -176,16 +176,16 @@ open class RestClient : NSObject
                     {
                         if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: userInfoJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                         {
-                            if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                            if let encrypted = try? jweObject.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
                             {
                                 parameters["encryptedData"] = encrypted
                             }
                         }
                     }
                     
-                    debugPrint("user creation url: \(self._session.baseAPIURL)/users")
-                    debugPrint("Headers: \(headers)")
-                    debugPrint("user creation json: \(parameters)")
+                    log.verbose("user creation url: \(self._session.baseAPIURL)/users")
+                    log.verbose("Headers: \(headers)")
+                    log.verbose("user creation json: \(parameters)")
                     
                     let request = self._manager.request(self._session.baseAPIURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                     
@@ -346,7 +346,7 @@ open class RestClient : NSObject
                     {
                         if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                         {
-                            if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
+                            if let encrypted = try? jweObject.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
                             {
                                 parameters["encryptedData"] = encrypted as AnyObject?
                             }
@@ -454,7 +454,6 @@ open class RestClient : NSObject
                     "deviceId" : "\(deviceId)"
                 ]
                 let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
-                debugPrint(request)
                 request.validate().responseObject(
                 queue: DispatchQueue.global(), completionHandler:
                 {
@@ -986,7 +985,7 @@ open class RestClient : NSObject
                 {
                     if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                     {
-                        if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                        if let encrypted = try? jweObject.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
                         {
                             parameters["encryptedData"] = encrypted
                         }
@@ -1181,7 +1180,7 @@ open class RestClient : NSObject
                     {
                         if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                         {
-                            if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
+                            if let encrypted = try? jweObject.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
                             {
                                 parameters["encryptedData"] = encrypted
                             }
