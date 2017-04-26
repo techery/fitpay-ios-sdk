@@ -8,28 +8,40 @@
 
 import Foundation
 
-extension Int {
-    func hex(charsLength: Int) -> String {
-        var result = String(format: "%X", self)
-        let resultSize = result.characters.count
-        if resultSize < charsLength {
-            for _ in resultSize..<charsLength {
-                result = "0" + result
-            }
-        }
-        return result
+func hex<T:Integer>( v:T) -> String {
+    var v = v
+    var s = ""
+    for _ in 0..<MemoryLayout<T>.size * 2 {
+        s = String(format: "%X", (v & 0xf).toIntMax()) + s
+        v /= 16
     }
+    
+    var firstZeroCounter = 0
+    for char in s.characters {
+        if char != "0" {
+            break
+        }
+        firstZeroCounter += 1
+    }
+    
+    if firstZeroCounter > 0 {
+        let range = s.startIndex..<s.index(s.startIndex, offsetBy: firstZeroCounter)
+        s.removeSubrange(range)
+    }
+    
+    return s
 }
 
-extension UInt64 {
-    func hex(charsLength: Int) -> String {
-        var result = String(format: "%X", self)
-        let resultSize = result.characters.count
-        if resultSize < charsLength {
-            for _ in resultSize..<charsLength {
-                result = "0" + result
+extension Integer {
+    func hex(preferableLength: Int) -> String {
+        var s = FitpaySDK.hex(v: self)
+        let lenght = s.characters.count
+        if lenght < preferableLength {
+            for _ in 0..<preferableLength - lenght {
+                s = "0" + s
             }
         }
-        return result
+        
+        return s
     }
 }
