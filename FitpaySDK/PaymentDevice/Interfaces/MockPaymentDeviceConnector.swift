@@ -133,9 +133,9 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     }
 
     func generateRandomSeId() -> String {
-        return  testingType.rawValue.hex(charsLength: 12) +
+        return  testingType.rawValue.hex(preferableLength: 12) +
                 "528704504258" +
-                UInt64(Date().timeIntervalSince1970).hex(charsLength: 12) +
+                UInt64(Date().timeIntervalSince1970).hex(preferableLength: 12) +
                 "FFFF427208236250082462502041FFFF082562502041FFFF"
     }
     
