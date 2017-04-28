@@ -33,6 +33,8 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     case receivedCardsWithTowApduCommands
     case apduCommandsProgress
     
+    case apduPackageComplete
+    
     case commitsReceived
     case commitProcessed
 
@@ -72,6 +74,8 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
             return "Commits received"
         case .commitProcessed:
             return "Processed commit"
+        case .apduPackageComplete:
+            return "Processing APDU package complete"
         case .cardAdded:
             return "New card was added"
         case .cardDeleted:
