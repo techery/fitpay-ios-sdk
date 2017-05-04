@@ -135,7 +135,6 @@ internal class CommitsApplyer {
             return
         }
         
-        SyncStorage.sharedInstance.lastPackageId += 1
         
         SyncManager.sharedInstance.paymentDevice?.apduPackageProcessingStarted(apduPackage, completion: {
             (error) in
@@ -174,6 +173,7 @@ internal class CommitsApplyer {
                     realError = error as NSError?
                 }
                 
+                SyncManager.sharedInstance.callCompletionForSyncEvent(.apduPackageComplete, params: ["package":apduPackage,"error":realError ?? "nil"])
                 SyncManager.sharedInstance.paymentDevice?.apduPackageProcessingFinished(apduPackage, completion: {
                     (error) in
                     
@@ -261,6 +261,7 @@ internal class CommitsApplyer {
                 }
             } else {
                 self.appliedApduCommands += 1
+                log.info("SYNC_DATA: PROCESSED \(self.appliedApduCommands)/\(self.totalApduCommands) COMMANDS")
                 
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.apduCommandsProgress, params: ["applied":self.appliedApduCommands, "total":self.totalApduCommands])
                 
