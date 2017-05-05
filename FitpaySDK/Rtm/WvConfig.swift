@@ -512,7 +512,7 @@ internal enum WVResponse: Int {
         restClient?.user(id: (self.webViewSessionData?.userId)!, completion: {
             [weak self] (user, error) in
             
-            guard (error == nil || user == nil) else {
+            guard user != nil && error == nil else {
                 userAndDeviceReceived(nil, nil, error)
                 return
             }
