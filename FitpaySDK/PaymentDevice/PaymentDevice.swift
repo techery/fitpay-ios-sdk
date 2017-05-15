@@ -295,9 +295,11 @@
     
     override public init() {
         super.init()
-        
+        self.paymentDeviceApduExecuter = PaymentDeviceApduExecuter(paymentDevice: self)
         self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
+    
+    fileprivate var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
     
     internal func apduPackageProcessingStarted(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
         if let onPreApduPackageExecute = self.deviceInterface.onPreApduPackageExecute {
@@ -315,42 +317,21 @@
         }
     }
     
-    internal func sendAPDUCommand(_ apduCommand:APDUCommand, completion: @escaping (ApduResultMessage?, String?, Error?)->Void) {
-        guard isConnected else {
-            completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
-            return
-        }
-        
-        self.apduResponseHandler = completion
-        log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
-        self.deviceInterface.executeAPDUCommand(apduCommand)
-    }
-    
     internal typealias APDUExecutionHandler = (_ apduCommand:APDUCommand?, _ state: APDUPackageResponseState?, _ error:Error?)->Void
     internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
-        self.sendAPDUCommand(apduCommand)
-        {
-            (apduResponse, state, error) -> Void in
-            
-            if let error = error {
-                completion(apduCommand, nil, error)
-                return
-            }
+        do {
+            try self.paymentDeviceApduExecuter.execute(command: apduCommand, executionBlock: { [weak self] (apduCommand, completion) in
+                self?.apduResponseHandler = completion
+                log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
+                self?.deviceInterface.executeAPDUCommand(apduCommand)
+                }, completion: completion)
 
-            apduCommand.responseData = apduResponse?.msg.hex
-            apduCommand.responseCode = apduResponse?.responseCode.hex
-            
-            log.debug("APDU_DATA: ExecuteAPDUCommand: response \(apduResponse?.responseData.hex ?? "nil"). Response type - \(String(describing: apduCommand.responseType)). Commands continueOnFailure - \(apduCommand.continueOnFailure).")
-            
-            if apduCommand.responseType == APDUResponseType.error && apduCommand.continueOnFailure == false {
-                completion(apduCommand, nil, NSError.error(code: PaymentDevice.ErrorCode.apduErrorResponse, domain: IPaymentDeviceConnector.self))
-                return
-            }
-            
-            completion(apduCommand, nil, nil)
+        } catch {
+            log.error("Can't execute message, error: \(error)")
+            completion(nil, nil, NSError.unhandledError(PaymentDevice.self))
         }
     }
-    
+        
     @objc open func callCompletionForEvent(_ eventType: PaymentDeviceEventTypes, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }
