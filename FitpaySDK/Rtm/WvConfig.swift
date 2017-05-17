@@ -183,7 +183,7 @@ internal enum WVResponse: Int {
     public var user: User?
     public var device: DeviceInfo?
     
-    var rtmConfig: RtmConfig?
+    var rtmConfig: RtmConfigProtocol?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
     var connectionBinding: FitpayEventBinding?
@@ -194,13 +194,13 @@ internal enum WVResponse: Int {
     
     @objc open var demoModeEnabled : Bool {
         get {
-            if let isEnabled = self.rtmConfig?.demoMode {
+            if let isEnabled = self.rtmConfig?.jsonDict()[RtmConfigDafaultMappingKey.demoMode.rawValue] as? Bool {
                 return isEnabled
             }
             return false
         }
         set {
-            self.rtmConfig?.demoMode = newValue
+            self.rtmConfig?.update(value: newValue, forKey: RtmConfigDafaultMappingKey.demoMode.rawValue)
         }
     }
     
@@ -208,7 +208,7 @@ internal enum WVResponse: Int {
         self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(clientId: clientId, redirectUri: redirectUri, userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount), SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL))
     }
     
-    @objc public init(paymentDevice:PaymentDevice, rtmConfig: RtmConfig, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
+    @objc public init(paymentDevice:PaymentDevice, rtmConfig: RtmConfigProtocol, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
         self.paymentDevice = paymentDevice
         self.rtmConfig = rtmConfig
         self.restSession = RestSession(configuration: SDKConfiguration)
@@ -313,10 +313,10 @@ internal enum WVResponse: Int {
             self.rtmConfig!.accessToken = accessToken
         }
         
-        let JSONString = Mapper().toJSONString(self.rtmConfig!)
-        let utfString = JSONString!.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        let JSONString = self.rtmConfig?.jsonDict().JSONString
+        let utfString = JSONString?.data(using: String.Encoding.utf8, allowLossyConversion: true)
         let encodedConfig = utfString?.base64URLencoded()
-        let configuredUrl = "\(url)?config=\(encodedConfig! as String)"
+        let configuredUrl = "\(url)?config=\(encodedConfig ?? "cantGenerateConfig_badJson?")"
         
         log.verbose(configuredUrl)
         
