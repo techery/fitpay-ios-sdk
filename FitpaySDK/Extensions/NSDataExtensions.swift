@@ -3,8 +3,7 @@ import Foundation
 
 extension Data
 {
-    var UTF8String:String?
-    {
+    var UTF8String: String? {
         return self.stringWithEncoding(String.Encoding.utf8)
     }
 
@@ -13,14 +12,17 @@ extension Data
         return String(data: self, encoding: encoding)
     }
 
-    var dictionary:Dictionary<String, AnyObject>?
-    {
+    var dictionary: Dictionary<String, AnyObject>? {
         guard let dictionary:[String : AnyObject] = try? JSONSerialization.jsonObject(with: self, options:.mutableContainers) as! [String : AnyObject] else
         {
             return nil
         }
 
         return dictionary
+    }
+    
+    var bytesArray: [UInt8] {
+        return [UInt8](self)
     }
 
     var errorMessages:[String]?

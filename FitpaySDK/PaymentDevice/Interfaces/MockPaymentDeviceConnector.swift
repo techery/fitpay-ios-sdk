@@ -87,7 +87,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     
     open func sendAPDUData(_ data: Data, sequenceNumber: UInt16) {
         let response = "9000"
-        let packet = ApduResultMessage(hexResult: response, sequenceId: String(sequenceNumber))
+        let packet = ApduResultMessage(hexResult: response)
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
             self.paymentDevice.apduResponseHandler = nil
