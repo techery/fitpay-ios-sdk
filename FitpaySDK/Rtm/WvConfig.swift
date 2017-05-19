@@ -313,6 +313,10 @@ internal enum WVResponse: Int {
             self.rtmConfig!.accessToken = accessToken
         }
         
+        if self.rtmConfig?.deviceInfo?.notificationToken == nil && FitpayNotificationsManager.sharedInstance.notificationsToken.characters.count > 0 {
+            self.rtmConfig?.deviceInfo?.notificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
+        }
+        
         let JSONString = self.rtmConfig?.jsonDict().JSONString
         let utfString = JSONString?.data(using: String.Encoding.utf8, allowLossyConversion: true)
         let encodedConfig = utfString?.base64URLencoded()
