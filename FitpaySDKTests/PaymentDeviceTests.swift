@@ -35,78 +35,7 @@ class PaymentDeviceTests: XCTestCase
             XCTAssertNotNil(deviceInfo)
             XCTAssertNotNil(deviceInfo?.secureElementId)
             
-            self.paymentDevice.disconnect()
-            
             expectation.fulfill()
-        })
-        
-        self.paymentDevice.connect()
-        
-        super.waitForExpectations(timeout: 20, handler: nil)
-    }
-    
-    func testDisconnectFromDeviceCheck()
-    {
-        let expectation = super.expectation(description: "disconnect from device check")
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-        {
-            (event) in
-            
-            let error = (event.eventData as? [String:Any])?["error"]
-            
-            XCTAssertNil(error)
-            
-            self.paymentDevice.disconnect()
-        })
-        
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion:
-        {
-            _ in
-            expectation.fulfill()
-        })
-        
-        self.paymentDevice.connect()
-        
-        super.waitForExpectations(timeout: 20, handler: nil)
-    }
-    
-    func testSecurityNotification()
-    {
-        let expectation = super.expectation(description: "disconnection from device check")
-        
-        var newState = SecurityNFCState.disabled
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-        {
-            (event) in
-            
-            let error = (event.eventData as? [String:Any])?["error"]
-            
-            XCTAssertNil(error)
-            
-            if self.paymentDevice.nfcState == SecurityNFCState.disabled {
-                newState = SecurityNFCState.enabled
-            }
-            
-            let _ = self.paymentDevice.writeSecurityState(newState)
-        })
-        
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onSecurityStateChanged, completion:
-        {
-            (event) -> Void in
-            
-
-            let stateInt = (event.eventData as? [String:Any])?["securityState"] as AnyObject as! NSNumber
-            
-            let state = SecurityNFCState(rawValue: stateInt.intValue)
-            
-            XCTAssert(newState == state)
-            
-            if state == SecurityNFCState.disabled {
-                newState = SecurityNFCState.enabled
-                let _ = self.paymentDevice.writeSecurityState(newState)
-            } else {
-                expectation.fulfill()
-            }
         })
         
         self.paymentDevice.connect()

@@ -1,53 +1,53 @@
 import ObjectMapper
 
 public enum APDUPackageResponseState : String {
-    case processed = "PROCESSED"
-    case failed = "FAILED"
-    case error = "ERROR"
-    case expired = "EXPIRED"
+    case processed    = "PROCESSED"
+    case failed       = "FAILED"
+    case error        = "ERROR"
+    case expired      = "EXPIRED"
     case notProcessed = "NOT_PROCESSED"
 }
 
 open class ApduPackage : NSObject, Mappable
 {
-    internal var links:[ResourceLink]?
-    open var seIdType:String?
-    open var targetDeviceType:String?
-    open var targetDeviceId:String?
-    open var packageId:String?
-    open var seId:String?
-    open var targetAid:String?
-    open var apduCommands:[APDUCommand]?
+    internal var links: [ResourceLink]?
+    open var seIdType: String?
+    open var targetDeviceType: String?
+    open var targetDeviceId: String?
+    open var packageId: String?
+    open var seId: String?
+    open var targetAid: String?
+    open var apduCommands: [APDUCommand]?
+
+    open var state: APDUPackageResponseState?
+    open var executedEpoch: TimeInterval?
+    open var executedDuration: Int64?
+
+    open var validUntil: String?
+    open var validUntilEpoch: TimeInterval?
+    open var apduPackageUrl: String?
     
-    open var state:APDUPackageResponseState?
-    open var executedEpoch:TimeInterval?
-    open var executedDuration:Int64?
-    
-    open var validUntil:String?
-    open var validUntilEpoch:TimeInterval?
-    open var apduPackageUrl:String?
-    
-    @objc open static var APDUPackageResponseStateProcessed:String
+    @objc open static var APDUPackageResponseStateProcessed: String
     {
         return APDUPackageResponseState.processed.rawValue
     }
-    @objc open static var APDUPackageResponseStateFailed:String
+    @objc open static var APDUPackageResponseStateFailed: String
     {
         return APDUPackageResponseState.failed.rawValue
     }
-    @objc open static var APDUPackageResponseStateError:String
+    @objc open static var APDUPackageResponseStateError: String
     {
         return APDUPackageResponseState.error.rawValue
     }
-    @objc open static var APDUPackageResponseStateExpired:String
+    @objc open static var APDUPackageResponseStateExpired: String
     {
         return APDUPackageResponseState.expired.rawValue
     }
-    @objc open static var APDUPackageResponseStateNotProcessed:String
+    @objc open static var APDUPackageResponseStateNotProcessed: String
     {
         return APDUPackageResponseState.notProcessed.rawValue
     }
-    
+
     override init() {
         super.init()
     }
@@ -69,54 +69,54 @@ open class ApduPackage : NSObject, Mappable
         validUntilEpoch <- (map["validUntilEpoch"], NSTimeIntervalTransform())
         apduPackageUrl <- map["apduPackageUrl"]
     }
-    
-    open var isExpired : Bool {
+
+    open var isExpired: Bool {
 //        return validUntilEpoch <= CLong(NSDate().timeIntervalSince1970)
         // validUntilEpoch not currently in the commit event
 
         return false
     }
-    
-    open var responseDictionary : [String:Any] {
+
+    open var responseDictionary: [String: Any] {
         get {
-            var dic : [String:Any] = [:]
-            
+            var dic: [String: Any] = [:]
+
             if let packageId = self.packageId {
                 dic["packageId"] = packageId
             }
-            
+
             if let state = self.state {
                 dic["state"] = state.rawValue
             }
-            
+
             if let executed = self.executedEpoch {
                 dic["executedTsEpoch"] = Int64(executed * 1000)
             }
-            
+
             if state == APDUPackageResponseState.expired {
                 return dic
             }
-            
+
             if let executedDuration = self.executedDuration {
                 dic["executedDuration"] = executedDuration
             }
-            
+
             if let apduResponses = self.apduCommands {
                 if apduResponses.count > 0 {
-                    var responsesArray : [Any] = []
+                    var responsesArray: [Any] = []
                     for resp in apduResponses {
                         if let _ = resp.responseData {
                             responsesArray.append(resp.responseDictionary)
                         }
                     }
-                    
+
                     dic["apduResponses"] = responsesArray
                 }
             }
-            
+
             return dic
         }
     }
-    
+
 }
 
