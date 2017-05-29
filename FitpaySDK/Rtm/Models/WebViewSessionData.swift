@@ -10,6 +10,12 @@ open class SessionData : Mappable
     
     internal var encryptedData:String?
     
+    public init(token: String, userId: String, deviceId: String) {
+        self.userId = userId
+        self.deviceId = deviceId
+        self.token = token
+    }
+    
     public required init?(map: Map)
     {
         

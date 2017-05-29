@@ -215,5 +215,15 @@ extension RestSession {
         
         return client
     }
+    
+    class func GetUserAndDeviceWith(token: String,
+                                    userId: String,
+                                    deviceId: String,
+                                    sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
+                                    completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
+        return RestSession.GetUserAndDeviceWith(sessionData: SessionData(token: token, userId: userId, deviceId: deviceId),
+                                                sdkConfiguration: sdkConfiguration,
+                                                completion: completion)
+    }
 
 }

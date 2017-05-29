@@ -22,6 +22,7 @@ open class SyncRequest {
     
     fileprivate let user: User?
     fileprivate let device: DeviceInfo?
+    fileprivate let deviceConnector: IPaymentDeviceConnector?
     fileprivate var completion: SyncRequestCompletion?
     
     fileprivate var state = SyncRequestState.pending
@@ -29,10 +30,12 @@ open class SyncRequest {
     
     init(requestTime: Date = Date(),
          user: User? = nil,
-         device: DeviceInfo? = nil) {
+         device: DeviceInfo? = nil,
+         deviceConnector: IPaymentDeviceConnector? = nil) {
         self.requestTime = requestTime
         self.user = user
         self.device = device
+        self.deviceConnector = deviceConnector
     }
     
     internal func update(state: SyncRequestState) {
@@ -139,11 +142,10 @@ open class SyncRequestQueue {
         request.update(state: .inProgress)
         
         let user = request.user
-        let device = request.device
         
         let error: NSError?
         if let user = user {
-            error = self.syncManager.sync(user, device: device)
+            error = self.syncManager.sync(user, device: request.device, deviceConnector: request.deviceConnector)
         } else {
             error = self.syncManager.tryToMakeSyncWithLastUser()
         }
