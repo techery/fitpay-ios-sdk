@@ -151,15 +151,12 @@ internal enum WVResponse: Int {
     public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
     {
         case unknownError                   = 0
-        case deviceNotFound                 = 10001
         case deviceDataNotValid				= 10002
         
         public var description : String {
             switch self {
             case .unknownError:
                 return "Unknown error"
-            case .deviceNotFound:
-                return "Can't find device provided by wv."
             case .deviceDataNotValid:
                 return "Could not open connection. OnDeviceConnected event did not supply valid device data."
             }
@@ -173,8 +170,7 @@ internal enum WVResponse: Int {
 
     var url = BASE_URL
     let paymentDevice: PaymentDevice?
-    open let restSession: RestSession?
-    open let restClient: RestClient?
+    var sdkConfiguration: FitpaySDKConfiguration
     let notificationCenter = NotificationCenter.default
 
     typealias MessagesHandlerBlock = (_ message: [String:Any]) -> ()
@@ -183,8 +179,9 @@ internal enum WVResponse: Int {
     public var user: User?
     public var device: DeviceInfo?
     
+    var restClient: RestClient?
+    var webViewSessionData: SessionData?
     var rtmConfig: RtmConfigProtocol?
-    var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
     var connectionBinding: FitpayEventBinding?
     var sessionDataCallBack: RtmMessage?
@@ -211,13 +208,10 @@ internal enum WVResponse: Int {
     @objc public init(paymentDevice:PaymentDevice, rtmConfig: RtmConfigProtocol, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
         self.paymentDevice = paymentDevice
         self.rtmConfig = rtmConfig
-        self.restSession = RestSession(configuration: SDKConfiguration)
-        self.restClient = RestClient(session: self.restSession!)
-        self.paymentDevice!.deviceInfo?.client = self.restClient
-        
+        self.sdkConfiguration = SDKConfiguration
         self.url = SDKConfiguration.webViewURL
         
-        
+
         SyncManager.sharedInstance.paymentDevice = paymentDevice
         
         super.init()
@@ -309,7 +303,7 @@ internal enum WVResponse: Int {
      This returns the request object clients will require in order to open a WKWebView
      */
     @objc open func wvRequest() -> URLRequest {
-        if let accessToken = self.restSession!.accessToken {
+        if let accessToken = self.user?.client?._session.accessToken {
             self.rtmConfig!.accessToken = accessToken
         }
         
@@ -411,8 +405,8 @@ internal enum WVResponse: Int {
                 let jsonData = try JSONSerialization.data(withJSONObject: data, options: JSONSerialization.WritingOptions.prettyPrinted)
                 let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String
                 
-                guard let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString) else {
-                    log.error("WV_DATA: Can't parse WebViewSessionData from rtmBridge message. Message: \(jsonString)")
+                guard let webViewSessionData = Mapper<SessionData>().map(JSONString: jsonString) else {
+                    log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(jsonString)")
                     return
                 }
                 
@@ -467,80 +461,46 @@ internal enum WVResponse: Int {
             goSync()
         } else {
             log.warning("WV_DATA: rtm not yet configured to hand syncs requests, failing sync.")
-            sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first!.callBackId, data: WVResponse.noSessionData.dictionaryRepresentation(), type: .sync, success: false))
+            sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first?.callBackId ?? 0, data: WVResponse.noSessionData.dictionaryRepresentation(), type: .sync, success: false))
             self.showStatusMessage(.syncError, message: "Can't make sync. Session data or user is nil.")
         }
     }
     
-    fileprivate func handleSessionData(_ webViewSessionData:WebViewSessionData) -> Void {
+    fileprivate func handleSessionData(_ webViewSessionData: SessionData) -> Void {
         self.webViewSessionData = webViewSessionData
-        self.restSession!.setWebViewAuthorization(webViewSessionData)
-
-        let userAndDeviceReceived: (_ user: User?, _ device: DeviceInfo?, _ error: NSError?) -> Void =  {
-            [weak self] (user, device, error) in
+        self.restClient = RestSession.GetUserAndDeviceWith(sessionData: webViewSessionData,
+                                                           sdkConfiguration: self.sdkConfiguration) { [weak self] (user, device, error) in
             guard error == nil else {
-                self?.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self?.sessionDataCallBack?.callBackId, data: WVResponse.failed.dictionaryRepresentation(param: error.debugDescription), type: .userData, success: false))
-                
+                self?.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self?.sessionDataCallBack?.callBackId,
+                                                                    data: WVResponse.failed.dictionaryRepresentation(param: error.debugDescription),
+                                                                    type: .userData,
+                                                                    success: false))
+
                 self?.showStatusMessage(.syncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
                 FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice, status: .failed, reason: error)
                 return
             }
-            
+
             self?.user = user
             self?.device = device
-            
+            self?.paymentDevice?.deviceInfo?.client = self?.user?.client
+
+
             if let delegate = self?.rtmDelegate {
                 delegate.didAuthorizeWithEmail(user?.email)
             }
-            
+
             if self?.rtmConfig?.hasAccount == false {
                 FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .userCreated)
             }
-            
-            FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice)
-            
-            self?.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self?.sessionDataCallBack?.callBackId, data: WVResponse.success.dictionaryRepresentation(), type: .resolve, success: true))
-            
-        }
-        
-        restClient?.user(id: (self.webViewSessionData?.userId)!, completion: {
-            [weak self] (user, error) in
-            
-            guard user != nil && error == nil else {
-                userAndDeviceReceived(nil, nil, error)
-                return
-            }
 
-            user?.listDevices(limit: 20, offset: 0, completion: { (devicesColletion, error) in
-                guard (error == nil || devicesColletion == nil) else {
-                    userAndDeviceReceived(nil, nil, error)
-                    return
-                }
-                
-                for device in devicesColletion!.results! {
-                    if device.deviceIdentifier == self?.webViewSessionData!.deviceId {
-                        userAndDeviceReceived(user!, device, nil)
-                        return
-                    }
-                }
-                
-                devicesColletion?.collectAllAvailable({ (devices, error) in
-                    guard (error == nil || devices == nil) else {
-                        userAndDeviceReceived(nil, nil, error as NSError?)
-                        return
-                    }
-                    
-                    for device in devices! {
-                        if device.deviceIdentifier == self?.webViewSessionData!.deviceId {
-                            userAndDeviceReceived(user!, device, nil)
-                            return
-                        }
-                    }
-                    
-                    userAndDeviceReceived(nil, nil, NSError.error(code:WvConfig.ErrorCode.deviceNotFound, domain: WvConfig.self))
-                })
-            })
-        })
+            FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice)
+
+            self?.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self?.sessionDataCallBack?.callBackId,
+                                                                data: WVResponse.success.dictionaryRepresentation(),
+                                                                type: .resolve,
+                                                                success: true))
+        }
     }
 
     fileprivate func rejectAndResetSyncCallbacks(_ reason:String) {

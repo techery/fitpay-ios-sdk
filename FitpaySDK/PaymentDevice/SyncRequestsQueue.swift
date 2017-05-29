@@ -48,6 +48,10 @@ open class SyncRequest {
             completion(status, error)
         }
     }
+    
+    func isSameUserAndDevice(otherRequest: SyncRequest) -> Bool {
+        return user?.id == otherRequest.user?.id && device?.deviceIdentifier == otherRequest.device?.deviceIdentifier
+    }
 }
 
 open class SyncRequestQueue {
@@ -157,7 +161,8 @@ open class SyncRequestQueue {
         
         // outdated requests should also become completed, because we already processed their commits
         while let outdateRequest = self.requestsQueue.peekAtQueue() {
-            if outdateRequest.requestTime.timeIntervalSince1970 < request.syncStartTime!.timeIntervalSince1970 {
+            if outdateRequest.requestTime.timeIntervalSince1970 < request.syncStartTime!.timeIntervalSince1970 &&
+                request.isSameUserAndDevice(otherRequest: outdateRequest) {
                 let _ = self.requestsQueue.dequeue()
                 outdateRequest.update(state: .done)
                 outdateRequest.syncCompleteWith(status: status, error: error)
