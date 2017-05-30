@@ -384,7 +384,6 @@ extension RestClient {
      */
     public typealias AssetsHandler = (_ asset: Asset?, _ error: NSError?) -> Void
     
-    
     internal func assets(_ url: String, completion: @escaping AssetsHandler)
     {
         let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
