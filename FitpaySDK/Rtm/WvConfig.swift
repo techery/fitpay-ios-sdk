@@ -66,9 +66,10 @@ import ObjectMapper
 @objc public enum RtmProtocolVersion: Int {
     case ver1 = 1
     case ver2
+    case ver3
     
     static func currentlySupportedVersion() -> RtmProtocolVersion {
-        return .ver2
+        return .ver3
     }
 }
 
@@ -405,8 +406,12 @@ internal enum WVResponse: Int {
             
             switch version {
             case .ver2:
-                log.debug("WV_DATA: using default message handler.")
+                log.info("WV_DATA: using v2 message handler.")
                 self.messageHandler = RtmMessageHandlerV2(wvConfig: self)
+                break
+            case .ver3:
+                log.info("WV_DATA: using v3 message handler.")
+                self.messageHandler = RtmMessageHandlerV3(wvConfig: self)
                 break
             case .ver1:
                 log.error("WV_DATA: rtm version 1 not supported yet =(")

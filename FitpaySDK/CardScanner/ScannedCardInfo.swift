@@ -7,14 +7,26 @@
 //
 
 import Foundation
+import ObjectMapper
 
-@objc public class ScannedCardInfo: NSObject {
-    var cardNumber: String?
-    var expiryMonth: Int?
-    var expiryYear: Int?
-    var cvv: String?
+@objc public class ScannedCardInfo: NSObject, Mappable {
+    public var cardNumber: String?
+    public var expiryMonth: UInt?
+    public var expiryYear: UInt?
+    public var cvv: String?
     
-    override init() {
+    public override init() {
         super.init()
+    }
+    
+    public required init?(map: Map) {
+        super.init()
+    }
+    
+    open func mapping(map: Map) {
+        self.cardNumber  <- map["cardNumber"]
+        self.expiryMonth <- map["expiryMonth"]
+        self.expiryYear  <- map["expiryYear"]
+        self.cvv         <- map["cvv"]
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 import ObjectMapper
 
-class RtmMessageHandlerV2: RtmMessageHandler {
+class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
     enum RtmMessageTypeVer2: RtmMessageType, RtmMessageTypeWithHandler {
         case rtmVersion   = "version"

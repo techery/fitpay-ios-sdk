@@ -23,5 +23,5 @@ import Foundation
 }
 
 @objc public protocol IFitpayCardScanner: NSObjectProtocol {
-    var delegate: FitpayCardScannerDelegate { get set }
+    weak var scanDelegate: FitpayCardScannerDelegate! { get set }
 }

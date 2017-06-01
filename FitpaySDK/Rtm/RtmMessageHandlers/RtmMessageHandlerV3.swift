@@ -8,8 +8,6 @@
 
 import Foundation
 
-
-
 class RtmMessageHandlerV3: RtmMessageHandlerV2 {
     
     var cardScanner: IFitpayCardScanner?
@@ -22,6 +20,7 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
         case logout       = "logout"
         case resolve      = "resolve"
         case scanRequest  = "scanRequest"
+        case cardScanned  = "cardScanned"
         
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
             guard let handlerObject = handlerObject as? RtmMessageHandlerV3 else {
@@ -35,7 +34,11 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
                 return handlerObject.handleSync
             case .scanRequest:
                 return handlerObject.handleScanRequest
-            case .deviceStatus, .logout, .resolve, .rtmVersion:
+            case .deviceStatus,
+                 .logout,
+                 .resolve,
+                 .rtmVersion,
+                 .cardScanned:
                 return nil
             }
         }
@@ -52,10 +55,28 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
     
     func handleScanRequest(_ message: RtmMessage) {
         if let cardScannerDataSource = self.wvConfig.cardScannerDataSource {
-            let scanner = cardScannerDataSource.cardScanner()
+            self.cardScanner = cardScannerDataSource.cardScanner()
+            self.cardScanner?.scanDelegate = self
             if let cardScannerPresenter = self.wvConfig.cardScannerPresenterDelegate {
-                cardScannerPresenter.shouldPresentCardScanner(scanner: scanner)
+                cardScannerPresenter.shouldPresentCardScanner(scanner: self.cardScanner!)
             }
         }
     }
 }
+
+extension RtmMessageHandlerV3: FitpayCardScannerDelegate {
+    func scanned(card: ScannedCardInfo?, error: Error?) {
+        self.wvConfig.sendRtmMessage(rtmMessage: RtmMessageResponse(data: card?.toJSONString(), type: RtmMessageTypeVer3.cardScanned.rawValue))
+        
+        if let cardScannerPresenter = self.wvConfig.cardScannerPresenterDelegate, let cardScanner = self.cardScanner {
+            cardScannerPresenter.shouldDissmissCardScanner(scanner: cardScanner)
+        }
+    }
+    
+    func canceled() {
+        if let cardScannerPresenter = self.wvConfig.cardScannerPresenterDelegate, let cardScanner = self.cardScanner {
+            cardScannerPresenter.shouldDissmissCardScanner(scanner: cardScanner)
+        }
+    }
+}
+

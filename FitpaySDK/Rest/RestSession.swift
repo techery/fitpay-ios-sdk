@@ -183,7 +183,7 @@ extension RestSession {
             }
             
             user?.listDevices(limit: 20, offset: 0, completion: { (devicesColletion, error) in
-                guard (error == nil || devicesColletion == nil) else {
+                guard user != nil && error == nil else {
                     completion(nil, nil, error)
                     return
                 }
