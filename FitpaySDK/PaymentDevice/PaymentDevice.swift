@@ -188,14 +188,6 @@
     }
     
     /**
-     Close connection with payment device.
-     */
-    @objc open func disconnect() {
-        self.connectionState = ConnectionState.disconnecting
-        self.deviceInterface.disconnect()
-    }
-    
-    /**
      Returns state of connection.
      */
     @objc open var connectionState : ConnectionState = ConnectionState.new {
@@ -223,44 +215,6 @@
      */
     @objc open var deviceInfo : DeviceInfo? {
         return self.deviceInterface.deviceInfo()
-    }
-    
-    /**
-     Returns NFC state on payment device.
-     */
-    @objc open var nfcState : SecurityNFCState {
-        return self.deviceInterface.nfcState()
-    }
-    
-    /**
-     Allows to power on / off the secure element or to reset it in preparation for sending it APDU and other commandsю
-     Calls OnApplicationControlReceived event on device reset?
-     
-     - parameter state: desired security state
-     */
-    @objc open func sendDeviceControl(_ state: DeviceControlState) -> NSError? {
-        return self.deviceInterface.sendDeviceControl(state)
-    }
-    
-    /**
-     Sends a notification to the payment device. 
-     Payment devices can then provide visual or tactile feedback depending on their capabilities.
-     
-     - parameter notificationData: //TODO:????
-     */
-    @objc open func sendNotification(_ notificationData: Data) -> NSError? {
-        return self.deviceInterface.sendNotification(notificationData)
-    }
-    
-    /**
-     Allows to change state of NFC at payment device.
-     Calls OnSecurityStateChanged event when state changed.
-     
-     - parameter state: desired security state
-     */
-    // TODO: shoud it be public?
-    internal func writeSecurityState(_ state:SecurityNFCState) -> NSError? {
-        return self.deviceInterface.writeSecurityState(state)
     }
     
     /**

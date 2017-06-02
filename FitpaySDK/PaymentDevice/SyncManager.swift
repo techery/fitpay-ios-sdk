@@ -21,6 +21,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 }
 
 
+
 @objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
     case connectingToDevice = 0x1
     case connectingToDeviceFailed
@@ -94,7 +95,25 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-open class SyncManager : NSObject {
+/**
+ Completion handler
+ 
+ - parameter event: Provides event with payload in eventData property
+ */
+public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
+
+protocol SyncManagerProtocol {
+    func sync(_ user: User, device: DeviceInfo?) -> NSError?
+    func tryToMakeSyncWithLastUser() -> NSError?
+    
+    var isSyncing: Bool { get }
+    
+    func bindToSyncEvent(eventType: SyncEventType, completion: @escaping SyncEventBlockHandler) -> FitpayEventBinding?
+    func removeSyncBinding(binding: FitpayEventBinding)
+    func callCompletionForSyncEvent(_ event: SyncEventType, params: [String: Any])
+}
+
+open class SyncManager : NSObject, SyncManagerProtocol {
     open static let sharedInstance = SyncManager()
     open var paymentDevice : PaymentDevice?
     
@@ -211,13 +230,6 @@ open class SyncManager : NSObject {
         
         return sync(user, device: deviceInfo)
     }
-    
-    /**
-     Completion handler
-     
-     - parameter event: Provides event with payload in eventData property
-     */
-    public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
     
     /**
      Binds to the sync event using SyncEventType and a block as callback.

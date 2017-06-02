@@ -58,21 +58,6 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         completion(isConnected(), nil)
     }
     
-    open func writeSecurityState(_ state: SecurityNFCState) -> NSError?{
-        _nfcState = state
-        self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.onSecurityStateChanged, params: ["securityState":state.rawValue])
-        return nil
-    }
-    
-    open func sendDeviceControl(_ state: DeviceControlState) -> NSError? {
-        return nil
-
-    }
-    
-    open func sendNotification(_ notificationData: Data) -> NSError? {
-        return nil
-
-    }
     
     open func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
@@ -117,10 +102,6 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         return deviceInfo;
     }
 
-    open func nfcState() -> SecurityNFCState {
-       return SecurityNFCState.disabled
-    }
-    
     open func resetToDefaultState() {
         
     }

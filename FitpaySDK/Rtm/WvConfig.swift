@@ -467,15 +467,9 @@ internal enum WVResponse: Int {
         if (self.webViewSessionData != nil && self.user != nil ) {
             log.verbose("WV_DATA: Adding sync to rtm callback queue.")
             syncCallBacks.append(message)
-            if !SyncManager.sharedInstance.isSyncing {
-                self.showStatusMessage(.syncGettingUpdates)
-                log.verbose("WV_DATA: initiating sync.")
-                goSync()
-            } else {
-                log.debug("WV_DATA: sync manager was syncing in RTM sync request. So doing nothing.")
-            }
+            log.verbose("WV_DATA: initiating sync.")
+            goSync()
         } else {
-
             log.warning("WV_DATA: rtm not yet configured to hand syncs requests, failing sync.")
             sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first!.callBackId, data: WVResponse.noSessionData.dictionaryRepresentation(), type: .sync, success: false))
             self.showStatusMessage(.syncError, message: "Can't make sync. Session data or user is nil.")
@@ -582,10 +576,8 @@ internal enum WVResponse: Int {
     }
 
     fileprivate func goSync() {
+        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: self.user!, device: self.device), completion: nil)
         log.verbose("WV_DATA: initiating SyncManager sync via rtm.")
-        if SyncManager.sharedInstance.sync(self.user!, device: self.device) != nil {
-            rejectAndResetSyncCallbacks("SyncManager failed to regulate sequential syncs, all pending syncs have been rejected")
-        }
     }
     
     fileprivate func sendVersion(version: RtmProtocolVersion) {
@@ -593,30 +585,30 @@ internal enum WVResponse: Int {
     }
 
     fileprivate func bindEvents() {
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: {
-            [weak self] (event) in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .syncStarted, completion: { [weak self] (event) in
+            self?.showStatusMessage(.syncGettingUpdates)
+        })
+        
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: { [weak self] (event) in
             log.debug("WV_DATA: received sync complete from SyncManager.")
-
+            
             self?.resolveSync()
             self?.showStatusMessage(.syncComplete)
         })
-
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: {
-            [weak self] (event) in
+        
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: { [weak self] (event) in
             log.error("WV_DATA: reveiced sync FAILED from SyncManager.")
             let error = (event.eventData as? [String:Any])?["error"] as? NSError
-                
+            
             if error?.code == SyncManager.ErrorCode.cantConnectToDevice.rawValue {
                 self?.showStatusMessage(.syncUpdatingConnectionFailed)
             } else {
-            	self?.showStatusMessage(.syncError, error: (event.eventData as? [String:Any])?["error"] as? Error)
+                self?.showStatusMessage(.syncError, error: (event.eventData as? [String:Any])?["error"] as? Error)
             }
-
-            self?.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
+            
         })
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .commitsReceived, completion: {
-            [weak self] (event) in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .commitsReceived, completion: { [weak self] (event) in
             guard let commits = (event.eventData as! [String:[Commit]])["commits"] else {
                 self?.showStatusMessage(.syncNoUpdates)
                 return
