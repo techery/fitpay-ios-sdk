@@ -9,14 +9,7 @@
 import UIKit
 import ObjectMapper
 
-public enum RtmMessagesType: String {
-    case rtmVersion = "version"
-    case sync = "sync"
-    case deviceStatus = "deviceStatus"
-    case userData = "userData"
-    case logout = "logout"
-    case resolve = "resolve"
-}
+public typealias RtmMessageType = String
 
 open class RtmMessage: NSObject, Mappable {
     open var callBackId: Int?
