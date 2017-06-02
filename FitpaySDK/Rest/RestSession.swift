@@ -49,7 +49,7 @@ open class RestSession: NSObject
         return self.accessToken != nil
     }
 
-    open func setWebViewAuthorization(_ webViewSessionData: WebViewSessionData) {
+    open func setWebViewAuthorization(_ webViewSessionData: SessionData) {
         self.accessToken = webViewSessionData.token
         self.userId = webViewSessionData.userId
     }
@@ -64,16 +64,21 @@ open class RestSession: NSObject
     fileprivate (set) internal var baseAPIURL: String
     fileprivate (set) internal var authorizeURL: String
 
-    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration)
+    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil)
     {
         self.clientId = configuration.clientId
         self.redirectUri = configuration.redirectUri
         self.authorizeURL = "\(configuration.baseAuthURL)/oauth/authorize"
         self.baseAPIURL = configuration.baseAPIURL
+        
+        if let sessionData = sessionData {
+            self.accessToken = sessionData.token
+            self.userId = sessionData.userId
+        }
     }
 
     public typealias LoginHandler = (_ error: NSError?) -> Void
-
+    
     @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
         self.acquireAccessToken(clientId: self.clientId, redirectUri: self.redirectUri, username: username, password: password, completion: {
             (details: AuthorizationDetails?, error: NSError?) in
@@ -135,4 +140,90 @@ open class RestSession: NSObject
             }
         }
     }
+}
+
+extension RestSession {
+    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
+    {
+        case unknownError                   = 0
+        case deviceNotFound                 = 10001
+        case userOrDeviceEmpty				= 10002
+        
+        public var description : String {
+            switch self {
+            case .unknownError:
+                return "Unknown error"
+            case .deviceNotFound:
+                return "Can't find device provided by wv."
+            case .userOrDeviceEmpty:
+                return "User or device empty."
+            }
+        }
+    }
+    
+    public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, NSError?) -> Void
+
+    class func GetUserAndDeviceWith(sessionData: SessionData,
+                                    sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
+                                    completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
+        guard let userId = sessionData.userId, let deviceId = sessionData.deviceId else {
+            completion(nil, nil, NSError.error(code: RestSession.ErrorCode.userOrDeviceEmpty, domain: RestSession.self))
+            return nil
+        }
+        
+        let session = RestSession(configuration: sdkConfiguration, sessionData: sessionData)
+        let client = RestClient(session: session)
+        
+        
+        client.user(id: userId) { (user, error) in
+
+            guard user != nil && error == nil else {
+                completion(nil, nil, error)
+                return
+            }
+            
+            user?.listDevices(limit: 20, offset: 0, completion: { (devicesColletion, error) in
+                guard (error == nil || devicesColletion == nil) else {
+                    completion(nil, nil, error)
+                    return
+                }
+                
+                for device in devicesColletion!.results! {
+                    if device.deviceIdentifier == deviceId {
+                        completion(user!, device, nil)
+                        return
+                    }
+                }
+                
+                devicesColletion?.collectAllAvailable({ (devices, error) in
+                    guard (error == nil || devices == nil) else {
+                        completion(nil, nil, error as NSError?)
+                        return
+                    }
+                    
+                    for device in devices! {
+                        if device.deviceIdentifier == deviceId {
+                            completion(user!, device, nil)
+                            return
+                        }
+                    }
+                    
+                    completion(nil, nil, NSError.error(code: RestSession.ErrorCode.deviceNotFound, domain: RestSession.self))
+                })
+            })
+        }
+        
+        return client
+    }
+    
+    class func GetUserAndDeviceWith(token: String,
+                                    userId: String,
+                                    deviceId: String,
+                                    sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
+                                    completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
+        return RestSession.GetUserAndDeviceWith(sessionData: SessionData(token: token, userId: userId, deviceId: deviceId),
+                                                sdkConfiguration: sdkConfiguration,
+                                                completion: completion)
+    }
+
 }

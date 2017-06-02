@@ -221,15 +221,8 @@
      Changes interface with payment device. Default is BLE (BluetoothPaymentDeviceConnector).
      If you want to implement your own interface than it should confirm IPaymentDeviceConnector protocol.
      Also implementation should call PaymentDevice.callCompletionForEvent() for events.
-     Can be changed if device disconnected.
      */
     @objc open func changeDeviceInterface(_ interface: IPaymentDeviceConnector) -> NSError? {
-        if interface !== self.deviceInterface {
-            guard !isConnected else {
-                return NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
-            }
-        }
-        
         self.deviceInterface = interface
         return nil
     }

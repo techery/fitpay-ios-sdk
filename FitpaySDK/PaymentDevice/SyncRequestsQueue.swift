@@ -22,6 +22,7 @@ open class SyncRequest {
     
     fileprivate let user: User?
     fileprivate let device: DeviceInfo?
+    fileprivate let deviceConnector: IPaymentDeviceConnector?
     fileprivate var completion: SyncRequestCompletion?
     
     fileprivate var state = SyncRequestState.pending
@@ -29,10 +30,12 @@ open class SyncRequest {
     
     init(requestTime: Date = Date(),
          user: User? = nil,
-         device: DeviceInfo? = nil) {
+         device: DeviceInfo? = nil,
+         deviceConnector: IPaymentDeviceConnector? = nil) {
         self.requestTime = requestTime
         self.user = user
         self.device = device
+        self.deviceConnector = deviceConnector
     }
     
     internal func update(state: SyncRequestState) {
@@ -47,6 +50,10 @@ open class SyncRequest {
         if let completion = self.completion {
             completion(status, error)
         }
+    }
+    
+    func isSameUserAndDevice(otherRequest: SyncRequest) -> Bool {
+        return user?.id == otherRequest.user?.id && device?.deviceIdentifier == otherRequest.device?.deviceIdentifier
     }
 }
 
@@ -135,11 +142,10 @@ open class SyncRequestQueue {
         request.update(state: .inProgress)
         
         let user = request.user
-        let device = request.device
         
         let error: NSError?
         if let user = user {
-            error = self.syncManager.sync(user, device: device)
+            error = self.syncManager.sync(user, device: request.device, deviceConnector: request.deviceConnector)
         } else {
             error = self.syncManager.tryToMakeSyncWithLastUser()
         }
@@ -157,7 +163,8 @@ open class SyncRequestQueue {
         
         // outdated requests should also become completed, because we already processed their commits
         while let outdateRequest = self.requestsQueue.peekAtQueue() {
-            if outdateRequest.requestTime.timeIntervalSince1970 < request.syncStartTime!.timeIntervalSince1970 {
+            if outdateRequest.requestTime.timeIntervalSince1970 < request.syncStartTime!.timeIntervalSince1970 &&
+                request.isSameUserAndDevice(otherRequest: outdateRequest) {
                 let _ = self.requestsQueue.dequeue()
                 outdateRequest.update(state: .done)
                 outdateRequest.syncCompleteWith(status: status, error: error)
