@@ -328,7 +328,7 @@ open class CardMetadata: NSObject, ClientModel, Mappable
     open var privacyPolicyUrl: String?
     open var brandLogo: [Image]?
     open var cardBackground: [Image]?
-    open var cardBackgroundCombined: [Image]?
+    open var cardBackgroundCombined: [ImageWithSize]?
     open var coBrandLogo: [Image]?
     open var icon: [Image]?
     open var issuerLogo: [Image]?
@@ -433,17 +433,67 @@ open class Image: NSObject, ClientModel, Mappable, AssetRetrivable
     }
 }
 
-internal class ImageTransformType: TransformType
+open class ImageWithSize: Image, AssetWithSizeRerivable {
+    open func retrieveAssetWith(height: Int = 0, width: Int = 0, completion: @escaping RestClient.AssetsHandler) {
+        let resource = Image.selfResource
+        let url = self.links?.url(resource)
+        if let url = url, let client = self.client, let urlString = updateUrlAssetWith(url: url, width: width, height: height) {
+            client.assets(urlString, completion: completion)
+        } else {
+            let error = NSError.clientUrlError(domain: Image.self, code: 0, client: client, url: url, resource: resource)
+            completion(nil, error)
+        }
+    }
+    
+    func updateUrlAssetWith(url urlString: String, width: Int, height: Int) -> String? {
+        guard var url = URLComponents(string: urlString) else { return urlString }
+        guard url.queryItems != nil else { return urlString }
+        
+        if width != 0 {
+            var widthFound = false
+            for (i, queryItem) in url.queryItems!.enumerated() {
+                if queryItem.name == "w" {
+                    url.queryItems?[i].value = String(width)
+                    widthFound = true
+                    break
+                }
+            }
+            
+            if !widthFound {
+                url.queryItems?.append(URLQueryItem(name: "w", value: String(width)))
+            }
+        }
+        
+        if height != 0 {
+            var heightFound = false
+            for (i, queryItem) in url.queryItems!.enumerated() {
+                if queryItem.name == "h" {
+                    url.queryItems?[i].value = String(height)
+                    heightFound = true
+                    break
+                }
+            }
+            
+            if !heightFound {
+                url.queryItems?.append(URLQueryItem(name: "h", value: String(height)))
+            }
+        }
+        
+        return (try? url.asURL())?.absoluteString
+    }
+}
+
+internal class ImageTransformType<T: BaseMappable>: TransformType
 {
-    typealias Object = [Image]
+    typealias Object = [T]
     typealias JSON = [[String: AnyObject]]
 
-    func transformFromJSON(_ value: Any?) -> [Image]? {
+    func transformFromJSON(_ value: Any?) -> [T]? {
         if let images = value as? [[String: AnyObject]] {
-            var list = [Image]()
+            var list = [T]()
 
             for raw in images {
-                if let image = Mapper<Image>().map(JSON: raw) {
+                if let image = Mapper<T>().map(JSON: raw) {
                     list.append(image)
                 }
             }
@@ -454,7 +504,7 @@ internal class ImageTransformType: TransformType
         return nil
     }
 
-    func transformToJSON(_ value: [Image]?) -> [[String: AnyObject]]? {
+    func transformToJSON(_ value: [T]?) -> [[String: AnyObject]]? {
         return nil
     }
 }

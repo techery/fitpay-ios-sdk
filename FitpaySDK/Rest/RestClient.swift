@@ -424,9 +424,12 @@ extension RestClient {
  
  - parameter completion:  AssetsHandler closure
  */
-public protocol AssetRetrivable
-{
+public protocol AssetRetrivable {
     func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler)
+}
+
+public protocol AssetWithSizeRerivable {
+    func retrieveAssetWith(height: Int, width: Int, completion: @escaping RestClient.AssetsHandler)
 }
 
 
