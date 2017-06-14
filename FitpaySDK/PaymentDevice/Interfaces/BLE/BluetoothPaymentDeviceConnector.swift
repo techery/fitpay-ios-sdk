@@ -256,7 +256,7 @@ internal class BluetoothPaymentDeviceConnector : NSObject, IPaymentDeviceConnect
         wearablePeripheral?.writeValue(msg as Data, for: continuationCharacteristicControl, type: CBCharacteristicWriteType.withResponse)
     }
     
-    fileprivate func processAPDUResponse(_ packet:ApduResultMessage) {
+    fileprivate func processAPDUResponse(_ packet:BLEApduResultMessage) {
         stopAPDUTimeout()
         
         self.sendingAPDU = false
@@ -389,7 +389,7 @@ extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
         }
         
         if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_APDU_RESULT {
-            let apduResultMessage = ApduResultMessage(msg: characteristic.value!)
+            let apduResultMessage = BLEApduResultMessage(msg: characteristic.value!)
             processAPDUResponse(apduResultMessage)
         } else if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_CONTINUATION_CONTROL {
             let continuationControlMessage = ContinuationControlMessage(msg: characteristic.value!)
@@ -423,7 +423,7 @@ extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
                 }
                 
                 if continuation.uuid.uuidString == PAYMENT_CHARACTERISTIC_UUID_APDU_RESULT.uuidString {
-                    let apduResultMessage = ApduResultMessage(msg: completeResponse)
+                    let apduResultMessage = BLEApduResultMessage(msg: completeResponse)
                     processAPDUResponse(apduResultMessage)
                 } else {
                     if let completion = self.paymentDevice.apduResponseHandler {

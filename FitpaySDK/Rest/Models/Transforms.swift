@@ -17,23 +17,19 @@ internal class NSTimeIntervalTransform: TransformType
     
     init() {}
     
-    func transformFromJSON(_ value: Any?) -> Double?
-    {
-        if let timeInt = value as? NSNumber
-        {
+    func transformFromJSON(_ value: Any?) -> Double? {
+        if let timeInt = value as? NSNumber {
             return TimeInterval(timeInt.int64Value/1000)
         }
-        if let timeStr = value as? String
-        {
+        
+        if let timeStr = value as? String {
             return TimeInterval(atof(timeStr)/1000)
         }
         return nil
     }
     
-    func transformToJSON(_ value: TimeInterval?) -> Int64?
-    {
-        if let epoch = value
-        {
+    func transformToJSON(_ value: TimeInterval?) -> Int64? {
+        if let epoch = value {
             let timeInt = Int64(epoch*1000)
             return timeInt
         }

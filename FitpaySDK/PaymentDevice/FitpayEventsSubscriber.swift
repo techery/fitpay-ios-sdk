@@ -117,8 +117,8 @@ open class FitpayEventsSubscriber {
         removeSubscriberIfBindingsEmpty(subscriberWithBindings)
     }
     
-    internal func executeCallbacksForEvent(event: EventType, status: EventStatus = .success, reason: Error? = nil) {
-        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: "", status: status, reason: reason))
+    internal func executeCallbacksForEvent(event: EventType, status: EventStatus = .success, reason: Error? = nil, eventData: Any = "") {
+        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: eventData, status: status, reason: reason))
     }
     
     private init() {
@@ -171,6 +171,18 @@ open class FitpayEventsSubscriber {
             
             self.executeCallbacksForEvent(event: .syncCompleted, status: .failed, reason: error)
         })
+        
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .apduPackageComplete) { (event) in
+            
+            var status = EventStatus.success
+            var error: Error? = nil
+            if let nserror = (event.eventData as? [String:NSError])?["error"] {
+                error = SyncManager.ErrorCode(rawValue: nserror.code)
+                status = .failed
+            }
+
+            self.executeCallbacksForEvent(event: .apduPackageProcessed, status: status, reason: error, eventData: event.eventData)
+        }
     }
     
     struct SubscriberWithBinding {

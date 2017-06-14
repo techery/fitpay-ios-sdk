@@ -154,31 +154,10 @@ open class FitpayNotificationsManager : NSObject {
             callReceivedCompletion(currentNotification, notificationType: notificationType)
             switch notificationType {
             case .WithSync:
-                if let syncCompletedBinding = self.syncCompletedBinding {
-                    log.verbose("NOTIFICATIONS_DATA: notif manager removing sync binding.")
-                    SyncManager.sharedInstance.removeSyncBinding(binding: syncCompletedBinding)
-                }
-                syncCompletedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: { (event) in
-                    log.debug("NOTIFICATIONS_DATA: Sync from notification completed.")
+                SyncRequestQueue.sharedInstance.add(request: SyncRequest(), completion: { (status, error) in
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 })
-                
-                if let syncFailedBinding = self.syncFailedBinding {
-                    SyncManager.sharedInstance.removeSyncBinding(binding: syncFailedBinding)
-                }
-                syncFailedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: { (event) in
-                    log.error("NOTIFICATIONS_DATA: Sync from notification falied. Error: \(String(describing: (event.eventData as? [String:Any])?["error"]))")
-                    self.currentNotification = nil
-                    self.processNextNotificationIfAvailable()
-                })
-                
-                if let _ = SyncManager.sharedInstance.tryToMakeSyncWithLastUser() {
-                    log.verbose("NOTIFICATIONS_DATA: SyncManager.sharedInstance.tryToMakeSyncWithLastUser was not nil (WTF?) so processing next notif if available.")
-                    self.currentNotification = nil
-                    self.processNextNotificationIfAvailable()
-                }
-                
                 break
             case .WithoutSync: // just call completion
                 log.debug("NOTIFICATIONS_DATA: notif was non-sync.")

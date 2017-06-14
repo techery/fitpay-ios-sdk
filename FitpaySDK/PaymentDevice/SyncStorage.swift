@@ -5,17 +5,6 @@ public class SyncStorage {
     
     fileprivate var keychain: Keychain
     fileprivate let keychainFieldName: String = "FitPayLastSyncCommitId"
-    fileprivate let keychainPackageFieldName: String = "FitPayLastPackageId"
-
-    public internal(set) var lastPackageId: Int {
-        get {
-            
-            return Int(self.keychain[keychainPackageFieldName] ?? "1") ?? 1
-        }
-        set {
-            self.keychain[keychainPackageFieldName] = String(newValue)
-        }
-    }
     
     private init() {
         self.keychain = Keychain(service: "com.masterofcode-llc.FitpaySDK")

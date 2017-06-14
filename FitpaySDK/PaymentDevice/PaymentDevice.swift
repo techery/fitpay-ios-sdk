@@ -188,14 +188,6 @@
     }
     
     /**
-     Close connection with payment device.
-     */
-    @objc open func disconnect() {
-        self.connectionState = ConnectionState.disconnecting
-        self.deviceInterface.disconnect()
-    }
-    
-    /**
      Returns state of connection.
      */
     @objc open var connectionState : ConnectionState = ConnectionState.new {
@@ -226,56 +218,11 @@
     }
     
     /**
-     Returns NFC state on payment device.
-     */
-    @objc open var nfcState : SecurityNFCState {
-        return self.deviceInterface.nfcState()
-    }
-    
-    /**
-     Allows to power on / off the secure element or to reset it in preparation for sending it APDU and other commandsю
-     Calls OnApplicationControlReceived event on device reset?
-     
-     - parameter state: desired security state
-     */
-    @objc open func sendDeviceControl(_ state: DeviceControlState) -> NSError? {
-        return self.deviceInterface.sendDeviceControl(state)
-    }
-    
-    /**
-     Sends a notification to the payment device. 
-     Payment devices can then provide visual or tactile feedback depending on their capabilities.
-     
-     - parameter notificationData: //TODO:????
-     */
-    @objc open func sendNotification(_ notificationData: Data) -> NSError? {
-        return self.deviceInterface.sendNotification(notificationData)
-    }
-    
-    /**
-     Allows to change state of NFC at payment device.
-     Calls OnSecurityStateChanged event when state changed.
-     
-     - parameter state: desired security state
-     */
-    // TODO: shoud it be public?
-    internal func writeSecurityState(_ state:SecurityNFCState) -> NSError? {
-        return self.deviceInterface.writeSecurityState(state)
-    }
-    
-    /**
      Changes interface with payment device. Default is BLE (BluetoothPaymentDeviceConnector).
      If you want to implement your own interface than it should confirm IPaymentDeviceConnector protocol.
      Also implementation should call PaymentDevice.callCompletionForEvent() for events.
-     Can be changed if device disconnected.
      */
     @objc open func changeDeviceInterface(_ interface: IPaymentDeviceConnector) -> NSError? {
-        if interface !== self.deviceInterface {
-            guard !isConnected else {
-                return NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
-            }
-        }
-        
         self.deviceInterface = interface
         return nil
     }
@@ -295,9 +242,11 @@
     
     override public init() {
         super.init()
-        
+        self.paymentDeviceApduExecuter = PaymentDeviceApduExecuter(paymentDevice: self)
         self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
+    
+    fileprivate var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
     
     internal func apduPackageProcessingStarted(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
         if let onPreApduPackageExecute = self.deviceInterface.onPreApduPackageExecute {
@@ -315,42 +264,21 @@
         }
     }
     
-    internal func sendAPDUCommand(_ apduCommand:APDUCommand, completion: @escaping (ApduResultMessage?, String?, Error?)->Void) {
-        guard isConnected else {
-            completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
-            return
-        }
-        
-        self.apduResponseHandler = completion
-        log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
-        self.deviceInterface.executeAPDUCommand(apduCommand)
-    }
-    
     internal typealias APDUExecutionHandler = (_ apduCommand:APDUCommand?, _ state: APDUPackageResponseState?, _ error:Error?)->Void
     internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
-        self.sendAPDUCommand(apduCommand)
-        {
-            (apduResponse, state, error) -> Void in
-            
-            if let error = error {
-                completion(apduCommand, nil, error)
-                return
-            }
+        do {
+            try self.paymentDeviceApduExecuter.execute(command: apduCommand, executionBlock: { [weak self] (apduCommand, completion) in
+                self?.apduResponseHandler = completion
+                log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
+                self?.deviceInterface.executeAPDUCommand(apduCommand)
+                }, completion: completion)
 
-            apduCommand.responseData = apduResponse?.msg.hex
-            apduCommand.responseCode = apduResponse?.responseCode.hex
-            
-            log.debug("APDU_DATA: ExecuteAPDUCommand: response \(apduResponse?.responseData.hex ?? "nil"). Response type - \(String(describing: apduCommand.responseType)). Commands continueOnFailure - \(apduCommand.continueOnFailure).")
-            
-            if apduCommand.responseType == APDUResponseType.error && apduCommand.continueOnFailure == false {
-                completion(apduCommand, nil, NSError.error(code: PaymentDevice.ErrorCode.apduErrorResponse, domain: IPaymentDeviceConnector.self))
-                return
-            }
-            
-            completion(apduCommand, nil, nil)
+        } catch {
+            log.error("Can't execute message, error: \(error)")
+            completion(nil, nil, NSError.unhandledError(PaymentDevice.self))
         }
     }
-    
+        
     @objc open func callCompletionForEvent(_ eventType: PaymentDeviceEventTypes, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }

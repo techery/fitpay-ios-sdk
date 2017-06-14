@@ -13,12 +13,12 @@ open class RtmMessageResponse: RtmMessage {
 
     var success: Bool?
     
-    public required init(callbackId: Int? = nil, data: Any? = nil, type: RtmMessagesType, success: Bool? = nil) {
+    public required init(callbackId: Int? = nil, data: Any? = nil, type: RtmMessageType, success: Bool? = nil) {
         super.init()
         
         self.callBackId = callbackId
         self.data = data
-        self.type = type.rawValue
+        self.type = type
         self.success = success
     }
     

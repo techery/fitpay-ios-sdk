@@ -417,7 +417,7 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectations(timeout: 10, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testCreditCardDeleteDeletesCreditCardAfterCreatingIt()
@@ -453,7 +453,7 @@ class RestClientTests: XCTestCase
         }
         
        
-        super.waitForExpectations(timeout: 10, handler: nil)
+        super.waitForExpectations(timeout: 15, handler: nil)
     }
     
     func testUpdateUpdatesCreditCard()
@@ -526,7 +526,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectations(timeout: 10, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testMakeDefaultMakesCreditCardDefault()
@@ -573,7 +573,7 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectations(timeout: 55, handler: nil)
+        super.waitForExpectations(timeout: 65, handler: nil)
     }
     
     func testDeactivateCreditCard()
@@ -672,7 +672,7 @@ class RestClientTests: XCTestCase
         }
 
         
-        super.waitForExpectations(timeout: 55, handler: nil)
+        super.waitForExpectations(timeout: 65, handler: nil)
     }
     
     func testCreditCardAcceptTerms()
@@ -699,7 +699,7 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectations(timeout: 10, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     
@@ -767,7 +767,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectations(timeout: 10, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
 
     func testCreditCardVerify()
@@ -1281,7 +1281,7 @@ class RestClientTests: XCTestCase
                 {
                     (user, creditCard) in
                     
-                    creditCard?.cardMetaData?.brandLogo?.first?.retrieveAsset
+                    creditCard?.cardMetaData?.cardBackgroundCombined?.first?.retrieveAssetWith(width: 600)
                     {
                         (asset, error) in
                         

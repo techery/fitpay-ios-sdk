@@ -21,6 +21,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 }
 
 
+
 @objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
     case connectingToDevice = 0x1
     case connectingToDeviceFailed
@@ -32,6 +33,8 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     case syncProgress
     case receivedCardsWithTowApduCommands
     case apduCommandsProgress
+    
+    case apduPackageComplete
     
     case commitsReceived
     case commitProcessed
@@ -72,6 +75,8 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
             return "Commits received"
         case .commitProcessed:
             return "Processed commit"
+        case .apduPackageComplete:
+            return "Processing APDU package complete"
         case .cardAdded:
             return "New card was added"
         case .cardDeleted:
@@ -90,7 +95,25 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-open class SyncManager : NSObject {
+/**
+ Completion handler
+ 
+ - parameter event: Provides event with payload in eventData property
+ */
+public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
+
+protocol SyncManagerProtocol {
+    func sync(_ user: User, device: DeviceInfo?, deviceConnector: IPaymentDeviceConnector?) -> NSError?
+    func tryToMakeSyncWithLastUser() -> NSError?
+    
+    var isSyncing: Bool { get }
+    
+    func bindToSyncEvent(eventType: SyncEventType, completion: @escaping SyncEventBlockHandler) -> FitpayEventBinding?
+    func removeSyncBinding(binding: FitpayEventBinding)
+    func callCompletionForSyncEvent(_ event: SyncEventType, params: [String: Any])
+}
+
+open class SyncManager : NSObject, SyncManagerProtocol {
     open static let sharedInstance = SyncManager()
     open var paymentDevice : PaymentDevice?
     
@@ -101,7 +124,7 @@ open class SyncManager : NSObject {
     internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
-    internal var deviceInfo : DeviceInfo?
+    public private(set) var deviceInfo : DeviceInfo?
 
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     fileprivate var user : User?
@@ -160,7 +183,7 @@ open class SyncManager : NSObject {
      - parameter user:	 user from API to whom device belongs to.
      - parameter device: device which we will sync with. If nil then we will use first one with secureElemendId.
      */
-    open func sync(_ user: User, device: DeviceInfo? = nil) -> NSError? {
+    open func sync(_ user: User, device: DeviceInfo? = nil, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
         log.debug("SYNC_DATA: Starting sync.")
         if self.isSyncing {
             log.warning("SYNC_DATA: Already syncing so can't sync.")
@@ -170,6 +193,12 @@ open class SyncManager : NSObject {
         self.isSyncing = true
         self.user = user
         self.deviceInfo = device
+        
+        if let deviceConnector = deviceConnector {
+            if let error = self.paymentDevice?.changeDeviceInterface(deviceConnector) {
+                return error
+            }
+        }
         
         if self.paymentDevice!.isConnected {
             log.verbose("SYNC_DATA: Validating device connection to sync.")
@@ -207,13 +236,6 @@ open class SyncManager : NSObject {
         
         return sync(user, device: deviceInfo)
     }
-    
-    /**
-     Completion handler
-     
-     - parameter event: Provides event with payload in eventData property
-     */
-    public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
     
     /**
      Binds to the sync event using SyncEventType and a block as callback.

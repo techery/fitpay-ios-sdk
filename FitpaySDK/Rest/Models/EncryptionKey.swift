@@ -1,15 +1,15 @@
 
 import ObjectMapper
 
-open class EncryptionKey : NSObject, Mappable
+open class EncryptionKey: NSObject, Mappable
 {
-    internal var links:[ResourceLink]?
-    open var keyId:String?
-    open var created:String?
-    open var createdEpoch:TimeInterval?
-    open var serverPublicKey:String?
-    open var clientPublicKey:String?
-    open var active:Bool?
+    internal var links: [ResourceLink]?
+    open var keyId: String?
+    open var created: String?
+    open var createdEpoch: TimeInterval?
+    open var serverPublicKey: String?
+    open var clientPublicKey: String?
+    open var active: Bool?
 
     public required init?(map: Map)
     {

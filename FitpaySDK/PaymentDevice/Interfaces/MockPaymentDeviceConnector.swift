@@ -58,21 +58,6 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         completion(isConnected(), nil)
     }
     
-    open func writeSecurityState(_ state: SecurityNFCState) -> NSError?{
-        _nfcState = state
-        self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.onSecurityStateChanged, params: ["securityState":state.rawValue])
-        return nil
-    }
-    
-    open func sendDeviceControl(_ state: DeviceControlState) -> NSError? {
-        return nil
-
-    }
-    
-    open func sendNotification(_ notificationData: Data) -> NSError? {
-        return nil
-
-    }
     
     open func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
@@ -87,7 +72,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     
     open func sendAPDUData(_ data: Data, sequenceNumber: UInt16) {
         let response = "9000"
-        let packet = ApduResultMessage(hexResult: response, sequenceId: String(sequenceNumber))
+        let packet = ApduResultMessage(hexResult: response)
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
             self.paymentDevice.apduResponseHandler = nil
@@ -117,10 +102,6 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         return deviceInfo;
     }
 
-    open func nfcState() -> SecurityNFCState {
-       return SecurityNFCState.disabled
-    }
-    
     open func resetToDefaultState() {
         
     }
@@ -133,9 +114,9 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     }
 
     func generateRandomSeId() -> String {
-        return  testingType.rawValue.hex(charsLength: 12) +
+        return  testingType.rawValue.hex(preferableLength: 12) +
                 "528704504258" +
-                UInt64(Date().timeIntervalSince1970).hex(charsLength: 12) +
+                UInt64(Date().timeIntervalSince1970).hex(preferableLength: 12) +
                 "FFFF427208236250082462502041FFFF082562502041FFFF"
     }
     

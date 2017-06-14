@@ -55,78 +55,8 @@ class MockPaymentDeviceTests: XCTestCase
                 XCTAssertEqual(deviceInfo!.osName, "IOS")
                 XCTAssertEqual(deviceInfo!.licenseKey, "6b413f37-90a9-47ed-962d-80e6a3528036")
                 XCTAssertEqual(deviceInfo!.bdAddress, "977214bf-d038-4077-bdf8-226b17d5958d")
-                self.paymentDevice.disconnect()
                 
                 expectation.fulfill()
-        })
-        
-        self.paymentDevice.connect()
-        
-        super.waitForExpectations(timeout: 20, handler: nil)
-    }
-    
-    func testDisconnectFromDeviceCheck()
-    {
-        let expectation = super.expectation(description: "disconnect from device check")
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-            {
-                (event) in
-                
-                let error = (event.eventData as? [String:Any])?["error"]
-                
-                XCTAssertNil(error)
-                
-                self.paymentDevice.disconnect()
-        })
-        
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion:
-            {
-                _ in
-                expectation.fulfill()
-        })
-        
-        self.paymentDevice.connect()
-        
-        super.waitForExpectations(timeout: 20, handler: nil)
-    }
-    
-    func testSecurityNotification()
-    {
-        let expectation = super.expectation(description: "disconnection from device check")
-        
-        var newState = SecurityNFCState.disabled
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-            {
-                (event) in
-                
-                let error = (event.eventData as? [String:Any])?["error"]
-                
-                XCTAssertNil(error)
-                
-                if self.paymentDevice.nfcState == SecurityNFCState.disabled {
-                    newState = SecurityNFCState.enabled
-                }
-                
-                let _ = self.paymentDevice.writeSecurityState(newState)
-        })
-        
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onSecurityStateChanged, completion:
-            {
-                (event) -> Void in
-                
-                
-                let stateInt = (event.eventData as? [String:Any])?["securityState"] as! Int
-                
-                let state = SecurityNFCState(rawValue: stateInt)
-                
-                XCTAssert(newState == state)
-                
-                if state == SecurityNFCState.disabled {
-                    newState = SecurityNFCState.enabled
-                    let _ = self.paymentDevice.writeSecurityState(newState)
-                } else {
-                    expectation.fulfill()
-                }
         })
         
         self.paymentDevice.connect()
@@ -151,21 +81,16 @@ class MockPaymentDeviceTests: XCTestCase
                     return
                 }
                 let command1 = Mapper<APDUCommand>().map(JSONString: "{ \"commandId\":\"e69e3bc6-bf36-4432-9db0-1f9e19b9d515\",\n         \"groupId\":0,\n         \"sequence\":0,\n         \"command\":\"00A4040008A00000000410101100\",\n         \"type\":\"PUT_DATA\"}")
-                self.paymentDevice.sendAPDUCommand(command1!, completion:
-                    {
-                        (apduResponse, responseMessage, error) -> Void in
-                        
+                self.paymentDevice.executeAPDUCommand(command1!, completion: { (command, state, error) in
                         XCTAssertNil(error)
-                        XCTAssertNotNil(apduResponse)
-                        XCTAssert(apduResponse!.responseCode == successResponse)
+                        XCTAssertNotNil(command)
+                        XCTAssert(command!.responseCode == successResponse)
                         let command2 = Mapper<APDUCommand>().map(JSONString: "{ \"commandId\":\"e69e3bc6-bf36-4432-9db0-1f9e19b9d517\",\n         \"groupId\":0,\n         \"sequence\":0,\n         \"command\":\"84E20001B0B12C352E835CBC2CA5CA22A223C6D54F3EDF254EF5E468F34CFD507C889366C307C7C02554BDACCDB9E1250B40962193AD594915018CE9C55FB92D25B0672E9F404A142446C4A18447FEAD7377E67BAF31C47D6B68D1FBE6166CF39094848D6B46D7693166BAEF9225E207F9322E34388E62213EE44184ED892AAF3AD1ECB9C2AE8A1F0DC9A9F19C222CE9F19F2EFE1459BDC2132791E851A090440C67201175E2B91373800920FB61B6E256AC834B9D\",\n         \"type\":\"PUT_DATA\"}")
-                        self.paymentDevice.sendAPDUCommand(command2!, completion:
-                            {
-                                (apduResponse, responseMessage, error) -> Void in
-                                debugPrint("apduResponse: \(String(describing: apduResponse))")
+                        self.paymentDevice.executeAPDUCommand(command2!, completion: { (command, state, error) -> Void in
+                                debugPrint("apduResponse: \(String(describing: command))")
                                 XCTAssertNil(error)
-                                XCTAssertNotNil(apduResponse)
-                                XCTAssert(apduResponse!.responseCode == successResponse)
+                                XCTAssertNotNil(command)
+                                XCTAssert(command!.responseCode == successResponse)
                                 
                                 expectation.fulfill()
                         })
