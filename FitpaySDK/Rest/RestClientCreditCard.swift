@@ -137,7 +137,7 @@ extension RestClient {
                         "postalCode": postalCode,
                         "country": country
                     ]
-                    ] as [String: Any]
+                ] as [String: Any]
                 
                 if let cardJSON = rawCard.JSONString {
                     if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId: headers[RestClient.fpKeyIdKey]!) {
