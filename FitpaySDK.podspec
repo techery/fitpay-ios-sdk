@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.requires_arc = true
   s.name = 'FitpaySDK'
-  s.version = '0.4.10'
+  s.version = '0.4.11'
   s.license = 'MIT'
   s.summary = 'Swift based library for the Fitpay Platform'
   s.homepage = 'https://github.com/fitpay/fitpay-ios-sdk'
