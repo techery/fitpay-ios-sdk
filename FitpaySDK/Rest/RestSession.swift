@@ -40,8 +40,8 @@ open class RestSession: NSObject
         case accessTokenFailure
     }
 
-    fileprivate var clientId: String
-    fileprivate var redirectUri: String
+    private(set) var clientId: String
+    private(set) var redirectUri: String
 
     open var userId: String?
     open var accessToken: String?
