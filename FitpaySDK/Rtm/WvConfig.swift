@@ -189,6 +189,8 @@ internal enum WVResponse: Int {
     var sessionDataCallBack: RtmMessage?
     var syncCallBacks = [RtmMessage]()
     
+    private var bindings: [FitpayEventBinding] = []
+
     fileprivate var rtmVersionSent = false
     
     @objc open var demoModeEnabled : Bool {
@@ -227,6 +229,7 @@ internal enum WVResponse: Int {
     deinit {
         self.notificationCenter.removeObserver(self)
         self.webview?.configuration.userContentController.removeScriptMessageHandler(forName: "rtmBridge")
+        self.unbindEvents()
     }
     
     /**
@@ -263,6 +266,11 @@ internal enum WVResponse: Int {
     }
     
     @objc open func setWebView(_ webview:WKWebView!) {
+        guard self.webview != webview else {
+            return
+        }
+        
+        self.rtmVersionSent = false
         self.webview = webview
     }
     
@@ -360,7 +368,7 @@ internal enum WVResponse: Int {
         sendStatusMessage(message, type: type)
     }
     
-    @objc open func sendRtmMessage(rtmMessage: RtmMessageResponse) {
+    @objc open func sendRtmMessage(rtmMessage: RtmMessageResponse, retries: Int = 3) {
         guard let jsonRepresentation = rtmMessage.toJSONString(prettyPrint: false) else {
             log.error("WV_DATA: Can't create json representation for rtm message.")
             return
@@ -368,9 +376,16 @@ internal enum WVResponse: Int {
 
         log.debug("WV_DATA: sending data to wv: \(jsonRepresentation)")
         
-        webview?.evaluateJavaScript("window.RtmBridge.resolve(\(jsonRepresentation))", completionHandler: { (result, error) in
+        webview?.evaluateJavaScript("window.RtmBridge.resolve(\(jsonRepresentation))", completionHandler: { [weak self] (result, error) in
             if let error = error {
-                log.error("WV_DATA: Can't send status message, error: \(error)")
+                if retries > 0 {
+                    log.warning("WV_DATA: Can't send message to wv... retrying...")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                        self?.sendRtmMessage(rtmMessage: rtmMessage, retries: retries - 1)
+                    })
+                } else {
+                    log.error("WV_DATA: Can't send message to wv, error: \(error)")
+                }
             }
         })
     }
@@ -447,18 +462,26 @@ internal enum WVResponse: Int {
     }
 
     fileprivate func bindEvents() {
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .syncStarted, completion: { [weak self] (event) in
+        var binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: .syncStarted, completion: { [weak self] (event) in
             self?.showStatusMessage(.syncGettingUpdates)
         })
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: { [weak self] (event) in
+        if let nonOptionalBinding = binding {
+            self.bindings.append(nonOptionalBinding)
+        }
+        
+        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: { [weak self] (event) in
             log.debug("WV_DATA: received sync complete from SyncManager.")
             
             self?.resolveSync()
             self?.showStatusMessage(.syncComplete)
         })
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: { [weak self] (event) in
+        if let nonOptionalBinding = binding {
+            self.bindings.append(nonOptionalBinding)
+        }
+        
+        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: { [weak self] (event) in
             log.error("WV_DATA: reveiced sync FAILED from SyncManager.")
             let error = (event.eventData as? [String:Any])?["error"] as? NSError
             
@@ -470,7 +493,11 @@ internal enum WVResponse: Int {
             
         })
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .commitsReceived, completion: { [weak self] (event) in
+        if let nonOptionalBinding = binding {
+            self.bindings.append(nonOptionalBinding)
+        }
+        
+        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: .commitsReceived, completion: { [weak self] (event) in
             guard let commits = (event.eventData as! [String:[Commit]])["commits"] else {
                 self?.showStatusMessage(.syncNoUpdates)
                 return
@@ -481,6 +508,16 @@ internal enum WVResponse: Int {
                 self?.showStatusMessage(.syncNoUpdates)
             }
         })
+        
+        if let nonOptionalBinding = binding {
+            self.bindings.append(nonOptionalBinding)
+        }
+    }
+    
+    fileprivate func unbindEvents() {
+        for binding in self.bindings {
+            SyncManager.sharedInstance.removeSyncBinding(binding: binding)
+        }
     }
 
     @objc fileprivate func logout() {
