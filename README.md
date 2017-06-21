@@ -82,7 +82,27 @@ To test on a different simulator, pass in a valid simulator same.
 ./bin/test "iPhone 5s"
 ```
 
+## Logging
+In order to remain flexible with the various mobile logging strategies, the SDK provides a mechanism to utilize custom logging implementations. For custom implementation there is protocol `LogsOutputProtocol` which should be implemented, and after that object of that protocol implementation should be added to logs ouput.
 
+Code example:
+
+```
+        class ErrorPusherOutput: LogsOutputProtocol {
+            func send(level: LogLevel, message: String, file: String, function: String, line: Int) {
+                if level == .error {
+                    print("Going to push next message:", message)
+                    // code for pushing here
+                }
+            }
+        }
+        
+        let log = FitpaySDKLogger.sharedInstance
+        log.addOutput(output: ConsoleOutput())
+        log.addOutput(output: ErrorPusherOutput())
+        log.minLogLevel = .debug
+
+```
 
 ## Contributing to the SDK
 We welcome contributions to the SDK. For your first few contributions please fork the repo, make your changes and submit a pull request. Internally we branch off of develop, test, and PR-review the branch before merging to develop (moderately stable). Releases to Master happen less frequently, undergo more testing, and can be considered stable. For more information, please read:  [http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)
