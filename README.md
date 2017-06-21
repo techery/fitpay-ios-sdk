@@ -83,7 +83,7 @@ To test on a different simulator, pass in a valid simulator same.
 ```
 
 ## Logging
-In order to remain flexible with the various mobile logging strategies, the SDK provides a mechanism to utilize custom logging implementations. For custom implementation there is protocol `LogsOutputProtocol` which should implemented, and after that object of that protocol implementation should be added to logs ouput.
+In order to remain flexible with the various mobile logging strategies, the SDK provides a mechanism to utilize custom logging implementations. For custom implementation there is protocol `LogsOutputProtocol` which should be implemented, and after that object of that protocol implementation should be added to logs ouput.
 
 Code example:
 
