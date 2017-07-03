@@ -191,40 +191,43 @@ internal class CommitsApplyer {
         })
     }
 
-    fileprivate func processNonAPDUCommit(_ commit: Commit, completion: CommitCompletion) {
-        guard let _ = commit.commitType else {
+    fileprivate func processNonAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
+        guard let commitType = commit.commitType else {
             return
         }
-
-        SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.commitProcessed, params: ["commit": commit])
-
-        switch commit.commitType! {
-        case .CREDITCARD_CREATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardAdded, params: ["commit": commit])
-            break;
-        case .CREDITCARD_DELETED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeleted, params: ["commit": commit])
-            break;
-        case .CREDITCARD_ACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardActivated, params: ["commit": commit])
-            break;
-        case .CREDITCARD_DEACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeactivated, params: ["commit": commit])
-            break;
-        case .CREDITCARD_REACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardReactivated, params: ["commit": commit])
-            break;
-        case .SET_DEFAULT_CREDITCARD:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.setDefaultCard, params: ["commit": commit])
-            break;
-        case .RESET_DEFAULT_CREDITCARD:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.resetDefaultCard, params: ["commit": commit])
-            break;
-        default:
-            break;
+        
+        SyncManager.sharedInstance.paymentDevice!.processNonAPDUCommit(commit: commit) { (error) in
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.commitProcessed, params: ["commit": commit])
+            
+            switch commitType {
+            case .CREDITCARD_CREATED:
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardAdded, params: ["commit": commit])
+                break;
+            case .CREDITCARD_DELETED:
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeleted, params: ["commit": commit])
+                break;
+            case .CREDITCARD_ACTIVATED:
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardActivated, params: ["commit": commit])
+                break;
+            case .CREDITCARD_DEACTIVATED:
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeactivated, params: ["commit": commit])
+                break;
+            case .CREDITCARD_REACTIVATED:
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardReactivated, params: ["commit": commit])
+                break;
+            case .SET_DEFAULT_CREDITCARD:
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.setDefaultCard, params: ["commit": commit])
+                break;
+            case .RESET_DEFAULT_CREDITCARD:
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.resetDefaultCard, params: ["commit": commit])
+                break;
+            default:
+                break;
+            }
+            
+            completion(nil)
         }
 
-        completion(nil)
     }
 
     fileprivate func applyAPDUPackage(_ apduPackage: ApduPackage, apduCommandIndex: Int, retryCount: Int, completion: @escaping (_ state: APDUPackageResponseState?, _ error: Error?) -> Void) {
