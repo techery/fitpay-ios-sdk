@@ -197,6 +197,12 @@ internal class CommitsApplyer {
         }
         
         SyncManager.sharedInstance.paymentDevice!.processNonAPDUCommit(commit: commit) { (error) in
+            
+            guard error == nil else {
+                completion(error)
+                return
+            }
+            
             SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.commitProcessed, params: ["commit": commit])
             
             switch commitType {
