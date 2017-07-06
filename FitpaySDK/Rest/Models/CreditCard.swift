@@ -329,6 +329,7 @@ open class CardMetadata: NSObject, ClientModel, Mappable
     open var brandLogo: [Image]?
     open var cardBackground: [Image]?
     open var cardBackgroundCombined: [ImageWithSize]?
+    open var cardBackgroundCombinedEmbossed: [ImageWithSize]?
     open var coBrandLogo: [Image]?
     open var icon: [Image]?
     open var issuerLogo: [Image]?
@@ -359,6 +360,12 @@ open class CardMetadata: NSObject, ClientModel, Mappable
                     image.client = self.client
                 }
             }
+            
+            if let cardBackgroundCombinedEmbossed = self.cardBackgroundCombinedEmbossed {
+                for image in cardBackgroundCombinedEmbossed {
+                    image.client = self.client
+                }
+            }
 
             if let coBrandLogo = self.coBrandLogo {
                 for image in coBrandLogo {
@@ -384,6 +391,7 @@ open class CardMetadata: NSObject, ClientModel, Mappable
     }
 
     open func mapping(map: Map) {
+        print("map:", map.JSON)
         self.labelColor <- map["labelColor"]
         self.issuerName <- map["issuerName"]
         self.shortDescription <- map["shortDescription"]
@@ -396,6 +404,7 @@ open class CardMetadata: NSObject, ClientModel, Mappable
         self.brandLogo <- (map["brandLogo"], ImageTransformType())
         self.cardBackground <- (map["cardBackground"], ImageTransformType())
         self.cardBackgroundCombined <- (map["cardBackgroundCombined"], ImageTransformType())
+        self.cardBackgroundCombinedEmbossed <- (map["cardBackgroundCombinedEmbossed"], ImageTransformType())
         self.coBrandLogo <- (map["coBrandLogo"], ImageTransformType())
         self.icon <- (map["icon"], ImageTransformType())
         self.issuerLogo <- (map["issuerLogo"], ImageTransformType())
@@ -445,7 +454,7 @@ open class ImageWithSize: Image, AssetWithSizeRerivable {
         }
     }
     
-    func updateUrlAssetWith(url urlString: String, width: Int, height: Int) -> String? {
+    internal func updateUrlAssetWith(url urlString: String, width: Int, height: Int) -> String? {
         guard var url = URLComponents(string: urlString) else { return urlString }
         guard url.queryItems != nil else { return urlString }
         
