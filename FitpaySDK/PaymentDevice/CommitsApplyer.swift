@@ -208,27 +208,28 @@ internal class CommitsApplyer {
             switch commitType {
             case .CREDITCARD_CREATED:
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardAdded, params: ["commit": commit])
-                break;
+                break
             case .CREDITCARD_DELETED:
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeleted, params: ["commit": commit])
-                break;
+                break
             case .CREDITCARD_ACTIVATED:
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardActivated, params: ["commit": commit])
-                break;
+                break
             case .CREDITCARD_DEACTIVATED:
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeactivated, params: ["commit": commit])
-                break;
+                break
             case .CREDITCARD_REACTIVATED:
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardReactivated, params: ["commit": commit])
-                break;
+                break
             case .SET_DEFAULT_CREDITCARD:
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.setDefaultCard, params: ["commit": commit])
-                break;
+                break
             case .RESET_DEFAULT_CREDITCARD:
                 SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.resetDefaultCard, params: ["commit": commit])
-                break;
-            default:
-                break;
+                break
+            case .APDU_PACKAGE:
+                log.warning("Processed APDU package inside nonapdu handler.")
+                break
             }
             
             completion(nil)
