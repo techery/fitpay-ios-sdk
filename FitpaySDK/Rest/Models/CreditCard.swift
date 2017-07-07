@@ -328,8 +328,8 @@ open class CardMetadata: NSObject, ClientModel, Mappable
     open var privacyPolicyUrl: String?
     open var brandLogo: [Image]?
     open var cardBackground: [Image]?
-    open var cardBackgroundCombined: [ImageWithSize]?
-    open var cardBackgroundCombinedEmbossed: [ImageWithSize]?
+    open var cardBackgroundCombined: [ImageWithOptions]?
+    open var cardBackgroundCombinedEmbossed: [ImageWithOptions]?
     open var coBrandLogo: [Image]?
     open var icon: [Image]?
     open var issuerLogo: [Image]?
@@ -391,7 +391,6 @@ open class CardMetadata: NSObject, ClientModel, Mappable
     }
 
     open func mapping(map: Map) {
-        print("map:", map.JSON)
         self.labelColor <- map["labelColor"]
         self.issuerName <- map["issuerName"]
         self.shortDescription <- map["shortDescription"]
@@ -410,114 +409,6 @@ open class CardMetadata: NSObject, ClientModel, Mappable
         self.issuerLogo <- (map["issuerLogo"], ImageTransformType())
     }
 }
-
-open class Image: NSObject, ClientModel, Mappable, AssetRetrivable
-{
-    internal var links: [ResourceLink]?
-    open var mimeType: String?
-    open var height: Int?
-    open var width: Int?
-    internal var client: RestClient?
-    fileprivate static let selfResource = "self"
-
-    public required init?(map: Map) {
-    }
-
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.mimeType <- map["mimeType"]
-        self.height <- map["height"]
-        self.width <- map["width"]
-    }
-
-    open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
-        let resource = Image.selfResource
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.assets(url, completion: completion)
-        } else {
-            let error = NSError.clientUrlError(domain: Image.self, code: 0, client: client, url: url, resource: resource)
-            completion(nil, error)
-        }
-    }
-}
-
-open class ImageWithSize: Image, AssetWithSizeRerivable {
-    open func retrieveAssetWith(height: Int = 0, width: Int = 0, completion: @escaping RestClient.AssetsHandler) {
-        let resource = Image.selfResource
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client, let urlString = updateUrlAssetWith(url: url, width: width, height: height) {
-            client.assets(urlString, completion: completion)
-        } else {
-            let error = NSError.clientUrlError(domain: Image.self, code: 0, client: client, url: url, resource: resource)
-            completion(nil, error)
-        }
-    }
-    
-    internal func updateUrlAssetWith(url urlString: String, width: Int, height: Int) -> String? {
-        guard var url = URLComponents(string: urlString) else { return urlString }
-        guard url.queryItems != nil else { return urlString }
-        
-        if width != 0 {
-            var widthFound = false
-            for (i, queryItem) in url.queryItems!.enumerated() {
-                if queryItem.name == "w" {
-                    url.queryItems?[i].value = String(width)
-                    widthFound = true
-                    break
-                }
-            }
-            
-            if !widthFound {
-                url.queryItems?.append(URLQueryItem(name: "w", value: String(width)))
-            }
-        }
-        
-        if height != 0 {
-            var heightFound = false
-            for (i, queryItem) in url.queryItems!.enumerated() {
-                if queryItem.name == "h" {
-                    url.queryItems?[i].value = String(height)
-                    heightFound = true
-                    break
-                }
-            }
-            
-            if !heightFound {
-                url.queryItems?.append(URLQueryItem(name: "h", value: String(height)))
-            }
-        }
-        
-        return (try? url.asURL())?.absoluteString
-    }
-}
-
-internal class ImageTransformType<T: BaseMappable>: TransformType
-{
-    typealias Object = [T]
-    typealias JSON = [[String: AnyObject]]
-
-    func transformFromJSON(_ value: Any?) -> [T]? {
-        if let images = value as? [[String: AnyObject]] {
-            var list = [T]()
-
-            for raw in images {
-                if let image = Mapper<T>().map(JSON: raw) {
-                    list.append(image)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [T]?) -> [[String: AnyObject]]? {
-        return nil
-    }
-}
-
 
 open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivable
 {
