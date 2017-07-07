@@ -17,7 +17,7 @@ public enum ImageAssetOption: AssetOption {
     case width(Int)
     case height(Int)
     case embossedText(String)
-    case foregroundColor(String)
+    case embossedForegroundColor(String)
     case fontScale(Int)
     case textPositionXScale(Float)
     case textPositionYScale(Float)
@@ -32,18 +32,18 @@ public enum ImageAssetOption: AssetOption {
             return "h"
         case .embossedText:
             return "embossedText"
-        case .foregroundColor:
-            return "foregroundColor"
+        case .embossedForegroundColor:
+            return "embossedForegroundColor"
         case .fontScale:
-            return "fontScale"
+            return "fs"
         case .textPositionXScale:
-            return "textPositionXScale"
+            return "txs"
         case .textPositionYScale:
-            return "textPositionYScale"
+            return "tys"
         case .fontName:
-            return "fontName"
+            return "fn"
         case .fontBold:
-            return "fontBold"
+            return "fb"
         }
     }
     
@@ -55,7 +55,7 @@ public enum ImageAssetOption: AssetOption {
             return String(value)
         case .embossedText(let value):
             return value
-        case .foregroundColor(let value):
+        case .embossedForegroundColor(let value):
             return value
         case .fontScale(let value):
             return String(value)
