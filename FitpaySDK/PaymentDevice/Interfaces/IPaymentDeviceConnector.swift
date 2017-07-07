@@ -1,4 +1,10 @@
 
+@objc public enum NonAPDUCommitState: Int {
+    case success = 0 // will continue commits execution
+    case skipped     // will continue commits execution
+    case failed      // will stop sync
+}
+
 @objc public protocol IPaymentDeviceConnector
 {
     /// Connects to the payment device
@@ -37,6 +43,14 @@
     ///   - completion: call completion when your task is done
     @objc optional func onPostApduPackageExecute(_ apduPackage: ApduPackage, completion: @escaping (_ error: NSError?) -> Void)
 
+    /// If you need to process non apdu commit somehow then you need to implement this method.
+    /// Don't forget to call completion, system is waiting for that completion.
+    ///
+    /// - Parameters:
+    ///   - commit: current Commit object
+    ///   - completion: state is process result. If state == failed, then it would be great if error object will be also provided.
+    @objc optional func processNonAPDUCommit(_ commit: Commit, completion: @escaping (_ state: NonAPDUCommitState, _ error: NSError?) -> Void)
+    
     /// - Returns: DeviceInfo if phone already connected to payment device
     func deviceInfo() -> DeviceInfo?
 

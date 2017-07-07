@@ -278,7 +278,21 @@
             completion(nil, nil, NSError.unhandledError(PaymentDevice.self))
         }
     }
-        
+    
+    internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ error: NSError?) -> Void) {
+        if let processNonAPDUCommit = self.deviceInterface.processNonAPDUCommit {
+            processNonAPDUCommit(commit) { (state, error) in
+                if state == .failed || error != nil{
+                    completion(error ?? NSError.unhandledError(PaymentDevice.self))
+                } else {
+                    completion(nil)
+                }
+            }
+        } else {
+            completion(nil)
+        }
+    }
+    
     @objc open func callCompletionForEvent(_ eventType: PaymentDeviceEventTypes, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }
