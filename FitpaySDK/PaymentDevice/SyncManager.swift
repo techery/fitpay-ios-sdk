@@ -21,80 +21,6 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 }
 
 
-
-@objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
-    case connectingToDevice = 0x1
-    case connectingToDeviceFailed
-    case connectingToDeviceCompleted
-    
-    case syncStarted
-    case syncFailed
-    case syncCompleted
-    case syncProgress
-    case receivedCardsWithTowApduCommands
-    case apduCommandsProgress
-    
-    case apduPackageComplete
-    
-    case commitsReceived
-    case commitProcessed
-
-    case cardAdded
-    case cardDeleted
-    case cardActivated
-    case cardDeactivated
-    case cardReactivated
-    case setDefaultCard
-    case resetDefaultCard
-    
-    public func eventId() -> Int {
-        return rawValue
-    }
-    
-    public func eventDescription() -> String {
-        switch self {
-        case .connectingToDevice:
-            return "Connecting to device"
-        case .connectingToDeviceFailed:
-            return "Connecting to device failed"
-        case .connectingToDeviceCompleted:
-            return "Connecting to device completed"
-        case .syncStarted:
-            return "Sync started"
-        case .syncFailed:
-            return "Sync failed"
-        case .syncCompleted:
-            return "Sync completed"
-        case .syncProgress:
-            return "Sync progress"
-        case .receivedCardsWithTowApduCommands:
-            return "Received cards with Top of Wallet APDU commands"
-        case .apduCommandsProgress:
-            return "APDU progress"
-        case .commitsReceived:
-            return "Commits received"
-        case .commitProcessed:
-            return "Processed commit"
-        case .apduPackageComplete:
-            return "Processing APDU package complete"
-        case .cardAdded:
-            return "New card was added"
-        case .cardDeleted:
-            return "Card was deleted"
-        case .cardActivated:
-            return "Card was activated"
-        case .cardDeactivated:
-            return "Card was deactivated"
-        case .cardReactivated:
-            return "Card was reactivated"
-        case .setDefaultCard:
-            return "New default card was manually set"
-        case .resetDefaultCard:
-            return "New default card was automatically set"
-        }
-    }
-}
-
 /**
  Completion handler
  
@@ -177,12 +103,13 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     open fileprivate(set) var isSyncing : Bool = false
     
     /**
-     Starts sync process with payment device. 
+     Starts sync process with payment device.
      If device disconnected, than system tries to connect.
      
      - parameter user:	 user from API to whom device belongs to.
      - parameter device: device which we will sync with. If nil then we will use first one with secureElemendId.
      */
+    @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open func sync(_ user: User, device: DeviceInfo? = nil, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
         log.debug("SYNC_DATA: Starting sync.")
         if self.isSyncing {
@@ -229,6 +156,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
      
      - parameter user: user from API to whom device belongs to.
      */
+    @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open func tryToMakeSyncWithLastUser() -> NSError? {
         guard let user = self.user else {
             return NSError.error(code: SyncManager.ErrorCode.userIsNill, domain: SyncManager.self)
@@ -530,5 +458,4 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         self.syncStorage.setLastCommitId(self.deviceInfo!.deviceIdentifier!, commitId: commitId)
     }
 }
-
 

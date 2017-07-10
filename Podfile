@@ -7,6 +7,7 @@ target 'FitpaySDK' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
     pod 'KeychainAccess', '3.0.1'
+    pod 'RxSwift', '~> 3.5'
 end
 
 target 'FitpaySDKDemo' do
