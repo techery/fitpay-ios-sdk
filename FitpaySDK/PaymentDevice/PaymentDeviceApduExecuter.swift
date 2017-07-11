@@ -91,7 +91,7 @@ internal class PaymentDeviceApduExecuter {
                 completion(nil, nil, NSError.unhandledError(PaymentDeviceApduExecuter.self))
             }
             return
-        case .error:
+        case .error, .warning:
             if apduCommand.continueOnFailure == false {
                 self.isExecuting = false
                 completion(apduCommand, nil, NSError.error(code: PaymentDevice.ErrorCode.apduErrorResponse, domain: PaymentDeviceApduExecuter.self))

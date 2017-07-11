@@ -47,7 +47,7 @@ class RestClientTests: XCTestCase
         
         self.session = RestSession(configuration: config)
         self.client = RestClient(session: self.session!)
-        self.testHelper = TestHelpers(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
+        self.testHelper = TestHelpers(clientId: clientId, redirectUri: config.redirectUri, session: self.session, client: self.client)
     }
     
     override func tearDown()
@@ -1266,7 +1266,7 @@ class RestClientTests: XCTestCase
         super.waitForExpectations(timeout: 15, handler: nil)
     }
     
-    func testAssetsRetrievesAsset()
+    func testAssetsRetrievesAssetWithOptions()
     {
         let expectation = super.expectation(description: "'assets' retrievs asset")
         
@@ -1281,18 +1281,56 @@ class RestClientTests: XCTestCase
                 {
                     (user, creditCard) in
                     
-                    creditCard?.cardMetaData?.cardBackgroundCombined?.first?.retrieveAssetWith(width: 600)
-                    {
-                        (asset, error) in
-                        
-                        XCTAssertNil(error)
-                        
-                        if error != nil
+                    user?.listCreditCards(excludeState: [], limit: 1, offset: 0, completion: { (collection, error) in
+                        let creditCard: CreditCard = (collection?.results?[0])!
+                        creditCard.cardMetaData?.cardBackgroundCombinedEmbossed?.first?.retrieveAssetWith(options: [.width(600), .height(600), .fontBold(false)])
                         {
+                            (asset, error) in
+                            
+                            XCTAssertNil(error)
+                            
+                            if error != nil {
+                                XCTAssertNotNil(asset?.image)
+                                expectation.fulfill()
+                                return
+                            }
+                            
+                            self.testHelper.deleteUser(user, expectation: expectation)
+                        }
+
+                    })
+                }
+            }
+        }
+
+        super.waitForExpectations(timeout: 30, handler: nil)
+    }
+    
+    func testAssetsRetrievesAsset() {
+        let expectation = super.expectation(description: "'assets' retrievs asset")
+
+        self.testHelper.createAndLoginUser(expectation)
+        {
+            [unowned self](user) in
+
+            self.testHelper.createDevice(expectation, user: user)
+            {
+                (user, device) in
+                self.testHelper.createCreditCard(expectation, user: user)
+                {
+                    (user, creditCard) in
+
+                    creditCard?.cardMetaData?.brandLogo?.first?.retrieveAsset() {
+                        (asset, error) in
+
+                        XCTAssertNil(error)
+
+                        if error != nil {
+                            XCTAssertNotNil(asset?.image)
                             expectation.fulfill()
                             return
                         }
-                        
+
                         self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 }
@@ -1300,6 +1338,36 @@ class RestClientTests: XCTestCase
         }
 
         super.waitForExpectations(timeout: 30, handler: nil)
+    }
+    
+    func testGetIssuers() {
+        let expectation = super.expectation(description: "'testGetIssuers' gets issuers")
+        
+        self.testHelper.createAndLoginUser(expectation) {
+            [unowned self](user) in
+            self.client.issuers(completion: { (issuers, error) in
+
+                XCTAssertNotNil(issuers)
+                XCTAssertNil(error)
+                XCTAssertNotNil(issuers?.countries)
+                
+                XCTAssertNotNil(issuers?.countries?["US"])
+                
+                for country in issuers!.countries! {
+                    XCTAssertNotNil(country.value.cardNetworks)
+                    XCTAssertNotEqual(country.value.cardNetworks?.count, 0)
+                    
+                    for cardNetwork in country.value.cardNetworks! {
+                        XCTAssertNotNil(cardNetwork.value.issuers)
+                        XCTAssertNotEqual(cardNetwork.value.issuers?.count, 0)
+                    }
+                }
+                
+                self.testHelper.deleteUser(user, expectation: expectation)
+            })
+        }
+        
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testTransactionRetrievesTransactionsByUserId()

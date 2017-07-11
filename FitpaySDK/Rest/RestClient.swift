@@ -373,6 +373,39 @@ extension RestClient {
     }
 }
 
+// MARK: Issuers
+extension RestClient {
+    public typealias IssuersHandler = (_ issuers: Issuers?, _ error: NSError?) -> Void
+    
+    public func issuers(completion: @escaping IssuersHandler) {
+        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+            if let headers = headers {
+                let request = self._manager.request(self._session.baseAPIURL + "/issuers",
+                                               method: .get,
+                                               parameters: nil,
+                                               encoding: JSONEncoding.default,
+                                               headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Issuers>) in
+                    DispatchQueue.main.async {
+                        if let _ = response.result.error {
+                            let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                            completion(nil, error)
+                        } else if let resultValue = response.result.value {
+                            resultValue.client = self
+                            completion(resultValue, response.result.error as NSError?)
+                        } else {
+                            completion(nil, NSError.unhandledError(RestClient.self))
+                        }
+                    }
+                }            } else {
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
+        }
+    }
+}
+
 // MARK: Assets
 extension RestClient {
     
@@ -428,8 +461,8 @@ public protocol AssetRetrivable {
     func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler)
 }
 
-public protocol AssetWithSizeRerivable {
-    func retrieveAssetWith(height: Int, width: Int, completion: @escaping RestClient.AssetsHandler)
+public protocol AssetWithOptionsRerivable {
+    func retrieveAssetWith(options: [AssetOption], completion: @escaping RestClient.AssetsHandler)
 }
 
 
