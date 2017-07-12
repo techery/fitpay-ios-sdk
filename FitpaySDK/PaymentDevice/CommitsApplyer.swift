@@ -5,9 +5,10 @@ internal class CommitsApplyer {
     init(paymentDevice: PaymentDevice,
          eventsPublisher: PublishSubject<SyncEvent>,
          syncStorage: SyncStorage) {
-        self.paymentDevice   = paymentDevice
-        self.eventsPublisher = eventsPublisher
-        self.syncStorage     = syncStorage
+        self.paymentDevice        = paymentDevice
+        self.eventsPublisher      = eventsPublisher
+        self.syncStorage          = syncStorage
+        self.apduConfirmOperation = APDUConfirmOperation()
     }
     
     internal var isRunning: Bool {
@@ -46,6 +47,7 @@ internal class CommitsApplyer {
         return true
     }
     
+    internal var apduConfirmOperation: APDUConfirmOperationProtocol
     
     // private
     fileprivate var commits: [Commit]!
@@ -58,8 +60,10 @@ internal class CommitsApplyer {
     fileprivate let maxAPDUCommandsRetries = 0
     fileprivate let paymentDevice: PaymentDevice
     fileprivate var syncStorage: SyncStorage
+    
     // rx
     fileprivate let eventsPublisher: PublishSubject<SyncEvent>
+    fileprivate var disposeBag = DisposeBag()
 
     @objc fileprivate func processCommits() {
         var commitsApplied = 0
@@ -110,11 +114,16 @@ internal class CommitsApplyer {
 
         let commitCompletion = { (error: Error?) -> Void in
             if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
-                SyncManager.sharedInstance.commitCompleted(commit.commit!)
+                if let deviceId = self.paymentDevice.deviceInfo?.deviceIdentifier, let commit = commit.commit {
+                    self.syncStorage.setLastCommitId(deviceId, commitId: commit)
+                } else {
+                    log.error("SYNC_DATA: Can't get deviceId or commitId.")
+                }
             }
 
             completion(error)
         }
+        
         switch (commitType) {
         case CommitType.APDU_PACKAGE:
             log.verbose("SYNC_DATA: processing APDU commit.")
@@ -194,10 +203,19 @@ internal class CommitsApplyer {
                     if apduPackage.state == .notProcessed {
                         completion(realError)
                     } else {
-                        commit.confirmAPDU { (confirmError) -> Void in
-                            log.debug("SYNC_DATA: Apdu package confirmed with error: \(String(describing: confirmError)).")
-                            completion(realError ?? confirmError)
-                        }
+                        self?.apduConfirmOperation.confirm(commit: commit).subscribe() { (e) in
+                            switch e {
+                            case .completed:
+                                completion(realError)
+                                break
+                            case .error(let error):
+                                log.debug("SYNC_DATA: Apdu package confirmed with error: \(error).")
+                                completion(error)
+                                break
+                            case .next:
+                                break
+                            }
+                        }.disposed(by: self?.disposeBag ?? DisposeBag())
                     }
                 })
             }
@@ -219,7 +237,7 @@ internal class CommitsApplyer {
             let eventData = ["commit": commit]
             self?.eventsPublisher.onNext(SyncEvent(event: .commitProcessed, data: eventData))
             
-            let syncEvent: SyncEvent
+            var syncEvent: SyncEvent? = nil
             switch commitType {
             case .CREDITCARD_CREATED:
                 syncEvent = SyncEvent(event: .cardAdded, data: eventData)
@@ -247,7 +265,9 @@ internal class CommitsApplyer {
                 break
             }
             
-            self?.eventsPublisher.onNext(syncEvent)
+            if let syncEvent = syncEvent {
+                self?.eventsPublisher.onNext(syncEvent)
+            }
             
             completion(nil)
         }

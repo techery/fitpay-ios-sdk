@@ -6,6 +6,8 @@ PODS:
   - JWTDecode (2.0.0)
   - KeychainAccess (3.0.1)
   - ObjectMapper (2.2.5)
+  - RxBlocking (3.5.0):
+    - RxSwift (~> 3.4)
   - RxSwift (3.5.0)
 
 DEPENDENCIES:
@@ -14,6 +16,7 @@ DEPENDENCIES:
   - JWTDecode (= 2.0.0)
   - KeychainAccess (= 3.0.1)
   - ObjectMapper (= 2.2.5)
+  - RxBlocking
   - RxSwift (~> 3.5)
 
 SPEC CHECKSUMS:
@@ -22,8 +25,9 @@ SPEC CHECKSUMS:
   JWTDecode: 178e47e5d28d3abcff778bacced8342858cd6cb5
   KeychainAccess: 017ea25e313a49eda10bb19b0bb0760fb1edfe1a
   ObjectMapper: fb30f71e08470d1e5a20b199fafe1246281db898
+  RxBlocking: 471315e18b87c5ed4b9d0c69a57dfdbca5c01af1
   RxSwift: 18ee9d78b45edb3b0b7e79916b47a116e6dbc842
 
-PODFILE CHECKSUM: 16bec27d6b3c2d91c0f978be7c50f00d136f0fed
+PODFILE CHECKSUM: 303380c8cb3ec1e077e3e8f24c1c101053667d6a
 
 COCOAPODS: 1.2.1

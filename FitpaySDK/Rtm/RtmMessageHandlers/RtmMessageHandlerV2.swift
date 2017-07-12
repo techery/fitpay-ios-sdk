@@ -67,7 +67,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             log.verbose("WV_DATA: Adding sync to rtm callback queue.")
             syncCallBacks.append(message)
             log.verbose("WV_DATA: initiating sync.")
-            SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: self.wvConfig.user!, device: self.wvConfig.device), completion: nil)
+            SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: self.wvConfig.user!, deviceInfo: self.wvConfig.device, paymentDevice: wvConfig.paymentDevice!), completion: nil)
         } else {
             log.warning("WV_DATA: rtm not yet configured to hand syncs requests, failing sync.")
             self.wvConfig.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first?.callBackId ?? 0,

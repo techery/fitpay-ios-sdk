@@ -13,7 +13,7 @@ class ConnectDeviceOperation {
     
     init(paymentDevice: PaymentDevice) {
         self.paymentDevice = paymentDevice
-        self.publisher = PublishSubject<SyncOperationConnectionState>()
+        self.publisher = BehaviorSubject<SyncOperationConnectionState>(value: .connecting)
     }
     
     enum SyncOperationConnectionState {
@@ -64,12 +64,12 @@ class ConnectDeviceOperation {
     // private
     fileprivate var paymentDevice: PaymentDevice
     // rx
-    fileprivate var publisher: PublishSubject<SyncOperationConnectionState>
+    fileprivate var publisher: BehaviorSubject<SyncOperationConnectionState>
     // bindings
     fileprivate weak var deviceConnectedBinding : FitpayEventBinding?
     fileprivate weak var deviceDisconnectedBinding : FitpayEventBinding?
     
-    fileprivate func connect(observable: PublishSubject<SyncOperationConnectionState>) {
+    fileprivate func connect(observable: BehaviorSubject<SyncOperationConnectionState>) {
         if let binding = self.deviceConnectedBinding {
             self.paymentDevice.removeBinding(binding: binding)
         }

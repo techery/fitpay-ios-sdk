@@ -452,7 +452,7 @@ internal enum WVResponse: Int {
     }
 
     fileprivate func goSync() {
-        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: self.user!, device: self.device), completion: nil)
+        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: self.user!, deviceInfo: self.device), completion: nil)
         log.verbose("WV_DATA: initiating SyncManager sync via rtm.")
     }
     

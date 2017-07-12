@@ -20,23 +20,22 @@ open class SyncRequest {
     public let requestTime: Date
     public private(set) var syncStartTime: Date?
     
-    fileprivate let user: User?
-    fileprivate let device: DeviceInfo?
-    fileprivate let deviceConnector: IPaymentDeviceConnector?
-    fileprivate var completion: SyncRequestCompletion?
-    
     fileprivate var state = SyncRequestState.pending
-    
     
     init(requestTime: Date = Date(),
          user: User? = nil,
-         device: DeviceInfo? = nil,
-         deviceConnector: IPaymentDeviceConnector? = nil) {
+         deviceInfo: DeviceInfo? = nil,
+         paymentDevice: PaymentDevice? = nil) {
         self.requestTime = requestTime
         self.user = user
-        self.device = device
-        self.deviceConnector = deviceConnector
+        self.deviceInfo = deviceInfo
+        self.paymentDevice = paymentDevice
     }
+    
+    internal let user: User?
+    internal let deviceInfo: DeviceInfo?
+    internal let paymentDevice: PaymentDevice?
+    fileprivate var completion: SyncRequestCompletion?
     
     internal func update(state: SyncRequestState) {
         if state == .inProgress {
@@ -53,7 +52,7 @@ open class SyncRequest {
     }
     
     func isSameUserAndDevice(otherRequest: SyncRequest) -> Bool {
-        return user?.id == otherRequest.user?.id && device?.deviceIdentifier == otherRequest.device?.deviceIdentifier
+        return user?.id == otherRequest.user?.id && deviceInfo?.deviceIdentifier == otherRequest.deviceInfo?.deviceIdentifier
     }
 }
 
@@ -141,16 +140,18 @@ open class SyncRequestQueue {
     fileprivate func startSyncFor(request: SyncRequest) -> NSError? {
         request.update(state: .inProgress)
         
-        let user = request.user
-        
-        let error: NSError?
-        if let user = user {
-            error = self.syncManager.sync(user, device: request.device, deviceConnector: request.deviceConnector)
+        var errorObj: NSError? = nil
+        if request.user != nil {
+            do {
+                try self.syncManager.syncWith(request: request)
+            } catch {
+                errorObj = error as NSError
+            }
         } else {
-            error = self.syncManager.tryToMakeSyncWithLastUser()
+            errorObj = self.syncManager.tryToMakeSyncWithLastUser()
         }
         
-        return error
+        return errorObj
     }
     
     fileprivate func lastSyncCompleteWith(status: EventStatus, error: Error?) {

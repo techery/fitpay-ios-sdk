@@ -15,6 +15,14 @@ class MockSyncManager: SyncManagerProtocol {
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     static var syncCompleteDelay: Double = 0.2
 
+    func syncWith(request: SyncRequest) throws {
+        if isSyncing {
+            throw NSError.unhandledError(MockSyncManager.self)
+        }
+        
+        self.startSync()
+    }
+    
     func sync(_ user: User, device: DeviceInfo?, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
         if isSyncing {
             return NSError.unhandledError(MockSyncManager.self)
