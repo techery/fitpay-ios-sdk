@@ -9,38 +9,34 @@
 import XCTest
 @testable import FitpaySDK
 
-
 class MockSyncManager: SyncManagerProtocol {
+    var synchronousModeOn: Bool = true
     var isSyncing: Bool = false
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     static var syncCompleteDelay: Double = 0.2
 
+    private var lastSyncRequest: SyncRequest?
+    
     func syncWith(request: SyncRequest) throws {
-        if isSyncing {
+        if isSyncing && synchronousModeOn {
             throw NSError.unhandledError(MockSyncManager.self)
         }
         
-        self.startSync()
+        lastSyncRequest = request
+        
+        self.startSync(request: request)
     }
     
-    func sync(_ user: User, device: DeviceInfo?, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
-        if isSyncing {
-            return NSError.unhandledError(MockSyncManager.self)
+    func syncWithLastRequest() throws {
+        guard let lastSyncRequest = self.lastSyncRequest else {
+            throw NSError.unhandledError(MockSyncManager.self)
         }
         
-        self.startSync()
-        
-        return nil
-    }
-    
-    func tryToMakeSyncWithLastUser() -> NSError? {
-        if isSyncing {
-            return NSError.unhandledError(MockSyncManager.self)
+        if isSyncing && synchronousModeOn {
+            throw NSError.unhandledError(MockSyncManager.self)
         }
         
-        self.startSync()
-        
-        return nil
+        self.startSync(request: lastSyncRequest)
     }
     
     func bindToSyncEvent(eventType: SyncEventType, completion: @escaping SyncEventBlockHandler) -> FitpayEventBinding? {
@@ -55,12 +51,12 @@ class MockSyncManager: SyncManagerProtocol {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
 
-    func startSync() {
+    func startSync(request: SyncRequest) {
         self.isSyncing = true
 
         DispatchQueue.main.asyncAfter(deadline: self.delayForSync) { [weak self] in
             self?.isSyncing = false
-            self?.callCompletionForSyncEvent(.syncCompleted, params: [:])
+            self?.callCompletionForSyncEvent(.syncCompleted, params: ["request":request])
         }
     }
     
@@ -70,12 +66,12 @@ class MockSyncManager: SyncManagerProtocol {
 }
 
 class MockFailedSyncManger: MockSyncManager {
-    override func startSync() {
+    override func startSync(request: SyncRequest) {
         self.isSyncing = true
         
         DispatchQueue.main.asyncAfter(deadline: self.delayForSync) { [weak self] in
             self?.isSyncing = false
-            self?.callCompletionForSyncEvent(.syncFailed, params: ["error":NSError.unhandledError(MockFailedSyncManger.self)])
+            self?.callCompletionForSyncEvent(.syncFailed, params: ["request":request, "error":NSError.unhandledError(MockFailedSyncManger.self)])
         }
     }
 }
@@ -83,20 +79,38 @@ class MockFailedSyncManger: MockSyncManager {
 
 class SyncRequestsQueueTests: XCTestCase {
     var requestsQueue: SyncRequestQueue!
+    var mockSyncManager: MockSyncManager!
     
     override func setUp() {
         super.setUp()
-        self.requestsQueue = SyncRequestQueue(syncManager: MockSyncManager())
+        self.mockSyncManager = MockSyncManager()
+        self.requestsQueue = SyncRequestQueue(syncManager: self.mockSyncManager)
     }
     
     override func tearDown() {
         super.tearDown()
     }
     
+    func getSyncRequest1() -> SyncRequest {
+        let deviceInfo = DeviceInfo()
+        deviceInfo.deviceIdentifier = "111-111-111"
+        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
+        SyncRequest.syncManager = self.mockSyncManager
+        return request
+    }
+    
+    func getSyncRequest2() -> SyncRequest {
+        let deviceInfo = DeviceInfo()
+        deviceInfo.deviceIdentifier = "123-123-123"
+        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
+        SyncRequest.syncManager = self.mockSyncManager
+        return request
+    }
+    
     func testMake1SuccessSync() {
         let expectation = super.expectation(description: "making 1 success sync")
 
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
             
@@ -112,7 +126,7 @@ class SyncRequestsQueueTests: XCTestCase {
 
         let expectation = super.expectation(description: "making 1 failed sync")
         
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
             
@@ -129,21 +143,21 @@ class SyncRequestsQueueTests: XCTestCase {
         MockSyncManager.syncCompleteDelay = 0.05
         
         var counter = 0
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 0)
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
             counter += 1
         }
         
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 1)
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
             counter += 1
         }
         
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 2)
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
@@ -163,21 +177,21 @@ class SyncRequestsQueueTests: XCTestCase {
         MockSyncManager.syncCompleteDelay = 0.02
         
         var counter = 0
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 0)
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
             counter += 1
         }
         
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 1)
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
             counter += 1
         }
         
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 2)
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
@@ -195,13 +209,13 @@ class SyncRequestsQueueTests: XCTestCase {
         MockSyncManager.syncCompleteDelay = 0.02
         
         var counter = 0
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 0)
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
             counter += 1
             
-            self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+            self.requestsQueue.add(request: self.getSyncRequest1()) { (status, error) in
                 XCTAssertEqual(counter, 3)
                 XCTAssertEqual(status, .success)
                 XCTAssertNil(error)
@@ -211,14 +225,14 @@ class SyncRequestsQueueTests: XCTestCase {
             }
         }
         
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 1)
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
             counter += 1
         }
         
-        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(counter, 2)
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
@@ -226,5 +240,60 @@ class SyncRequestsQueueTests: XCTestCase {
         }
         
         super.waitForExpectations(timeout: MockSyncManager.syncCompleteDelay * 5 + 1, handler: nil)
+    }
+    
+    func testParallelSync() {
+        let expectation = super.expectation(description: "making parallel sync")
+        
+        mockSyncManager.synchronousModeOn = false
+        MockSyncManager.syncCompleteDelay = 0.1
+        
+        var counter = 0
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
+            XCTAssertEqual(counter, 0)
+            XCTAssertEqual(status, .success)
+            XCTAssertNil(error)
+            counter += 1
+        }
+        
+        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
+            XCTAssertEqual(counter, 2)
+            XCTAssertEqual(status, .success)
+            XCTAssertNil(error)
+            counter += 1
+        }
+        
+        self.requestsQueue.add(request: getSyncRequest2()) { (status, error) in
+            XCTAssertEqual(counter, 1)
+            XCTAssertEqual(status, .success)
+            XCTAssertNil(error)
+            counter += 1
+        }
+        
+        self.requestsQueue.add(request: getSyncRequest2()) { (status, error) in
+            XCTAssertEqual(counter, 3)
+            XCTAssertEqual(status, .success)
+            XCTAssertNil(error)
+            counter += 1
+            expectation.fulfill()
+        }
+        
+        super.waitForExpectations(timeout: MockSyncManager.syncCompleteDelay * 5 + 1, handler: nil)
+    }
+    
+    func testMakeSyncWithoutDeviceInfo() {
+        let expectation = super.expectation(description: "making sync without device info")
+        mockSyncManager.synchronousModeOn = true
+        SyncRequest.syncManager = self.mockSyncManager
+
+        let request = SyncRequest()
+
+        self.requestsQueue.add(request: request) { (status, error) in
+            XCTAssertEqual(status, .failed)
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+        
+        super.waitForExpectations(timeout: 1, handler: nil)
     }
 }

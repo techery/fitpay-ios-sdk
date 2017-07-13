@@ -33,6 +33,7 @@ internal class SyncOperation {
         
         self.syncEventsPublisher   = PublishSubject<SyncEvent>()
         self.commitsApplyer        = CommitsApplyer(paymentDevice: self.paymentDevice,
+                                                    deviceInfo: self.deviceInfo,
                                                     eventsPublisher: self.syncEventsPublisher,
                                                     syncStorage: SyncStorage.sharedInstance)
         self.state                 = Variable(.waiting)
@@ -156,18 +157,6 @@ internal class SyncOperation {
                     log.verbose("SYNC_DATA: Commit applier returned with out errors.")
                     
                     self?.state.value = .completed(nil)
-                    
-    // NEEDS TO BE DONE!
-    //                self.getAllCardsWithToWAPDUCommands({ [unowned self] (cards, error) in
-    //                    if let error = error {
-    //                        log.error("SYNC_DATA: Can't get offline APDU commands. Error: \(error)")
-    //                        return
-    //                    }
-    //
-    //                    if let cards = cards {
-    //                        self.callCompletionForSyncEvent(SyncEventType.receivedCardsWithTowApduCommands, params: ["cards":cards])
-    //                    }
-    //                })
                 }
                 
                 if applayerStarted ?? false == false {
@@ -181,28 +170,3 @@ internal class SyncOperation {
         
     }
 }
-
-//internal typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
-//
-//internal func getAllCardsWithToWAPDUCommands(_ completion:@escaping ToWAPDUCommandsHandler) {
-//    if self.user == nil {
-//        completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
-//        return
-//    }
-//    
-//    self.user?.listCreditCards(excludeState: [""], limit: 20, offset: 0, completion: { (result, error) in
-//        if let error = error {
-//            completion(nil, error)
-//            return
-//        }
-//        
-//        if result!.nextAvailable {
-//            result?.collectAllAvailable({ (results, error) in
-//                completion(results, error)
-//            })
-//        } else {
-//            completion(result?.results, error)
-//        }
-//    })
-//}
-//

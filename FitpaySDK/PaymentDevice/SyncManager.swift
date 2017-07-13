@@ -11,10 +11,10 @@ public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
 
 protocol SyncManagerProtocol {
     func syncWith(request: SyncRequest) throws
-    
-    func tryToMakeSyncWithLastUser() -> NSError?
+    func syncWithLastRequest() throws
     
     var isSyncing: Bool { get }
+    var synchronousModeOn: Bool { get }
     
     func bindToSyncEvent(eventType: SyncEventType, completion: @escaping SyncEventBlockHandler) -> FitpayEventBinding?
     func removeSyncBinding(binding: FitpayEventBinding)
@@ -23,7 +23,7 @@ protocol SyncManagerProtocol {
 
 open class SyncManager : NSObject, SyncManagerProtocol {
     open static let sharedInstance = SyncManager()
-    open var synchronousMode = false
+    open var synchronousModeOn = false
     
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open var paymentDevice : PaymentDevice?
@@ -168,7 +168,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
     internal func syncWith(request: SyncRequest) throws {
-        if synchronousMode {
+        if synchronousModeOn {
             if syncOperations.count > 0 {
                 throw ErrorCode.syncAlreadyStarted
             }
@@ -249,6 +249,30 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
 
+    internal typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
+    
+    internal func getAllCardsWithToWAPDUCommands(_ completion:@escaping ToWAPDUCommandsHandler) {
+        if self.user == nil {
+            completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
+            return
+        }
+    
+        self.user?.listCreditCards(excludeState: [""], limit: 20, offset: 0, completion: { (result, error) in
+            if let error = error {
+                completion(nil, error)
+                return
+            }
+    
+            if result!.nextAvailable {
+                result?.collectAllAvailable({ (results, error) in
+                    completion(results, error)
+                })
+            } else {
+                completion(result?.results, error)
+            }
+        })
+    }
+    
     fileprivate func syncFinishedFor(request: SyncRequest, withError error: Error?) {
         request.deviceInfo?.updateNotificationTokenIfNeeded()
         
@@ -269,6 +293,17 @@ open class SyncManager : NSObject, SyncManagerProtocol {
             log.debug("SYNC_DATA: Sync finished successfully")
             callCompletionForSyncEvent(SyncEventType.syncCompleted, params: eventParams)
         }
+        
+        self.getAllCardsWithToWAPDUCommands({ [unowned self] (cards, error) in
+            if let error = error {
+                log.error("SYNC_DATA: Can't get offline APDU commands. Error: \(error)")
+                return
+            }
+
+            if let cards = cards {
+                self.callCompletionForSyncEvent(SyncEventType.receivedCardsWithTowApduCommands, params: ["cards":cards])
+            }
+        })
     }
 }
 

@@ -26,7 +26,7 @@ class MockCommitsFetcher: FetchCommitsOperationProtocol {
         return Observable<[Commit]>.just(commits)
     }
     
-    func getCreateCardCommit(id: String) -> Commit {
+    func getCreateCardCommit(id: String = "12323") -> Commit {
         return Commit(JSONString: "{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"commitType\":\"CREDITCARD_CREATED\",\"payload\":{\"createdTsEpoch\":1446587257324,\"cvv\":\"###\",\"address\":{\"street1\":\"1035 Pearl St\",\"street2\":\"5th Floor\",\"city\":\"Boulder\",\"state\":\"CO\",\"postalCode\":\"80302\",\"countryCode\":\"US\"},\"deviceRelationships\":[{\"deviceType\":\"ACTIVITY_TRACKER\",\"deviceIdentifier\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"manufacturerName\":\"Pebble\",\"deviceName\":\"Pebble Time\",\"serialNumber\":\"074DCC022E14\",\"modelNumber\":\"FB404\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2015-11-03T21:47:37.146+0000\",\"createdTsEpoch\":1446587257146,\"osName\":\"ANDROID\",\"systemId\":\"0x123456FFFE9ABCDE\"}],\"cardType\":\"VISA\",\"creditCardId\":\"da635517-7f9e-4833-a772-2eab3b9d30c9\",\"termsAssetId\":\"c076a474-222c-48f4-9f87-776ee2cb0140\",\"userId\":\"9469bfe0-3fa1-4465-9abf-f78cacc740b2\",\"createdTs\":\"2015-11-03T21:47:37.324Z\",\"expMonth\":12,\"targetDeviceType\":\"fitpay.tokenization.model.Device\",\"expYear\":2018,\"targetDeviceId\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"termsAssetReferences\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-498647650&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=40\",\"title\":null}},\"mimeType\":\"text/html\"}],\"name\":\"John Doe\",\"state\":\"ELIGIBLE\",\"pan\":\"############4441\",\"cardMetaData\":{\"labelColor\":\"00000\",\"issuerName\":\"JPMorgan Chase\",\"shortDescription\":\"Chase Freedom Visa\",\"longDescription\":\"Chase Freedom Visa with the super duper rewards\",\"contactUrl\":\"www.chase.com\",\"contactPhone\":\"18001234567\",\"contactEmail\":\"goldcustomer@chase.com\",\"termsAndConditionsUrl\":\"http://visa.com/terms\",\"privacyPolicyUrl\":\"http://visa.com/privacy\",\"brandLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}],\"cardBackground\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=42\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"cardBackgroundCombined\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=43\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"icon\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=1661540331&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/jpeg\",\"height\":\"1024\",\"width\":\"1024\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1279887808&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"64\",\"width\":\"64\"}],\"issuerLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}]}},\"createdTs\":1446587258151,\"commit\":\"\(id)\"}")!
     }
     
@@ -114,6 +114,45 @@ class SyncOperationTests: XCTestCase {
         XCTAssertTrue(events.contains { $0.event == SyncEventType.apduPackageComplete })
         XCTAssertTrue(events.contains { $0.event == SyncEventType.cardAdded })
         XCTAssertEqual(events.last?.event, SyncEventType.syncCompleted)
+    }
+    
+    func testParallelSync() {
+        
+        let expectation = super.expectation(description: "making parallel sync")
+
+        let paymentDevice = PaymentDevice()
+        let secondConnector = MockPaymentDeviceConnector(paymentDevice: paymentDevice)
+        _ = paymentDevice.changeDeviceInterface(secondConnector)
+
+        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: DeviceInfo(), user: User(JSONString: "{\"id\":\"1\"}")!)
+        
+        commitsFetcher.commits = [commitsFetcher.getCreateCardCommit(id: "1"), commitsFetcher.getAPDUCommit()]
+
+        secondSyncOperation.fetchCommitsOperation = commitsFetcher
+        syncOperation.fetchCommitsOperation = commitsFetcher
+
+        secondConnector.connectDelayTime = 0.1 // second operation should work faster
+        connector.connectDelayTime = 0.3
+        
+        secondSyncOperation.commitsApplyer.apduConfirmOperation = MockAPDUConfirm()
+        syncOperation.commitsApplyer.apduConfirmOperation = MockAPDUConfirm()
+
+        var syncCompleteCounter = 0
+        
+        syncOperation.start().subscribe(onNext: { (event) in
+            if event.event == .syncCompleted {
+                XCTAssertEqual(syncCompleteCounter, 1)
+                expectation.fulfill()
+            }
+        }).disposed(by: self.disposeBag)
+        
+        secondSyncOperation.start().subscribe(onNext: { (event) in
+            if event.event == .syncCompleted {
+                syncCompleteCounter += 1
+            }
+        }).disposed(by: self.disposeBag)
+
+        super.waitForExpectations(timeout: 5, handler: nil)
     }
 }
 

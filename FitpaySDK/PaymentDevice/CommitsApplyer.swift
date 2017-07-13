@@ -3,11 +3,13 @@ import RxSwift
 internal class CommitsApplyer {
 
     init(paymentDevice: PaymentDevice,
+         deviceInfo: DeviceInfo,
          eventsPublisher: PublishSubject<SyncEvent>,
          syncStorage: SyncStorage) {
         self.paymentDevice        = paymentDevice
         self.eventsPublisher      = eventsPublisher
         self.syncStorage          = syncStorage
+        self.deviceInfo           = deviceInfo
         self.apduConfirmOperation = APDUConfirmOperation()
     }
     
@@ -60,6 +62,7 @@ internal class CommitsApplyer {
     fileprivate let maxAPDUCommandsRetries = 0
     fileprivate let paymentDevice: PaymentDevice
     fileprivate var syncStorage: SyncStorage
+    fileprivate var deviceInfo: DeviceInfo
     
     // rx
     fileprivate let eventsPublisher: PublishSubject<SyncEvent>
@@ -114,7 +117,7 @@ internal class CommitsApplyer {
 
         let commitCompletion = { (error: Error?) -> Void in
             if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
-                if let deviceId = self.paymentDevice.deviceInfo?.deviceIdentifier, let commit = commit.commit {
+                if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commit {
                     self.syncStorage.setLastCommitId(deviceId, commitId: commit)
                 } else {
                     log.error("SYNC_DATA: Can't get deviceId or commitId.")
