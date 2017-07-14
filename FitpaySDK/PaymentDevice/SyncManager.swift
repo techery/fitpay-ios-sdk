@@ -163,7 +163,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         eventsDispatcher.removeAllBindings()
     }
     
-
+    internal var lastSyncRequest: SyncRequest?
     internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
@@ -239,7 +239,6 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     fileprivate var user: User?
-    fileprivate var lastSyncRequest: SyncRequest?
     
     fileprivate override init() {
         super.init()

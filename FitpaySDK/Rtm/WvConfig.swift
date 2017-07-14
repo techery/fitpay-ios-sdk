@@ -73,28 +73,6 @@ import ObjectMapper
     }
 }
 
-@available(*, deprecated, message: "use WvRTMDelegate: instead")
-@objc public protocol WvConfigDelegate : NSObjectProtocol {
-    /**
-     This method will be called after successful user authorization.
-     */
-    func didAuthorizeWithEmail(_ email:String?)
-    
-    /**
-     This method can be used for user messages customization.
-     
-     Will be called when status has changed and system going to show message.
-     
-     - parameter status:         New device status
-     - parameter defaultMessage: Default message for new status
-     - parameter error:          If we had an error during status change than it will be here.
-                                 For now error will be used with SyncError status
-     
-     - returns:                  Message string which will be shown on status board.
-     */
-    @objc optional func willDisplayStatusMessage(_ status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
-}
-
 @objc public protocol WvRTMDelegate : NSObjectProtocol {
     /**
      This method will be called after successful user authorization.
@@ -163,9 +141,6 @@ internal enum WVResponse: Int {
             }
         }
     }
-
-    @available(*, unavailable, message: "use rtmDelegate: instead")
-    weak open var delegate : WvConfigDelegate?
     
     weak open var rtmDelegate : WvRTMDelegate?
     weak open var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate?
@@ -188,6 +163,7 @@ internal enum WVResponse: Int {
     var connectionBinding: FitpayEventBinding?
     var sessionDataCallBack: RtmMessage?
     var syncCallBacks = [RtmMessage]()
+
     
     private var bindings: [FitpayEventBinding] = []
 
@@ -214,10 +190,7 @@ internal enum WVResponse: Int {
         self.rtmConfig = rtmConfig
         self.sdkConfiguration = SDKConfiguration
         self.url = SDKConfiguration.webViewURL
-        
-
-        SyncManager.sharedInstance.paymentDevice = paymentDevice
-        
+                
         super.init()
 
         self.demoModeEnabled = false

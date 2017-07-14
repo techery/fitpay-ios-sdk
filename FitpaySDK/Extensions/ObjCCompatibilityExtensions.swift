@@ -1,4 +1,3 @@
-import FitpaySDK
 import Foundation
 
 public extension Transaction
