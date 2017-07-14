@@ -560,7 +560,7 @@ public extension CreditCard
         self.reactivate(causedBy: CreditCardInitiator(rawValue:causedBy)!, reason: reason, completion: completion)
     }
     
-    @objc public func listTransactions(limit:Int, offset:Int, completion:@escaping ResultCollectionObjC.ResultCollectionHandler)
+    @objc public func listTransactionsObjC(limit:Int, offset:Int, completion:@escaping ResultCollectionObjC.ResultCollectionHandler)
     {
         self.listTransactions(limit:limit, offset: offset)
         {
