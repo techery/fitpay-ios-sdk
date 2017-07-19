@@ -251,6 +251,11 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     internal typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
     
     internal func getAllCardsWithToWAPDUCommands(_ completion:@escaping ToWAPDUCommandsHandler) {
+        var user = self.user
+        if user == nil {
+            user = lastSyncRequest?.user
+        }
+        
         if self.user == nil {
             completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
             return
