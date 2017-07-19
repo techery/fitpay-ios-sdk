@@ -108,7 +108,7 @@ class RtmMessagingTests: XCTestCase {
         super.waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testLoverVersionReceived() {
+    func testLowerVersionReceived() {
         let expectation = super.expectation(description: "rtm messaging")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
