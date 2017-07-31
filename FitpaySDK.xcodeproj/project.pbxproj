@@ -24,8 +24,8 @@
 		3701AE4A1F14C29900550890 /* SyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE461F14C29900550890 /* SyncOperation.swift */; };
 		3701AE4C1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE4B1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift */; };
 		3701AE4D1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE4B1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift */; };
-		3701AE551F1613B200550890 /* SyncOpeartionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE521F16137600550890 /* SyncOpeartionTests.swift */; };
-		3701AE561F1613B200550890 /* SyncOpeartionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE521F16137600550890 /* SyncOpeartionTests.swift */; };
+		3701AE551F1613B200550890 /* SyncOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE521F16137600550890 /* SyncOperationTests.swift */; };
+		3701AE561F1613B200550890 /* SyncOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE521F16137600550890 /* SyncOperationTests.swift */; };
 		3701AE581F16180000550890 /* FetchCommitsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE571F16180000550890 /* FetchCommitsOperation.swift */; };
 		3701AE591F16180000550890 /* FetchCommitsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE571F16180000550890 /* FetchCommitsOperation.swift */; };
 		37139BDB1F164695001EEE73 /* APDUConfirmOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BDA1F164695001EEE73 /* APDUConfirmOperation.swift */; };
@@ -376,7 +376,7 @@
 		3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectDeviceOperation.swift; sourceTree = "<group>"; };
 		3701AE461F14C29900550890 /* SyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
 		3701AE4B1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOperationStateToSyncEventAdapter.swift; sourceTree = "<group>"; };
-		3701AE521F16137600550890 /* SyncOpeartionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOpeartionTests.swift; sourceTree = "<group>"; };
+		3701AE521F16137600550890 /* SyncOperationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOperationTests.swift; sourceTree = "<group>"; };
 		3701AE571F16180000550890 /* FetchCommitsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchCommitsOperation.swift; sourceTree = "<group>"; };
 		37139BDA1F164695001EEE73 /* APDUConfirmOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APDUConfirmOperation.swift; sourceTree = "<group>"; };
 		37139BDF1F177B04001EEE73 /* SyncRequestsQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncRequestsQueue.swift; sourceTree = "<group>"; };
@@ -714,7 +714,7 @@
 				9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */,
 				0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */,
 				37D0CFE31ED599C00049B5AA /* SyncRequestsQueueTests.swift */,
-				3701AE521F16137600550890 /* SyncOpeartionTests.swift */,
+				3701AE521F16137600550890 /* SyncOperationTests.swift */,
 				37D908211F1E546700AA9F86 /* RtmMessagingTests.swift */,
 			);
 			path = FitpaySDKTests;
@@ -1839,7 +1839,7 @@
 				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
 				9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */,
 				0A7EE11B1CFE0A2B00503BC8 /* testHelpers.swift in Sources */,
-				3701AE551F1613B200550890 /* SyncOpeartionTests.swift in Sources */,
+				3701AE551F1613B200550890 /* SyncOperationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1856,7 +1856,7 @@
 				3A46E14D1DF023F9002D0270 /* JWETests.swift in Sources */,
 				3A46E14E1DF023F9002D0270 /* RestClientTests.swift in Sources */,
 				3A46E14F1DF023F9002D0270 /* testHelpers.swift in Sources */,
-				3701AE561F1613B200550890 /* SyncOpeartionTests.swift in Sources */,
+				3701AE561F1613B200550890 /* SyncOperationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
