@@ -9,7 +9,7 @@ open class Relationship : NSObject, ClientModel, Mappable
     
     fileprivate static let selfResource = "self"
     
-    internal weak var client:RestClient?
+    public weak var client:RestClient?
     
     public required init?(map: Map)
     {

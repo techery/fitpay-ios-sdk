@@ -16,7 +16,7 @@ open class Transaction : NSObject, ClientModel, Mappable
     open var merchantType:String?
     
     fileprivate static let selfResource = "self"
-    internal weak var client:RestClient?
+    public weak var client:RestClient?
     
     public required init?(map: Map)
     {

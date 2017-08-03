@@ -15,7 +15,7 @@ open class Image: NSObject, ClientModel, Mappable, AssetRetrivable
     open var mimeType: String?
     open var height: Int?
     open var width: Int?
-    internal var client: RestClient?
+    public var client: RestClient?
     fileprivate static let selfResource = "self"
     
     public required init?(map: Map) {

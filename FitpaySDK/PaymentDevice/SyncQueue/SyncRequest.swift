@@ -29,7 +29,7 @@ open class SyncRequest {
     ///           You can use nil only for synchronous sync mode.
     ///   - paymentDevice: payment device object. If nil then will be used payment device from previous sync.
     ///           You can use nil only for synchronous sync mode.
-    init(requestTime: Date = Date(),
+    public init(requestTime: Date = Date(),
          user: User? = nil,
          deviceInfo: DeviceInfo? = nil,
          paymentDevice: PaymentDevice? = nil) {
