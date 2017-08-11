@@ -77,6 +77,8 @@
 		37F781B11F17C8FA00742E15 /* SyncRequestsQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BDF1F177B04001EEE73 /* SyncRequestsQueue.swift */; };
 		37F781DE1F18B57E00742E15 /* ObjCCompatibilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */; };
 		37F781DF1F18B57F00742E15 /* ObjCCompatibilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */; };
+		37F781F71F18F64B00742E15 /* RtmDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F781F51F18F64B00742E15 /* RtmDeviceInfo.swift */; };
+		37F781F81F18F64B00742E15 /* RtmSecureDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F781F61F18F64B00742E15 /* RtmSecureDeviceInfo.swift */; };
 		3A18E6FA1D4B9B01005E471F /* FitpaySDKConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A18E6F91D4B9B01005E471F /* FitpaySDKConfiguration.swift */; };
 		3A32D0161CC7CA68000BB0D8 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		3A32D0171CC7CA68000BB0D8 /* FitpaySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -396,6 +398,8 @@
 		37DB88751F0F87A600B070DA /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		37F781AC1F17C8A300742E15 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = "../../../../Library/Developer/Xcode/DerivedData/FitpaySDK-ftljlgyeumfdweegbredonxspgdi/Build/Products/Debug-iphonesimulator/RxSwift/RxSwift.framework"; sourceTree = "<group>"; };
 		37F781AE1F17C8A800742E15 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = "../../../../Library/Developer/Xcode/DerivedData/FitpaySDK-ftljlgyeumfdweegbredonxspgdi/Build/Products/Debug-iphonesimulator/RxBlocking/RxBlocking.framework"; sourceTree = "<group>"; };
+		37F781F51F18F64B00742E15 /* RtmDeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmDeviceInfo.swift; sourceTree = "<group>"; };
+		37F781F61F18F64B00742E15 /* RtmSecureDeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmSecureDeviceInfo.swift; sourceTree = "<group>"; };
 		3A18E6F91D4B9B01005E471F /* FitpaySDKConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FitpaySDKConfiguration.swift; sourceTree = "<group>"; };
 		3A1CD3521DCCE39600B97AC8 /* SwiftyBeaver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyBeaver.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/FitpaySDK-hiwsoltxrmlgfogrkxhcqbugbddj/Build/Products/Debug-iphonesimulator/SwiftyBeaver/SwiftyBeaver.framework"; sourceTree = "<group>"; };
 		3A46E15B1DF023F9002D0270 /* FitpaySDKTestsCarthage.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitpaySDKTestsCarthage.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1046,6 +1050,8 @@
 		CD0385FBA6E03879966B500B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				37F781F51F18F64B00742E15 /* RtmDeviceInfo.swift */,
+				37F781F61F18F64B00742E15 /* RtmSecureDeviceInfo.swift */,
 				0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */,
 				CD03843A84ED76B33DA758D4 /* WebViewSessionData.swift */,
 				3A640B451DDF110E008AD936 /* RtmMessage.swift */,
@@ -1724,6 +1730,7 @@
 				CD03806996B162B739B5C3C4 /* User.swift in Sources */,
 				8C870F171D00EC630048A1DF /* Transforms.swift in Sources */,
 				9AB68E3F1C84A1EC00A0E172 /* JWEObject.swift in Sources */,
+				37F781F71F18F64B00742E15 /* RtmDeviceInfo.swift in Sources */,
 				9AB68E401C84A1EC00A0E172 /* Base64Utils.swift in Sources */,
 				37139BE21F177B21001EEE73 /* SyncRequest.swift in Sources */,
 				CD038E19C412D95ED6F9F036 /* Relationship.swift in Sources */,
@@ -1757,6 +1764,7 @@
 				CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */,
 				847264A21CA53D0800DE801D /* BLEPackets.swift in Sources */,
 				37D0CFEF1EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
+				37F781F81F18F64B00742E15 /* RtmSecureDeviceInfo.swift in Sources */,
 				9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */,
 				3A18E6FA1D4B9B01005E471F /* FitpaySDKConfiguration.swift in Sources */,
 				9A7C78841CC77F210097BAB9 /* FitpayEventTypeProtocol.swift in Sources */,
