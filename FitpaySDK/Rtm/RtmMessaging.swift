@@ -25,7 +25,8 @@ class RtmMessaging {
     lazy var handlersMapping: [RtmProtocolVersion: RtmMessageHandler?] = {
         return [RtmProtocolVersion.ver1: nil,
                 RtmProtocolVersion.ver2: RtmMessageHandlerV2(wvConfigStorage: self.wvConfigStorage),
-                RtmProtocolVersion.ver3: RtmMessageHandlerV3(wvConfigStorage: self.wvConfigStorage)]
+                RtmProtocolVersion.ver3: RtmMessageHandlerV3(wvConfigStorage: self.wvConfigStorage),
+                RtmProtocolVersion.ver4: RtmMessageHandlerV4(wvConfigStorage: self.wvConfigStorage)]
     }()
     
     init(wvConfigStorage: WvConfigStorage) {

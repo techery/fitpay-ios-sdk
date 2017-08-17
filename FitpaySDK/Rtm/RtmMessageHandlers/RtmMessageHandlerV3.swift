@@ -48,7 +48,7 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
     
     override func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler? {
         guard let messageAction = RtmMessageTypeVer3(rawValue: rtmMessage) else {
-            log.error("WV_DATA: RtmMessage. Action is missing or unknown: \(rtmMessage)")
+            log.debug("WV_DATA: RtmMessage. Action is missing or unknown: \(rtmMessage)")
             return nil
         }
         
