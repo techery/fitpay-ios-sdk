@@ -21,6 +21,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     let apduSecsTimeout : Double = 5
     var sequenceId: UInt16 = 0
     var testingType: TestingType
+    var connectDelayTime: Double = 4
     
     var timeoutTimer : Timer?
     
@@ -31,7 +32,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     
     open func connect() {
         log.verbose("connecting")
-        DispatchQueue.main.asyncAfter(deadline: getDelayTime(), execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + connectDelayTime, execute: {
             self.connected = true
             self._nfcState = SecurityNFCState.enabled
             let deviceInfo = self.deviceInfo()

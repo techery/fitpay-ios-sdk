@@ -1,99 +1,6 @@
 
 import ObjectMapper
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
-}
-
-
-
-@objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
-    case connectingToDevice = 0x1
-    case connectingToDeviceFailed
-    case connectingToDeviceCompleted
-    
-    case syncStarted
-    case syncFailed
-    case syncCompleted
-    case syncProgress
-    case receivedCardsWithTowApduCommands
-    case apduCommandsProgress
-    
-    case apduPackageComplete
-    
-    case commitsReceived
-    case commitProcessed
-
-    case cardAdded
-    case cardDeleted
-    case cardActivated
-    case cardDeactivated
-    case cardReactivated
-    case setDefaultCard
-    case resetDefaultCard
-    
-    public func eventId() -> Int {
-        return rawValue
-    }
-    
-    public func eventDescription() -> String {
-        switch self {
-        case .connectingToDevice:
-            return "Connecting to device"
-        case .connectingToDeviceFailed:
-            return "Connecting to device failed"
-        case .connectingToDeviceCompleted:
-            return "Connecting to device completed"
-        case .syncStarted:
-            return "Sync started"
-        case .syncFailed:
-            return "Sync failed"
-        case .syncCompleted:
-            return "Sync completed"
-        case .syncProgress:
-            return "Sync progress"
-        case .receivedCardsWithTowApduCommands:
-            return "Received cards with Top of Wallet APDU commands"
-        case .apduCommandsProgress:
-            return "APDU progress"
-        case .commitsReceived:
-            return "Commits received"
-        case .commitProcessed:
-            return "Processed commit"
-        case .apduPackageComplete:
-            return "Processing APDU package complete"
-        case .cardAdded:
-            return "New card was added"
-        case .cardDeleted:
-            return "Card was deleted"
-        case .cardActivated:
-            return "Card was activated"
-        case .cardDeactivated:
-            return "Card was deactivated"
-        case .cardReactivated:
-            return "Card was reactivated"
-        case .setDefaultCard:
-            return "New default card was manually set"
-        case .resetDefaultCard:
-            return "New default card was automatically set"
-        }
-    }
-}
+import RxSwift
 
 /**
  Completion handler
@@ -103,10 +10,11 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
 
 protocol SyncManagerProtocol {
-    func sync(_ user: User, device: DeviceInfo?, deviceConnector: IPaymentDeviceConnector?) -> NSError?
-    func tryToMakeSyncWithLastUser() -> NSError?
+    func syncWith(request: SyncRequest) throws
+    func syncWithLastRequest() throws
     
     var isSyncing: Bool { get }
+    var synchronousModeOn: Bool { get }
     
     func bindToSyncEvent(eventType: SyncEventType, completion: @escaping SyncEventBlockHandler) -> FitpayEventBinding?
     func removeSyncBinding(binding: FitpayEventBinding)
@@ -115,28 +23,19 @@ protocol SyncManagerProtocol {
 
 open class SyncManager : NSObject, SyncManagerProtocol {
     open static let sharedInstance = SyncManager()
+    open var synchronousModeOn = false
+    
+    @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open var paymentDevice : PaymentDevice?
     
+    @available(*, deprecated, message: "you can use lastSyncRequest instead")
     open var userId : String? {
         return user?.id
     }
     
-    internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
-    internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
-    
+    @available(*, deprecated, message: "you can use lastSyncRequest instead")
     public private(set) var deviceInfo : DeviceInfo?
 
-    fileprivate let eventsDispatcher = FitpayEventDispatcher()
-    fileprivate var user : User?
-    
-    fileprivate var commitsApplyer = CommitsApplyer()
-    
-    fileprivate weak var deviceConnectedBinding : FitpayEventBinding?
-    fileprivate weak var deviceDisconnectedBinding : FitpayEventBinding?
-    
-    fileprivate override init() {
-        super.init()
-    }
     
     public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
     {
@@ -149,6 +48,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         case commitsApplyerIsBusy           = 10006
         case connectionWithDeviceWasLost    = 10007
         case userIsNill                     = 10008
+        case notEnoughData                  = 10009
         
         public var description : String {
             switch self {
@@ -170,6 +70,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
                 return "Connection with device was lost."
             case .userIsNill:
                 return "User is nill"
+            case .notEnoughData:
+                return "For sync we need user, deviceInfo, paymentDevice, connector - some of that values is missing."
             }
         }
     }
@@ -177,12 +79,13 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     open fileprivate(set) var isSyncing : Bool = false
     
     /**
-     Starts sync process with payment device. 
+     Starts sync process with payment device.
      If device disconnected, than system tries to connect.
      
      - parameter user:	 user from API to whom device belongs to.
      - parameter device: device which we will sync with. If nil then we will use first one with secureElemendId.
      */
+    @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open func sync(_ user: User, device: DeviceInfo? = nil, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
         log.debug("SYNC_DATA: Starting sync.")
         if self.isSyncing {
@@ -200,24 +103,11 @@ open class SyncManager : NSObject, SyncManagerProtocol {
             }
         }
         
-        if self.paymentDevice!.isConnected {
-            log.verbose("SYNC_DATA: Validating device connection to sync.")
-            self.paymentDevice?.validateConnection(completion: { (isValid, error) in
-                if let error = error {
-                    self.syncFinished(error: error)
-                    return
-                }
-                
-                if isValid {
-                    self.startSync()
-                } else {
-                    self.syncWithDeviceConnection()
-                }
-            })
-            return nil
+        do {
+            try syncWith(request: SyncRequest(user: user, deviceInfo: device, paymentDevice: self.paymentDevice))
+        } catch {
+            return error as NSError
         }
-        
-        self.syncWithDeviceConnection()
         
         return nil
     }
@@ -229,6 +119,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
      
      - parameter user: user from API to whom device belongs to.
      */
+    @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open func tryToMakeSyncWithLastUser() -> NSError? {
         guard let user = self.user else {
             return NSError.error(code: SyncManager.ErrorCode.userIsNill, domain: SyncManager.self)
@@ -272,63 +163,91 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         eventsDispatcher.removeAllBindings()
     }
     
-    internal func syncWithDeviceConnection() {
-        log.verbose("SYNC_DATA: No connection to device so connecting before initing sync.")
-        if let binding = self.deviceConnectedBinding {
-            self.paymentDevice!.removeBinding(binding: binding)
+    internal var lastSyncRequest: SyncRequest?
+    internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
+    internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
+    
+    internal func syncWith(request: SyncRequest) throws {
+        if synchronousModeOn {
+            if syncOperations.count > 0 {
+                throw ErrorCode.syncAlreadyStarted
+            }
         }
         
-        if let binding = self.deviceDisconnectedBinding {
-            self.paymentDevice!.removeBinding(binding: binding)
+        if let deviceInfo = request.deviceInfo {
+            if syncOperations[deviceInfo] != nil {
+                throw ErrorCode.syncAlreadyStarted
+            }
         }
         
-        self.deviceConnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
-            [unowned self] (event) in
-
-            let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
-            let error = (event.eventData as? [String:Any])?["error"] as? Error
-
-            guard (error == nil && deviceInfo != nil) else {
-                
-                self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted, params: ["error": NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self)])
-                
-                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self))
-                
-                return
-            }
-
-            self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted)
-
-            self.startSync()
-
-            if let binding = self.deviceConnectedBinding {
-                self.paymentDevice!.removeBinding(binding: binding)
-            }
-
-            self.deviceConnectedBinding = nil
-        })
-        
-        self.deviceDisconnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
-            [unowned self] (event) in
-            self.callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": NSError.error(code: SyncManager.ErrorCode.connectionWithDeviceWasLost, domain: SyncManager.self)])
-            
-            if let binding = self.deviceConnectedBinding {
-                self.paymentDevice!.removeBinding(binding: binding)
-            }
-            
-            if let binding = self.deviceDisconnectedBinding {
-                self.paymentDevice!.removeBinding(binding: binding)
-            }
-            
-            self.deviceConnectedBinding = nil
-            self.deviceDisconnectedBinding = nil
-        })
-        
-        self.paymentDevice!.connect(self.paymentDeviceConnectionTimeoutInSecs)
-        
-        self.callCompletionForSyncEvent(SyncEventType.connectingToDevice)
+        do {
+            try self.startSyncWith(request: request)
+        } catch {
+            throw error
+        }
     }
     
+    internal func syncWithLastRequest() throws {
+        guard let lastSyncRequest = self.lastSyncRequest else {
+            throw ErrorCode.notEnoughData
+        }
+        
+        do {
+            try self.startSyncWith(request: lastSyncRequest)
+        } catch {
+            throw error
+        }
+    }
+    
+    fileprivate func startSyncWith(request: SyncRequest) throws {
+        guard let paymentDevice = request.paymentDevice,
+            let connector = request.paymentDevice?.deviceInterface,
+            let deviceInfo = request.deviceInfo,
+            let user = request.user else {
+                throw ErrorCode.notEnoughData
+        }
+
+        lastSyncRequest = request
+        
+        let syncOperation = SyncOperation(paymentDevice: paymentDevice,
+                                          connector: connector,
+                                          deviceInfo: deviceInfo,
+                                          user: user)
+        
+        syncOperations[deviceInfo] = syncOperation
+        
+        syncOperation.start().subscribe(onNext: { [unowned self] (event) in
+            
+            switch event.event {
+            case .syncCompleted:
+                self.syncFinishedFor(request: request, withError: nil)
+                self.syncOperations.removeValue(forKey: deviceInfo)
+                break
+            case .syncFailed:
+                self.syncFinishedFor(request: request, withError: event.data["error"] as? Error)
+                self.syncOperations.removeValue(forKey: deviceInfo)
+                break
+            default:
+                self.callCompletionForSyncEvent(event.event, params: event.data)
+            }
+            
+        }).disposed(by: disposeBag)
+    }
+    
+    fileprivate var syncOperations = [DeviceInfo:SyncOperation]()
+    fileprivate var disposeBag = DisposeBag()
+    
+    fileprivate let eventsDispatcher = FitpayEventDispatcher()
+    fileprivate var user: User?
+    
+    fileprivate override init() {
+        super.init()
+    }
+    
+    internal func callCompletionForSyncEvent(_ event: SyncEventType, params: [String:Any] = [:]) {
+        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
+    }
+
     internal typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
     
     internal func getAllCardsWithToWAPDUCommands(_ completion:@escaping ToWAPDUCommandsHandler) {
@@ -336,13 +255,13 @@ open class SyncManager : NSObject, SyncManagerProtocol {
             completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
             return
         }
-        
+    
         self.user?.listCreditCards(excludeState: [""], limit: 20, offset: 0, completion: { (result, error) in
             if let error = error {
                 completion(nil, error)
                 return
             }
-            
+    
             if result!.nextAvailable {
                 result?.collectAllAvailable({ (results, error) in
                     completion(results, error)
@@ -353,182 +272,37 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         })
     }
     
-    fileprivate func startSync() {
-        log.verbose("SYNC_DATA: Sync preconditions validated, beginning process.")
-        
-        self.callCompletionForSyncEvent(SyncEventType.syncStarted)
-        
-        getCommits()
-        {
-            [unowned self] (commits, error) -> Void in
-            
-            guard (error == nil && commits != nil) else {
-                log.error("SYNC_DATA: failed to get commits error: \(String(describing: error)).")
-                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantFetchCommits, domain: SyncManager.self))
-                return
-            }
-            
-            self.callCompletionForSyncEvent(.commitsReceived, params: ["commits":commits!])
-
-            log.debug("SYNC_DATA: \(commits?.count ?? 0) commits successfully retrieved.")
-
-            let applayerStarted = self.commitsApplyer.apply(commits!, completion:
-            {
-                [unowned self] (error) -> Void in
-                
-                if let _ = error {
-                    log.error("SYNC_DATA: Commit applier returned a failure: \(String(describing: error))")
-                    self.syncFinished(error: error)
-                    return
-                }
-
-                log.verbose("SYNC_DATA: Commit applier returned with out errors.")
-                
-                self.syncFinished(error: nil)
-                
-                self.getAllCardsWithToWAPDUCommands({ [unowned self] (cards, error) in
-                    if let error = error {
-                        log.error("SYNC_DATA: Can't get offline APDU commands. Error: \(error)")
-                        return
-                    }
-                    
-                    if let cards = cards {
-                        self.callCompletionForSyncEvent(SyncEventType.receivedCardsWithTowApduCommands, params: ["cards":cards])
-                    }
-                })
-            })
-            
-            if !applayerStarted {
-                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.commitsApplyerIsBusy, domain: SyncManager.self))
-            }
-        }
-    }
-    
-    fileprivate func obtainDeviceInfo(completion: @escaping (_ deviceInfo: DeviceInfo?, _ error: Error?)->Void) {
-        // we already have device, return it
-        if self.deviceInfo != nil {
-            completion(self.deviceInfo, nil)
-            return
-        }
-        
-        // we should find device because we have no device
-        findDeviceInfo(20, searchOffset: 0, completion: completion)
-    }
-    
-    fileprivate func findDeviceInfo(_ itrSearchLimit: Int, searchOffset: Int, completion: @escaping (_ deviceInfo: DeviceInfo?, _ error: Error?)->Void) {
-        user?.listDevices(limit: itrSearchLimit, offset: searchOffset, completion:
-        {
-            [unowned self] (result, error) -> Void in
-            
-            guard (error == nil && result != nil && result?.results?.count > 0) else {
-                completion(nil, error)
-                return
-            }
-            
-            for deviceInfo in result!.results! {
-                if deviceInfo.secureElementId != nil {
-                    completion(deviceInfo, nil)
-                    return
-                }
-            }
-        
-            if result!.results!.count + searchOffset >= result!.totalResults! {
-                completion(nil, NSError.error(code: SyncManager.ErrorCode.cantFindDeviceWithSerialNumber, domain: SyncManager.self))
-                return
-            }
-            
-            self.findDeviceInfo(itrSearchLimit, searchOffset: searchOffset+itrSearchLimit, completion: completion)
-        })
-    }
-    
-    fileprivate func getCommits(_ completion: @escaping (_ commits: [Commit]?, _ error: Error?)->Void) {
-        obtainDeviceInfo {
-            [weak self] (deviceInfo, error) in
-            
-            if let deviceInfo = deviceInfo, let strongSelf = self {
-                strongSelf.deviceInfo = deviceInfo
-
-                let lastCommitId = strongSelf.syncStorage.getLastCommitId(strongSelf.deviceInfo!.deviceIdentifier!)
-
-                deviceInfo.listCommits(commitsAfter: lastCommitId, limit: 20, offset: 0, completion:
-                {
-                    (result, error) -> Void in
-                    
-                    guard error == nil else {
-                        completion(nil, error)
-                        return
-                    }
-                    
-                    guard let result = result else {
-                        completion(nil, NSError.unhandledError(SyncManager.self))
-                        return
-                    }
-                    
-                    if result.totalResults > result.results?.count {
-                        result.collectAllAvailable(
-                        {
-                            (results, error) -> Void in
-                            
-                            if let error = error {
-                                completion(nil, error)
-                                return
-                            }
-                            
-                            guard let results = results else {
-                                completion(nil, NSError.unhandledError(SyncManager.self))
-                                return
-                            }
-                            
-                            completion(results, nil)
-                        })
-                    } else {
-                        completion(result.results, nil)
-                    }
-                })
-            } else {
-                completion(nil, error)
-            }
-        }
-    }
-
-    internal func callCompletionForSyncEvent(_ event: SyncEventType, params: [String:Any] = [:]) {
-        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
-    }
-
-    fileprivate func syncFinished(error: Error?) {
-        self.deviceInfo?.updateNotificationTokenIfNeeded()
+    fileprivate func syncFinishedFor(request: SyncRequest, withError error: Error?) {
+        request.deviceInfo?.updateNotificationTokenIfNeeded()
         
         self.isSyncing = false
+        
+        var eventParams: [String: Any] = ["request": request]
 
         if let error = error {
             log.debug("SYNC_DATA: Sync finished with error: \(error)")
             // TODO: it's a hack, because currently we can move to wallet screen only if we received SyncEventType.syncCompleted
             if (error as NSError).code == PaymentDevice.ErrorCode.tryLater.rawValue {
-                callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
+                callCompletionForSyncEvent(SyncEventType.syncCompleted, params: eventParams)
             } else {
-                callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": error])
+                eventParams["error"] = error
+                callCompletionForSyncEvent(SyncEventType.syncFailed, params: eventParams)
             }
         } else {
             log.debug("SYNC_DATA: Sync finished successfully")
-            callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
+            callCompletionForSyncEvent(SyncEventType.syncCompleted, params: eventParams)
         }
         
-        if let binding = self.deviceConnectedBinding {
-            self.paymentDevice!.removeBinding(binding: binding)
-        }
-        
-        if let binding = self.deviceDisconnectedBinding {
-            self.paymentDevice!.removeBinding(binding: binding)
-        }
-        
-        self.deviceConnectedBinding = nil
-        self.deviceDisconnectedBinding = nil
-    }
+        self.getAllCardsWithToWAPDUCommands({ [unowned self] (cards, error) in
+            if let error = error {
+                log.error("SYNC_DATA: Can't get offline APDU commands. Error: \(error)")
+                return
+            }
 
-    internal func commitCompleted(_ commitId:String) {
-        log.debug("SYNC_DATA: Setting new last commit ID(\(commitId)).")
-        self.syncStorage.setLastCommitId(self.deviceInfo!.deviceIdentifier!, commitId: commitId)
+            if let cards = cards {
+                self.callCompletionForSyncEvent(SyncEventType.receivedCardsWithTowApduCommands, params: ["cards":cards])
+            }
+        })
     }
 }
-
 

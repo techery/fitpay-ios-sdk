@@ -1,14 +1,18 @@
+import RxSwift
 
 internal class CommitsApplyer {
-    fileprivate var commits: [Commit]!
-    fileprivate let semaphore = DispatchSemaphore(value: 0)
-    fileprivate var thread: Thread?
-    fileprivate var applyerCompletionHandler: ApplyerCompletionHandler!
-    fileprivate var totalApduCommands = 0
-    fileprivate var appliedApduCommands = 0
-    fileprivate let maxCommitsRetries = 0
-    fileprivate let maxAPDUCommandsRetries = 0
 
+    init(paymentDevice: PaymentDevice,
+         deviceInfo: DeviceInfo,
+         eventsPublisher: PublishSubject<SyncEvent>,
+         syncStorage: SyncStorage) {
+        self.paymentDevice        = paymentDevice
+        self.eventsPublisher      = eventsPublisher
+        self.syncStorage          = syncStorage
+        self.deviceInfo           = deviceInfo
+        self.apduConfirmOperation = APDUConfirmOperation()
+    }
+    
     internal var isRunning: Bool {
         guard let thread = self.thread else {
             return false
@@ -44,6 +48,25 @@ internal class CommitsApplyer {
 
         return true
     }
+    
+    internal var apduConfirmOperation: APDUConfirmOperationProtocol
+    
+    // private
+    fileprivate var commits: [Commit]!
+    fileprivate let semaphore = DispatchSemaphore(value: 0)
+    fileprivate var thread: Thread?
+    fileprivate var applyerCompletionHandler: ApplyerCompletionHandler!
+    fileprivate var totalApduCommands = 0
+    fileprivate var appliedApduCommands = 0
+    fileprivate let maxCommitsRetries = 0
+    fileprivate let maxAPDUCommandsRetries = 0
+    fileprivate let paymentDevice: PaymentDevice
+    fileprivate var syncStorage: SyncStorage
+    fileprivate var deviceInfo: DeviceInfo
+    
+    // rx
+    fileprivate let eventsPublisher: PublishSubject<SyncEvent>
+    fileprivate var disposeBag = DisposeBag()
 
     @objc fileprivate func processCommits() {
         var commitsApplied = 0
@@ -75,8 +98,8 @@ internal class CommitsApplyer {
             }
 
             commitsApplied += 1
-
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.syncProgress, params: ["applied": commitsApplied, "total": commits.count])
+            
+            eventsPublisher.onNext(SyncEvent(event: .syncProgress, data: ["applied": commitsApplied, "total": commits.count]))
         }
 
         DispatchQueue.main.async(execute: {
@@ -88,17 +111,22 @@ internal class CommitsApplyer {
 
     fileprivate func processCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         guard let commitType = commit.commitType else {
-            completion(NSError.unhandledError(SyncManager.self))
+            completion(NSError.unhandledError(CommitsApplyer.self))
             return
         }
 
         let commitCompletion = { (error: Error?) -> Void in
             if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
-                SyncManager.sharedInstance.commitCompleted(commit.commit!)
+                if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commit {
+                    self.syncStorage.setLastCommitId(deviceId, commitId: commit)
+                } else {
+                    log.error("SYNC_DATA: Can't get deviceId or commitId.")
+                }
             }
 
             completion(error)
         }
+        
         switch (commitType) {
         case CommitType.APDU_PACKAGE:
             log.verbose("SYNC_DATA: processing APDU commit.")
@@ -112,7 +140,7 @@ internal class CommitsApplyer {
     fileprivate func processAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         log.debug("SYNC_DATA: Processing APDU commit: \(commit.commit ?? "").")
         guard let apduPackage = commit.payload?.apduPackage else {
-            completion(NSError.unhandledError(SyncManager.self))
+            completion(NSError.unhandledError(CommitsApplyer.self))
             return
         }
 
@@ -132,18 +160,14 @@ internal class CommitsApplyer {
         }
 
 
-        SyncManager.sharedInstance.paymentDevice?.apduPackageProcessingStarted(apduPackage, completion: {
-            (error) in
+        self.paymentDevice.apduPackageProcessingStarted(apduPackage) { [weak self] (error) in
 
             guard error == nil else {
                 completion(error)
                 return
             }
 
-            self.applyAPDUPackage(apduPackage, apduCommandIndex: 0, retryCount: 0)
-            {
-                (state, error) -> Void in
-
+            self?.applyAPDUPackage(apduPackage, apduCommandIndex: 0, retryCount: 0) { (state, error) in
                 let currentTimestamp = Date().timeIntervalSince1970
 
                 apduPackage.executedDuration = Int64(currentTimestamp - applyingStartDate)
@@ -169,8 +193,9 @@ internal class CommitsApplyer {
                     realError = error as NSError?
                 }
 
-                SyncManager.sharedInstance.callCompletionForSyncEvent(.apduPackageComplete, params: ["package": apduPackage, "error": realError ?? "nil"])
-                SyncManager.sharedInstance.paymentDevice?.apduPackageProcessingFinished(apduPackage, completion: { (error) in
+                self?.eventsPublisher.onNext(SyncEvent(event: .apduPackageComplete, data: ["package": apduPackage, "error": realError ?? "nil"]))
+
+                self?.paymentDevice.apduPackageProcessingFinished(apduPackage, completion: { (error) in
                     guard error == nil else {
                         completion(error)
                         return
@@ -181,14 +206,23 @@ internal class CommitsApplyer {
                     if apduPackage.state == .notProcessed {
                         completion(realError)
                     } else {
-                        commit.confirmAPDU { (confirmError) -> Void in
-                            log.debug("SYNC_DATA: Apdu package confirmed with error: \(String(describing: confirmError)).")
-                            completion(realError ?? confirmError)
-                        }
+                        self?.apduConfirmOperation.confirm(commit: commit).subscribe() { (e) in
+                            switch e {
+                            case .completed:
+                                completion(realError)
+                                break
+                            case .error(let error):
+                                log.debug("SYNC_DATA: Apdu package confirmed with error: \(error).")
+                                completion(error)
+                                break
+                            case .next:
+                                break
+                            }
+                        }.disposed(by: self?.disposeBag ?? DisposeBag())
                     }
                 })
             }
-        })
+        }
     }
 
     fileprivate func processNonAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
@@ -196,59 +230,65 @@ internal class CommitsApplyer {
             return
         }
         
-        SyncManager.sharedInstance.paymentDevice!.processNonAPDUCommit(commit: commit) { (error) in
+        self.paymentDevice.processNonAPDUCommit(commit: commit) { [weak self] (error) in
             
             guard error == nil else {
                 completion(error)
                 return
             }
             
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.commitProcessed, params: ["commit": commit])
+            let eventData = ["commit": commit]
+            self?.eventsPublisher.onNext(SyncEvent(event: .commitProcessed, data: eventData))
             
+            var syncEvent: SyncEvent? = nil
             switch commitType {
             case .CREDITCARD_CREATED:
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardAdded, params: ["commit": commit])
+                syncEvent = SyncEvent(event: .cardAdded, data: eventData)
                 break
             case .CREDITCARD_DELETED:
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeleted, params: ["commit": commit])
+                syncEvent = SyncEvent(event: .cardDeleted, data: eventData)
                 break
             case .CREDITCARD_ACTIVATED:
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardActivated, params: ["commit": commit])
+                syncEvent = SyncEvent(event: .cardActivated, data: eventData)
                 break
             case .CREDITCARD_DEACTIVATED:
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeactivated, params: ["commit": commit])
+                syncEvent = SyncEvent(event: .cardDeactivated, data: eventData)
                 break
             case .CREDITCARD_REACTIVATED:
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardReactivated, params: ["commit": commit])
+                syncEvent = SyncEvent(event: .cardReactivated, data: eventData)
                 break
             case .SET_DEFAULT_CREDITCARD:
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.setDefaultCard, params: ["commit": commit])
+                syncEvent = SyncEvent(event: .setDefaultCard, data: eventData)
                 break
             case .RESET_DEFAULT_CREDITCARD:
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.resetDefaultCard, params: ["commit": commit])
+                syncEvent = SyncEvent(event: .resetDefaultCard, data: eventData)
                 break
             case .APDU_PACKAGE:
                 log.warning("Processed APDU package inside nonapdu handler.")
                 break
             }
             
+            if let syncEvent = syncEvent {
+                self?.eventsPublisher.onNext(syncEvent)
+            }
+            
             completion(nil)
         }
-
     }
 
-    fileprivate func applyAPDUPackage(_ apduPackage: ApduPackage, apduCommandIndex: Int, retryCount: Int, completion: @escaping (_ state: APDUPackageResponseState?, _ error: Error?) -> Void) {
+    fileprivate func applyAPDUPackage(_ apduPackage: ApduPackage,
+                                      apduCommandIndex: Int,
+                                      retryCount: Int,
+                                      completion: @escaping (_ state: APDUPackageResponseState?, _ error: Error?) -> Void) {
         let isFinished = (apduPackage.apduCommands?.count)! <= apduCommandIndex
 
-        if isFinished {
+        guard !isFinished else {
             completion(apduPackage.state, nil)
             return
         }
 
         var mutableApduPackage = apduPackage.apduCommands![apduCommandIndex]
-        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(mutableApduPackage, completion: {
-            [unowned self] (apduPack, state, error) in
-
+        self.paymentDevice.executeAPDUCommand(mutableApduPackage) { [weak self] (apduPack, state, error) in
             apduPackage.state = state
 
             if let apduPack = apduPack {
@@ -256,19 +296,19 @@ internal class CommitsApplyer {
             }
 
             if let error = error {
-                if retryCount >= self.maxAPDUCommandsRetries {
+                if retryCount >= self?.maxAPDUCommandsRetries ?? 1 {
                     completion(state, error)
                 } else {
-                    self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex, retryCount: retryCount + 1, completion: completion)
+                    self?.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex, retryCount: retryCount + 1, completion: completion)
                 }
             } else {
-                self.appliedApduCommands += 1
-                log.info("SYNC_DATA: PROCESSED \(self.appliedApduCommands)/\(self.totalApduCommands) COMMANDS")
+                self?.appliedApduCommands += 1
+                log.info("SYNC_DATA: PROCESSED \(self?.appliedApduCommands ?? 0)/\(self?.totalApduCommands ?? 0) COMMANDS")
 
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.apduCommandsProgress, params: ["applied": self.appliedApduCommands, "total": self.totalApduCommands])
+                self?.eventsPublisher.onNext(SyncEvent(event: .apduCommandsProgress, data: ["applied": self?.appliedApduCommands ?? 0, "total": self?.totalApduCommands ?? 0]))
 
-                self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, retryCount: 0, completion: completion)
+                self?.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, retryCount: 0, completion: completion)
             }
-        })
+        }
     }
 }
