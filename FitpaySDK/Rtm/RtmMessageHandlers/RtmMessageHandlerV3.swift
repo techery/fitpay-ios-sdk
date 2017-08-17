@@ -69,7 +69,7 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
 extension RtmMessageHandlerV3: FitpayCardScannerDelegate {
     func scanned(card: ScannedCardInfo?, error: Error?) {
         if let delegate = self.outputDelegate {
-            delegate.send(rtmMessage: RtmMessageResponse(data: card?.toJSONString(), type: RtmMessageTypeVer3.cardScanned.rawValue), retries: 3)
+            delegate.send(rtmMessage: RtmMessageResponse(data: card?.toJSON(), type: RtmMessageTypeVer3.cardScanned.rawValue, success: true), retries: 3)
         }
         
         if let cardScannerPresenter = self.cardScannerPresenterDelegate, let cardScanner = self.cardScanner {

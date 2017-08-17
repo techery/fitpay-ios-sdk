@@ -1,5 +1,5 @@
 //
-//  SyncTests.swift
+//  SyncOperationTests.swift
 //  FitpaySDK
 //
 //  Created by Anton Popovichenko on 12.07.17.
