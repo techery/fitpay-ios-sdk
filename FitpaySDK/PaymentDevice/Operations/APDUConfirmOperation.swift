@@ -8,12 +8,12 @@
 
 import RxSwift
 
-protocol APDUConfirmOperationProtocol {
-    func confirm(commit: Commit) -> Observable<Void>
+public protocol APDUConfirmOperationProtocol {
+    func startWith(commit: Commit) -> Observable<Void>
 }
 
 class APDUConfirmOperation: APDUConfirmOperationProtocol {
-    func confirm(commit: Commit) -> Observable<Void> {
+    func startWith(commit: Commit) -> Observable<Void> {
         let publisher = PublishSubject<Void>()
         commit.confirmAPDU { (error) in
             guard error == nil else {

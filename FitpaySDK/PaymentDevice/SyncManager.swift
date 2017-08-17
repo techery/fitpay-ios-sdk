@@ -163,6 +163,12 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         eventsDispatcher.removeAllBindings()
     }
     
+    open var commitFetcherOperationProducer: () -> FetchCommitsOperationProtocol? = {
+        return FetchCommitsOperation(deviceInfo: DeviceInfo())
+    }
+    
+    var syncFactory: SyncFactory = DefaultSyncFactory()
+    
     internal var lastSyncRequest: SyncRequest?
     internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
@@ -212,7 +218,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         let syncOperation = SyncOperation(paymentDevice: paymentDevice,
                                           connector: connector,
                                           deviceInfo: deviceInfo,
-                                          user: user)
+                                          user: user,
+                                          syncFactory: syncFactory)
         
         syncOperations[deviceInfo] = syncOperation
         
@@ -251,6 +258,11 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     internal typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
     
     internal func getAllCardsWithToWAPDUCommands(_ completion:@escaping ToWAPDUCommandsHandler) {
+        var user = self.user
+        if user == nil {
+            user = lastSyncRequest?.user
+        }
+        
         if self.user == nil {
             completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
             return

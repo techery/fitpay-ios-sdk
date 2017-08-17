@@ -24,6 +24,8 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
     open var pairing: String?
     open var secureElementId: String?
     open var casd: String?
+    open var lastAckCommit: String?
+    
     fileprivate static let userResource = "user"
     fileprivate static let commitsResource = "commits"
     fileprivate static let selfResource = "self"
@@ -43,7 +45,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         return self.links?.url(DeviceInfo.commitsResource) != nil
     }
 
-    internal var client: RestClient?
+    public var client: RestClient?
     {
         get
         {
@@ -92,6 +94,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         licenseKey <- map["licenseKey"]
         bdAddress <- map["bdAddress"]
         pairing <- map["pairing"]
+        lastAckCommit <- map["lastAckCommit"]
         casd <- map["casd"]
         if let secureElement = map["secureElement"].currentValue as? [String: String] {
             secureElementId = secureElement["secureElementId"]
@@ -288,7 +291,7 @@ open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable
 
     internal var encryptedData: String?
     fileprivate static let selfResource = "self"
-    internal weak var client: RestClient?
+    public weak var client: RestClient?
 
     public required init?(map: Map)
     {

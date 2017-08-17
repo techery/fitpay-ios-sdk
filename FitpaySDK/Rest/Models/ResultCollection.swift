@@ -24,7 +24,7 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
         return self.links?.url(self.previousResource) != nil
     }
 
-    internal var client: RestClient? {
+    public var client: RestClient? {
         get {
             if let results = self.results {
                 for result in results {

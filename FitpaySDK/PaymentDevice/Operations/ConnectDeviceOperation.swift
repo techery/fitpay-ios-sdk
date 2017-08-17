@@ -9,20 +9,24 @@
 import Foundation
 import RxSwift
 
-class ConnectDeviceOperation {
+public enum SyncOperationConnectionState {
+    case connecting
+    case connected
+    case disconnected
+}
+
+public protocol ConnectDeviceOperationProtocol {
+    func start() -> Observable<SyncOperationConnectionState>
+}
+
+open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
     
-    init(paymentDevice: PaymentDevice) {
+    public init(paymentDevice: PaymentDevice) {
         self.paymentDevice = paymentDevice
         self.publisher = BehaviorSubject<SyncOperationConnectionState>(value: .connecting)
     }
     
-    enum SyncOperationConnectionState {
-        case connecting
-        case connected
-        case disconnected
-    }
-
-    func start() -> Observable<SyncOperationConnectionState> {
+    open func start() -> Observable<SyncOperationConnectionState> {
         if self.paymentDevice.isConnected {
             log.verbose("SYNC_DATA: Validating device connection to sync.")
             self.paymentDevice.validateConnection() { [weak self] (isValid, error) in

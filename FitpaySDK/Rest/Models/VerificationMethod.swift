@@ -45,7 +45,7 @@ open class VerificationMethod: NSObject, ClientModel, Mappable
     fileprivate static let verifyResource = "verify"
     fileprivate static let cardResource = "card"
 
-    internal weak var client: RestClient?
+    public weak var client: RestClient?
 
     open var selectAvailable: Bool {
         return self.links?.url(VerificationMethod.selectResource) != nil
