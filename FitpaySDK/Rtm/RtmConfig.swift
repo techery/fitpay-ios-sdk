@@ -13,6 +13,7 @@ public enum RtmConfigDafaultMappingKey: String {
     case accessToken = "accessToken"
     case language = "language"
     case baseLanguageUrl = "baseLangUrl"
+    case useWebCardScanner = "useWebCardScanner"
 }
 
 @objc public protocol RtmConfigProtocol {
@@ -40,6 +41,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
     open var accessToken: String?
     open var language: String?
     open var baseLanguageUrl: String?
+    open var useWebCardScanner: String?
     
     open var customs: [String:Any]?
     
@@ -72,6 +74,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         accessToken     <- map[RtmConfigDafaultMappingKey.accessToken.rawValue]
         language        <- map[RtmConfigDafaultMappingKey.language.rawValue]
         baseLanguageUrl <- map[RtmConfigDafaultMappingKey.baseLanguageUrl.rawValue]
+        useWebCardScanner <- map[RtmConfigDafaultMappingKey.useWebCardScanner.rawValue]
     }
     
     public func update(value: Any, forKey key: String) {
@@ -109,8 +112,12 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
                 break
             case .language:
                 language = value as? String
+                break
             case .baseLanguageUrl:
                 baseLanguageUrl = value as? String
+                break
+            case .useWebCardScanner:
+                useWebCardScanner = value as? String
             }
         } else {
             if customs == nil {

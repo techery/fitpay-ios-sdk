@@ -35,6 +35,8 @@
 		37139BE31F177B21001EEE73 /* SyncRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BE11F177B21001EEE73 /* SyncRequest.swift */; };
 		37139BE51F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BE41F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift */; };
 		37139BE61F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BE41F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift */; };
+		371CB3031F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */; };
+		371CB3041F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */; };
 		37327B9A1E9BAB5A003B8918 /* SwCrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37327B991E9BAB5A003B8918 /* SwCrypt.swift */; };
 		37327B9B1E9CC2EF003B8918 /* SwCrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37327B991E9BAB5A003B8918 /* SwCrypt.swift */; };
 		374B62641EC9DA3C00A7CE62 /* ApduCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374B62631EC9DA3C00A7CE62 /* ApduCommand.swift */; };
@@ -378,6 +380,7 @@
 		37139BDF1F177B04001EEE73 /* SyncRequestsQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncRequestsQueue.swift; sourceTree = "<group>"; };
 		37139BE11F177B21001EEE73 /* SyncRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncRequest.swift; sourceTree = "<group>"; };
 		37139BE41F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BindedToDeviceSyncRequestQueue.swift; sourceTree = "<group>"; };
+		371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmMessageHandlerV4.swift; sourceTree = "<group>"; };
 		37327B991E9BAB5A003B8918 /* SwCrypt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwCrypt.swift; sourceTree = "<group>"; };
 		374B62631EC9DA3C00A7CE62 /* ApduCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduCommand.swift; sourceTree = "<group>"; };
 		374B62661EC9DAB300A7CE62 /* ApduResponseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduResponseProtocol.swift; sourceTree = "<group>"; };
@@ -751,6 +754,7 @@
 				37D0CFEE1EDD5DA50049B5AA /* RtmMessageHandler.swift */,
 				37D0CFF11EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift */,
 				37D0CFF41EDDA27E0049B5AA /* RtmMessageHandlerV3.swift */,
+				371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */,
 			);
 			path = RtmMessageHandlers;
 			sourceTree = "<group>";
@@ -1803,6 +1807,7 @@
 				3701AE581F16180000550890 /* FetchCommitsOperation.swift in Sources */,
 				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
 				8456437C1CAD7F7200351C8E /* CommitsApplyer.swift in Sources */,
+				371CB3031F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,
 				37139BDB1F164695001EEE73 /* APDUConfirmOperation.swift in Sources */,
 				CD03864C52B317B02135FF7D /* NSDataExtensions.swift in Sources */,
 				9B65A33B1CDD1534007A7D7D /* MockPaymentDeviceConnector.swift in Sources */,
@@ -1939,6 +1944,7 @@
 				3701AE3C1F13BA1B00550890 /* SyncEvent.swift in Sources */,
 				3A93A0BA1DB8CA2C00A9FEB4 /* SecretApplyable.swift in Sources */,
 				3A93A0BB1DB8CA2C00A9FEB4 /* ApduResultMessage.swift in Sources */,
+				371CB3041F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,
 				3A93A0BC1DB8CA2C00A9FEB4 /* RestAPIConstants.swift in Sources */,
 				37139BE61F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */,
 				37F781DE1F18B57E00742E15 /* ObjCCompatibilityExtensions.swift in Sources */,
