@@ -9,27 +9,26 @@
 import Foundation
 import RxSwift
 
-protocol FetchCommitsOperationProtocol {
+public protocol FetchCommitsOperationProtocol {
+    var deviceInfo: DeviceInfo! { get set }
+    
     func startWith(limit: Int, andOffset offset: Int) -> Observable<[Commit]>
 }
 
-class FetchCommitsOperation: FetchCommitsOperationProtocol {
+open class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
-    init(deviceInfo: DeviceInfo, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
+    public init(deviceInfo: DeviceInfo, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
         self.deviceInfo = deviceInfo
         self.startFromSyncedCommit = shouldStartFromSyncedCommit
         self.syncStorage = syncStorage
     }
     
-    enum ErrorCode: Error {
+    public enum ErrorCode: Error {
         case parsingError
     }
     
-    func startWith(limit: Int, andOffset offset: Int) -> Observable<[Commit]> {
-        var commitId = ""
-        if self.startFromSyncedCommit {
-            commitId = self.syncStorage.getLastCommitId(self.deviceInfo.deviceIdentifier!)
-        }
+    public func startWith(limit: Int, andOffset offset: Int) -> Observable<[Commit]> {
+        let commitId = generateCommitIdFromWhichWeShouldStart()
         
         deviceInfo.listCommits(commitsAfter: commitId, limit: limit, offset: offset) { [weak self] (result, error) in
             guard error == nil else {
@@ -64,8 +63,23 @@ class FetchCommitsOperation: FetchCommitsOperationProtocol {
         return publisher
     }
     
+    open func generateCommitIdFromWhichWeShouldStart() -> String {
+        var commitId = ""
+        if self.startFromSyncedCommit {
+            commitId = self.syncStorage.getLastCommitId(self.deviceInfo.deviceIdentifier!)
+        }
+        
+        if commitId.isEmpty {
+            commitId = deviceInfo.lastAckCommit ?? ""
+        }
+
+        return commitId
+    }
+    
+    
+    public var deviceInfo: DeviceInfo!
+    
     // private
-    private let deviceInfo: DeviceInfo
     private let syncStorage: SyncStorage
     private let startFromSyncedCommit: Bool
 

@@ -24,6 +24,7 @@ internal class SyncOperation {
          connector: IPaymentDeviceConnector,
          deviceInfo: DeviceInfo,
          user: User,
+         syncFactory: SyncFactory,
          syncStorage: SyncStorage = SyncStorage.sharedInstance)
     {
         self.paymentDevice = paymentDevice
@@ -35,15 +36,15 @@ internal class SyncOperation {
         self.commitsApplyer        = CommitsApplyer(paymentDevice: self.paymentDevice,
                                                     deviceInfo: self.deviceInfo,
                                                     eventsPublisher: self.syncEventsPublisher,
+                                                    syncFactory: syncFactory,
                                                     syncStorage: SyncStorage.sharedInstance)
         self.state                 = Variable(.waiting)
-        self.connectOperation      = ConnectDeviceOperation(paymentDevice: paymentDevice)
+        self.connectOperation      = syncFactory.connectDeviceOperationWith(paymentDevice: paymentDevice)
         self.eventsAdapter         = SyncOperationStateToSyncEventAdapter(stateObservable: self.state.asObservable(),
                                                                           publisher: self.syncEventsPublisher)
         
-        self.fetchCommitsOperation = FetchCommitsOperation(deviceInfo: deviceInfo,
-                                                           shouldStartFromSyncedCommit: true,
-                                                           syncStorage: syncStorage)
+        self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo)
+            
         self.syncStorage = syncStorage
     }
     
@@ -96,7 +97,7 @@ internal class SyncOperation {
     fileprivate var connector: IPaymentDeviceConnector
     fileprivate var deviceInfo: DeviceInfo
     fileprivate var user: User
-    fileprivate var connectOperation: ConnectDeviceOperation
+    fileprivate var connectOperation: ConnectDeviceOperationProtocol
     fileprivate var eventsAdapter: SyncOperationStateToSyncEventAdapter
     fileprivate var syncStorage: SyncStorage
     

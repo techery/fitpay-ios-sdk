@@ -3,6 +3,17 @@
     case success = 0 // will continue commits execution
     case skipped     // will continue commits execution
     case failed      // will stop sync
+    
+    var description: String {
+        switch self {
+        case .failed:
+            return "FAILED"
+        case .skipped:
+            return "SKIPPED"
+        case .success:
+            return "SUCCESS"
+        }
+    }
 }
 
 @objc public protocol IPaymentDeviceConnector

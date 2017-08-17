@@ -279,17 +279,13 @@
         }
     }
     
-    internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ error: NSError?) -> Void) {
+    internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ state: NonAPDUCommitState?, _ error: NSError?) -> Void) {
         if let processNonAPDUCommit = self.deviceInterface.processNonAPDUCommit {
             processNonAPDUCommit(commit) { (state, error) in
-                if state == .failed || error != nil{
-                    completion(error ?? NSError.unhandledError(PaymentDevice.self))
-                } else {
-                    completion(nil)
-                }
+                completion(state, error)
             }
         } else {
-            completion(nil)
+            completion(.skipped, nil)
         }
     }
     

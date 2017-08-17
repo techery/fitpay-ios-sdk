@@ -109,6 +109,33 @@ extension RestClient {
      
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
+    public typealias ConfirmCommitHandler = (_ error: NSError?) -> Void
+    
+    open func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
+        self.prepareAuthAndKeyHeaders { (headers, error) in
+            if let headers = headers {
+                
+                let params = ["result": executionResult.description]
+
+                let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                request.validate().responseString { (response: DataResponse<String>) in
+                    DispatchQueue.main.async {
+                        completion(response.result.error as NSError?)
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(error)
+                }
+            }
+        }
+    }
+    
+    /**
+     Completion handler
+     
+     - parameter ErrorType?:   Provides error object, or nil if no error occurs
+     */
     public typealias ConfirmAPDUPackageHandler = (_ error: NSError?) -> Void
 
     /**

@@ -14,12 +14,20 @@ import RxBlocking
 @testable import FitpaySDK
 
 class MockAPDUConfirm: APDUConfirmOperationProtocol {
-    func confirm(commit: Commit) -> Observable<Void> {
+    func startWith(commit: Commit) -> Observable<Void> {
+        return Observable.empty()
+    }
+}
+
+class MockNonAPDUConfirm: NonAPDUConfirmOperationProtocol {
+    func startWith(commit: Commit, result: NonAPDUCommitState) -> Observable<Void> {
         return Observable.empty()
     }
 }
 
 class MockCommitsFetcher: FetchCommitsOperationProtocol {
+    var deviceInfo: DeviceInfo!
+
     var commits: [Commit] = []
     
     func startWith(limit: Int, andOffset offset: Int) -> Observable<[Commit]> {
@@ -37,11 +45,28 @@ class MockCommitsFetcher: FetchCommitsOperationProtocol {
     }
 }
 
+class MocksFactory: SyncFactory {
+    var commitsFetcher: MockCommitsFetcher!
+
+    func apduConfirmOperation() -> APDUConfirmOperationProtocol {
+        return MockAPDUConfirm()
+    }
+    
+    func nonApduConfirmOperation() -> NonAPDUConfirmOperationProtocol {
+        return MockNonAPDUConfirm()
+    }
+    
+    func commitsFetcherOperationWith(deviceInfo: DeviceInfo) -> FetchCommitsOperationProtocol {
+        return commitsFetcher
+    }
+}
+
 let log = FitpaySDKLogger.sharedInstance
 
 class SyncOperationTests: XCTestCase {
     var syncOperation: SyncOperation!
     var commitsFetcher = MockCommitsFetcher()
+    var mocksFactory = MocksFactory()
     var connector: MockPaymentDeviceConnector!
     
     var disposeBag = DisposeBag()
@@ -56,12 +81,13 @@ class SyncOperationTests: XCTestCase {
 
         disposeBag = DisposeBag()
         
+        mocksFactory.commitsFetcher = commitsFetcher
+        
         let paymentDevice = PaymentDevice()
         connector = MockPaymentDeviceConnector(paymentDevice: paymentDevice)
         _ = paymentDevice.changeDeviceInterface(connector)
 
-        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: DeviceInfo(), user: User(JSONString: "{\"id\":\"1\"}")!)
-        syncOperation.fetchCommitsOperation = commitsFetcher
+        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: DeviceInfo(), user: User(JSONString: "{\"id\":\"1\"}")!, syncFactory: mocksFactory)
     }
     
     override func tearDown() {
@@ -105,7 +131,6 @@ class SyncOperationTests: XCTestCase {
     func testSuccessSyncWithAPDUAndNonAPDUCommits() {
         connector.connectDelayTime = 0.001
         commitsFetcher.commits = [commitsFetcher.getCreateCardCommit(id: "1"), commitsFetcher.getAPDUCommit()]
-        syncOperation.commitsApplyer.apduConfirmOperation = MockAPDUConfirm()
         guard let events = try? syncOperation.start().toBlocking(timeout: 2).toArray() else {
             XCTAssert(false, "Timeouted.")
             return
@@ -124,19 +149,13 @@ class SyncOperationTests: XCTestCase {
         let secondConnector = MockPaymentDeviceConnector(paymentDevice: paymentDevice)
         _ = paymentDevice.changeDeviceInterface(secondConnector)
 
-        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: DeviceInfo(), user: User(JSONString: "{\"id\":\"1\"}")!)
+        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: DeviceInfo(), user: User(JSONString: "{\"id\":\"1\"}")!, syncFactory: mocksFactory)
         
         commitsFetcher.commits = [commitsFetcher.getCreateCardCommit(id: "1"), commitsFetcher.getAPDUCommit()]
-
-        secondSyncOperation.fetchCommitsOperation = commitsFetcher
-        syncOperation.fetchCommitsOperation = commitsFetcher
 
         secondConnector.connectDelayTime = 0.1 // second operation should work faster
         connector.connectDelayTime = 0.3
         
-        secondSyncOperation.commitsApplyer.apduConfirmOperation = MockAPDUConfirm()
-        syncOperation.commitsApplyer.apduConfirmOperation = MockAPDUConfirm()
-
         var syncCompleteCounter = 0
         
         syncOperation.start().subscribe(onNext: { (event) in

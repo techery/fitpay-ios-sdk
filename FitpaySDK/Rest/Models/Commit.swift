@@ -11,6 +11,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     open var commit:String?
     
     fileprivate static let apduResponseResource = "apduResponse"
+    fileprivate static let confirmResource = "confirm"
     
     public weak var client: RestClient? {
         didSet {
@@ -20,13 +21,11 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     
     internal var encryptedData:String?
     
-    public required init?(map: Map)
-    {
+    public required init?(map: Map) {
         
     }
     
-    open func mapping(map: Map)
-    {
+    open func mapping(map: Map) {
         links <- (map["_links"], ResourceLinkTransformType())
         commitType <- map["commitType"]
         created <- map["createdTs"]
@@ -35,10 +34,32 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
         encryptedData <- map["encryptedData"]
     }
     
-    internal func applySecret(_ secret:Data, expectedKeyId:String?)
-    {
+    internal func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
         self.payload?.creditCard?.client = self.client
+    }
+    
+    internal func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmCommitHandler) {
+        log.verbose("Confirming commit - \(self.commit ?? "")")
+        
+        guard self.commitType != CommitType.APDU_PACKAGE else {
+            log.error("Trying send confirm for APDU commit but should be non APDU.")
+            completion(NSError.unhandledError(Commit.self))
+            return
+        }
+        
+        let resource = Commit.confirmResource
+        guard let url = self.links?.url(resource) else {
+            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
+            return
+        }
+        
+        guard let client = self.client else {
+            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
+            return
+        }
+        
+        client.confirm(url, executionResult: result, completion: completion)
     }
     
     internal func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
@@ -63,6 +84,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
             completion(NSError.unhandledError(Commit.self))
             return
         }
+        
         log.verbose("apdu package \(apduPackage)")
         client.confirmAPDUPackage(url, package: apduPackage, completion: completion)
     }
