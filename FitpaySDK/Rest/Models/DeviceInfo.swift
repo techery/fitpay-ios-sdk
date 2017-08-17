@@ -24,6 +24,8 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
     open var pairing: String?
     open var secureElementId: String?
     open var casd: String?
+    open var lastAckCommit: String?
+    
     fileprivate static let userResource = "user"
     fileprivate static let commitsResource = "commits"
     fileprivate static let selfResource = "self"
@@ -92,6 +94,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         licenseKey <- map["licenseKey"]
         bdAddress <- map["bdAddress"]
         pairing <- map["pairing"]
+        lastAckCommit <- map["lastAckCommit"]
         casd <- map["casd"]
         if let secureElement = map["secureElement"].currentValue as? [String: String] {
             secureElementId = secureElement["secureElementId"]

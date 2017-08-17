@@ -5,12 +5,14 @@ internal class CommitsApplyer {
     init(paymentDevice: PaymentDevice,
          deviceInfo: DeviceInfo,
          eventsPublisher: PublishSubject<SyncEvent>,
+         syncFactory: SyncFactory,
          syncStorage: SyncStorage) {
-        self.paymentDevice        = paymentDevice
-        self.eventsPublisher      = eventsPublisher
-        self.syncStorage          = syncStorage
-        self.deviceInfo           = deviceInfo
-        self.apduConfirmOperation = APDUConfirmOperation()
+        self.paymentDevice           = paymentDevice
+        self.eventsPublisher         = eventsPublisher
+        self.syncStorage             = syncStorage
+        self.deviceInfo              = deviceInfo
+        self.apduConfirmOperation    = syncFactory.apduConfirmOperation()
+        self.nonApduConfirmOperation = syncFactory.nonApduConfirmOperation()
     }
     
     internal var isRunning: Bool {
@@ -50,6 +52,7 @@ internal class CommitsApplyer {
     }
     
     internal var apduConfirmOperation: APDUConfirmOperationProtocol
+    internal var nonApduConfirmOperation: NonAPDUConfirmOperationProtocol
     
     // private
     fileprivate var commits: [Commit]!
@@ -206,7 +209,7 @@ internal class CommitsApplyer {
                     if apduPackage.state == .notProcessed {
                         completion(realError)
                     } else {
-                        self?.apduConfirmOperation.confirm(commit: commit).subscribe() { (e) in
+                        self?.apduConfirmOperation.startWith(commit: commit).subscribe() { (e) in
                             switch e {
                             case .completed:
                                 completion(realError)
@@ -230,49 +233,62 @@ internal class CommitsApplyer {
             return
         }
         
-        self.paymentDevice.processNonAPDUCommit(commit: commit) { [weak self] (error) in
-            
-            guard error == nil else {
-                completion(error)
-                return
-            }
-            
-            let eventData = ["commit": commit]
-            self?.eventsPublisher.onNext(SyncEvent(event: .commitProcessed, data: eventData))
-            
-            var syncEvent: SyncEvent? = nil
-            switch commitType {
-            case .CREDITCARD_CREATED:
-                syncEvent = SyncEvent(event: .cardAdded, data: eventData)
-                break
-            case .CREDITCARD_DELETED:
-                syncEvent = SyncEvent(event: .cardDeleted, data: eventData)
-                break
-            case .CREDITCARD_ACTIVATED:
-                syncEvent = SyncEvent(event: .cardActivated, data: eventData)
-                break
-            case .CREDITCARD_DEACTIVATED:
-                syncEvent = SyncEvent(event: .cardDeactivated, data: eventData)
-                break
-            case .CREDITCARD_REACTIVATED:
-                syncEvent = SyncEvent(event: .cardReactivated, data: eventData)
-                break
-            case .SET_DEFAULT_CREDITCARD:
-                syncEvent = SyncEvent(event: .setDefaultCard, data: eventData)
-                break
-            case .RESET_DEFAULT_CREDITCARD:
-                syncEvent = SyncEvent(event: .resetDefaultCard, data: eventData)
-                break
-            case .APDU_PACKAGE:
-                log.warning("Processed APDU package inside nonapdu handler.")
-                break
-            }
-            
-            if let syncEvent = syncEvent {
-                self?.eventsPublisher.onNext(syncEvent)
-            }
-            
-            completion(nil)
+        self.paymentDevice.processNonAPDUCommit(commit: commit) { [weak self] (state, error) in
+            self?.nonApduConfirmOperation.startWith(commit: commit, result: state ?? .failed).subscribe { (e) in
+                switch e {
+                case .completed:
+                    guard state != .failed else {
+                        completion(NSError.unhandledError(CommitsApplyer.self))
+                        return
+                    }
+                    
+                    let eventData = ["commit": commit]
+                    self?.eventsPublisher.onNext(SyncEvent(event: .commitProcessed, data: eventData))
+                    
+                    var syncEvent: SyncEvent? = nil
+                    switch commitType {
+                    case .CREDITCARD_CREATED:
+                        syncEvent = SyncEvent(event: .cardAdded, data: eventData)
+                        break
+                    case .CREDITCARD_DELETED:
+                        syncEvent = SyncEvent(event: .cardDeleted, data: eventData)
+                        break
+                    case .CREDITCARD_ACTIVATED:
+                        syncEvent = SyncEvent(event: .cardActivated, data: eventData)
+                        break
+                    case .CREDITCARD_DEACTIVATED:
+                        syncEvent = SyncEvent(event: .cardDeactivated, data: eventData)
+                        break
+                    case .CREDITCARD_REACTIVATED:
+                        syncEvent = SyncEvent(event: .cardReactivated, data: eventData)
+                        break
+                    case .SET_DEFAULT_CREDITCARD:
+                        syncEvent = SyncEvent(event: .setDefaultCard, data: eventData)
+                        break
+                    case .RESET_DEFAULT_CREDITCARD:
+                        syncEvent = SyncEvent(event: .resetDefaultCard, data: eventData)
+                        break
+                    case .APDU_PACKAGE:
+                        log.warning("Processed APDU package inside nonapdu handler.")
+                        break
+                    }
+                    
+                    if let syncEvent = syncEvent {
+                        self?.eventsPublisher.onNext(syncEvent)
+                    }
+                    
+                    completion(nil)
+
+                    break
+                case .error(let error):
+                    log.debug("SYNC_DATA: non APDU commit confirmed with error: \(error).")
+                    completion(error)
+                    break
+                case .next:
+                    break
+                }
+                
+            }.disposed(by: self?.disposeBag ?? DisposeBag())
         }
     }
 
