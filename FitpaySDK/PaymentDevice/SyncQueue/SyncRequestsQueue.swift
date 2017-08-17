@@ -11,7 +11,7 @@ import Foundation
 open class SyncRequestQueue {
     public static let sharedInstance = SyncRequestQueue(syncManager: SyncManager.sharedInstance)
     
-    func add(request: SyncRequest, completion: SyncRequestCompletion?) {
+    public func add(request: SyncRequest, completion: SyncRequestCompletion?) {
         request.completion = completion
         request.update(state: .pending)
 

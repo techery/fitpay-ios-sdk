@@ -12,6 +12,8 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
     
     var cardScanner: IFitpayCardScanner?
     
+
+    
     enum RtmMessageTypeVer3: RtmMessageType, RtmMessageTypeWithHandler {
         case rtmVersion   = "version"
         case sync         = "sync"
@@ -54,10 +56,10 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
     }
     
     func handleScanRequest(_ message: RtmMessage) {
-        if let cardScannerDataSource = self.wvConfig.cardScannerDataSource {
+        if let cardScannerDataSource = self.cardScannerDataSource {
             self.cardScanner = cardScannerDataSource.cardScanner()
             self.cardScanner?.scanDelegate = self
-            if let cardScannerPresenter = self.wvConfig.cardScannerPresenterDelegate {
+            if let cardScannerPresenter = self.cardScannerPresenterDelegate {
                 cardScannerPresenter.shouldPresentCardScanner(scanner: self.cardScanner!)
             }
         }
@@ -66,15 +68,17 @@ class RtmMessageHandlerV3: RtmMessageHandlerV2 {
 
 extension RtmMessageHandlerV3: FitpayCardScannerDelegate {
     func scanned(card: ScannedCardInfo?, error: Error?) {
-        self.wvConfig.sendRtmMessage(rtmMessage: RtmMessageResponse(data: card?.toJSONString(), type: RtmMessageTypeVer3.cardScanned.rawValue))
+        if let delegate = self.outputDelegate {
+            delegate.send(rtmMessage: RtmMessageResponse(data: card?.toJSONString(), type: RtmMessageTypeVer3.cardScanned.rawValue), retries: 3)
+        }
         
-        if let cardScannerPresenter = self.wvConfig.cardScannerPresenterDelegate, let cardScanner = self.cardScanner {
+        if let cardScannerPresenter = self.cardScannerPresenterDelegate, let cardScanner = self.cardScanner {
             cardScannerPresenter.shouldDissmissCardScanner(scanner: cardScanner)
         }
     }
     
     func canceled() {
-        if let cardScannerPresenter = self.wvConfig.cardScannerPresenterDelegate, let cardScanner = self.cardScanner {
+        if let cardScannerPresenter = self.cardScannerPresenterDelegate, let cardScanner = self.cardScanner {
             cardScannerPresenter.shouldDissmissCardScanner(scanner: cardScanner)
         }
     }

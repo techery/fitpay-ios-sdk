@@ -14,7 +14,7 @@ enum SyncRequestState: Int {
     case done
 }
 
-typealias SyncRequestCompletion = (EventStatus, Error?) -> Void
+public typealias SyncRequestCompletion = (EventStatus, Error?) -> Void
 
 open class SyncRequest {
     
