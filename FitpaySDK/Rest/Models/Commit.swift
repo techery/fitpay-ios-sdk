@@ -37,8 +37,6 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     internal func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
         self.payload?.creditCard?.client = self.client
-        print("SECRET:")
-        print(self.toJSONString()!)
     }
     
     internal func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmCommitHandler) {

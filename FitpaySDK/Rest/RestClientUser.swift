@@ -157,7 +157,6 @@ extension RestClient {
                                                     parameters: nil,
                                                     encoding: JSONEncoding.default,
                                                     headers: headers)
-                debugPrint(request)
                 request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<User>) in
                     DispatchQueue.main.async {
                         if let _ = response.result.error {
