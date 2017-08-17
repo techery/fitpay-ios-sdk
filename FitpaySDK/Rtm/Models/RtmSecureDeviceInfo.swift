@@ -8,7 +8,7 @@
 
 import ObjectMapper
 
-class RtmSecureDeviceInfo: RtmDeviceInfo {
+public class RtmSecureDeviceInfo: RtmDeviceInfo {
     open override func mapping(map: Map) {
         super.mapping(map: map)
         

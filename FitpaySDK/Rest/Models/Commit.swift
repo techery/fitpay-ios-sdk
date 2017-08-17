@@ -12,7 +12,11 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     
     fileprivate static let apduResponseResource = "apduResponse"
     
-    internal weak var client:RestClient?
+    public weak var client: RestClient? {
+        didSet {
+            payload?.creditCard?.client = self.client
+        }
+    }
     
     internal var encryptedData:String?
     
@@ -34,6 +38,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     internal func applySecret(_ secret:Data, expectedKeyId:String?)
     {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
+        self.payload?.creditCard?.client = self.client
     }
     
     internal func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {

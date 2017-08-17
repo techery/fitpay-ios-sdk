@@ -45,7 +45,7 @@ open class User : NSObject, ClientModel, Mappable, SecretApplyable
         return self.links?.url(User.devicesResource) != nil
     }
     
-    internal weak var client:RestClient?
+    public weak var client:RestClient?
 
     
     public required init?(map: Map)

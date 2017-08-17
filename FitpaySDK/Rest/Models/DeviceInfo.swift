@@ -43,7 +43,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         return self.links?.url(DeviceInfo.commitsResource) != nil
     }
 
-    internal var client: RestClient?
+    public var client: RestClient?
     {
         get
         {
@@ -288,7 +288,7 @@ open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable
 
     internal var encryptedData: String?
     fileprivate static let selfResource = "self"
-    internal weak var client: RestClient?
+    public weak var client: RestClient?
 
     public required init?(map: Map)
     {

@@ -58,7 +58,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
 
     fileprivate weak var _client: RestClient?
 
-    internal var client: RestClient? {
+    public var client: RestClient? {
         get {
             return self._client
         }
@@ -334,7 +334,7 @@ open class CardMetadata: NSObject, ClientModel, Mappable
     open var icon: [Image]?
     open var issuerLogo: [Image]?
     fileprivate var _client: RestClient?
-    internal var client: RestClient?
+    public var client: RestClient?
     {
         get {
             return self._client
@@ -414,7 +414,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivabl
 {
     internal var links: [ResourceLink]?
     open var mimeType: String?
-    internal var client: RestClient?
+    public var client: RestClient?
     fileprivate static let selfResource = "self"
 
     public required init?(map: Map) {
@@ -481,7 +481,7 @@ open class DeviceRelationships: NSObject, ClientModel, Mappable
     open var systemId: String?
 
     fileprivate static let selfResource = "self"
-    internal var client: RestClient?
+    public var client: RestClient?
 
     public required init?(map: Map) {
     }
