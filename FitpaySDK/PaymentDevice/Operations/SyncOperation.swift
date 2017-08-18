@@ -86,7 +86,6 @@ internal class SyncOperation {
         
         return self.eventsAdapter.startAdapting()
     }
-    
 
     // MARK: internal
     internal var fetchCommitsOperation: FetchCommitsOperationProtocol // Dependency Injection
