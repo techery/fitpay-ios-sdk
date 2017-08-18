@@ -376,7 +376,6 @@ extension RestClient {
                     }
                 }
             }
-            
         }
     }
     

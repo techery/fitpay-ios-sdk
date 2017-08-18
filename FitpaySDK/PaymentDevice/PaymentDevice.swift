@@ -268,10 +268,12 @@
     internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
         do {
             try self.paymentDeviceApduExecuter.execute(command: apduCommand, executionBlock: { [weak self] (apduCommand, completion) in
+                
                 self?.apduResponseHandler = completion
                 log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
                 self?.deviceInterface.executeAPDUCommand(apduCommand)
-                }, completion: completion)
+                
+            }, completion: completion)
 
         } catch {
             log.error("Can't execute message, error: \(error)")

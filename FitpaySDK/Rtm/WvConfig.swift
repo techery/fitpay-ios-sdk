@@ -264,7 +264,6 @@ class WvConfigStorage {
                 completion(nil)
                 return
             }
-
             
             completion(NSError.error(code:WvConfig.ErrorCode.deviceDataNotValid, domain: WvConfig.self))
         })

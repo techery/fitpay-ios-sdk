@@ -41,7 +41,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
     open var accessToken: String?
     open var language: String?
     open var baseLanguageUrl: String?
-    open var useWebCardScanner: String?
+    open var useWebCardScanner: Bool?
     
     open var customs: [String:Any]?
     
@@ -117,7 +117,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
                 baseLanguageUrl = value as? String
                 break
             case .useWebCardScanner:
-                useWebCardScanner = value as? String
+                useWebCardScanner = value as? Bool
             }
         } else {
             if customs == nil {
