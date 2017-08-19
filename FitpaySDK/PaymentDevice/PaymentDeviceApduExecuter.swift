@@ -16,7 +16,7 @@ enum PaymentDeviceAPDUExecuterError: Error {
 }
 
 internal class PaymentDeviceApduExecuter {
-    var paymentDevice: PaymentDevice
+    weak var paymentDevice: PaymentDevice?
     var isExecuting: Bool = false
     var completion: PaymentDevice.APDUExecutionHandler!
     var currentApduCommand: APDUCommand!
@@ -36,7 +36,7 @@ internal class PaymentDeviceApduExecuter {
             throw PaymentDeviceAPDUExecuterError.alreadyExecuting
         }
         
-        guard self.paymentDevice.isConnected else {
+        guard self.paymentDevice?.isConnected == true else {
             throw PaymentDeviceAPDUExecuterError.deviceShouldBeConnected
         }
         

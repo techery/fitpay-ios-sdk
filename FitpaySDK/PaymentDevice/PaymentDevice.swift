@@ -268,10 +268,12 @@
     internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
         do {
             try self.paymentDeviceApduExecuter.execute(command: apduCommand, executionBlock: { [weak self] (apduCommand, completion) in
+                
                 self?.apduResponseHandler = completion
                 log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
                 self?.deviceInterface.executeAPDUCommand(apduCommand)
-                }, completion: completion)
+                
+            }, completion: completion)
 
         } catch {
             log.error("Can't execute message, error: \(error)")
@@ -279,17 +281,13 @@
         }
     }
     
-    internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ error: NSError?) -> Void) {
+    internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ state: NonAPDUCommitState?, _ error: NSError?) -> Void) {
         if let processNonAPDUCommit = self.deviceInterface.processNonAPDUCommit {
             processNonAPDUCommit(commit) { (state, error) in
-                if state == .failed || error != nil{
-                    completion(error ?? NSError.unhandledError(PaymentDevice.self))
-                } else {
-                    completion(nil)
-                }
+                completion(state, error)
             }
         } else {
-            completion(nil)
+            completion(.skipped, nil)
         }
     }
     

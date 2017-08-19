@@ -67,32 +67,11 @@ import ObjectMapper
     case ver1 = 1
     case ver2
     case ver3
+    case ver4
     
     static func currentlySupportedVersion() -> RtmProtocolVersion {
-        return .ver3
+        return .ver4
     }
-}
-
-@available(*, deprecated, message: "use WvRTMDelegate: instead")
-@objc public protocol WvConfigDelegate : NSObjectProtocol {
-    /**
-     This method will be called after successful user authorization.
-     */
-    func didAuthorizeWithEmail(_ email:String?)
-    
-    /**
-     This method can be used for user messages customization.
-     
-     Will be called when status has changed and system going to show message.
-     
-     - parameter status:         New device status
-     - parameter defaultMessage: Default message for new status
-     - parameter error:          If we had an error during status change than it will be here.
-                                 For now error will be used with SyncError status
-     
-     - returns:                  Message string which will be shown on status board.
-     */
-    @objc optional func willDisplayStatusMessage(_ status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
 }
 
 @objc public protocol WvRTMDelegate : NSObjectProtocol {
@@ -147,6 +126,14 @@ internal enum WVResponse: Int {
     }
 }
 
+class WvConfigStorage {
+    var sdkConfiguration: FitpaySDKConfiguration?
+    var paymentDevice: PaymentDevice?
+    var user: User?
+    var device: DeviceInfo?
+    
+    var rtmConfig: RtmConfigProtocol?
+}
 
 @objc open class WvConfig : NSObject, WKScriptMessageHandler {
     public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
@@ -163,31 +150,50 @@ internal enum WVResponse: Int {
             }
         }
     }
-
-    @available(*, unavailable, message: "use rtmDelegate: instead")
-    weak open var delegate : WvConfigDelegate?
     
-    weak open var rtmDelegate : WvRTMDelegate?
-    weak open var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate?
-    weak open var cardScannerDataSource: FitpayCardScannerDataSource?
+    weak open var rtmDelegate : WvRTMDelegate? {
+        didSet {
+            self.rtmMessaging.rtmDelegate = rtmDelegate
+        }
+    }
+    weak open var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? {
+        didSet {
+            self.rtmMessaging.cardScannerPresenterDelegate = cardScannerPresenterDelegate
+        }
+    }
+    weak open var cardScannerDataSource: FitpayCardScannerDataSource? {
+        didSet {
+            self.rtmMessaging.cardScannerDataSource = cardScannerDataSource
+        }
+    }
 
     var url = BASE_URL
-    let paymentDevice: PaymentDevice?
-    var sdkConfiguration: FitpaySDKConfiguration
     let notificationCenter = NotificationCenter.default
     
-    var messageHandler: RtmMessageHandler?
-    
-    public var user: User?
-    public var device: DeviceInfo?
-    
-    var restClient: RestClient?
-    var webViewSessionData: SessionData?
-    var rtmConfig: RtmConfigProtocol?
     var webview: WKWebView?
     var connectionBinding: FitpayEventBinding?
     var sessionDataCallBack: RtmMessage?
     var syncCallBacks = [RtmMessage]()
+
+    public var user: User? {
+        get {
+            return self.configStorage.user
+        }
+        set {
+            self.configStorage.user = newValue
+        }
+    }
+    
+    public var device: DeviceInfo? {
+        get {
+            return self.configStorage.device
+        }
+        set {
+            self.configStorage.device = newValue
+        }
+    }
+    
+    var configStorage = WvConfigStorage()
     
     private var bindings: [FitpayEventBinding] = []
 
@@ -195,13 +201,13 @@ internal enum WVResponse: Int {
     
     @objc open var demoModeEnabled : Bool {
         get {
-            if let isEnabled = self.rtmConfig?.jsonDict()[RtmConfigDafaultMappingKey.demoMode.rawValue] as? Bool {
+            if let isEnabled = self.configStorage.rtmConfig?.jsonDict()[RtmConfigDafaultMappingKey.demoMode.rawValue] as? Bool {
                 return isEnabled
             }
             return false
         }
         set {
-            self.rtmConfig?.update(value: newValue, forKey: RtmConfigDafaultMappingKey.demoMode.rawValue)
+            self.configStorage.rtmConfig?.update(value: newValue, forKey: RtmConfigDafaultMappingKey.demoMode.rawValue)
         }
     }
     
@@ -210,16 +216,17 @@ internal enum WVResponse: Int {
     }
     
     @objc public init(paymentDevice:PaymentDevice, rtmConfig: RtmConfigProtocol, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
-        self.paymentDevice = paymentDevice
-        self.rtmConfig = rtmConfig
-        self.sdkConfiguration = SDKConfiguration
+        self.configStorage.paymentDevice = paymentDevice
+        self.configStorage.rtmConfig = rtmConfig
+        self.configStorage.sdkConfiguration = SDKConfiguration
         self.url = SDKConfiguration.webViewURL
         
+        self.rtmMessaging = RtmMessaging(wvConfigStorage: self.configStorage)
 
-        SyncManager.sharedInstance.paymentDevice = paymentDevice
-        
         super.init()
-
+        
+        self.rtmMessaging.outputDelagate = self
+        
         self.demoModeEnabled = false
 
         self.notificationCenter.addObserver(self, selector: #selector(logout), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
@@ -238,14 +245,14 @@ internal enum WVResponse: Int {
       attempt is successful.
      */
     @objc open func openDeviceConnection(_ completion: @escaping (_ error:NSError?) -> Void) {
-        self.connectionBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
+        self.connectionBinding = self.configStorage.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
             [weak self] (event) in
             
             guard let strongSelf = self else {
                 return
             }
             
-            strongSelf.paymentDevice!.removeBinding(binding: strongSelf.connectionBinding!)
+            strongSelf.configStorage.paymentDevice!.removeBinding(binding: strongSelf.connectionBinding!)
 
             if let error = (event.eventData as! [String: Any])["error"] as? NSError {
                 completion(error)
@@ -253,16 +260,15 @@ internal enum WVResponse: Int {
             }
 
             if let deviceInfo = (event.eventData as! [String: Any])["deviceInfo"] as? DeviceInfo {
-                strongSelf.rtmConfig?.deviceInfo = deviceInfo
+                strongSelf.configStorage.rtmConfig?.deviceInfo = deviceInfo
                 completion(nil)
                 return
             }
-
             
             completion(NSError.error(code:WvConfig.ErrorCode.deviceDataNotValid, domain: WvConfig.self))
         })
         
-        self.paymentDevice!.connect()
+        self.configStorage.paymentDevice!.connect()
     }
     
     @objc open func setWebView(_ webview:WKWebView!) {
@@ -309,15 +315,15 @@ internal enum WVResponse: Int {
      This returns the request object clients will require in order to open a WKWebView
      */
     @objc open func wvRequest() -> URLRequest {
-        if let accessToken = self.user?.client?._session.accessToken {
-            self.rtmConfig!.accessToken = accessToken
+        if let accessToken = self.configStorage.user?.client?._session.accessToken {
+            self.configStorage.rtmConfig!.accessToken = accessToken
         }
         
-        if self.rtmConfig?.deviceInfo?.notificationToken == nil && FitpayNotificationsManager.sharedInstance.notificationsToken.characters.count > 0 {
-            self.rtmConfig?.deviceInfo?.notificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
+        if self.configStorage.rtmConfig?.deviceInfo?.notificationToken == nil && FitpayNotificationsManager.sharedInstance.notificationsToken.characters.count > 0 {
+            self.configStorage.rtmConfig?.deviceInfo?.notificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         }
         
-        let JSONString = self.rtmConfig?.jsonDict().JSONString
+        let JSONString = self.configStorage.rtmConfig?.jsonDict().JSONString
         let utfString = JSONString?.data(using: String.Encoding.utf8, allowLossyConversion: true)
         let encodedConfig = utfString?.base64URLencoded()
         let configuredUrl = "\(url)?config=\(encodedConfig ?? "cantGenerateConfig_badJson?")"
@@ -351,8 +357,8 @@ internal enum WVResponse: Int {
             log.error("WV_DATA: Received message from \(message.name), but can't convert it to dictionary type.")
             return
         }
-        
-        self.defaultMessagesHandler(sentData)
+
+        self.rtmMessaging.received(message: sentData)
     }
     
     @objc open func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
@@ -390,74 +396,18 @@ internal enum WVResponse: Int {
         })
     }
     
-    fileprivate func defaultMessagesHandler(_ message: [String:Any]) {
-        let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
-        
-        guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
-            log.error("WV_DATA: Can't create RtmMessage.")
-            return
-        }
-        
-        defer {
-            if let delegate = self.rtmDelegate {
-                delegate.onWvMessageReceived?(message: rtmMessage)
-            }
-        }
-        
-        guard self.messageHandler == nil else {
-            self.messageHandler?.handle(message: message)
-            return
-        }
-        
-        switch rtmMessage.type ?? "" {
-        case "version":
-            guard let versionDictionary = rtmMessage.data as? [String:Int], let versionInt = versionDictionary["version"] else {
-                log.error("WV_DATA: Can't get version of rtm protocol. Data: \(String(describing: rtmMessage.data)).")
-                return
-            }
-            
-            guard let version = RtmProtocolVersion(rawValue: versionInt) else {
-                log.error("WV_DATA: Unknown rtm version - \(versionInt).")
-                return
-            }
-            
-            log.debug("WV_DATA: received \(version) rtm version.")
-            
-            switch version {
-            case .ver2:
-                log.info("WV_DATA: using v2 message handler.")
-                self.messageHandler = RtmMessageHandlerV2(wvConfig: self)
-                break
-            case .ver3:
-                log.info("WV_DATA: using v3 message handler.")
-                self.messageHandler = RtmMessageHandlerV3(wvConfig: self)
-                break
-            case .ver1:
-                log.error("WV_DATA: rtm version 1 not supported yet =(")
-                break
-            }
-            break
-        default:
-            break
-        }
-    }
+    fileprivate var rtmMessaging: RtmMessaging
     
     fileprivate func sendStatusMessage(_ message: String, type: WVMessageType) {
-        sendRtmMessage(rtmMessage: self.messageHandler?.statusResponseMessage(message: message, type: type) ?? RtmMessageResponse(data:["message":message, "type":type.rawValue], type: "deviceStatus"))
+        sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.statusResponseMessage(message: message, type: type) ?? RtmMessageResponse(data:["message":message, "type":type.rawValue], type: "deviceStatus"))
     }
-
 
     fileprivate func resolveSync() {
-        self.messageHandler?.resolveSync()
-    }
-
-    fileprivate func goSync() {
-        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: self.user!, device: self.device), completion: nil)
-        log.verbose("WV_DATA: initiating SyncManager sync via rtm.")
+        self.rtmMessaging.messageHandler?.resolveSync()
     }
     
     fileprivate func sendVersion(version: RtmProtocolVersion) {
-        sendRtmMessage(rtmMessage: self.messageHandler?.versionResponseMessage(version: version) ?? RtmMessageResponse(data: ["version":version.rawValue], type: "version"))
+        sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.versionResponseMessage(version: version) ?? RtmMessageResponse(data: ["version":version.rawValue], type: "version"))
         rtmVersionSent = true
     }
 
@@ -521,9 +471,18 @@ internal enum WVResponse: Int {
     }
 
     @objc fileprivate func logout() {
-        if let _ = user {
-            sendRtmMessage(rtmMessage: self.messageHandler?.logoutResponseMessage() ?? RtmMessageResponse(type: "logout"))
+        if let _ = self.configStorage.user {
+            sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.logoutResponseMessage() ?? RtmMessageResponse(type: "logout"))
         }
     }
+}
 
+extension WvConfig: RtmOutputDelegate {
+    func send(rtmMessage: RtmMessageResponse, retries: Int) {
+        self.sendRtmMessage(rtmMessage: rtmMessage, retries: retries)
+    }
+    
+    func show(status: WVDeviceStatuses, message: String?, error: Error?) {
+        self.showStatusMessage(status, message: message, error: error)
+    }
 }
