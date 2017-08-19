@@ -116,3 +116,7 @@ This code is licensed under the MIT license. More information can be found in th
 ## Questions? Comments? Concerns?
 Please contact the team via a github issue, OR, feel free to email us: sdk@fit-pay.com
 
+
+## Fit Pay Internal Instructions 
+### Publishing Updated SDKs
+* [How-to publish (deploy) a new version of the iOS FitPay SDK](https://fitpay.atlassian.net/wiki/spaces/ENG/pages/92798977/How-to+publish+deploy+a+new+version+of+the+iOS+FitPay+SDK)
