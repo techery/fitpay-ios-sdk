@@ -19,5 +19,11 @@ public class RtmSecureDeviceInfo: RtmDeviceInfo {
             secureElementId <- map["secureElementId"]
         }
     }
+    
+    override func copyFieldsFrom(deviceInfo: DeviceInfo) {
+        super.copyFieldsFrom(deviceInfo: deviceInfo)
+        self.casd = deviceInfo.casd
+        self.secureElementId = deviceInfo.secureElementId
+    }
 }
 

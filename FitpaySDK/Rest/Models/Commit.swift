@@ -50,7 +50,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
         
         let resource = Commit.confirmResource
         guard let url = self.links?.url(resource) else {
-            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
+            completion(nil)
             return
         }
         
