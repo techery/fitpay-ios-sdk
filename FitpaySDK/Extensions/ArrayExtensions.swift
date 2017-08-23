@@ -53,7 +53,7 @@ extension Array {
     }
     
     mutating func dequeue() -> Element? {
-        return self.remove(at: 0)
+        return self.count > 0 ? self.remove(at: 0) : nil
     }
     
     func peekAtQueue() -> Element? {

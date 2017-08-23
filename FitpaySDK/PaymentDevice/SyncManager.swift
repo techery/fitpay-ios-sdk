@@ -23,7 +23,7 @@ protocol SyncManagerProtocol {
 
 open class SyncManager : NSObject, SyncManagerProtocol {
     open static let sharedInstance = SyncManager()
-    open var synchronousModeOn = false
+    open var synchronousModeOn = true
     
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open var paymentDevice : PaymentDevice?
@@ -198,6 +198,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
             throw ErrorCode.notEnoughData
         }
         
+        SyncRequestQueue.sharedInstance.updateLastEmptyRequestWith(request: lastSyncRequest)
+        
         do {
             try self.startSyncWith(request: lastSyncRequest)
         } catch {
@@ -263,7 +265,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
             user = lastSyncRequest?.user
         }
         
-        if self.user == nil {
+        if user == nil {
             completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
             return
         }
