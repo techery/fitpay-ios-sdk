@@ -114,6 +114,7 @@ internal class CommitsApplyer {
 
     fileprivate func processCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         guard let commitType = commit.commitType else {
+            log.error("SYNC_DATA: trying to process commit without commitType.")
             completion(NSError.unhandledError(CommitsApplyer.self))
             return
         }
@@ -143,6 +144,7 @@ internal class CommitsApplyer {
     fileprivate func processAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         log.debug("SYNC_DATA: Processing APDU commit: \(commit.commit ?? "").")
         guard let apduPackage = commit.payload?.apduPackage else {
+            log.error("SYNC_DATA: trying to process apdu commit without apdu package.")
             completion(NSError.unhandledError(CommitsApplyer.self))
             return
         }
@@ -238,6 +240,7 @@ internal class CommitsApplyer {
                 switch e {
                 case .completed:
                     guard state != .failed else {
+                        log.error("SYNC_DATA: received failed state for processing non apdu commit.")
                         completion(NSError.unhandledError(CommitsApplyer.self))
                         return
                     }
@@ -270,6 +273,15 @@ internal class CommitsApplyer {
                         break
                     case .APDU_PACKAGE:
                         log.warning("Processed APDU package inside nonapdu handler.")
+                        break
+                    case .CREDITCARD_PROVISION_FAILED:
+                        syncEvent = SyncEvent(event: .cardProvisionFailed, data: eventData)
+                        break
+                    case .CREDITCARD_METADATA_UPDATED:
+                        syncEvent = SyncEvent(event: .cardMetadataUpdated, data: eventData)
+                        break
+                    case .UNKNOWN:
+                        log.warning("Received new (unknown) commit type - \(commit.commitTypeString ?? "").")
                         break
                     }
                     

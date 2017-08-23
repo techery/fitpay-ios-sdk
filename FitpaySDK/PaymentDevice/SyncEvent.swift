@@ -37,6 +37,9 @@ struct SyncEvent {
     case cardReactivated
     case setDefaultCard
     case resetDefaultCard
+    case cardProvisionFailed
+    case cardMetadataUpdated
+
     
     public func eventId() -> Int {
         return rawValue
@@ -82,6 +85,10 @@ struct SyncEvent {
             return "New default card was manually set"
         case .resetDefaultCard:
             return "New default card was automatically set"
+        case .cardProvisionFailed:
+            return "Card provision failed event."
+        case .cardMetadataUpdated:
+            return "Card metadata updated event."
         }
     }
 }

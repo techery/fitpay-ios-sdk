@@ -33,6 +33,14 @@ open class SyncRequestQueue {
         self.syncManager = syncManager
         self.bind()
     }
+    
+    internal func updateLastEmptyRequestWith(request: SyncRequest) {
+        if let queue = self.queueFor(syncRequest: SyncRequest()) {
+            if let intRequest = queue.dequeue() {
+                add(request: request, completion: intRequest.completion)
+            }
+        }
+    }
 
     deinit {
         self.unbind()
@@ -54,11 +62,7 @@ open class SyncRequestQueue {
     }
     
     private func createNewQueueFor(deviceId: DeviceIdentifier, syncRequest: SyncRequest) -> BindedToDeviceSyncRequestQueue? {
-        guard let deviceInfo = syncRequest.deviceInfo else {
-            return nil
-        }
-        
-        let queue = BindedToDeviceSyncRequestQueue(deviceInfo: deviceInfo, syncManager: syncManager)
+        let queue = BindedToDeviceSyncRequestQueue(deviceInfo: syncRequest.deviceInfo, syncManager: syncManager)
         queues[deviceId] = queue
         
         return queue

@@ -4,7 +4,10 @@ import ObjectMapper
 open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
-    open var commitType:CommitType?
+    open var commitType:CommitType? {
+        return CommitType(rawValue: commitTypeString ?? "") ?? .UNKNOWN
+    }
+    open var commitTypeString: String?
     open var payload:Payload?
     open var created:CLong?
     open var previousCommit:String?
@@ -27,7 +30,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     
     open func mapping(map: Map) {
         links <- (map["_links"], ResourceLinkTransformType())
-        commitType <- map["commitType"]
+        commitTypeString <- map["commitType"]
         created <- map["createdTs"]
         previousCommit <- map["previousCommit"]
         commit <- map["commitId"]
@@ -92,14 +95,17 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
 
 public enum CommitType : String
 {
-    case CREDITCARD_CREATED       = "CREDITCARD_CREATED"
-    case CREDITCARD_DEACTIVATED   = "CREDITCARD_DEACTIVATED"
-    case CREDITCARD_ACTIVATED     = "CREDITCARD_ACTIVATED"
-    case CREDITCARD_REACTIVATED   = "CREDITCARD_REACTIVATED"
-    case CREDITCARD_DELETED       = "CREDITCARD_DELETED"
-    case RESET_DEFAULT_CREDITCARD = "RESET_DEFAULT_CREDITCARD"
-    case SET_DEFAULT_CREDITCARD   = "SET_DEFAULT_CREDITCARD"
-    case APDU_PACKAGE             = "APDU_PACKAGE"
+    case CREDITCARD_CREATED          = "CREDITCARD_CREATED"
+    case CREDITCARD_DEACTIVATED      = "CREDITCARD_DEACTIVATED"
+    case CREDITCARD_ACTIVATED        = "CREDITCARD_ACTIVATED"
+    case CREDITCARD_REACTIVATED      = "CREDITCARD_REACTIVATED"
+    case CREDITCARD_DELETED          = "CREDITCARD_DELETED"
+    case RESET_DEFAULT_CREDITCARD    = "RESET_DEFAULT_CREDITCARD"
+    case SET_DEFAULT_CREDITCARD      = "SET_DEFAULT_CREDITCARD"
+    case APDU_PACKAGE                = "APDU_PACKAGE"
+    case CREDITCARD_PROVISION_FAILED = "CREDITCARD_PROVISION_FAILED"
+    case CREDITCARD_METADATA_UPDATED = "CREDITCARD_METADATA_UPDATED"
+    case UNKNOWN                     = "UNKNOWN"
 }
 
 open class Payload : NSObject, Mappable
