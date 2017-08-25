@@ -196,12 +196,12 @@ extension RestSession {
                 }
                 
                 devicesColletion?.collectAllAvailable({ (devices, error) in
-                    guard (error == nil || devices == nil) else {
+                    guard error == nil, let devices = devices else {
                         completion(nil, nil, error as NSError?)
                         return
                     }
                     
-                    for device in devices! {
+                    for device in devices {
                         if device.deviceIdentifier == deviceId {
                             completion(user!, device, nil)
                             return
