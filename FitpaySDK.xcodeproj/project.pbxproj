@@ -35,12 +35,12 @@
 		37139BE31F177B21001EEE73 /* SyncRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BE11F177B21001EEE73 /* SyncRequest.swift */; };
 		37139BE51F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BE41F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift */; };
 		37139BE61F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37139BE41F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift */; };
-		371CB3031F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */; };
-		371CB3041F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */; };
 		371CB2FD1F4449C50019A766 /* SyncFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB2FC1F4449C50019A766 /* SyncFactory.swift */; };
 		371CB2FE1F4449C50019A766 /* SyncFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB2FC1F4449C50019A766 /* SyncFactory.swift */; };
 		371CB3001F444ACF0019A766 /* NonAPDUConfirmOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB2FF1F444ACF0019A766 /* NonAPDUConfirmOperation.swift */; };
 		371CB3011F444ACF0019A766 /* NonAPDUConfirmOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB2FF1F444ACF0019A766 /* NonAPDUConfirmOperation.swift */; };
+		371CB3031F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */; };
+		371CB3041F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */; };
 		37327B9A1E9BAB5A003B8918 /* SwCrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37327B991E9BAB5A003B8918 /* SwCrypt.swift */; };
 		37327B9B1E9CC2EF003B8918 /* SwCrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37327B991E9BAB5A003B8918 /* SwCrypt.swift */; };
 		374B62641EC9DA3C00A7CE62 /* ApduCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374B62631EC9DA3C00A7CE62 /* ApduCommand.swift */; };
@@ -388,9 +388,9 @@
 		37139BDF1F177B04001EEE73 /* SyncRequestsQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncRequestsQueue.swift; sourceTree = "<group>"; };
 		37139BE11F177B21001EEE73 /* SyncRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncRequest.swift; sourceTree = "<group>"; };
 		37139BE41F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BindedToDeviceSyncRequestQueue.swift; sourceTree = "<group>"; };
-		371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmMessageHandlerV4.swift; sourceTree = "<group>"; };
 		371CB2FC1F4449C50019A766 /* SyncFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncFactory.swift; sourceTree = "<group>"; };
 		371CB2FF1F444ACF0019A766 /* NonAPDUConfirmOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonAPDUConfirmOperation.swift; sourceTree = "<group>"; };
+		371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmMessageHandlerV4.swift; sourceTree = "<group>"; };
 		37327B991E9BAB5A003B8918 /* SwCrypt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwCrypt.swift; sourceTree = "<group>"; };
 		374B62631EC9DA3C00A7CE62 /* ApduCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduCommand.swift; sourceTree = "<group>"; };
 		374B62661EC9DAB300A7CE62 /* ApduResponseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduResponseProtocol.swift; sourceTree = "<group>"; };

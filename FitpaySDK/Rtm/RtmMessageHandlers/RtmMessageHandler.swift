@@ -34,10 +34,17 @@ protocol RtmMessageHandler {
     func handleSync(_ message: RtmMessage)
     func handleSessionData(_ message: RtmMessage)
 
+    func handleSdkVersion(_ message: RtmMessage)
+
     func resolveSync()
     
     func logoutResponseMessage() -> RtmMessageResponse?
     func statusResponseMessage(message: String, type: WVMessageType) -> RtmMessageResponse?
     func versionResponseMessage(version: RtmProtocolVersion) -> RtmMessageResponse?
 
+}
+
+extension RtmMessageHandler {
+    func handleSdkVersion(_ message: RtmMessage) {
+    }
 }

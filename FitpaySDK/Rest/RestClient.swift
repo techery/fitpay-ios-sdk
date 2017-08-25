@@ -46,7 +46,11 @@ open class RestClient: NSObject
 
     internal static let fpKeyIdKey: String = "fp-key-id"
 
-    fileprivate let defaultHeaders = ["Accept": "application/json"]
+    fileprivate let defaultHeaders = [
+        "Accept": "application/json",
+        "X-FitPay-SDK": "iOS-\(FitpaySDKConfiguration.sdkVersion)"
+    ]
+    
     internal var _session: RestSession
     internal var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
 
@@ -348,7 +352,7 @@ extension RestClient {
     internal func createAuthHeaders(_ completion: CreateAuthHeaders)
     {
         if self._session.isAuthorized {
-            completion(["Authorization": "Bearer " + self._session.accessToken!], nil)
+            completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
         } else {
             completion(nil, NSError.error(code: ErrorCode.unauthorized, domain: RestClient.self, message: "\(ErrorCode.unauthorized)"))
         }
