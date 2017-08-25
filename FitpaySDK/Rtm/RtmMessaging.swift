@@ -68,6 +68,7 @@ class RtmMessaging {
             
             guard let version = RtmProtocolVersion(rawValue: versionInt) else {
                 log.error("WV_DATA: Unknown rtm version - \(versionInt).")
+                receivedWrongVersion = true
                 completion?(false)
                 return
             }
@@ -96,8 +97,13 @@ class RtmMessaging {
             
             break
         default:
-            log.debug("Adding message to the buffer. Will be used after we will receive rtm version.")
-            preVersionBuffer.append(BufferedMessage(message: message, completion: completion))
+            if !receivedWrongVersion {
+                log.debug("Adding message to the buffer. Will be used after we will receive rtm version.")
+                preVersionBuffer.append(BufferedMessage(message: message, completion: completion))
+            } else {
+                log.error("Can't handle message because version ack was failed.")
+                completion?(false)
+            }
             return
         }
         
@@ -112,4 +118,5 @@ class RtmMessaging {
     }
     
     fileprivate var preVersionBuffer: [BufferedMessage]
+    fileprivate var receivedWrongVersion = false
 }

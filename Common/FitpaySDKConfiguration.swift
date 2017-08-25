@@ -43,9 +43,7 @@ open class FitpaySDKConfiguration : NSObject{
         self.setupLogs()
     }
     
-    fileprivate func setupLogs() {
-		log.addOutput(output: ConsoleOutput())
-    }
+    open static let sdkVersion: String = Bundle(for: FitpaySDKConfiguration.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "unk"
     
     enum EnvironmentLoadingErrors : Error {
         case clientIdIsEmpty
@@ -89,5 +87,9 @@ open class FitpaySDKConfiguration : NSObject{
         self.baseAPIURL = baseAPIUrl
         
         return nil
+    }
+    
+    fileprivate func setupLogs() {
+        log.addOutput(output: ConsoleOutput())
     }
 }
