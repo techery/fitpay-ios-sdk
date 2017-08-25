@@ -20,6 +20,8 @@ open class FitpayEventsSubscriber {
         case cardDeleted
         case setDefaultCard
         case resetDefaultCard
+        case cardProvisionFailed
+        case cardMetadataUpdated
         
         case userCreated
         case getUserAndDevice
@@ -47,6 +49,10 @@ open class FitpayEventsSubscriber {
                 return "Set default card event."
             case .resetDefaultCard:
                 return "Reset default card event."
+            case .cardProvisionFailed:
+                return "Card provision failed event."
+            case .cardMetadataUpdated:
+                return "Card metadata updated event."
             case .userCreated:
                 return "User created event."
             case .getUserAndDevice:
@@ -155,6 +161,16 @@ open class FitpayEventsSubscriber {
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .resetDefaultCard, completion: {
             (event) in
             self.executeCallbacksForEvent(event: .resetDefaultCard)
+        })
+        
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .cardMetadataUpdated, completion: {
+            (event) in
+            self.executeCallbacksForEvent(event: .cardMetadataUpdated)
+        })
+        
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .cardProvisionFailed, completion: {
+            (event) in
+            self.executeCallbacksForEvent(event: .cardProvisionFailed)
         })
         
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .syncCompleted, completion: {

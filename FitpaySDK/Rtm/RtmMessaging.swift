@@ -19,7 +19,7 @@ class RtmMessaging {
     weak var rtmDelegate: WvRTMDelegate?
     weak var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate?
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
-
+    
     private(set) var messageHandler: RtmMessageHandler?
 
     lazy var handlersMapping: [RtmProtocolVersion: RtmMessageHandler?] = {
@@ -31,9 +31,13 @@ class RtmMessaging {
     
     init(wvConfigStorage: WvConfigStorage) {
         self.wvConfigStorage = wvConfigStorage
+        self.preVersionBuffer = []
     }
     
-    func received(message: [String:Any], completion: ((_ success:Bool)->Void)? = nil) {
+    typealias RtmRawMessage = [String: Any]
+    typealias RtmRawMessageCompletion = ((_ success:Bool)->Void)
+    
+    func received(message: RtmRawMessage, completion: RtmRawMessageCompletion? = nil) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
         guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
@@ -64,6 +68,7 @@ class RtmMessaging {
             
             guard let version = RtmProtocolVersion(rawValue: versionInt) else {
                 log.error("WV_DATA: Unknown rtm version - \(versionInt).")
+                receivedWrongVersion = true
                 completion?(false)
                 return
             }
@@ -83,9 +88,22 @@ class RtmMessaging {
 
             self.messageHandler = handler
             
+            defer {
+                for message in preVersionBuffer {
+                    received(message: message.message, completion: message.completion)
+                }
+                preVersionBuffer = []
+            }
+            
             break
         default:
-            completion?(false)
+            if !receivedWrongVersion {
+                log.debug("Adding message to the buffer. Will be used after we will receive rtm version.")
+                preVersionBuffer.append(BufferedMessage(message: message, completion: completion))
+            } else {
+                log.error("Can't handle message because version ack was failed.")
+                completion?(false)
+            }
             return
         }
         
@@ -93,4 +111,12 @@ class RtmMessaging {
     }
     
     fileprivate var wvConfigStorage: WvConfigStorage
+    
+    fileprivate struct BufferedMessage {
+        var message: RtmRawMessage
+        var completion: RtmRawMessageCompletion?
+    }
+    
+    fileprivate var preVersionBuffer: [BufferedMessage]
+    fileprivate var receivedWrongVersion = false
 }

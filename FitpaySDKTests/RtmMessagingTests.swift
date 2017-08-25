@@ -96,7 +96,7 @@ class RtmMessagingTests: XCTestCase {
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
         rtmMessaging.handlersMapping = [RtmProtocolVersion.ver3: handler]
         
-        rtmMessaging.received(message: ["type":"version","callBackId":0,"data":["version":4]], completion: { (success) in
+        rtmMessaging.received(message: ["type":"version","callBackId":0,"data":["version":99]], completion: { (success) in
             XCTAssertFalse(success)
         })
         

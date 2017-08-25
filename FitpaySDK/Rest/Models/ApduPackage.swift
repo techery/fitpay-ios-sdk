@@ -71,10 +71,11 @@ open class ApduPackage : NSObject, Mappable
     }
 
     open var isExpired: Bool {
-//        return validUntilEpoch <= CLong(NSDate().timeIntervalSince1970)
-        // validUntilEpoch not currently in the commit event
-
-        return false
+        guard let validUntilEpoch = self.validUntilEpoch else {
+            return false
+        }
+        
+        return validUntilEpoch <= NSDate().timeIntervalSince1970
     }
 
     open var responseDictionary: [String: Any] {

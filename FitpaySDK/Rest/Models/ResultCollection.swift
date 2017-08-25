@@ -89,7 +89,8 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
                 completion(self.results, error)
             })
         } else {
-            completion(nil, NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: nil, resource: self.nextResourse))
+            log.error("Can't collect all available data, probably there is no 'next' URL.")
+            completion(self.results, nil)
         }
     }
 
