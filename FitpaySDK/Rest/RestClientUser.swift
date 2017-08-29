@@ -58,7 +58,11 @@ extension RestClient {
         ) {
         log.verbose("request create user: \(email)")
         
-        self.preparKeyHeader { [unowned self] (headers, error) in
+        self.preparKeyHeader { [weak self] (headers, error) in
+            guard let strongSelf = self else {
+                return
+            }
+
             if let headers = headers {
                 log.verbose("got headers: \(headers)")
                 var parameters: [String: Any] = [:]
@@ -101,17 +105,17 @@ extension RestClient {
                                                                       enc: JWEEncryption.A256GCM,
                                                                       payload: userInfoJSON,
                                                                       keyId: headers[RestClient.fpKeyIdKey]!) {
-                        if let encrypted = try? jweObject.encrypt(self.secret) {
+                        if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
                             parameters["encryptedData"] = encrypted
                         }
                     }
                 }
                 
-                log.verbose("user creation url: \(self._session.baseAPIURL)/users")
+                log.verbose("user creation url: \(strongSelf._session.baseAPIURL)/users")
                 log.verbose("Headers: \(headers)")
                 log.verbose("user creation json: \(parameters)")
                 
-                let request = self._manager.request(self._session.baseAPIURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 
                 request.validate().responseObject(queue: DispatchQueue.global(), completionHandler: { (response: DataResponse<User>) in
                     DispatchQueue.main.async {
@@ -119,7 +123,7 @@ extension RestClient {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             resultValue.client = self
                             completion(resultValue, nil)
                         } else {
@@ -150,13 +154,17 @@ extension RestClient {
      */
     @objc open func user(id: String, completion: @escaping UserHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let strongSelf = self else {
+                return
+            }
+
             if let headers = headers {
-                let request = self._manager.request(self._session.baseAPIURL + "/users/" + id,
-                                                    method: .get,
-                                                    parameters: nil,
-                                                    encoding: JSONEncoding.default,
-                                                    headers: headers)
+                let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users/" + id,
+                                                          method: .get,
+                                                          parameters: nil,
+                                                          encoding: JSONEncoding.default,
+                                                          headers: headers)
                 request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<User>) in
                     DispatchQueue.main.async {
                         if let _ = response.result.error {
@@ -164,7 +172,7 @@ extension RestClient {
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             completion(resultValue, response.result.error as NSError?)
                         } else {
                             completion(nil, NSError.unhandledError(RestClient.self))
@@ -249,7 +257,7 @@ extension RestClient {
                 
                 let request = self._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 request.validate().responseObject(queue: DispatchQueue.global()) {
-                    [unowned self] (response: DataResponse<User>) in
+                    [weak self] (response: DataResponse<User>) in
                     
                     DispatchQueue.main.async {
                         if let _ = response.result.error {
@@ -257,7 +265,9 @@ extension RestClient {
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            if let secret = self?.secret {
+                                resultValue.applySecret(secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            }
                             completion(resultValue, response.result.error as NSError?)
                         } else {
                             completion(nil, NSError.unhandledError(RestClient.self))
@@ -302,10 +312,14 @@ extension RestClient {
     
     open func user(_ url: String, completion: @escaping UserHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<User>) in
+                let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<User>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+                    
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -313,7 +327,7 @@ extension RestClient {
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             completion(resultValue, response.result.error as NSError?)
                         } else {
                             completion(nil, NSError.unhandledError(RestClient.self))

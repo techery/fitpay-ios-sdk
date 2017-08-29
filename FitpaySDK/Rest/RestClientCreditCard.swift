@@ -118,7 +118,11 @@ extension RestClient {
                                    street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
                                    completion: @escaping CreateCreditCardHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let strongSelf = self else {
+                return
+            }
+            
             if let headers = headers {
                 var parameters: [String: String] = [:]
                 
@@ -141,22 +145,26 @@ extension RestClient {
                 
                 if let cardJSON = rawCard.JSONString {
                     if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId: headers[RestClient.fpKeyIdKey]!) {
-                        if let encrypted = try? jweObject.encrypt(self.secret) {
+                        if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
                             parameters["encryptedData"] = encrypted
                         }
                     }
                 }
                 
-                let request = self._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                let request = strongSelf._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 
-                request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<CreditCard>) in
+                request.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<CreditCard>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                             
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             resultValue.client = self
                             completion(resultValue, nil)
                         } else {
@@ -180,18 +188,26 @@ extension RestClient {
     
     internal func creditCards(_ url: String, parameters: [String: AnyObject]?, completion: @escaping CreditCardsHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let strongSelf = self else {
+                return
+            }
+
             if let headers = headers {
-                let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                let request = strongSelf._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
                 
-                request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<ResultCollection<CreditCard>>) in
+                request.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<ResultCollection<CreditCard>>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                             
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             
                             resultValue.client = self
                             
@@ -211,9 +227,14 @@ extension RestClient {
     
     internal func deleteCreditCard(_ url: String, completion: @escaping DeleteCreditCardHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            
+            guard let strongSelf = self else {
+                return
+            }
+
             if let headers = headers {
-                let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+                let request = strongSelf._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
                 request.validate().responseData(queue: DispatchQueue.global()) { (response: DataResponse<Data>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
@@ -236,7 +257,11 @@ extension RestClient {
     
     internal func updateCreditCard(_ url: String, name: String?, street1: String?, street2: String?, city: String?, state: String?, postalCode: String?, countryCode: String?, completion: @escaping UpdateCreditCardHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let strongSelf = self else {
+                return
+            }
+
             if let headers = headers {
                 var operations: [[String: String]] = []
                 
@@ -286,22 +311,26 @@ extension RestClient {
                 
                 if let updateJSON = operations.JSONString {
                     if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId: headers[RestClient.fpKeyIdKey]!) {
-                        if let encrypted = try? jweObject.encrypt(self.secret)! {
+                        if let encrypted = try? jweObject.encrypt(strongSelf.secret)! {
                             parameters["encryptedData"] = encrypted
                         }
                     }
                 }
                 
-                let request = self._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                let request = strongSelf._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<CreditCard>) in
+                request.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<CreditCard>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                             
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             resultValue.client = self
                             completion(resultValue, nil)
                         } else {
@@ -319,10 +348,10 @@ extension RestClient {
     
     internal func acceptTerms(_ url: String, completion: @escaping AcceptTermsHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<CreditCard>) in
+                let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<CreditCard>) in
                     
                     DispatchQueue.main.async {
                         if response.result.error != nil {
@@ -349,10 +378,10 @@ extension RestClient {
     
     internal func declineTerms(_ url: String, completion: @escaping DeclineTermsHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<CreditCard>) in
+                let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<CreditCard>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -377,10 +406,10 @@ extension RestClient {
     
     internal func selectVerificationType(_ url: String, completion: @escaping SelectVerificationTypeHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<VerificationMethod>) in
+                let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<VerificationMethod>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -413,14 +442,14 @@ extension RestClient {
     
     internal func verify(_ url: String, verificationCode: String, completion: @escaping VerifyHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
                 let params = [
                     "verificationCode": verificationCode
                 ]
                 
-                let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<VerificationMethod>) in
+                let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<VerificationMethod>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -455,11 +484,11 @@ extension RestClient {
     
     internal func deactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping DeactivateHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
                 let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
-                let request = self._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self](response: DataResponse<CreditCard>) in
+                let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self](response: DataResponse<CreditCard>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -493,11 +522,11 @@ extension RestClient {
     
     internal func reactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping ReactivateHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
                 let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
-                let request = self._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<CreditCard>) in
+                let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<CreditCard>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -531,10 +560,15 @@ extension RestClient {
     
     internal func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<CreditCard>) in
+                let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<CreditCard>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
+                    
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -542,7 +576,7 @@ extension RestClient {
                         } else if let resultValue = response.result.value
                         {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             completion(resultValue, nil)
                         } else {
                             completion(nil, NSError.unhandledError(RestClient.self))
@@ -559,10 +593,10 @@ extension RestClient {
     
     internal func makeDefault(_ url: String, completion: @escaping MakeDefaultHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<CreditCard>) in
+                let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<CreditCard>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)

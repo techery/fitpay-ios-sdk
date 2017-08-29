@@ -175,11 +175,15 @@
         if let secsTimeout = secsTimeout {
             let delayTime = DispatchTime.now() + Double(Int64(UInt64(secsTimeout) * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: delayTime) {
-                [unowned self] () -> Void in
-                if (!self.isConnected || self.deviceInfo == nil) {
-                    self.deviceInterface.resetToDefaultState()
-                    self.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.operationTimeout, domain: PaymentDevice.self)])
-                    self.connectionState = .disconnected
+                [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                if (!strongSelf.isConnected || strongSelf.deviceInfo == nil) {
+                    strongSelf.deviceInterface.resetToDefaultState()
+                    strongSelf.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.operationTimeout, domain: PaymentDevice.self)])
+                    strongSelf.connectionState = .disconnected
                 }
             }
         }

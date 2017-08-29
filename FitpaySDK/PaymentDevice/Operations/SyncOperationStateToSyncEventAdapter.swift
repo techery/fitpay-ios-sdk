@@ -17,7 +17,7 @@ class SyncOperationStateToSyncEventAdapter {
     }
     
     func startAdapting() -> Observable<SyncEvent> {
-        self.stateObservable.subscribe(onNext: { [unowned self] (state) in
+        self.stateObservable.subscribe(onNext: { [weak self] (state) in
             var callComplete = false
             var syncEvent: SyncEvent? = nil
             switch state {
@@ -46,11 +46,11 @@ class SyncOperationStateToSyncEventAdapter {
             }
             
             if let syncEvent = syncEvent {
-                self.syncEventsPublisher.onNext(syncEvent)
+                self?.syncEventsPublisher.onNext(syncEvent)
             }
             
             if callComplete {
-                self.syncEventsPublisher.onCompleted()
+                self?.syncEventsPublisher.onCompleted()
             }
             
         }).disposed(by: disposeBag)

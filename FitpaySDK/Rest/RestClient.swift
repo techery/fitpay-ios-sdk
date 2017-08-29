@@ -333,12 +333,12 @@ extension RestClient {
         if let key = self.key {
             completion(key, nil)
         } else {
-            self.createEncryptionKey(clientPublicKey: self.keyPair.publicKey!) { [unowned self] (encryptionKey, error) in
+            self.createEncryptionKey(clientPublicKey: self.keyPair.publicKey!) { [weak self] (encryptionKey, error) in
                 if let error = error {
                     completion(nil, error)
                 } else if let encryptionKey = encryptionKey {
-                    self.key = encryptionKey
-                    completion(self.key, nil)
+                    self?.key = encryptionKey
+                    completion(self?.key, nil)
                 }
             }
         }
@@ -368,11 +368,11 @@ extension RestClient {
     typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: NSError?) -> Void
     internal func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders)
     {
-        self.createAuthHeaders { [unowned self] (headers, error) in
+        self.createAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
             } else {
-                self.createKeyIfNeeded { (encryptionKey, keyError) in
+                self?.createKeyIfNeeded { (encryptionKey, keyError) in
                     if let keyError = keyError {
                         completion(nil, keyError)
                     } else {
@@ -387,11 +387,11 @@ extension RestClient {
     
     internal func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders)
     {
-        self.skipAuthHeaders { [unowned self] (headers, error) in
+        self.skipAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
             } else {
-                self.createKeyIfNeeded { (encryptionKey, keyError) in
+                self?.createKeyIfNeeded { (encryptionKey, keyError) in
                     if let keyError = keyError {
                         completion(nil, keyError)
                     } else {
@@ -408,9 +408,13 @@ extension RestClient {
     public typealias IssuersHandler = (_ issuers: Issuers?, _ error: NSError?) -> Void
     
     public func issuers(completion: @escaping IssuersHandler) {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let strongSelf = self else {
+                return
+            }
+            
             if let headers = headers {
-                let request = self._manager.request(self._session.baseAPIURL + "/issuers",
+                let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/issuers",
                                                method: .get,
                                                parameters: nil,
                                                encoding: JSONEncoding.default,
@@ -427,7 +431,8 @@ extension RestClient {
                             completion(nil, NSError.unhandledError(RestClient.self))
                         }
                     }
-                }            } else {
+                }
+            } else {
                 DispatchQueue.main.async {
                     completion(nil, error)
                 }

@@ -80,10 +80,14 @@ extension RestClient {
     
     internal func devices(_ url: String, parameters: [String: AnyObject]?, completion: @escaping DevicesHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<ResultCollection<DeviceInfo>>) in
+                let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<ResultCollection<DeviceInfo>>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -91,7 +95,7 @@ extension RestClient {
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             
                             completion(resultValue, response.result.error as NSError?)
                         } else {
@@ -113,59 +117,61 @@ extension RestClient {
                                   softwareRevision: String, systemId: String, osName: String, licenseKey: String, bdAddress: String,
                                   secureElementId: String, pairing: String, completion: @escaping CreateNewDeviceHandler)
     {
-        self.prepareAuthAndKeyHeaders
-            {
-                [unowned self] (headers, error) in
-                if let headers = headers {
-                    let params = [
-                        "deviceType": deviceType,
-                        "manufacturerName": manufacturerName,
-                        "deviceName": deviceName,
-                        "serialNumber": serialNumber,
-                        "modelNumber": modelNumber,
-                        "hardwareRevision": hardwareRevision,
-                        "firmwareRevision": firmwareRevision,
-                        "softwareRevision": softwareRevision,
-                        "systemId": systemId,
-                        "osName": osName,
-                        "licenseKey": licenseKey,
-                        "bdAddress": bdAddress,
-                        "secureElement": [
-                            "secureElementId": secureElementId
-                        ],
-                        "pairingTs": pairing
-                        ] as [String: Any]
-                    let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-                    request.validate().responseObject( queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<DeviceInfo>) in
-                        DispatchQueue.main.async {
-                            if response.result.error != nil {
-                                let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                                
-                                completion(nil, error)
-                            } else if let resultValue = response.result.value {
-                                resultValue.client = self
-                                
-                                resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                                completion(resultValue, response.result.error as NSError?)
-                            } else {
-                                completion(nil, NSError.unhandledError(RestClient.self))
-                            }
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            if let headers = headers {
+                let params = [
+                    "deviceType": deviceType,
+                    "manufacturerName": manufacturerName,
+                    "deviceName": deviceName,
+                    "serialNumber": serialNumber,
+                    "modelNumber": modelNumber,
+                    "hardwareRevision": hardwareRevision,
+                    "firmwareRevision": firmwareRevision,
+                    "softwareRevision": softwareRevision,
+                    "systemId": systemId,
+                    "osName": osName,
+                    "licenseKey": licenseKey,
+                    "bdAddress": bdAddress,
+                    "secureElement": [
+                        "secureElementId": secureElementId
+                    ],
+                    "pairingTs": pairing
+                ] as [String: Any]
+                let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseObject( queue: DispatchQueue.global()) { [weak self] (response: DataResponse<DeviceInfo>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
+                    DispatchQueue.main.async {
+                        if response.result.error != nil {
+                            let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+
+                            completion(nil, error)
+                        } else if let resultValue = response.result.value {
+                            resultValue.client = self
+
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            completion(resultValue, response.result.error as NSError?)
+                        } else {
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
                     }
-                } else {
-                    DispatchQueue.main.async {
-                        completion(nil, error)
-                    }
                 }
+            } else {
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+            }
         }
     }
-    
+
     internal func deleteDevice(_ url: String, completion: @escaping DeleteDeviceHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseString { (response: DataResponse<String>) in
+                let request = self?._manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request?.validate().responseString { (response: DataResponse<String>) in
                     DispatchQueue.main.async {
                         completion(response.result.error as NSError?)
                     }
@@ -194,18 +200,22 @@ extension RestClient {
             paramsArray.append(["op": "replace", "path": "/notificationToken", "value": notificationToken])
         }
         
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
                 let params = ["params": paramsArray]
-                let request = self._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<DeviceInfo>) in
+                let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<DeviceInfo>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if let _ = response.result.error {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             
                             completion(resultValue, response.result.error as NSError?)
                         } else {
@@ -224,11 +234,15 @@ extension RestClient {
     internal func addDeviceProperty(_ url: String, propertyPath: String, propertyValue: String, completion: @escaping UpdateDeviceHandler) {
         var paramsArray = [Any]()
         paramsArray.append(["op": "add", "path": propertyPath, "value": propertyValue])
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
                 let params = ["params": paramsArray]
-                let request = self._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<DeviceInfo>) in
+                let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<DeviceInfo>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -236,7 +250,7 @@ extension RestClient {
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             
                             completion(resultValue, response.result.error as NSError?)
                         } else {
@@ -264,10 +278,14 @@ extension RestClient {
             parameters["commitsAfter"] = commitsAfter!
         }
         
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<ResultCollection<Commit>>) in
+                let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<ResultCollection<Commit>>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -275,7 +293,7 @@ extension RestClient {
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             completion(resultValue, response.result.error as NSError?)
                         } else {
                             completion(nil, NSError.unhandledError(RestClient.self))
@@ -293,10 +311,14 @@ extension RestClient {
     internal func commits(_ url: String, parameters: [String: AnyObject]?,
                           completion: @escaping CommitsHandler)
     {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { [unowned self] (response: DataResponse<ResultCollection<Commit>>) in
+                let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<ResultCollection<Commit>>) in
+                    guard let strongSelf = self else {
+                        return
+                    }
+
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -304,7 +326,7 @@ extension RestClient {
                             completion(nil, error)
                         } else if let resultValue = response.result.value {
                             resultValue.client = self
-                            resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                            resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                             completion(resultValue, response.result.error as NSError?)
                         } else {
                             completion(nil, NSError.unhandledError(RestClient.self))
