@@ -6,31 +6,31 @@ target 'FitpaySDK' do
     pod 'ObjectMapper', '2.2.5'
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
-    pod 'KeychainAccess', '3.0.1'
+    pod 'KeychainAccess', '3.0.2'
     pod 'RxSwift', '~> 3.5'
 end
 
 target 'FitpaySDKDemo' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
-    pod 'KeychainAccess', '3.0.1'
+    pod 'KeychainAccess', '3.0.2'
 end
 
 target 'RTMClientApp' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
-    pod 'KeychainAccess', '3.0.1'
+    pod 'KeychainAccess', '3.0.2'
 end
 
 target 'ObjCDemo' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
-    pod 'KeychainAccess', '3.0.1'
+    pod 'KeychainAccess', '3.0.2'
 end
 
 target 'FitpaySDKTestsPods' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
-    pod 'KeychainAccess', '3.0.1'
+    pod 'KeychainAccess', '3.0.2'
     pod 'RxBlocking'
 end
