@@ -95,11 +95,11 @@ open class RestSession: NSObject
 
                         if let userId = jwt.body["user_id"] as? String {
                             DispatchQueue.main.async {
-                                [unowned self] () -> Void in
+                                [weak self] in
 
                                 log.verbose("successful login for user: \(userId)")
-                                self.userId = userId
-                                self.accessToken = accessToken
+                                self?.userId = userId
+                                self?.accessToken = accessToken
                                 completion(nil)
                             }
                         } else {
