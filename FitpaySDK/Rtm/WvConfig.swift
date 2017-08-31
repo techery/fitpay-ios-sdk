@@ -68,9 +68,10 @@ import ObjectMapper
     case ver2
     case ver3
     case ver4
+    case ver5
     
     static func currentlySupportedVersion() -> RtmProtocolVersion {
-        return .ver4
+        return .ver5
     }
 }
 

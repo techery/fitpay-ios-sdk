@@ -116,7 +116,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
                 FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice, status: .failed, reason: error)
                 return
             }
-
+                                                            
             self?.wvConfigStorage.user = user
             self?.wvConfigStorage.device = device
             self?.wvConfigStorage.paymentDevice?.deviceInfo?.client = self?.wvConfigStorage.user?.client

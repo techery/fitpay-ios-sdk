@@ -244,6 +244,13 @@
     public typealias APDUResponseHandler = (_ apduResponse:ApduResultMessage?, _ responseState: APDUPackageResponseState?, _ error:Error?)->Void
     @objc open var apduResponseHandler : ((_ apduResponse:ApduResultMessage?, _ responseState: String?, _ error:Error?)->Void)?
     
+    /// Handles id verification request
+    ///
+    /// - Parameter completion: when completion will be called, then the response will be sent to RTM
+    public func handleIdVerificationRequest(completion: @escaping (IdVerificationResponse)->Void) {
+        self.deviceInterface.handleIdVerificationRequest?(completion: completion)
+    }
+    
     override public init() {
         super.init()
         self.paymentDeviceApduExecuter = PaymentDeviceApduExecuter(paymentDevice: self)
