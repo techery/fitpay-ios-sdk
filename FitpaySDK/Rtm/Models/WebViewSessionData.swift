@@ -2,7 +2,7 @@
 import ObjectMapper
 
 /// This data can be used to set or verify a user device relationship, retrieve commit changes for the device, etc...
-open class SessionData : Mappable
+open class SessionData : NSObject, Mappable
 {
     open var userId:String?
     open var deviceId:String?
