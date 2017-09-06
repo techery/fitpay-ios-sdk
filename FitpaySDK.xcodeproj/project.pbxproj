@@ -49,6 +49,10 @@
 		374B62681EC9DAB300A7CE62 /* ApduResponseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374B62661EC9DAB300A7CE62 /* ApduResponseProtocol.swift */; };
 		374B626A1EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374B62691EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift */; };
 		374B626B1EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374B62691EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift */; };
+		374D0C971F56F8080060A4FC /* RtmMessageHandlerV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D0C961F56F8080060A4FC /* RtmMessageHandlerV5.swift */; };
+		374D0C981F56F8080060A4FC /* RtmMessageHandlerV5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D0C961F56F8080060A4FC /* RtmMessageHandlerV5.swift */; };
+		374D0C9A1F56FD620060A4FC /* IdVerificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D0C991F56FD620060A4FC /* IdVerificationResponse.swift */; };
+		374D0C9B1F56FD620060A4FC /* IdVerificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D0C991F56FD620060A4FC /* IdVerificationResponse.swift */; };
 		3767B8161ED31BC2007443D2 /* RestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3767B8151ED31BC2007443D2 /* RestClientUser.swift */; };
 		3767B8171ED31BC2007443D2 /* RestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3767B8151ED31BC2007443D2 /* RestClientUser.swift */; };
 		3767B8191ED31D48007443D2 /* RestClientDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3767B8181ED31D48007443D2 /* RestClientDevice.swift */; };
@@ -395,6 +399,8 @@
 		374B62631EC9DA3C00A7CE62 /* ApduCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduCommand.swift; sourceTree = "<group>"; };
 		374B62661EC9DAB300A7CE62 /* ApduResponseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduResponseProtocol.swift; sourceTree = "<group>"; };
 		374B62691EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDeviceApduExecuter.swift; sourceTree = "<group>"; };
+		374D0C961F56F8080060A4FC /* RtmMessageHandlerV5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmMessageHandlerV5.swift; sourceTree = "<group>"; };
+		374D0C991F56FD620060A4FC /* IdVerificationResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdVerificationResponse.swift; sourceTree = "<group>"; };
 		3767B8151ED31BC2007443D2 /* RestClientUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientUser.swift; sourceTree = "<group>"; };
 		3767B8181ED31D48007443D2 /* RestClientDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientDevice.swift; sourceTree = "<group>"; };
 		3767B81B1ED31EDD007443D2 /* RestClientCreditCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientCreditCard.swift; sourceTree = "<group>"; };
@@ -769,6 +775,7 @@
 				37D0CFF11EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift */,
 				37D0CFF41EDDA27E0049B5AA /* RtmMessageHandlerV3.swift */,
 				371CB3021F45DA4F0019A766 /* RtmMessageHandlerV4.swift */,
+				374D0C961F56F8080060A4FC /* RtmMessageHandlerV5.swift */,
 			);
 			path = RtmMessageHandlers;
 			sourceTree = "<group>";
@@ -961,6 +968,7 @@
 				A306B4C91CEE457D007F093C /* ApduResultMessage.swift */,
 				374B62661EC9DAB300A7CE62 /* ApduResponseProtocol.swift */,
 				3701AE3A1F13BA1B00550890 /* SyncEvent.swift */,
+				374D0C991F56FD620060A4FC /* IdVerificationResponse.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1764,6 +1772,7 @@
 				CD038DC45BF133FC5A0D9A94 /* ResourceLink.swift in Sources */,
 				9A7C787F1CC77F210097BAB9 /* FitpayBlockEventListener.swift in Sources */,
 				37139BE01F177B04001EEE73 /* SyncRequestsQueue.swift in Sources */,
+				374D0C971F56F8080060A4FC /* RtmMessageHandlerV5.swift in Sources */,
 				CD03852C57B1C79751A86197 /* ApduPackage.swift in Sources */,
 				37DB88741F0F844B00B070DA /* ImageAssetOptions.swift in Sources */,
 				8425931D1CAA613E0006FFA6 /* SyncStorage.swift in Sources */,
@@ -1779,6 +1788,7 @@
 				CD038A69826DABAA4DE467C5 /* VerificationMethod.swift in Sources */,
 				9A7C78801CC77F210097BAB9 /* FitpayEvent.swift in Sources */,
 				CD038BD672C20128B6711869 /* CreditCard.swift in Sources */,
+				374D0C9A1F56FD620060A4FC /* IdVerificationResponse.swift in Sources */,
 				37B85D5A1EF29FCB00B7616F /* Issuers.swift in Sources */,
 				CD038A4098738EC358AD2751 /* Address.swift in Sources */,
 				CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */,
@@ -1889,6 +1899,7 @@
 				3A93A0881DB8CA2C00A9FEB4 /* JWEObject.swift in Sources */,
 				371CB3011F444ACF0019A766 /* NonAPDUConfirmOperation.swift in Sources */,
 				3A93A0891DB8CA2C00A9FEB4 /* Base64Utils.swift in Sources */,
+				374D0C9B1F56FD620060A4FC /* IdVerificationResponse.swift in Sources */,
 				37DB88781F0F8B7500B070DA /* Image.swift in Sources */,
 				37AB3F8E1E9FEBDC001B2981 /* IntExtensions.swift in Sources */,
 				37D0CFF31EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift in Sources */,
@@ -1940,6 +1951,7 @@
 				374B62681EC9DAB300A7CE62 /* ApduResponseProtocol.swift in Sources */,
 				371CB2FE1F4449C50019A766 /* SyncFactory.swift in Sources */,
 				3786F9801F1E03BA00693B6A /* RtmMessaging.swift in Sources */,
+				374D0C981F56F8080060A4FC /* RtmMessageHandlerV5.swift in Sources */,
 				3A93A0AA1DB8CA2C00A9FEB4 /* NSData+CRC32.swift in Sources */,
 				37139BE31F177B21001EEE73 /* SyncRequest.swift in Sources */,
 				3701AE4D1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift in Sources */,

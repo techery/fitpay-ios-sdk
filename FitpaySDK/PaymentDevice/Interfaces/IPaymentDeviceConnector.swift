@@ -62,6 +62,11 @@
     ///   - completion: state is process result. If state == failed, then it would be great if error object will be also provided.
     @objc optional func processNonAPDUCommit(_ commit: Commit, completion: @escaping (_ state: NonAPDUCommitState, _ error: NSError?) -> Void)
     
+    /// If you can handle id verification request, then you can handle it here
+    ///
+    /// - Parameter completion: when completion will be called, then the response will be sent to RTM
+    @objc optional func handleIdVerificationRequest(completion: @escaping (IdVerificationResponse)->Void)
+
     /// - Returns: DeviceInfo if phone already connected to payment device
     func deviceInfo() -> DeviceInfo?
 
