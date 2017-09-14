@@ -9,7 +9,7 @@ import XCTest
 @testable import FitpaySDK
 
 class TestHelpers {
-
+    
     let clientId: String!
     let redirectUri: String!
     var session: RestSession!
@@ -32,55 +32,58 @@ class TestHelpers {
         
     }
     
-    func createAndLoginUser(_ expectation:XCTestExpectation, completion:@escaping (User?)->Void) {
-        let email = self.randomEmail()
-        let pin = "1234" //needs to be a parameter eventually.
-
+    func createUser(_ expectation:XCTestExpectation, email: String, pin: String, completion:@escaping (User?)->Void) {
         let currentTime = Date().timeIntervalSince1970 //double or NSTimeInterval
         
         self.client.createUser(
             email, password: pin, firstName:nil, lastName:nil, birthDate:nil, termsVersion:nil,
-            termsAccepted:nil, origin:nil, originAccountCreated:nil, clientId: clientId!, completion:
-        {
-            [unowned self](user, error) -> Void in
+            termsAccepted:nil, origin:nil, originAccountCreated:nil, clientId: clientId!, completion: {
+                [unowned self] (user, error) in
+                
+                XCTAssertNil(error)
+                
+                if error != nil {
+                    expectation.fulfill()
+                    return
+                }
+                
+                XCTAssertNotNil(user, "user is nil")
+                debugPrint("created user: \(String(describing: user?.info?.email))")
+                if (user != nil) { self.userValid(user!) }
+                
+                //additional sanity checks that we created a meaningful user
+                //PLAT-1388 has a bug on the number of links returned when creating a user. When that gets fixed, reenable this.
+                //XCTAssertEqual(user!.links!.count, 4, "Expect the number of links to be at least user, cards, devices") //could change. I'm violating HATEAOS
+                
+                //because there is such a thing as system clock variance (and I demonstrated it to Jakub), we check +/- 5 minutes.
+                let comparisonTime = currentTime - (150) //2.5 minutes.
+                let actualTime = user!.createdEpoch! //PGR-551 bug. Drop the /1000.0 when the bug is fixed.
+                debugPrint("actualTime created: \(actualTime), expected Time: \(currentTime)")
+                XCTAssertGreaterThan(actualTime, comparisonTime, "Want it to be created after the last 2.5 minutes")
+                XCTAssertLessThan(actualTime, comparisonTime+300, "Want it to be created no more than the last 2.5 min")
+                XCTAssertEqual(user?.email, email, "Want the emails to match up")
+                
+                completion(user)
+        })
 
-            XCTAssertNil(error)
-
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-
-            XCTAssertNotNil(user, "user is nil")
-            debugPrint("created user: \(String(describing: user?.info?.email))")
-            if (user != nil) { self.userValid(user!) }
-
-            //additional sanity checks that we created a meaningful user
-            //PLAT-1388 has a bug on the number of links returned when creating a user. When that gets fixed, reenable this.
-            //XCTAssertEqual(user!.links!.count, 4, "Expect the number of links to be at least user, cards, devices") //could change. I'm violating HATEAOS
-        
-            //because there is such a thing as system clock variance (and I demonstrated it to Jakub), we check +/- 5 minutes.
-            let comparisonTime = currentTime - (150) //2.5 minutes.
-            let actualTime = user!.createdEpoch! //PGR-551 bug. Drop the /1000.0 when the bug is fixed.
-            debugPrint("actualTime created: \(actualTime), expected Time: \(currentTime)")
-            XCTAssertGreaterThan(actualTime, comparisonTime, "Want it to be created after the last 2.5 minutes")
-            XCTAssertLessThan(actualTime, comparisonTime+300, "Want it to be created no more than the last 2.5 min")
-            XCTAssertEqual(user?.email, email, "Want the emails to match up")
-            
+    }
+    
+    func createAndLoginUser(_ expectation:XCTestExpectation, email: String = TestHelpers.randomEmail(), pin: String = "1234", completion:@escaping (User?)->Void) {
+        createUser(expectation, email: email, pin: pin) { (user) in
             self.session.login(username: email, password: pin, completion: {
                 (loginError) -> Void in
                 XCTAssertNil(loginError)
                 debugPrint("user isAuthorized: \(self.session.isAuthorized)")
                 XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
-
+                
                 if loginError != nil {
                     expectation.fulfill()
                     return
                 }
-
+                
                 self.client.user(id: self.session.userId!) {
                     (user, userError) in
-
+                    
                     XCTAssertNotNil(user)
                     if (user !=  nil) { self.userValid(user!) }
                     XCTAssertEqual(user?.email, email, "Want emails to match up after logging in")
@@ -90,12 +93,12 @@ class TestHelpers {
                         expectation.fulfill()
                         return
                     }
-
+                    
                     completion(user)
                 }
-
+                
             })
-        })
+        }
     }
 
     func deleteUser(_ user:User?, expectation:XCTestExpectation) {
@@ -443,7 +446,7 @@ class TestHelpers {
         }
     }
 
-    func randomStringWithLength (_ len : Int) -> String {
+    class func randomStringWithLength (_ len : Int) -> String {
 
         let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
@@ -458,7 +461,7 @@ class TestHelpers {
         return randomString as String
     }
 
-    func randomNumbers (_ len:Int = 16) -> String {
+    class func randomNumbers (_ len:Int = 16) -> String {
 
         let letters : NSString = "0123456789"
 
@@ -473,14 +476,14 @@ class TestHelpers {
         return randomString as String
     }
 
-    func randomEmail() -> String {
+    class func randomEmail() -> String {
         let email = (((randomStringWithLength(8) + "@") + randomStringWithLength(5)) + ".") + randomStringWithLength(5)
 
         return email
     }
     
     func randomPan() -> String {
-        return "999941111111" + randomNumbers(4)
+        return "999941111111" + TestHelpers.randomNumbers(4)
     }
 
     func generateRandomSeId() -> String {

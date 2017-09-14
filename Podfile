@@ -34,3 +34,7 @@ target 'FitpaySDKTestsPods' do
     pod 'KeychainAccess', '3.0.2'
     pod 'RxBlocking'
 end
+
+target 'FitpaySDKAuthenticationTests' do
+    pod 'RxSwift', '~> 3.5'
+end

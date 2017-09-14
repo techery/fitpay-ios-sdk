@@ -197,7 +197,7 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectation(description: "'user' created")
         
-        let email = self.testHelper.randomEmail()
+        let email = TestHelpers.randomEmail()
         let pin = "1234"
         
         self.client.createUser(
@@ -283,8 +283,8 @@ class RestClientTests: XCTestCase
         {
             [unowned self] (user) in
             
-            let firstName = self.testHelper.randomStringWithLength(10)
-            let lastNname = self.testHelper.randomStringWithLength(10)
+            let firstName = TestHelpers.randomStringWithLength(10)
+            let lastNname = TestHelpers.randomStringWithLength(10)
             
             user?.updateUser(firstName: firstName, lastName: lastNname, birthDate: nil, originAccountCreated: nil, termsAccepted: nil, termsVersion: nil)
             {
