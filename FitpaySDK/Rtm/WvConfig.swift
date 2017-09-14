@@ -329,6 +329,8 @@ class WvConfigStorage {
         let encodedConfig = utfString?.base64URLencoded()
         let configuredUrl = "\(url)?config=\(encodedConfig ?? "cantGenerateConfig_badJson?")"
         
+        print(configuredUrl)
+
         log.verbose(configuredUrl)
         
         let requestUrl = URL(string: configuredUrl)

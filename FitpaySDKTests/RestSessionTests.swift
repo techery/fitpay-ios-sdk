@@ -33,7 +33,7 @@ class RestSessionTests: XCTestCase {
     
     
     func testAcquireAccessTokenRetrievesToken() {
-        let email = self.testHelper.randomEmail()
+        let email = TestHelpers.randomEmail()
         let expectation = super.expectation(description: "'acquireAccessToken' retrieves auth details")
 
         self.client.createUser(
@@ -61,7 +61,7 @@ class RestSessionTests: XCTestCase {
     }
     
     func testLoginRetrievesUserId() {
-        let email = self.testHelper.randomEmail()
+        let email = TestHelpers.randomEmail()
         let expectation = super.expectation(description: "'login' retrieves user id")
 
         self.client.createUser(
