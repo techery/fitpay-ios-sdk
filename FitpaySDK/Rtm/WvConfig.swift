@@ -272,6 +272,10 @@ class WvConfigStorage {
         self.configStorage.paymentDevice!.connect()
     }
     
+    /**
+     Sets webview which will be used by fitpay platform.
+     Make sure that webViewPageLoaded() will be called, otherwise RTM will not work.
+     */
     @objc open func setWebView(_ webview:WKWebView!) {
         guard self.webview != webview else {
             return
@@ -281,6 +285,10 @@ class WvConfigStorage {
         self.webview = webview
     }
     
+    /**
+     Should be called when webview will be loaded.
+     You can use WKNavigationDelegate.webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) for managing page state.
+     */
     @objc open func webViewPageLoaded() {
         if !rtmVersionSent {
             sendVersion(version: RtmProtocolVersion.currentlySupportedVersion())
