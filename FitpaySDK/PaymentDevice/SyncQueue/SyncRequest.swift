@@ -44,6 +44,13 @@ open class SyncRequest {
         self.user = user
         self.deviceInfo = deviceInfo
         self.paymentDevice = paymentDevice
+        
+        // capture restClient reference
+        if user?.client != nil {
+            self.restClient = user?.client
+        } else if deviceInfo?.client != nil {
+            self.restClient = deviceInfo?.client
+        }
     }
     
     public let requestTime: Date
@@ -58,6 +65,9 @@ open class SyncRequest {
     
     private var state = SyncRequestState.pending
     
+    // we should capture restClient to prevent deallocation
+    private var restClient: RestClient?
+
     internal func update(state: SyncRequestState) {
         if state == .inProgress {
             self.syncStartTime = Date()
