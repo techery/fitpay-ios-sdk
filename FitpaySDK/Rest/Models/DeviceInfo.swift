@@ -24,11 +24,11 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
     open var pairing: String?
     open var secureElementId: String?
     open var casd: String?
-    open var lastAckCommit: String?
     
     fileprivate static let userResource = "user"
     fileprivate static let commitsResource = "commits"
     fileprivate static let selfResource = "self"
+    fileprivate static let lastAckCommitResource = "lastAckCommit"
 
     fileprivate weak var _client: RestClient?
 
@@ -94,7 +94,6 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         licenseKey <- map["licenseKey"]
         bdAddress <- map["bdAddress"]
         pairing <- map["pairing"]
-        lastAckCommit <- map["lastAckCommit"]
         casd <- map["casd"]
         if let secureElement = map["secureElement"].currentValue as? [String: String] {
             secureElementId = secureElement["secureElementId"]
@@ -230,6 +229,21 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.commits(url, commitsAfter: commitsAfter, limit: limit, offset: offset, completion: completion)
+        } else {
+            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    /**
+     Retrieves last acknowledge commit for device
+     
+     - parameter completion: CommitHandler closure
+     */
+    open func lastAckCommit(completion: @escaping RestClient.CommitHandler) {
+        let resource = DeviceInfo.lastAckCommitResource
+        let url = self.links?.url(resource)
+        if let url = url, let client = self.client {
+            client.commit(url, completion: completion)
         } else {
             completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
         }
