@@ -8,14 +8,14 @@
 
 import Foundation
 
-open class FitpaySDKLogger {
+@objc open class FitpaySDKLogger: NSObject {
     public static let sharedInstance = FitpaySDKLogger()
     
     public private(set) var outputs: [LogsOutputProtocol] = []
 
     open var minLogLevel: LogLevel = LogLevel.info
     
-    open func addOutput(output: LogsOutputProtocol) {
+    @objc open func addOutput(output: LogsOutputProtocol) {
         outputs.append(output)
     }
     
