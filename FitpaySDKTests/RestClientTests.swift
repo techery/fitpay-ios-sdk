@@ -794,7 +794,7 @@ class RestClientTests: XCTestCase
                             
                             self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod)
                             {
-                                (verificationMethod) in
+                                (verifiedCreditCard) in
                                 self.testHelper.deleteUser(user, expectation: expectation)
                             }
                         }
@@ -1384,45 +1384,56 @@ class RestClientTests: XCTestCase
                 self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
-                    
-                    creditCard?.listTransactions(limit: 1, offset:0)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard)
                     {
-                        
-                        (transactions, error) -> Void in
-                        
-                        XCTAssertNil(error)
-                        
-                        if error != nil
+                        (card) in
+                        self.testHelper.selectVerificationType(expectation, card: card)
                         {
-                            expectation.fulfill()
-                            return
-                        }
-                        
-                        XCTAssertNotNil(transactions)
-                        XCTAssertNotNil(transactions?.limit)
-                        XCTAssertNotNil(transactions?.totalResults)
-                        XCTAssertNotNil(transactions?.links)
-                        XCTAssertNotNil(transactions?.results)
-                        
-                        if let transactionsResults = transactions!.results
-                        {
-                            if transactionsResults.count > 0
+                            (verificationMethod) in
+                            self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod)
                             {
-                                for transactionInfo in transactionsResults
+                                (verifiedCreditCard) in
+                                verifiedCreditCard?.listTransactions(limit: 1, offset:0)
                                 {
-                                    XCTAssertNotNil(transactionInfo.transactionId)
-                                    XCTAssertNotNil(transactionInfo.transactionType)
+                                    
+                                    (transactions, error) -> Void in
+                                    
+                                    XCTAssertNil(error)
+                                    
+                                    if error != nil
+                                    {
+                                        expectation.fulfill()
+                                        return
+                                    }
+                                    
+                                    XCTAssertNotNil(transactions)
+                                    XCTAssertNotNil(transactions?.limit)
+                                    XCTAssertNotNil(transactions?.totalResults)
+                                    XCTAssertNotNil(transactions?.links)
+                                    XCTAssertNotNil(transactions?.results)
+                                    
+                                    if let transactionsResults = transactions!.results
+                                    {
+                                        if transactionsResults.count > 0
+                                        {
+                                            for transactionInfo in transactionsResults
+                                            {
+                                                XCTAssertNotNil(transactionInfo.transactionId)
+                                                XCTAssertNotNil(transactionInfo.transactionType)
+                                            }
+                                        }
+                                        
+                                        self.testHelper.deleteUser(user, expectation: expectation)
+                                    }
                                 }
                             }
-                            
-                            self.testHelper.deleteUser(user, expectation: expectation)
                         }
                     }
                 }
             }
         }
-
-        super.waitForExpectations(timeout: 10, handler: nil)
+        
+        super.waitForExpectations(timeout: 50, handler: nil)
     }
     
     /**
