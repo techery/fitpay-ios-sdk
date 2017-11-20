@@ -129,5 +129,24 @@ class RtmMessagingTests: XCTestCase {
         
         super.waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testUnknownMessageTypeNegotiating() {
+        let expectation = super.expectation(description: "rtm messaging - unknown message type")
+        
+        let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
+        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver2: handler]
+        
+        handler.completion = { (message) in
+            expectation.fulfill()
+        }
+
+        rtmMessaging.received(message: ["type":"UnknownType","callBackId":21,"data":["string parameter":"Some Details", "number parameter": 99]])
+
+        rtmMessaging.received(message: ["type":"version","callBackId":0,"data":["version":2]], completion: { (success) in
+            XCTAssertTrue(success)
+        })
+        
+        super.waitForExpectations(timeout: 5, handler: nil)
+    }
 
 }
