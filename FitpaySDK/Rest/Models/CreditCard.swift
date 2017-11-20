@@ -166,6 +166,14 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
 
+    @objc open func getIsDefault() -> Bool {
+        if let _isDefault = isDefault {
+            return _isDefault
+        }
+        
+        return false
+    }
+    
     /**
      Delete a single credit card from a user's profile. If you delete a card that is currently the default source, then the most recently added source will become the new default.
      

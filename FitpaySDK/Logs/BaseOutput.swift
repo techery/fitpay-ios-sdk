@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum LogLevel: Int {
+@objc public enum LogLevel: Int {
     case verbose = 0
     case debug
     case info
@@ -33,17 +33,17 @@ public enum LogLevel: Int {
     }
 }
 
-public protocol LogsOutputProtocol {
+@objc public protocol LogsOutputProtocol {
     func send(level: LogLevel, message: String, file: String, function: String, line: Int)
 }
 
-open class BaseLogsOutput : LogsOutputProtocol {
+open class BaseLogsOutput : NSObject, LogsOutputProtocol {
     let formatter = DateFormatter()
     var date: String {
         return formatter.string(from: Date())
     }
     
-    public init() {
+    public override init() {
         formatter.dateFormat = "HH:mm:ss.SSS"
     }
     
