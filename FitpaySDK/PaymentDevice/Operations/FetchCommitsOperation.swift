@@ -35,12 +35,14 @@ open class FetchCommitsOperation: FetchCommitsOperationProtocol {
                     return
                 }
                 
-                guard let result = result, let commits = result.results else {
+                guard let result = result else {
                     self?.publisher.onError(ErrorCode.parsingError)
                     return
                 }
                 
-                if result.totalResults ?? 0 > result.results?.count ?? 0 {
+                let commits = result.results ?? []
+                
+                if result.nextAvailable {
                     result.collectAllAvailable() { (results, error) in
                         guard error == nil else {
                             self?.publisher.onError(error!)

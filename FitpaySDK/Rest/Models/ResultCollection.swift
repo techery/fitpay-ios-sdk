@@ -26,6 +26,10 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
 
     public var client: RestClient? {
         get {
+            if _client != nil {
+                return _client
+            }
+            
             if let results = self.results {
                 for result in results {
                     if var result = result as? ClientModel {
@@ -38,6 +42,7 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
         }
 
         set {
+            _client = newValue
             if let results = self.results {
                 for result in results {
                     if var result = result as? ClientModel {
@@ -49,6 +54,8 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
             }
         }
     }
+    
+    fileprivate weak var _client: RestClient?
 
     public required init?(map: Map){
     }
@@ -105,10 +112,12 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
                     return
                 }
 
-                guard let resultCollection = resultCollection, let results = resultCollection.results else {
+                guard let resultCollection = resultCollection else {
                     completion(nil, NSError.unhandledError(ResultCollection.self))
                     return
                 }
+                
+                let results = resultCollection.results ?? []
 
                 let newStorage = storage + results
 
