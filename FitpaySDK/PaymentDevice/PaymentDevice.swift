@@ -69,6 +69,7 @@
         case deviceShouldBeDisconnected = 10010
         case deviceShouldBeConnected    = 10011
         case tryLater                   = 10012
+        case nonApduProcessingTimeout   = 10013
         
         public var description : String {
             switch self {
@@ -98,6 +99,8 @@
                 return "Received APDU command with error response."
             case .tryLater:
                 return "Device not ready for sync, try later."
+            case .nonApduProcessingTimeout:
+                return "Non APDU processing timeout error occurred."
             }
         }
         
@@ -282,8 +285,19 @@
                 
                 self?.apduResponseHandler = completion
                 log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
-                self?.deviceInterface.executeAPDUCommand(apduCommand)
                 
+                var isCompleteExecute = false
+                DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(FitpaySDKConfiguration.defaultConfiguration.commitErrorTimeout), execute: {
+                    if !isCompleteExecute {
+                        self?.apduResponseHandler = nil
+                        log.error("APDU_DATA: Received timeout during execute APDU's.")
+                        completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduSendingTimeout, domain: PaymentDevice.self))
+                    }
+                })
+
+                self?.deviceInterface.executeAPDUCommand(apduCommand)
+                isCompleteExecute = true
+
             }, completion: completion)
 
         } catch {
@@ -294,7 +308,17 @@
     
     internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ state: NonAPDUCommitState?, _ error: NSError?) -> Void) {
         if let processNonAPDUCommit = self.deviceInterface.processNonAPDUCommit {
+
+            var isCompleteProcessing = false
+            DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(FitpaySDKConfiguration.defaultConfiguration.commitErrorTimeout), execute: {
+                if !isCompleteProcessing {
+                    log.error("APDU_DATA: Received timeout during process non-APDU commit.")
+                    completion(.failed, NSError.error(code: PaymentDevice.ErrorCode.nonApduProcessingTimeout, domain: PaymentDevice.self))
+                }
+            })
+            
             processNonAPDUCommit(commit) { (state, error) in
+                isCompleteProcessing = true
                 completion(state, error)
             }
         } else {
