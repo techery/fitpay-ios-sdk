@@ -8,7 +8,7 @@
 
 import Foundation
 
-func hex<T:Integer>( v:T) -> String {
+public func hex<T:Integer>( v:T) -> String {
     var v = v
     var s = ""
     for _ in 0..<MemoryLayout<T>.size * 2 {
@@ -33,7 +33,7 @@ func hex<T:Integer>( v:T) -> String {
 }
 
 extension Integer {
-    func hex(preferableLength: Int) -> String {
+    public func hex(preferableLength: Int) -> String {
         var s = FitpaySDK.hex(v: self)
         let lenght = s.characters.count
         if lenght < preferableLength {
