@@ -243,7 +243,7 @@ internal class CommitsApplyer {
                 case .completed:
                     guard state != .failed else {
                         log.error("SYNC_DATA: received failed state for processing non apdu commit.")
-                        completion(NSError.unhandledError(CommitsApplyer.self))
+                        completion(error ?? NSError.unhandledError(CommitsApplyer.self))
                         return
                     }
                     

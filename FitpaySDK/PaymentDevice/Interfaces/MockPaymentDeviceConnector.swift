@@ -14,15 +14,17 @@ public enum TestingType: UInt64 {
 open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     weak var paymentDevice : PaymentDevice!
     var responseData : ApduResultMessage!
-    var connected = false;
+    var connected = false
     var _nfcState = SecurityNFCState.disabled
     var sendingAPDU : Bool = false
     let maxPacketSize : Int = 20
     let apduSecsTimeout : Double = 5
     var sequenceId: UInt16 = 0
     var testingType: TestingType
-    var connectDelayTime: Double = 4
-    
+    var connectDelayTime: Double = 4 
+    var disconnectDelayTime: Double = 4
+    var apduExecuteDelayTime: Double = 0.5
+
     var timeoutTimer : Timer?
     
     required public init(paymentDevice device:PaymentDevice, testingType: TestingType = .fullSimulationMode) {
@@ -43,7 +45,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     }
     
     open func disconnect() {
-        DispatchQueue.main.asyncAfter(deadline: getDelayTime(), execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + disconnectDelayTime, execute: {
             self.connected = false
             self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceDisconnected)
             self.paymentDevice?.connectionState = ConnectionState.disconnected
@@ -52,7 +54,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     
     open func isConnected() -> Bool {
         log.verbose("checking is connected")
-        return connected;
+        return connected
     }
     
     open func validateConnection(completion: @escaping (Bool, NSError?) -> Void) {
@@ -75,9 +77,11 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         let response = "9000"
         let packet = ApduResultMessage(hexResult: response)
         
-        if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
-            self.paymentDevice.apduResponseHandler = nil
-            apduResponseHandler(packet, nil, nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + apduExecuteDelayTime) {
+            if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
+                self.paymentDevice.apduResponseHandler = nil
+                apduResponseHandler(packet, nil, nil)
+            }
         }
     }
     
@@ -105,13 +109,6 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
 
     open func resetToDefaultState() {
         
-    }
-    
-    open func getDelayTime() -> DispatchTime {
-        let seconds = 4.0
-        let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-        let dispatchTime = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
-        return dispatchTime
     }
 
     func generateRandomSeId() -> String {

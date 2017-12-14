@@ -22,6 +22,9 @@ internal class PaymentDeviceApduExecuter {
     var currentApduCommand: APDUCommand!
     var prevResponsesData: Data?
     
+    // bindings
+    fileprivate weak var deviceDisconnectedBinding : FitpayEventBinding?
+
     typealias OnResponseReadyToHandle = (_ apduResultMessage: ApduResultMessage?, _ state: String?, _ error: Error?) -> Void
     typealias ExecutionBlock = (_ command: APDUCommand, _ completion: @escaping OnResponseReadyToHandle) -> Void
     
@@ -40,10 +43,21 @@ internal class PaymentDeviceApduExecuter {
             throw PaymentDeviceAPDUExecuterError.deviceShouldBeConnected
         }
         
+        
         self.isExecuting = true
-        self.completion = completion
+        self.completion = { [weak self] (apduCommand, state, error) in
+            self?.removeDisconnectedBinding()
+            completion(apduCommand, state, error)
+        }
         self.currentApduCommand = command
         self.executionBlock = executionBlock
+        
+        self.deviceDisconnectedBinding = self.paymentDevice?.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: { [weak self] (event) in
+            log.error("APDU_DATA: Device is disconnected during execute APDU's.")
+            self?.isExecuting = false
+            self?.completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceWasDisconnected, domain: PaymentDevice.self))
+        })
+
         
         self.executionBlock(command, self.handleApduResponse)
     }
@@ -103,5 +117,12 @@ internal class PaymentDeviceApduExecuter {
         
         self.isExecuting = false
         completion(apduCommand, nil, nil)
+    }
+    
+    internal func removeDisconnectedBinding() {
+        if let binding = self.deviceDisconnectedBinding {
+            self.paymentDevice?.removeBinding(binding: binding)
+            self.deviceDisconnectedBinding = nil
+        }
     }
 }

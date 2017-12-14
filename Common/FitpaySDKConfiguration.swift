@@ -13,12 +13,23 @@ internal let log = FitpaySDKLogger.sharedInstance
 open class FitpaySDKConfiguration : NSObject{
     open static let defaultConfiguration = FitpaySDKConfiguration()
     
-    open var clientId : String
-    open var redirectUri : String
-    open var baseAuthURL : String
-    open var baseAPIURL : String
-    open var webViewURL : String
-    open var commitErrorTimeout : Int
+    open var clientId: String
+    open var redirectUri: String
+    open var baseAuthURL: String
+    open var baseAPIURL: String
+    open var webViewURL: String
+    
+    @available(*, deprecated, message: "Use commitProcessingTimeoutSecs")
+    open var commitErrorTimeout: Int {
+        set {
+            commitProcessingTimeoutSecs = Double(newValue)
+        }
+        get {
+            return Int(commitProcessingTimeoutSecs)
+        }
+    }
+    
+    open var commitProcessingTimeoutSecs: Double = 30.0
     
     override public init() {
         self.clientId = ""
@@ -26,20 +37,18 @@ open class FitpaySDKConfiguration : NSObject{
         self.baseAuthURL = AUTHORIZE_BASE_URL
         self.baseAPIURL = API_BASE_URL
         self.webViewURL = BASE_URL
-        self.commitErrorTimeout = 30
         
         super.init()
         
         self.setupLogs()
     }
     
-    public init(clientId: String, redirectUri: String, baseAuthURL: String, baseAPIURL: String, webViewURL: String = BASE_URL, commitErrorTimeout: Int = 30) {
+    public init(clientId: String, redirectUri: String, baseAuthURL: String, baseAPIURL: String, webViewURL: String = BASE_URL) {
         self.clientId = clientId
         self.redirectUri = redirectUri
         self.baseAuthURL = baseAuthURL
         self.baseAPIURL = baseAPIURL
         self.webViewURL = webViewURL
-        self.commitErrorTimeout = commitErrorTimeout
         
         super.init()
         

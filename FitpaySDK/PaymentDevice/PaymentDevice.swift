@@ -294,22 +294,13 @@
     internal typealias APDUExecutionHandler = (_ apduCommand:APDUCommand?, _ state: APDUPackageResponseState?, _ error:Error?)->Void
     internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
         do {
-            try self.paymentDeviceApduExecuter.execute(command: apduCommand, executionBlock: { [weak self] (apduCommand, completion) in
-                
+            var isCompleteExecute = false
+
+            let apduExecutionBlock: PaymentDeviceApduExecuter.ExecutionBlock = { [weak self] (apduCommand, completion) in
                 self?.apduResponseHandler = completion
                 log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
                 
-                if self?.deviceDisconnectedBinding == nil {
-                    self?.deviceDisconnectedBinding = self?.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: { (event) in
-                        log.error("APDU_DATA: Device is disconnected during execute APDU's.")
-                        self?.apduResponseHandler = nil
-                        self?.removeDisconnectedBinding()
-                        completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceWasDisconnected, domain: PaymentDevice.self))
-                    })
-                }
-
-                var isCompleteExecute = false
-                DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(FitpaySDKConfiguration.defaultConfiguration.commitErrorTimeout), execute: {
+                DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs, execute: {
                     if !isCompleteExecute {
                         self?.apduResponseHandler = nil
                         self?.removeDisconnectedBinding()
@@ -317,12 +308,15 @@
                         completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduSendingTimeout, domain: PaymentDevice.self))
                     }
                 })
-
+                
                 self?.deviceInterface.executeAPDUCommand(apduCommand)
+            }
+            
+            try self.paymentDeviceApduExecuter.execute(command: apduCommand, executionBlock: apduExecutionBlock) { [weak self] (apduCommand, state, error) in
                 isCompleteExecute = true
-                self?.removeDisconnectedBinding()
-
-            }, completion: completion)
+                self?.apduResponseHandler = nil
+                completion(apduCommand, state, error)
+            }
 
         } catch {
             log.error("Can't execute message, error: \(error)")
@@ -333,17 +327,14 @@
     internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ state: NonAPDUCommitState?, _ error: NSError?) -> Void) {
         if let processNonAPDUCommit = self.deviceInterface.processNonAPDUCommit {
             if self.connectionState == .connected {
-     
-                if self.deviceDisconnectedBinding == nil {
-                    self.deviceDisconnectedBinding = self.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: { (event) in
-                        log.error("APDU_DATA: Device is disconnected during process non-APDU commit.")
-                        self.removeDisconnectedBinding()
-                        completion(.failed, NSError.error(code: PaymentDevice.ErrorCode.nonApduProcessingTimeout, domain: PaymentDevice.self))
-                    })
-                }
+                self.deviceDisconnectedBinding = self.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: { (event) in
+                    log.error("APDU_DATA: Device is disconnected during process non-APDU commit.")
+                    self.removeDisconnectedBinding()
+                    completion(.failed, NSError.error(code: PaymentDevice.ErrorCode.nonApduProcessingTimeout, domain: PaymentDevice.self))
+                })
                 
                 var isCompleteProcessing = false
-                DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(FitpaySDKConfiguration.defaultConfiguration.commitErrorTimeout), execute: {
+                DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs, execute: {
                     if !isCompleteProcessing {
                         log.error("APDU_DATA: Received timeout during process non-APDU commit.")
                         self.removeDisconnectedBinding()

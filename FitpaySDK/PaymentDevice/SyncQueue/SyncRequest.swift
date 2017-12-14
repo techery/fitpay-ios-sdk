@@ -18,6 +18,28 @@ public typealias SyncRequestCompletion = (EventStatus, Error?) -> Void
 
 open class SyncRequest {
     
+    @available(*, deprecated, message: "This constructor depreceted. You should use next one - init(requestTime: Date = Date(), user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice)")
+    public init() {
+        self.requestTime = Date()
+        self.user = nil
+        self.deviceInfo = nil
+        self.paymentDevice = nil
+
+        if SyncRequest.syncManager.synchronousModeOn == false {
+            if (user != nil && deviceInfo != nil && paymentDevice != nil) == false {
+                assert(false, "You should pass all params to SyncRequest in parallel sync mode.")
+            }
+        }
+        
+        // capture restClient reference
+        if user?.client != nil {
+            self.restClient = user?.client
+        } else if deviceInfo?.client != nil {
+            self.restClient = deviceInfo?.client
+        }
+
+    }
+    
     /// Creates sync request. If you are using parallel sync mode,
     /// then make sure that you are passing all params.
     ///
@@ -30,15 +52,9 @@ open class SyncRequest {
     ///   - paymentDevice: payment device object. If nil then will be used payment device from previous sync.
     ///           You can use nil only for synchronous sync mode.
     public init(requestTime: Date = Date(),
-         user: User? = nil,
-         deviceInfo: DeviceInfo? = nil,
-         paymentDevice: PaymentDevice? = nil) {
-        
-        if SyncRequest.syncManager.synchronousModeOn == false {
-            if (user != nil && deviceInfo != nil && paymentDevice != nil) == false {
-                assert(false, "You should pass all params to SyncRequest in parallel sync mode.")
-            }
-        }
+                user: User,
+                deviceInfo: DeviceInfo,
+                paymentDevice: PaymentDevice) {
         
         self.requestTime = requestTime
         self.user = user
@@ -46,19 +62,23 @@ open class SyncRequest {
         self.paymentDevice = paymentDevice
         
         // capture restClient reference
-        if user?.client != nil {
-            self.restClient = user?.client
-        } else if deviceInfo?.client != nil {
-            self.restClient = deviceInfo?.client
+        if user.client != nil {
+            self.restClient = user.client
+        } else if deviceInfo.client != nil {
+            self.restClient = deviceInfo.client
         }
     }
     
     public let requestTime: Date
     public private(set) var syncStartTime: Date?
     
-    internal let user: User?
-    internal let deviceInfo: DeviceInfo?
-    internal let paymentDevice: PaymentDevice?
+    internal var isEmptyRequest: Bool {
+        return user == nil || deviceInfo == nil || paymentDevice == nil
+    }
+    
+    internal var user: User?
+    internal var deviceInfo: DeviceInfo?
+    internal var paymentDevice: PaymentDevice?
     internal var completion: SyncRequestCompletion?
     
     internal static var syncManager: SyncManagerProtocol = SyncManager.sharedInstance

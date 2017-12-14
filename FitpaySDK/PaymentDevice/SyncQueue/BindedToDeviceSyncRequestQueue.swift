@@ -64,6 +64,14 @@ internal class BindedToDeviceSyncRequestQueue {
         return self.requestsQueue.dequeue()
     }
     
+    internal func peek() -> SyncRequest? {
+        return self.requestsQueue.peekAtQueue()
+    }
+    
+    internal func enqueue(syncRequest: SyncRequest) {
+        self.requestsQueue.enqueue(syncRequest)
+    }
+    
     private var requestsQueue: [SyncRequest] = []
     private var deviceInfo: DeviceInfo?
     private var syncManager: SyncManagerProtocol
@@ -79,11 +87,7 @@ internal class BindedToDeviceSyncRequestQueue {
                 errorObj = error as NSError
             }
         } else {
-            do {
-                try self.syncManager.syncWithLastRequest()
-            } catch {
-                errorObj = error as NSError
-            }
+            errorObj = NSError.error(code: 0, domain: BindedToDeviceSyncRequestQueue.self, message: "Can't start sync with empty user")
         }
         
         return errorObj
