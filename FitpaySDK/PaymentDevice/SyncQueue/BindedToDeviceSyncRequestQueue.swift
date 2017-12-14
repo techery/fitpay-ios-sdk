@@ -64,14 +64,6 @@ internal class BindedToDeviceSyncRequestQueue {
         return self.requestsQueue.dequeue()
     }
     
-    internal func peek() -> SyncRequest? {
-        return self.requestsQueue.peekAtQueue()
-    }
-    
-    internal func enqueue(syncRequest: SyncRequest) {
-        self.requestsQueue.enqueue(syncRequest)
-    }
-    
     private var requestsQueue: [SyncRequest] = []
     private var deviceInfo: DeviceInfo?
     private var syncManager: SyncManagerProtocol

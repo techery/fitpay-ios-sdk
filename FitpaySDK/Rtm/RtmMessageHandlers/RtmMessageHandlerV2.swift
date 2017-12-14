@@ -77,7 +77,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             let user = self.wvConfigStorage.user,
             let deviceInfo = self.wvConfigStorage.device,
             let paymentDevice = self.wvConfigStorage.paymentDevice else {
-                log.warning("WV_DATA: rtm not yet configured to hand syncs requests, failing sync.")
+                log.warning("WV_DATA: rtm not yet configured to handle syncs requests, failing sync.")
                 if let delegate = self.outputDelegate {
                     delegate.send(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first?.callBackId ?? 0,
                                                                  data: WVResponse.noSessionData.dictionaryRepresentation(),
