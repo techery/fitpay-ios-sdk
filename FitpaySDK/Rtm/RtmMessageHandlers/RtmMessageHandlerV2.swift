@@ -72,21 +72,27 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
     func handleSync(_ message: RtmMessage) {
         log.verbose("WV_DATA: Handling rtm sync.")
-        if (self.webViewSessionData != nil && self.wvConfigStorage.user != nil ) {
-            log.verbose("WV_DATA: Adding sync to rtm callback queue.")
-            syncCallBacks.append(message)
-            log.verbose("WV_DATA: initiating sync.")
-            SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: self.wvConfigStorage.user!, deviceInfo: self.wvConfigStorage.device, paymentDevice: self.wvConfigStorage.paymentDevice!), completion: nil)
-        } else {
-            log.warning("WV_DATA: rtm not yet configured to hand syncs requests, failing sync.")
-            if let delegate = self.outputDelegate {
-                delegate.send(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first?.callBackId ?? 0,
-                                                             data: WVResponse.noSessionData.dictionaryRepresentation(),
-                                                             type: RtmMessageTypeVer2.sync.rawValue,
-                                                             success: false), retries: 3)
-                delegate.show(status: .syncError, message: "Can't make sync. Session data or user is nil.", error: nil)
-            }
+        
+        guard let _ = self.webViewSessionData,
+            let user = self.wvConfigStorage.user,
+            let deviceInfo = self.wvConfigStorage.device,
+            let paymentDevice = self.wvConfigStorage.paymentDevice else {
+                log.warning("WV_DATA: rtm not yet configured to handle syncs requests, failing sync.")
+                if let delegate = self.outputDelegate {
+                    delegate.send(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first?.callBackId ?? 0,
+                                                                 data: WVResponse.noSessionData.dictionaryRepresentation(),
+                                                                 type: RtmMessageTypeVer2.sync.rawValue,
+                                                                 success: false), retries: 3)
+                    delegate.show(status: .syncError, message: "Can't make sync. Session data or user or deviceInfo or payment device is nil.", error: nil)
+                }
+                return
         }
+        
+        log.verbose("WV_DATA: Adding sync to rtm callback queue.")
+        syncCallBacks.append(message)
+        log.verbose("WV_DATA: initiating sync.")
+        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: user, deviceInfo: deviceInfo, paymentDevice: paymentDevice),
+                                            completion: nil)
     }
     
     func handleSessionData(_ message: RtmMessage) {

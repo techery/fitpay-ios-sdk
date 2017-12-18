@@ -83,6 +83,9 @@ class SyncRequestsQueueTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        if log.outputs.count == 0 {
+            log.addOutput(output: ConsoleOutput())
+        }
         self.mockSyncManager = MockSyncManager()
         self.requestsQueue = SyncRequestQueue(syncManager: self.mockSyncManager)
     }
@@ -225,7 +228,7 @@ class SyncRequestsQueueTests: XCTestCase {
             }
         }
         
-        self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
+        self.requestsQueue.add(request: SyncRequest()) { (status, error) in
             XCTAssertEqual(counter, 1)
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)

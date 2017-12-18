@@ -79,11 +79,7 @@ internal class BindedToDeviceSyncRequestQueue {
                 errorObj = error as NSError
             }
         } else {
-            do {
-                try self.syncManager.syncWithLastRequest()
-            } catch {
-                errorObj = error as NSError
-            }
+            errorObj = NSError.error(code: 0, domain: BindedToDeviceSyncRequestQueue.self, message: "Can't start sync with empty user")
         }
         
         return errorObj

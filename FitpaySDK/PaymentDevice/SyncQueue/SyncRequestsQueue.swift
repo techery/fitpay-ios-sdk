@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 open class SyncRequestQueue {
     public static let sharedInstance = SyncRequestQueue(syncManager: SyncManager.sharedInstance)
     
@@ -20,10 +21,14 @@ open class SyncRequestQueue {
             request.update(state: .done)
 
             if let completion = completion {
-                completion(.failed, NSError.unhandledError(SyncRequestQueue.self))
+                completion(.failed, SyncRequestQueueError.cantCreateQueueForSyncRequest)
             }
             
             return
+        }
+        
+        if !request.isEmptyRequest {
+            lastFullSyncRequest = request
         }
 
         queue.add(request: request)
@@ -33,32 +38,20 @@ open class SyncRequestQueue {
         self.syncManager = syncManager
         self.bind()
     }
-    
-    internal func updateLastEmptyRequestWith(request: SyncRequest) -> Bool{
-        if let queue = self.queueFor(syncRequest: SyncRequest()) {
-            if let intRequest = queue.dequeue() {
-                add(request: request, completion: intRequest.completion)
-                return true
-            }
-        }
-        return false
-    }
 
     deinit {
         self.unbind()
     }
     
-    internal var requestsQueue: [SyncRequest] = []
-
     private typealias DeviceIdentifier = String
     private var queues: [DeviceIdentifier: BindedToDeviceSyncRequestQueue] = [:]
     private let syncManager: SyncManagerProtocol
     private var bindings: [FitpayEventBinding] = []
 
     private func queueFor(syncRequest: SyncRequest) -> BindedToDeviceSyncRequestQueue? {
-        let deviceId = syncRequest.deviceInfo?.deviceIdentifier ?? "none" // In this case we can also
-                                                                          // process devices without id.
-                                                                          // Do we need that?
+        guard let deviceId = syncRequest.deviceInfo?.deviceIdentifier else {
+            return queueForDeviceWithoutDeviceIdentifier(syncRequest: syncRequest)
+        }
         
         return queues[deviceId] ?? createNewQueueFor(deviceId: deviceId, syncRequest: syncRequest)
     }
@@ -68,6 +61,21 @@ open class SyncRequestQueue {
         queues[deviceId] = queue
         
         return queue
+    }
+    
+    private func queueForDeviceWithoutDeviceIdentifier(syncRequest: SyncRequest) -> BindedToDeviceSyncRequestQueue? {
+        log.warning("Searching queue for SyncRequest without deviceIdentifier (empty SyncRequests is deprycated)... ")
+        guard let lastFullSyncRequest = self.lastFullSyncRequest else {
+            log.error("Can't find queue for empty SyncRequest")
+            return nil
+        }
+        
+        syncRequest.user = lastFullSyncRequest.user
+        syncRequest.deviceInfo = lastFullSyncRequest.deviceInfo
+        syncRequest.paymentDevice = lastFullSyncRequest.paymentDevice
+        
+        log.warning("Putting SyncRequest without deviceIdentifier to the queue with deviceIdentifier - \(syncRequest.deviceInfo?.deviceIdentifier ?? "none")")
+        return queueFor(syncRequest: syncRequest)
     }
     
     fileprivate func bind() {
@@ -107,5 +115,13 @@ open class SyncRequestQueue {
         for binding in self.bindings {
             self.syncManager.removeSyncBinding(binding: binding)
         }
+    }
+    
+    internal var lastFullSyncRequest: SyncRequest?
+}
+
+extension SyncRequestQueue {
+    enum SyncRequestQueueError: Error {
+        case cantCreateQueueForSyncRequest
     }
 }

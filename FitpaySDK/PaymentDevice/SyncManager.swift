@@ -11,7 +11,6 @@ public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
 
 protocol SyncManagerProtocol {
     func syncWith(request: SyncRequest) throws
-    func syncWithLastRequest() throws
     
     var isSyncing: Bool { get }
     var synchronousModeOn: Bool { get }
@@ -22,7 +21,7 @@ protocol SyncManagerProtocol {
 }
 
 open class SyncManager : NSObject, SyncManagerProtocol {
-    open static let sharedInstance = SyncManager()
+    open static let sharedInstance = SyncManager(syncFactory: DefaultSyncFactory())
     open var synchronousModeOn = true
     
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
@@ -88,9 +87,13 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open func sync(_ user: User, device: DeviceInfo? = nil, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
         log.debug("SYNC_DATA: Starting sync.")
-        if self.isSyncing {
+        guard !self.isSyncing else {
             log.warning("SYNC_DATA: Already syncing so can't sync.")
             return NSError.error(code: SyncManager.ErrorCode.syncAlreadyStarted, domain: SyncManager.self)
+        }
+        
+        guard let device = device, let paymentDevice = self.paymentDevice else {
+            return NSError.error(code: SyncManager.ErrorCode.notEnoughData, domain: SyncManager.self)
         }
         
         self.isSyncing = true
@@ -104,7 +107,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         }
         
         do {
-            try syncWith(request: SyncRequest(user: user, deviceInfo: device, paymentDevice: self.paymentDevice))
+            try syncWith(request: SyncRequest(user: user, deviceInfo: device, paymentDevice: paymentDevice))
         } catch {
             return error as NSError
         }
@@ -167,9 +170,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         return FetchCommitsOperation(deviceInfo: DeviceInfo())
     }
     
-    var syncFactory: SyncFactory = DefaultSyncFactory()
+    var syncFactory: SyncFactory
     
-    internal var lastSyncRequest: SyncRequest?
     internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
@@ -193,22 +195,6 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         }
     }
     
-    internal func syncWithLastRequest() throws {
-        guard let lastSyncRequest = self.lastSyncRequest else {
-            throw ErrorCode.notEnoughData
-        }
-        
-        let isAddedToQueue = SyncRequestQueue.sharedInstance.updateLastEmptyRequestWith(request: lastSyncRequest)
-        
-        if !isAddedToQueue {
-            do {
-                try self.startSyncWith(request: lastSyncRequest)
-            } catch {
-                throw error
-            }
-        }
-    }
-    
     fileprivate func startSyncWith(request: SyncRequest) throws {
         guard let paymentDevice = request.paymentDevice,
             let connector = request.paymentDevice?.deviceInterface,
@@ -216,8 +202,6 @@ open class SyncManager : NSObject, SyncManagerProtocol {
             let user = request.user else {
                 throw ErrorCode.notEnoughData
         }
-
-        lastSyncRequest = request
         
         let syncOperation = SyncOperation(paymentDevice: paymentDevice,
                                           connector: connector,
@@ -251,7 +235,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     fileprivate var user: User?
     
-    fileprivate override init() {
+    internal init(syncFactory: SyncFactory) {
+        self.syncFactory = syncFactory
         super.init()
     }
     
@@ -264,7 +249,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     internal func getAllCardsWithToWAPDUCommands(_ completion:@escaping ToWAPDUCommandsHandler) {
         var user = self.user
         if user == nil {
-            user = lastSyncRequest?.user
+            user = SyncRequestQueue.sharedInstance.lastFullSyncRequest?.user
         }
         
         if user == nil {
