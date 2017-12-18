@@ -7,7 +7,7 @@ extension String {
         return nil
     }
     
-    func hexToData() -> Data? {
+    public func hexToData() -> Data? {
         let trimmedString = self.trimmingCharacters(in: CharacterSet(charactersIn: "<> ")).replacingOccurrences(of: " ", with: "")
         
         let regex = try! NSRegularExpression(pattern: "^[0-9a-f]*$", options: .caseInsensitive)
