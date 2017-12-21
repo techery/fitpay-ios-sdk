@@ -121,11 +121,7 @@ internal class CommitsApplyer {
 
         let commitCompletion = { (error: Error?) -> Void in
             if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
-                if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commit {
-                    self.syncStorage.setLastCommitId(deviceId, commitId: commit)
-                } else {
-                    log.error("SYNC_DATA: Can't get deviceId or commitId.")
-                }
+                self.saveLastCommitId(deviceIdentifier:  self.deviceInfo.deviceIdentifier, commitId: commit.commit)
             }
 
             completion(error)
@@ -141,6 +137,18 @@ internal class CommitsApplyer {
         }
     }
 
+    fileprivate func saveLastCommitId(deviceIdentifier: String?, commitId: String?) {
+        if let deviceId = deviceIdentifier, let storedCommitId = commitId {
+            if let setDeviceLastCommitId = self.paymentDevice.deviceInterface.setDeviceLastCommitId, let _ = self.paymentDevice.deviceInterface.getDeviceLastCommitId {
+                setDeviceLastCommitId(storedCommitId)
+            } else {
+                self.syncStorage.setLastCommitId(deviceId, commitId: storedCommitId)
+            }
+        } else {
+            log.error("SYNC_DATA: Can't get deviceId or commitId.")
+        }
+    }
+    
     fileprivate func processAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         log.debug("SYNC_DATA: Processing APDU commit: \(commit.commit ?? "").")
         guard let apduPackage = commit.payload?.apduPackage else {

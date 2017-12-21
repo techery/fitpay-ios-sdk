@@ -43,7 +43,7 @@ internal class SyncOperation {
         self.eventsAdapter         = SyncOperationStateToSyncEventAdapter(stateObservable: self.state.asObservable(),
                                                                           publisher: self.syncEventsPublisher)
         
-        self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo)
+        self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo, connector: connector)
             
         self.syncStorage = syncStorage
     }

@@ -17,10 +17,11 @@ public protocol FetchCommitsOperationProtocol {
 
 open class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
-    public init(deviceInfo: DeviceInfo, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
+    public init(deviceInfo: DeviceInfo, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance, connector: IPaymentDeviceConnector? = nil) {
         self.deviceInfo = deviceInfo
         self.startFromSyncedCommit = shouldStartFromSyncedCommit
         self.syncStorage = syncStorage
+        self.connector = connector
     }
     
     public enum ErrorCode: Error {
@@ -81,7 +82,11 @@ open class FetchCommitsOperation: FetchCommitsOperationProtocol {
     open func generateCommitIdFromWhichWeShouldStart() -> Observable<String> {
         var commitId = ""
         if self.startFromSyncedCommit {
-            commitId = self.syncStorage.getLastCommitId(self.deviceInfo.deviceIdentifier!)
+            if let getDeviceLastCommitId = self.connector?.getDeviceLastCommitId, let _ = self.connector?.setDeviceLastCommitId {
+                commitId = getDeviceLastCommitId()
+            } else {
+                commitId = self.syncStorage.getLastCommitId(self.deviceInfo.deviceIdentifier!)
+            }
         }
         
         if commitId.isEmpty {
@@ -108,6 +113,7 @@ open class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
     
     public var deviceInfo: DeviceInfo!
+    fileprivate var connector: IPaymentDeviceConnector?
     
     // private
     private let syncStorage: SyncStorage
