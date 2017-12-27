@@ -87,6 +87,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open func sync(_ user: User, device: DeviceInfo? = nil, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
         log.debug("SYNC_DATA: Starting sync.")
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
         guard !self.isSyncing else {
             log.warning("SYNC_DATA: Already syncing so can't sync.")
             return NSError.error(code: SyncManager.ErrorCode.syncAlreadyStarted, domain: SyncManager.self)
@@ -203,6 +205,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
                 throw ErrorCode.notEnoughData
         }
         
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
         let syncOperation = SyncOperation(paymentDevice: paymentDevice,
                                           connector: connector,
                                           deviceInfo: deviceInfo,
@@ -277,6 +281,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         request.deviceInfo?.updateNotificationTokenIfNeeded()
         
         self.isSyncing = false
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
         
         var eventParams: [String: Any] = ["request": request]
 
