@@ -171,8 +171,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     }
     
     var syncFactory: SyncFactory
-    
-    internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
+    var syncStorage: SyncStorage
+
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
     internal func syncWith(request: SyncRequest) throws {
@@ -207,7 +207,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
                                           connector: connector,
                                           deviceInfo: deviceInfo,
                                           user: user,
-                                          syncFactory: syncFactory)
+                                          syncFactory: syncFactory,
+                                          syncStorage: syncStorage)
         
         syncOperations[deviceInfo] = syncOperation
         
@@ -235,8 +236,9 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     fileprivate var user: User?
     
-    internal init(syncFactory: SyncFactory) {
+    internal init(syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
         self.syncFactory = syncFactory
+        self.syncStorage = syncStorage
         super.init()
     }
     

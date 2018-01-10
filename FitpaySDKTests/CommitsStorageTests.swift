@@ -31,7 +31,8 @@ class CommitsStorageTests: XCTestCase {
         fetcher = MockCommitsFetcher()
         let syncFactory = SyncManagerTests.MocksFactory()
         syncFactory.commitsFetcher = fetcher
-        syncManager = SyncManager(syncFactory: syncFactory)
+        let syncStorage = MockSyncStorage.sharedMockInstance
+        syncManager = SyncManager(syncFactory: syncFactory, syncStorage: syncStorage)
         syncQueue = SyncRequestQueue(syncManager: syncManager)
     }
     
@@ -45,7 +46,7 @@ class CommitsStorageTests: XCTestCase {
         
         let fetch = FetchCommitsOperation(deviceInfo: self.deviceInfo,
                                           shouldStartFromSyncedCommit: true,
-                                          syncStorage: SyncStorage.sharedInstance,
+                                          syncStorage: MockSyncStorage.sharedMockInstance,
                                           connector: connector)
         
         fetch.generateCommitIdFromWhichWeShouldStart().subscribe(onNext: { (commitId) in
@@ -68,7 +69,7 @@ class CommitsStorageTests: XCTestCase {
         
         let expectation = super.expectation(description: "check load commitId from device with wrong storage")
         
-        let syncStorage = SyncStorage.sharedInstance
+        let syncStorage = MockSyncStorage.sharedMockInstance
         let localCommitId = "654321"
         syncStorage.setLastCommitId(self.deviceInfo.deviceIdentifier!, commitId: localCommitId)
         
@@ -127,7 +128,7 @@ class CommitsStorageTests: XCTestCase {
         let connector = MockPaymentDeviceConnectorWithWrongStorage1(paymentDevice: self.paymentDevice)
         
         self.syncQueue.add(request: getSyncRequest(connector: connector)) { (status, error) in
-            let storedDeviceCommitId = SyncStorage.sharedInstance.getLastCommitId(self.deviceInfo.deviceIdentifier!)
+            let storedDeviceCommitId = MockSyncStorage.sharedMockInstance.getLastCommitId(self.deviceInfo.deviceIdentifier!)
             XCTAssertEqual(storedDeviceCommitId, "21321312")
             expectation.fulfill()
         }
@@ -164,7 +165,19 @@ extension CommitsStorageTests {
             return commitId ?? String()
         }
     }
-
+    
+    class MockSyncStorage: SyncStorage {
+        public static let sharedMockInstance = MockSyncStorage()
+        var commits =  [String: String]()
+        
+        override public func getLastCommitId(_ deviceId:String) -> String {
+                return commits[deviceId] ?? String()
+        }
+        
+        override public func setLastCommitId(_ deviceId:String, commitId:String) -> Void {
+            commits[deviceId] = commitId
+        }
+    }
 }
 
 extension CommitsStorageTests {

@@ -37,7 +37,7 @@ internal class SyncOperation {
                                                     deviceInfo: self.deviceInfo,
                                                     eventsPublisher: self.syncEventsPublisher,
                                                     syncFactory: syncFactory,
-                                                    syncStorage: SyncStorage.sharedInstance)
+                                                    syncStorage: syncStorage)
         self.state                 = Variable(.waiting)
         self.connectOperation      = syncFactory.connectDeviceOperationWith(paymentDevice: paymentDevice)
         self.eventsAdapter         = SyncOperationStateToSyncEventAdapter(stateObservable: self.state.asObservable(),

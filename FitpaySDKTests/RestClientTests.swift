@@ -1198,7 +1198,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectations(timeout: 10, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testRelationshipsCreatesAndDeletesRelationship()
