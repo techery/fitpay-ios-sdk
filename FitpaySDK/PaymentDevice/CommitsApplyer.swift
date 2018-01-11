@@ -120,7 +120,7 @@ internal class CommitsApplyer {
         }
 
         let commitCompletion = { (error: Error?) -> Void in
-            if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
+            if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue || commit.commitType != CommitType.APDU_PACKAGE {
                 if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commit {
                     self.syncStorage.setLastCommitId(deviceId, commitId: commit)
                 } else {
