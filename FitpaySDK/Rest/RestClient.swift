@@ -487,6 +487,44 @@ extension RestClient {
     }
 }
 
+// MARK: Sync Statistics
+extension RestClient {
+    /**
+     Completion handler
+     
+     - parameter error: Provides error object, or nil if no error occurs
+     */
+    public typealias SyncHandler = (_ error: NSError?) -> Void
+    
+    internal func makePostCall(_ url: String, parameters: [String: AnyObject]?, completion: @escaping SyncHandler)
+    {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            if var headers = headers {
+                headers = headers + ["Content-Type": "application/json"]
+                let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
+                DispatchQueue.global().async {
+                    request?.response { (response: DefaultDataResponse) in
+                        if response.error != nil {
+                            DispatchQueue.main.async {
+                                completion(response.error as NSError?)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                completion(nil)
+                            }
+                        }
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(error)
+                }
+            }
+        }
+    }
+}
+
+
 /**
  Retrieve an individual asset (i.e. terms and conditions)
  
