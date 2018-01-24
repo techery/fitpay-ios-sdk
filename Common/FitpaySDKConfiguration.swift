@@ -8,7 +8,7 @@
 
 import Foundation
 
-public let FitpaySDKVersion = "0.4.20"
+public let FitpaySDKVersion = "0.4.21"
 internal let log = FitpaySDKLogger.sharedInstance
 
 open class FitpaySDKConfiguration : NSObject{
