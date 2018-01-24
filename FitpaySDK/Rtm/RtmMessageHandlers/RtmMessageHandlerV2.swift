@@ -91,7 +91,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
         log.verbose("WV_DATA: Adding sync to rtm callback queue.")
         syncCallBacks.append(message)
         log.verbose("WV_DATA: initiating sync.")
-        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: user, deviceInfo: deviceInfo, paymentDevice: paymentDevice),
+        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: user, deviceInfo: deviceInfo, paymentDevice: paymentDevice, initiator: .Platform),
                                             completion: nil)
     }
     
@@ -144,6 +144,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
                                                              success: true), retries: 3)
             }
         }
+        FitpayNotificationsManager.sharedInstance.setRestClient(self.restClient)
     }
 
     func logoutResponseMessage() -> RtmMessageResponse? {

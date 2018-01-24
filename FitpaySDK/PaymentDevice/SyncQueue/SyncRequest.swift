@@ -19,11 +19,13 @@ public typealias SyncRequestCompletion = (EventStatus, Error?) -> Void
 open class SyncRequest {
     
     @available(*, deprecated, message: "This constructor depreceted. You should use next one - init(requestTime: Date = Date(), user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice)")
-    public init() {
+    public init(initiator: SyncInitiator = .NotDefined, notificationAsc: NotificationDetail? = nil) {
         self.requestTime = Date()
         self.user = nil
         self.deviceInfo = nil
         self.paymentDevice = nil
+        self.syncInitiator = initiator
+        self.notificationAsc = notificationAsc
 
         if SyncRequest.syncManager.synchronousModeOn == false {
             if (user != nil && deviceInfo != nil && paymentDevice != nil) == false {
@@ -54,13 +56,17 @@ open class SyncRequest {
     public init(requestTime: Date = Date(),
                 user: User,
                 deviceInfo: DeviceInfo,
-                paymentDevice: PaymentDevice) {
+                paymentDevice: PaymentDevice,
+                initiator: SyncInitiator = .NotDefined,
+                notificationAsc: NotificationDetail? = nil) {
         
         self.requestTime = requestTime
         self.user = user
         self.deviceInfo = deviceInfo
         self.paymentDevice = paymentDevice
-        
+        self.syncInitiator = initiator
+        self.notificationAsc = notificationAsc
+
         // capture restClient reference
         if user.client != nil {
             self.restClient = user.client
@@ -80,6 +86,12 @@ open class SyncRequest {
     internal var deviceInfo: DeviceInfo?
     internal var paymentDevice: PaymentDevice?
     internal var completion: SyncRequestCompletion?
+    public var syncInitiator: SyncInitiator?
+    public var notificationAsc: NotificationDetail? {
+        didSet {
+            FitpayNotificationsManager.sharedInstance.updateRestClientForNotificationDetail(self.notificationAsc)
+        }
+    }
     
     internal static var syncManager: SyncManagerProtocol = SyncManager.sharedInstance
     

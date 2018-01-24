@@ -207,7 +207,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
                                           connector: connector,
                                           deviceInfo: deviceInfo,
                                           user: user,
-                                          syncFactory: syncFactory)
+                                          syncFactory: syncFactory,
+                                          request: request)
         
         syncOperations[deviceInfo] = syncOperation
         
