@@ -87,7 +87,11 @@ open class SyncRequest {
     internal var paymentDevice: PaymentDevice?
     internal var completion: SyncRequestCompletion?
     public var syncInitiator: SyncInitiator?
-    public var notificationAsc: NotificationDetail? 
+    public var notificationAsc: NotificationDetail? {
+        didSet {
+            FitpayNotificationsManager.sharedInstance.updateRestClientForNotificationDetail(self.notificationAsc)
+        }
+    }
     
     internal static var syncManager: SyncManagerProtocol = SyncManager.sharedInstance
     

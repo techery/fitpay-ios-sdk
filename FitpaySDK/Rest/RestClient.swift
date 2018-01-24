@@ -5,13 +5,15 @@ import AlamofireObjectMapper
 
 class CustomJSONArrayEncoding: ParameterEncoding {
     public static var `default`: CustomJSONArrayEncoding { return CustomJSONArrayEncoding() }
-
+    
     func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var mutableRequest = try urlRequest.asURLRequest()
-        let jsondata = try? JSONSerialization.data(withJSONObject: parameters!["params"]!, options: JSONSerialization.WritingOptions(rawValue: 0))
-        if let jsondata = jsondata {
-            mutableRequest.httpBody = jsondata
-            mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let jsonObject = parameters?["params"] {
+            let jsondata = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0))
+            if let jsondata = jsondata {
+                mutableRequest.httpBody = jsondata
+            }
         }
         return mutableRequest
     }
@@ -499,8 +501,7 @@ extension RestClient {
     internal func makePostCall(_ url: String, parameters: [String: AnyObject]?, completion: @escaping SyncHandler)
     {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            if var headers = headers {
-                headers = headers + ["Content-Type": "application/json"]
+            if let headers = headers {
                 let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
                 DispatchQueue.global().async {
                     request?.response { (response: DefaultDataResponse) in

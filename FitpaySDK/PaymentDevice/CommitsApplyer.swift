@@ -244,7 +244,7 @@ internal class CommitsApplyer {
         
         self.paymentDevice.processNonAPDUCommit(commit: commit) { [weak self] (state, error) in
             let currentTimestamp = Date().timeIntervalSince1970
-            commit.executedDuration = Int(currentTimestamp - applyingStartDate)
+            commit.executedDuration = Int((currentTimestamp - applyingStartDate)*1000)
 
             self?.nonApduConfirmOperation.startWith(commit: commit, result: state ?? .failed).subscribe { (e) in
                 switch e {

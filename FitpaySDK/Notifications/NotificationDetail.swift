@@ -36,8 +36,8 @@ open class NotificationDetail : Mappable
         }
 
         client.makePostCall(ackSync, parameters:nil) { (error) in
-            if (error != nil) {
-                log.error("SYNC_ACKNOWLEDGMENT: ackSync failed to send.")
+            if let error = error {
+                log.error("SYNC_ACKNOWLEDGMENT: ackSync failed to send. Error: \(error)")
             } else {
                 log.debug("SYNC_ACKNOWLEDGMENT: ackSync has been sent successfully.")
             }

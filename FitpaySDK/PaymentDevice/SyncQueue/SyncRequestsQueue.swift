@@ -12,8 +12,16 @@ import Foundation
 open class SyncRequestQueue {
     public static let sharedInstance = SyncRequestQueue(syncManager: SyncManager.sharedInstance)
     
-    public func add(request: SyncRequest, completion: SyncRequestCompletion?) {
+    public func add(request: SyncRequest, payload: String? = nil, completion: SyncRequestCompletion?) {
         request.completion = completion
+        if let payload = payload {
+            if let notificationDetail = NotificationDetail(JSONString: payload) {
+                request.syncInitiator = .WebHook
+                request.notificationAsc = notificationDetail
+            } else {
+                log.error("Payload data is wrong. Payload: \(payload)")
+            }
+        }
         request.update(state: .pending)
 
         guard let queue = queueFor(syncRequest: request) else {
