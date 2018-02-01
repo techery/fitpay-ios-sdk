@@ -84,7 +84,10 @@ internal class SyncOperation {
             return self.eventsAdapter.startAdapting()
         }
         
-        self.startSync()
+        // we need to update notification token first, because during sync we can receive push notifications
+        self.deviceInfo.updateNotificationTokenIfNeeded { [weak self] (_, error) in
+            self?.startSync()
+        }
         
         return self.eventsAdapter.startAdapting()
     }
