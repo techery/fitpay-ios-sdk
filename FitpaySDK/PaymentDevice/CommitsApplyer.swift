@@ -66,6 +66,7 @@ internal class CommitsApplyer {
     fileprivate let paymentDevice: PaymentDevice
     fileprivate var syncStorage: SyncStorage
     fileprivate var deviceInfo: DeviceInfo
+    internal var commitStatistics = [CommitStatistic]()
     
     // rx
     fileprivate let eventsPublisher: PublishSubject<SyncEvent>
@@ -73,6 +74,7 @@ internal class CommitsApplyer {
 
     @objc fileprivate func processCommits() {
         var commitsApplied = 0
+        commitStatistics = []
         for commit in commits {
             var errorItr: Error? = nil
 
@@ -86,7 +88,8 @@ internal class CommitsApplyer {
                 })
 
                 let _ = self.semaphore.wait(timeout: DispatchTime.distantFuture)
-
+                self.saveCommitStatistic(commit:commit, error: errorItr)
+                
                 // if there is no error than leave retry cycle
                 if errorItr == nil {
                     break
@@ -120,8 +123,13 @@ internal class CommitsApplyer {
         }
 
         let commitCompletion = { (error: Error?) -> Void in
-            if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
-                self.saveLastCommitId(deviceIdentifier:  self.deviceInfo.deviceIdentifier, commitId: commit.commit)
+
+            if error == nil || (error as NSError?)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue || commit.commitType != CommitType.APDU_PACKAGE {
+                if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commit {
+                    self.saveLastCommitId(deviceIdentifier:  deviceId, commitId: commit)
+                } else {
+                    log.error("SYNC_DATA: Can't get deviceId or commitId.")
+                }
             }
 
             completion(error)
@@ -185,7 +193,7 @@ internal class CommitsApplyer {
             self?.applyAPDUPackage(apduPackage, apduCommandIndex: 0, retryCount: 0) { (state, error) in
                 let currentTimestamp = Date().timeIntervalSince1970
 
-                apduPackage.executedDuration = Int64(currentTimestamp - applyingStartDate)
+                apduPackage.executedDuration = Int((currentTimestamp - applyingStartDate)*1000)
                 apduPackage.executedEpoch = TimeInterval(currentTimestamp)
 
                 if state == nil {
@@ -245,7 +253,12 @@ internal class CommitsApplyer {
             return
         }
         
+        let applyingStartDate = Date().timeIntervalSince1970
+        
         self.paymentDevice.processNonAPDUCommit(commit: commit) { [weak self] (state, error) in
+            let currentTimestamp = Date().timeIntervalSince1970
+            commit.executedDuration = Int((currentTimestamp - applyingStartDate)*1000)
+
             self?.nonApduConfirmOperation.startWith(commit: commit, result: state ?? .failed).subscribe { (e) in
                 switch e {
                 case .completed:
@@ -347,6 +360,32 @@ internal class CommitsApplyer {
 
                 self?.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, retryCount: 0, completion: completion)
             }
+        }
+    }
+    
+    fileprivate func saveCommitStatistic(commit:Commit, error: Error?) {
+        guard let commitType = commit.commitType else {
+            let statistic = CommitStatistic(commitId:commit.commit, total:0, average:0, errorDesc:error?.localizedDescription)
+            self.commitStatistics.append(statistic)
+            return
+        }
+        
+        switch (commitType) {
+        case CommitType.APDU_PACKAGE:
+            let total = commit.payload?.apduPackage?.executedDuration ?? 0
+            let commandsCount = commit.payload?.apduPackage?.apduCommands?.count ?? 1
+            
+            let statistic = CommitStatistic(commitId: commit.commit,
+                                              total: total,
+                                              average: total/commandsCount,
+                                              errorDesc: error?.localizedDescription)
+            self.commitStatistics.append(statistic)
+        default:
+            let statistic = CommitStatistic(commitId: commit.commit,
+                                              total: commit.executedDuration,
+                                              average: commit.executedDuration,
+                                              errorDesc: error?.localizedDescription)
+            self.commitStatistics.append(statistic)
         }
     }
 }

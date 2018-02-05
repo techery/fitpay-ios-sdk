@@ -12,6 +12,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     open var created:CLong?
     open var previousCommit:String?
     open var commit:String?
+    open var executedDuration:Int?
     
     fileprivate static let apduResponseResource = "apduResponse"
     fileprivate static let confirmResource = "confirm"

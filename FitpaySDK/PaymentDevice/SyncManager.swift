@@ -208,7 +208,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
                                           deviceInfo: deviceInfo,
                                           user: user,
                                           syncFactory: syncFactory,
-                                          syncStorage: syncStorage)
+                                          syncStorage: syncStorage,
+                                          request: request)
         
         syncOperations[deviceInfo] = syncOperation
         
@@ -276,8 +277,6 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     }
     
     fileprivate func syncFinishedFor(request: SyncRequest, withError error: Error?) {
-        request.deviceInfo?.updateNotificationTokenIfNeeded()
-        
         self.isSyncing = false
         
         var eventParams: [String: Any] = ["request": request]

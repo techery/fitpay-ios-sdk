@@ -44,12 +44,16 @@ public enum NotificationsEventType : Int, FitpayEventTypeProtocol {
 
 open class FitpayNotificationsManager : NSObject {
     open static let sharedInstance = FitpayNotificationsManager()
-
+    fileprivate var restClient: RestClient?
+    
     override public init() {
         super.init()
     }
     
     public typealias NotificationsPayload = [AnyHashable: Any]
+    public func setRestClient(_ client: RestClient?) {
+        restClient = client
+    }
     
     /**
      Handle notification from Fitpay platform. It may call syncing process and other stuff.
@@ -61,6 +65,10 @@ open class FitpayNotificationsManager : NSObject {
      */
     open func handleNotification(_ payload: NotificationsPayload) {
         log.verbose("--- handling notification ---")
+
+        let notificationDetail = self.notificationDetailFromNotification(payload)
+        notificationDetail?.sendAckSync()
+        
         notificationsQueue.enqueue(payload)
         
         processNextNotificationIfAvailable()
@@ -154,7 +162,8 @@ open class FitpayNotificationsManager : NSObject {
             callReceivedCompletion(currentNotification, notificationType: notificationType)
             switch notificationType {
             case .WithSync:
-                SyncRequestQueue.sharedInstance.add(request: SyncRequest(), completion: { (status, error) in
+                let notificationDetail = self.notificationDetailFromNotification(currentNotification)
+                SyncRequestQueue.sharedInstance.add(request: SyncRequest(initiator: SyncInitiator.Notification, notificationAsc: notificationDetail), completion: { (status, error) in
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 })
@@ -184,5 +193,22 @@ open class FitpayNotificationsManager : NSObject {
     
     fileprivate func callAllNotificationProcessedCompletion() {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: NotificationsEventType.allNotificationsProcessed, eventData: [:]))
+    }
+    
+    fileprivate func notificationDetailFromNotification(_ notification: NotificationsPayload?) -> NotificationDetail? {
+        if let fpField2 = notification?["fpField2"] as? String {
+            let notificationDetail = NotificationDetail(JSONString: fpField2)
+            notificationDetail?.restClient = self.restClient
+            return notificationDetail
+        }
+        return nil
+    }
+    
+    open func updateRestClientForNotificationDetail(_ notificationDetail: NotificationDetail?) {
+        if let notificationDetail = notificationDetail {
+            if notificationDetail.restClient == nil {
+                notificationDetail.restClient = self.restClient
+            }
+        }
     }
 }
