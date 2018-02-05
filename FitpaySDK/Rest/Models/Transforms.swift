@@ -36,3 +36,27 @@ internal class NSTimeIntervalTransform: TransformType
         return nil
     }
 }
+
+internal class DecimalNumberTransform: TransformType {
+    public typealias Object = NSDecimalNumber
+    public typealias JSON = String
+    
+    public init() {}
+    
+    public func transformFromJSON(_ value: Any?) -> NSDecimalNumber? {
+        if let string = value as? String {
+            return NSDecimalNumber(string: string)
+        } else if let number = value as? NSNumber {
+            let handler = NSDecimalNumberHandler(roundingMode: .plain, scale: 3, raiseOnExactness: false, raiseOnOverflow: false, raiseOnUnderflow: false, raiseOnDivideByZero: false)
+            return NSDecimalNumber(decimal: number.decimalValue).rounding(accordingToBehavior: handler)
+        } else if let double = value as? Double {
+            return NSDecimalNumber(floatLiteral: double)
+        }
+        return nil
+    }
+    
+    public func transformToJSON(_ value: NSDecimalNumber?) -> String? {
+        guard let value = value else { return nil }
+        return value.description
+    }
+}
