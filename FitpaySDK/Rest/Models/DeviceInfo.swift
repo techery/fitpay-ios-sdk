@@ -210,7 +210,20 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
+            // if notification token not exists on platform then we need to create this field
+            if notifcationToken != nil && self.notificationToken == nil {
+                addNotificationToken(notifcationToken!, completion: { (deviceInfo, error) in
+                    // notificationToken added, check do we need to update other fields
+                    if firmwareRevision == nil && softwareRevision == nil {
+                        completion(deviceInfo, error)
+                        return
+                    }
+                    
+                    client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
+                })
+            } else {
+                client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
+            }
         } else {
             completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
         }
@@ -269,28 +282,28 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
 
-    internal func updateNotificationTokenIfNeeded() {
+    internal typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: NSError?) -> Void
+    internal func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         if newNotificationToken != "" {
             if newNotificationToken != self.notificationToken {
-                if self.notificationToken != nil {
-                    update(nil, softwareRevision: nil, notifcationToken: newNotificationToken, completion: {
-                        [weak self] (device, error) in
-                        if error == nil && device != nil {
-                            log.debug("NOTIFICATIONS_DATA: NotificationToken updated to - \(device?.notificationToken ?? "null token")")
-                            self?.notificationToken = device?.notificationToken
-                        }
-                    })
-                } else {
-                    addNotificationToken(newNotificationToken, completion: {
-                        [weak self] (device, error) in
+                update(nil, softwareRevision: nil, notifcationToken: newNotificationToken, completion: {
+                    [weak self] (device, error) in
+                    if error == nil && device != nil {
                         log.debug("NOTIFICATIONS_DATA: NotificationToken updated to - \(device?.notificationToken ?? "null token")")
-                        if error == nil && device != nil {
-                            self?.notificationToken = device?.notificationToken
-                        }
-                    })
-                }
+                        self?.notificationToken = device?.notificationToken
+                        completion?(true, nil)
+                    } else {
+                        log.error("NOTIFICATIONS_DATA: can't update notification token for device, error: \(String(describing: error))")
+                        completion?(false, error)
+                    }
+                    
+                })
+            } else {
+                completion?(false, nil)
             }
+        } else {
+            completion?(false, nil)
         }
     }
 }

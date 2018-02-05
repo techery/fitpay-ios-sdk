@@ -25,7 +25,8 @@ internal class SyncOperation {
          deviceInfo: DeviceInfo,
          user: User,
          syncFactory: SyncFactory,
-         syncStorage: SyncStorage = SyncStorage.sharedInstance)
+         syncStorage: SyncStorage = SyncStorage.sharedInstance,
+         request: SyncRequest? = nil)
     {
         self.paymentDevice = paymentDevice
         self.connector     = connector
@@ -46,6 +47,7 @@ internal class SyncOperation {
         self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo)
             
         self.syncStorage = syncStorage
+        self.syncRequest = request
     }
     
     enum SyncOperationState {
@@ -82,7 +84,10 @@ internal class SyncOperation {
             return self.eventsAdapter.startAdapting()
         }
         
-        self.startSync()
+        // we need to update notification token first, because during sync we can receive push notifications
+        self.deviceInfo.updateNotificationTokenIfNeeded { [weak self] (_, error) in
+            self?.startSync()
+        }
         
         return self.eventsAdapter.startAdapting()
     }
@@ -99,6 +104,7 @@ internal class SyncOperation {
     fileprivate var connectOperation: ConnectDeviceOperationProtocol
     fileprivate var eventsAdapter: SyncOperationStateToSyncEventAdapter
     fileprivate var syncStorage: SyncStorage
+    public var syncRequest: SyncRequest?
     
     // rx
     fileprivate var syncEventsPublisher: PublishSubject<SyncEvent>
@@ -141,6 +147,7 @@ internal class SyncOperation {
             switch e {
             case .error(let error):
                 log.error("Can't fetch commits. Error: \(error)")
+                self?.sendCommitsMetric()
                 self?.state.value = .completed(SyncManager.ErrorCode.cantFetchCommits)
                 break
             case .next(let commits):
@@ -156,6 +163,7 @@ internal class SyncOperation {
                     
                     log.verbose("SYNC_DATA: Commit applier returned without errors.")
                     
+                    self?.sendCommitsMetric()
                     self?.state.value = .completed(nil)
                 }
                 
@@ -164,9 +172,29 @@ internal class SyncOperation {
                 }
                 break
             case .completed:
+                self?.sendCommitsMetric()
                 break
             }
         }.addDisposableTo(disposeBag)
         
+    }
+    
+    fileprivate func sendCommitsMetric() {
+        guard (self.syncRequest?.notificationAsc) != nil else {
+            return
+        }
+        
+        let currentTimestamp = Date().timeIntervalSince1970
+        
+        
+        let metric = CommitMetrics()
+        metric.commitStatistics = self.commitsApplyer.commitStatistics
+        metric.deviceId = deviceInfo.deviceIdentifier
+        metric.userId = user.id
+        metric.initiator = self.syncRequest?.syncInitiator
+        metric.notificationAsc = self.syncRequest?.notificationAsc
+        metric.totalProcessingTimeMs = Int((currentTimestamp - (self.syncRequest?.syncStartTime?.timeIntervalSince1970)!)*1000)
+
+        metric.sendCompleteSync()
     }
 }

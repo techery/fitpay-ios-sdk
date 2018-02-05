@@ -21,7 +21,7 @@ open class ApduPackage : NSObject, Mappable
 
     open var state: APDUPackageResponseState?
     open var executedEpoch: TimeInterval?
-    open var executedDuration: Int64?
+    open var executedDuration: Int?
 
     open var validUntil: String?
     open var validUntilEpoch: Date?
