@@ -21,8 +21,8 @@ class SyncOperationStateToSyncEventAdapter {
             var callComplete = false
             var syncEvent: SyncEvent? = nil
             switch state {
-            case .commitsReceived:
-                syncEvent = SyncEvent(event: .commitsReceived, data: [:])
+            case .commitsReceived(let commits):
+                syncEvent = SyncEvent(event: .commitsReceived, data: ["commits":commits])
                 break
             case .completed(let error):
                 if let error = error {
