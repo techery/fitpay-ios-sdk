@@ -27,12 +27,12 @@ import ObjectMapper
             return .pending
         case .syncGettingUpdates,
              .syncNoUpdates,
-             .syncUpdatingConnectingToDevice,
-             .syncUpdating,
+             .syncUpdatingConnectionFailed,
              .syncComplete:
             return .success
         case .pairing,
-             .syncUpdatingConnectionFailed:
+             .syncUpdating,
+             .syncUpdatingConnectingToDevice:
             return .progress
         case .syncError:
             return .error
@@ -50,11 +50,11 @@ import ObjectMapper
         case .pairing:
             return "Pairing with device..."
         case .syncUpdatingConnectingToDevice:
-            return "Updates available for wallet - connecting to device ..."
+            return "Connecting to device..."
         case .syncUpdatingConnectionFailed:
             return "Updates available for wallet - unable to connect to device - check connection"
         case .syncUpdating:
-            return "Syncing updates to device ..."
+            return "Syncing updates to device..."
         case .syncComplete:
             return "Sync complete - device up to date - no updates available"
         case .syncError:
@@ -462,10 +462,18 @@ class WvConfigStorage {
                 return
             }
             if commits.count > 0 {
-                self?.showStatusMessage(.syncUpdatingConnectingToDevice)
+                self?.showStatusMessage(.syncUpdating)
             } else {
                 self?.showStatusMessage(.syncNoUpdates)
             }
+        })
+        
+        if let nonOptionalBinding = binding {
+            self.bindings.append(nonOptionalBinding)
+        }
+
+        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: .connectingToDevice, completion: { [weak self] (event) in
+            self?.showStatusMessage(.syncUpdatingConnectingToDevice)
         })
         
         if let nonOptionalBinding = binding {

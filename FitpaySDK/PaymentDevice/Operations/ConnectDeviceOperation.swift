@@ -121,7 +121,9 @@ open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
         
         self.paymentDevice.connect(ConnectDeviceOperation.paymentDeviceConnectionTimeoutInSecs)
         
-        observable.onNext(.connecting)
+        DispatchQueue.main.async {
+            observable.onNext(.connecting)
+        }
     }
 
 }

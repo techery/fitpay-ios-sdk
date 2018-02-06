@@ -55,7 +55,7 @@ internal class SyncOperation {
         case started
         case connecting
         case connected
-        case commitsReceived
+        case commitsReceived(commits: [Commit])
         case completed(Error?)
     }
     
@@ -151,7 +151,7 @@ internal class SyncOperation {
                 self?.state.value = .completed(SyncManager.ErrorCode.cantFetchCommits)
                 break
             case .next(let commits):
-                self?.state.value = .commitsReceived
+                self?.state.value = .commitsReceived(commits: commits)
                 
                 let applayerStarted = self?.commitsApplyer.apply(commits) { (error) in
                     
