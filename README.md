@@ -50,7 +50,7 @@ git clone git@github.com:fitpay/fitpay-ios-sdk.git
 cd fitpay-ios-sdk
 pod install  
 ```
-Open Xcode (currently using Xcode 8.3.1), and add a project (->Open another project->/users/yourname/fipay/fitpay-ios-sdk)  
+Open Xcode (currently using Xcode 8.3.3), and add a project (->Open another project->/users/yourname/fitpay/fitpay-ios-sdk)  
 
 Select the **FitpaySDK-Universal** build under Product->Scheme. Ensure that the scheme is set to build for Generic iOS Device.
 ## Using a local pod
@@ -120,3 +120,4 @@ Please contact the team via a github issue, OR, feel free to email us: sdk@fit-p
 ## Fit Pay Internal Instructions 
 ### Publishing Updated SDKs
 * [How-to publish (deploy) a new version of the iOS FitPay SDK](https://fitpay.atlassian.net/wiki/spaces/ENG/pages/92798977/How-to+publish+deploy+a+new+version+of+the+iOS+FitPay+SDK)
+
