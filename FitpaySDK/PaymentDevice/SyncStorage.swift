@@ -11,7 +11,7 @@ public class SyncStorage: SyncStorageProtocol {
     fileprivate var keychain: Keychain
     fileprivate let keychainFieldName: String = "FitPayLastSyncCommitId"
     
-    private init() {
+    init() {
         self.keychain = Keychain(service: "com.masterofcode-llc.FitpaySDK")
     }
 

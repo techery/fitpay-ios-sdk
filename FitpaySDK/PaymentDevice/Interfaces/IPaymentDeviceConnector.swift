@@ -71,4 +71,8 @@
     func deviceInfo() -> DeviceInfo?
 
     func resetToDefaultState()
+    
+    /// If you need to store lastCommitId on OEM device, then you need to implement this methods
+    @objc optional func getDeviceLastCommitId() -> String
+    @objc optional func setDeviceLastCommitId(_ commitId: String)
 }
