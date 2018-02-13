@@ -16,10 +16,10 @@
 		0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD9232B1C20BB38007693AB /* FitpaySDK.swift */; };
 		0AF2B4121CDA6F410090CFCF /* WvConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2B4111CDA6F410090CFCF /* WvConfig.swift */; };
 		1F3A8343DD1633B6AD0DD63B /* Pods_FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC9BEB6E19B0C27478180657 /* Pods_FitpaySDK.framework */; };
-		1F5DE2C51FEA7E3B00BB0531 /* CommitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */; };
-		1F5DE2C61FEAB4C600BB0531 /* CommitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */; };
 		1F5BBD802017450200F16B4F /* NotificationDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5BBD7F2017450200F16B4F /* NotificationDetail.swift */; };
 		1F5BBD812017450200F16B4F /* NotificationDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5BBD7F2017450200F16B4F /* NotificationDetail.swift */; };
+		1F5DE2C51FEA7E3B00BB0531 /* CommitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */; };
+		1F5DE2C61FEAB4C600BB0531 /* CommitsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */; };
 		1FE1479E201613CB005DEA29 /* CommitMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE1479D201613CB005DEA29 /* CommitMetrics.swift */; };
 		1FE1479F201613CB005DEA29 /* CommitMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE1479D201613CB005DEA29 /* CommitMetrics.swift */; };
 		1FE147A320161F8C005DEA29 /* CommitStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE147A220161F8B005DEA29 /* CommitStatistic.swift */; };
@@ -412,8 +412,8 @@
 		0AF2B4111CDA6F410090CFCF /* WvConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WvConfig.swift; sourceTree = "<group>"; };
 		11F9FB4AE574F159FE7FA410 /* Pods_RTMClientApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RTMClientApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EB6DEAD1196670507C4D4FF /* Pods-FitpaySDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig"; sourceTree = "<group>"; };
-		1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitsStorageTests.swift; sourceTree = "<group>"; };
 		1F5BBD7F2017450200F16B4F /* NotificationDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDetail.swift; sourceTree = "<group>"; };
+		1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitsStorageTests.swift; sourceTree = "<group>"; };
 		1FE1479D201613CB005DEA29 /* CommitMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitMetrics.swift; sourceTree = "<group>"; };
 		1FE147A220161F8B005DEA29 /* CommitStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommitStatistic.swift; sourceTree = "<group>"; };
 		257A6BE26A491B73F385488D /* Pods-ObjCDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjCDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjCDemo/Pods-ObjCDemo.release.xcconfig"; sourceTree = "<group>"; };
