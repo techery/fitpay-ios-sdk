@@ -38,13 +38,13 @@ internal class SyncOperation {
                                                     deviceInfo: self.deviceInfo,
                                                     eventsPublisher: self.syncEventsPublisher,
                                                     syncFactory: syncFactory,
-                                                    syncStorage: SyncStorage.sharedInstance)
+                                                    syncStorage: syncStorage)
         self.state                 = Variable(.waiting)
         self.connectOperation      = syncFactory.connectDeviceOperationWith(paymentDevice: paymentDevice)
         self.eventsAdapter         = SyncOperationStateToSyncEventAdapter(stateObservable: self.state.asObservable(),
                                                                           publisher: self.syncEventsPublisher)
         
-        self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo)
+        self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo, connector: connector)
             
         self.syncStorage = syncStorage
         self.syncRequest = request
@@ -55,7 +55,7 @@ internal class SyncOperation {
         case started
         case connecting
         case connected
-        case commitsReceived
+        case commitsReceived(commits: [Commit])
         case completed(Error?)
     }
     
@@ -84,7 +84,10 @@ internal class SyncOperation {
             return self.eventsAdapter.startAdapting()
         }
         
-        self.startSync()
+        // we need to update notification token first, because during sync we can receive push notifications
+        self.deviceInfo.updateNotificationTokenIfNeeded { [weak self] (_, error) in
+            self?.startSync()
+        }
         
         return self.eventsAdapter.startAdapting()
     }
@@ -148,7 +151,7 @@ internal class SyncOperation {
                 self?.state.value = .completed(SyncManager.ErrorCode.cantFetchCommits)
                 break
             case .next(let commits):
-                self?.state.value = .commitsReceived
+                self?.state.value = .commitsReceived(commits: commits)
                 
                 let applayerStarted = self?.commitsApplyer.apply(commits) { (error) in
                     

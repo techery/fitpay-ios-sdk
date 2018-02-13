@@ -53,7 +53,7 @@ internal class PaymentDeviceApduExecuter {
         self.executionBlock = executionBlock
         
         self.deviceDisconnectedBinding = self.paymentDevice?.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: { [weak self] (event) in
-            log.error("APDU_DATA: Device is disconnected during execute APDU's.")
+            log.error("APDU_DATA: Device was disconnected during APDU execution.")
             self?.isExecuting = false
             self?.completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceWasDisconnected, domain: PaymentDevice.self))
         })

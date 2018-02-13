@@ -87,6 +87,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
     open func sync(_ user: User, device: DeviceInfo? = nil, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
         log.debug("SYNC_DATA: Starting sync.")
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
         guard !self.isSyncing else {
             log.warning("SYNC_DATA: Already syncing so can't sync.")
             return NSError.error(code: SyncManager.ErrorCode.syncAlreadyStarted, domain: SyncManager.self)
@@ -171,8 +173,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     }
     
     var syncFactory: SyncFactory
-    
-    internal let syncStorage : SyncStorage = SyncStorage.sharedInstance
+    var syncStorage: SyncStorage
+
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
     internal func syncWith(request: SyncRequest) throws {
@@ -203,11 +205,14 @@ open class SyncManager : NSObject, SyncManagerProtocol {
                 throw ErrorCode.notEnoughData
         }
         
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
         let syncOperation = SyncOperation(paymentDevice: paymentDevice,
                                           connector: connector,
                                           deviceInfo: deviceInfo,
                                           user: user,
                                           syncFactory: syncFactory,
+                                          syncStorage: syncStorage,
                                           request: request)
         
         syncOperations[deviceInfo] = syncOperation
@@ -236,8 +241,9 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     fileprivate var user: User?
     
-    internal init(syncFactory: SyncFactory) {
+    internal init(syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
         self.syncFactory = syncFactory
+        self.syncStorage = syncStorage
         super.init()
     }
     
@@ -275,9 +281,8 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     }
     
     fileprivate func syncFinishedFor(request: SyncRequest, withError error: Error?) {
-        request.deviceInfo?.updateNotificationTokenIfNeeded()
-        
         self.isSyncing = false
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
         
         var eventParams: [String: Any] = ["request": request]
 
