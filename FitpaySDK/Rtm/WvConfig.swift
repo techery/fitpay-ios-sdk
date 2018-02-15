@@ -136,7 +136,7 @@ class WvConfigStorage {
     var rtmConfig: RtmConfigProtocol?
 }
 
-@objc open class WvConfig : NSObject, WKScriptMessageHandler {
+@objcMembers open class WvConfig : NSObject, WKScriptMessageHandler {
     public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
     {
         case unknownError                   = 0
@@ -328,7 +328,7 @@ class WvConfigStorage {
             self.configStorage.rtmConfig!.accessToken = accessToken
         }
         
-        if self.configStorage.rtmConfig?.deviceInfo?.notificationToken == nil && FitpayNotificationsManager.sharedInstance.notificationsToken.characters.count > 0 {
+        if self.configStorage.rtmConfig?.deviceInfo?.notificationToken == nil && FitpayNotificationsManager.sharedInstance.notificationsToken.isEmpty == false {
             self.configStorage.rtmConfig?.deviceInfo?.notificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         }
         

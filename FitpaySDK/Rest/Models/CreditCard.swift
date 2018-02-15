@@ -17,6 +17,7 @@ public enum TokenizationState: String
     DECLINED
 }
 
+@objcMembers
 open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links: [ResourceLink]?
