@@ -23,11 +23,10 @@ extension String {
         var index = trimmedString.startIndex
         while index < trimmedString.endIndex
         {
-            if let byteString = String(trimmedString[index ..< trimmedString.index(after: trimmedString.index(after: index))]) {
-                let num = UInt8(byteString.withCString { strtoul($0, nil, 16) })
-                data?.append([num] as [UInt8], length: 1)
-                index = trimmedString.index(after: trimmedString.index(after: index))
-            }
+            let byteString = String(trimmedString[index ..< trimmedString.index(after: trimmedString.index(after: index))])
+            let num = UInt8(byteString.withCString { strtoul($0, nil, 16) })
+            data?.append([num] as [UInt8], length: 1)
+            index = trimmedString.index(after: trimmedString.index(after: index))
         }
         
         return data as Data?

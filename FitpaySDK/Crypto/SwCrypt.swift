@@ -505,7 +505,7 @@ open class PEM {
         
         fileprivate static func getIV(_ strippedKey: String) -> Data? {
             let ivInHex = String(strippedKey[strippedKey.index(strippedKey.startIndex, offsetBy:aesInfoLength) ..< strippedKey.index(strippedKey.startIndex, offsetBy:aesHeaderLength)])
-            return ivInHex?.dataFromHexadecimalString()
+            return ivInHex.dataFromHexadecimalString()
         }
         
         fileprivate static func getAESKey(_ mode: EncMode, passphrase: String, iv: Data) -> Data {
@@ -2100,15 +2100,12 @@ extension String {
         var index: String.Index? = trimmedString.startIndex
         
         while let i = index {
-            if let byteString = String(trimmedString[i ..< trimmedString.index(i, offsetBy: 2)]) {
-                let num = UInt8(byteString.withCString { strtoul($0, nil, 16) })
-                data.append([num] as [UInt8], count: 1)
-                
-                index = trimmedString.index(i, offsetBy: 2, limitedBy: trimmedString.endIndex)
-                if index == trimmedString.endIndex { break }
-            } else {
-                break
-            }
+            let byteString = String(trimmedString[i ..< trimmedString.index(i, offsetBy: 2)])
+            let num = UInt8(byteString.withCString { strtoul($0, nil, 16) })
+            data.append([num] as [UInt8], count: 1)
+            
+            index = trimmedString.index(i, offsetBy: 2, limitedBy: trimmedString.endIndex)
+            if index == trimmedString.endIndex { break }
         }
         
         return data
