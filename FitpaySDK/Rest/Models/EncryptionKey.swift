@@ -30,6 +30,15 @@ open class EncryptionKey: NSObject, Mappable
         clientPublicKey <- map["clientPublicKey"]
         active <- map["active"]
     }
+
+    /**
+     Validates encryption key expiration date
+     */
+    func isExpired() -> Bool {
+        let currentEpoch = Date().timeIntervalSince1970
+        guard let expirationEpoch = self.expirationEpoch else { return false }
+        let platoformRequestTimeout: Double = 60
+        let isExpired = expirationEpoch - platoformRequestTimeout < currentEpoch
+        return isExpired
+    }
 }
-
-

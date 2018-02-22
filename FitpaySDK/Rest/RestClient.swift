@@ -332,7 +332,7 @@ extension RestClient {
     
     internal func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler)
     {
-        if let key = self.key, validateKeyExpiration(expirationEpoch: key.expirationEpoch) {
+        if let key = self.key, !key.isExpired() {
             completion(key, nil)
         } else {
             self.createEncryptionKey(clientPublicKey: self.keyPair.publicKey!) { [weak self] (encryptionKey, error) in
@@ -344,17 +344,6 @@ extension RestClient {
                 }
             }
         }
-    }
-
-    /**
-     Validates encryption key expiration date
-
-     - parameter expirationEpoch:     encryption key expiration date
-     */
-    private func validateKeyExpiration(expirationEpoch: TimeInterval?) -> Bool {
-        let currentEpoch = Date().timeIntervalSince1970
-        let isValid = expirationEpoch > currentEpoch
-        return isValid
     }
 }
 
