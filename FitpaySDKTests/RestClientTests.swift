@@ -704,7 +704,7 @@ class RestClientTests: XCTestCase
 
     func testCreditCardEditAcceptTermsUrl()
     {
-        let expectation = super.expectation(description: "'creditCard' accept terms")
+        let expectation = super.expectation(description: "'creditCard' edit accept terms url")
 
         self.testHelper.createAndLoginUser(expectation)
         {
