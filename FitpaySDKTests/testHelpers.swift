@@ -310,7 +310,7 @@ class TestHelpers {
         }
     }
 
-    func editAcceptTermsUrl(_ expectation:XCTestExpectation, card:CreditCard?){
+    func editAcceptTermsUrlSuccess(_ card:CreditCard?){
         let randomText = TestHelpers.randomStringWithLength(10)
 
         //update acceptTerms url
