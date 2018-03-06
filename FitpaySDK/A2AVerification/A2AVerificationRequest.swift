@@ -27,6 +27,3 @@ public class A2AVerificationResponse : NSObject, Mappable {
         context <- map["context"]
     }
 }
-
-
-
