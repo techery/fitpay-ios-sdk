@@ -8,7 +8,7 @@
 import UIKit
 import ObjectMapper
 
-public class A2AVerificationResponse : NSObject, Mappable {
+public class A2AVerificationRequest : NSObject, Mappable {
     open var cardType: String?
     open var returnLocation: String?
     open var context: A2AContext?

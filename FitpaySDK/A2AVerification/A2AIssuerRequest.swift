@@ -14,7 +14,7 @@ public enum A2AStepupResult: String {
     case Failure   = "failure"
 }
 
-public class A2AIssuerResponse: NSObject, Mappable  {
+public class A2AIssuerRequest: NSObject, Mappable  {
     private var response: A2AStepupResult?
     private var authCode: String?
 
@@ -39,6 +39,6 @@ public class A2AIssuerResponse: NSObject, Mappable  {
 
     public func getEncodedString() -> String? {
         guard let string = toString() else { return nil }
-        return Data(string.utf8).base64EncodedString()
+        return Data(string.utf8).base64URLencoded()
     }
 }

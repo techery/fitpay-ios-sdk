@@ -100,7 +100,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
 
             if self.wvConfigStorage.supportsAppVerification == true {
                 guard let data = message.data as? [String: Any] else { return }
-                guard let appToAppVerification = Mapper<A2AVerificationResponse>().map(JSONObject: data) else {
+                guard let appToAppVerification = Mapper<A2AVerificationRequest>().map(JSONObject: data) else {
                     appToAppVerificationFailed(reason: A2AVerificationError.CantProcess)
                     return
                 }

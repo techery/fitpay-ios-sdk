@@ -12,5 +12,5 @@ import Foundation
       <baseUrl>/<returnLocation>?config=<base64 encoded config with a2a>
     */
 @objc public protocol FitpayA2AVerificationDelegate: NSObjectProtocol {
-    func verificationFinished(verificationInfo: A2AVerificationResponse?)
+    func verificationFinished(verificationInfo: A2AVerificationRequest?)
 }
