@@ -238,6 +238,11 @@
 		91185B7820615E0C00E5E1CE /* A2AVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7320615E0C00E5E1CE /* A2AVerification.swift */; };
 		91185B7920615E0C00E5E1CE /* A2AVerificationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */; };
 		91185B7A20615E0C00E5E1CE /* A2AVerificationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */; };
+		91185B7B2061694400E5E1CE /* A2AContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7120615E0C00E5E1CE /* A2AContext.swift */; };
+		91185B7C2061694400E5E1CE /* A2AIssuerRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7220615E0C00E5E1CE /* A2AIssuerRequest.swift */; };
+		91185B7D2061694400E5E1CE /* A2AVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7320615E0C00E5E1CE /* A2AVerification.swift */; };
+		91185B7E2061694400E5E1CE /* A2AVerificationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */; };
+		91185B7F2061694400E5E1CE /* A2AVerificationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */; };
 		9A0A12A91CC0FF630088393E /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A18CAB61CABDFD600658223 /* DevicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A18CAB51CABDFD600658223 /* DevicesViewController.swift */; };
@@ -2194,8 +2199,10 @@
 				37D0CFF31EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift in Sources */,
 				3A46E1431DEEE499002D0270 /* FitpayEventsSubscriber.swift in Sources */,
 				3A93A08A1DB8CA2C00A9FEB4 /* Relationship.swift in Sources */,
+				91185B7E2061694400E5E1CE /* A2AVerificationError.swift in Sources */,
 				3A93A08B1DB8CA2C00A9FEB4 /* Commit.swift in Sources */,
 				3767B8221ED32AE5007443D2 /* RestClientRelationship.swift in Sources */,
+				91185B7B2061694400E5E1CE /* A2AContext.swift in Sources */,
 				3A93A08C1DB8CA2C00A9FEB4 /* WvConfig.swift in Sources */,
 				3A93A08D1DB8CA2C00A9FEB4 /* ResourceLink.swift in Sources */,
 				3A93A08E1DB8CA2C00A9FEB4 /* FitpayBlockEventListener.swift in Sources */,
@@ -2210,6 +2217,7 @@
 				3A93A0941DB8CA2C00A9FEB4 /* BLEConstants.swift in Sources */,
 				3A93A0951DB8CA2C00A9FEB4 /* StringExtensions.swift in Sources */,
 				3A93A0961DB8CA2C00A9FEB4 /* BLEDeviceInfoCollector.swift in Sources */,
+				91185B7C2061694400E5E1CE /* A2AIssuerRequest.swift in Sources */,
 				3A93A0971DB8CA2C00A9FEB4 /* IPaymentDeviceConnector.swift in Sources */,
 				3A93A0981DB8CA2C00A9FEB4 /* FitpayEventDispatcher.swift in Sources */,
 				3A93A0991DB8CA2C00A9FEB4 /* BluetoothPaymentDeviceConnector.swift in Sources */,
@@ -2236,6 +2244,7 @@
 				3767B81A1ED31D48007443D2 /* RestClientDevice.swift in Sources */,
 				3A93A0A71DB8CA2C00A9FEB4 /* FitpayNotificationsManager.swift in Sources */,
 				3A93A0A91DB8CA2C00A9FEB4 /* RestSession.swift in Sources */,
+				91185B7F2061694400E5E1CE /* A2AVerificationRequest.swift in Sources */,
 				374B626B1EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift in Sources */,
 				3A640B4B1DDF1127008AD936 /* FitpaySDKLogger.swift in Sources */,
 				37F781B11F17C8FA00742E15 /* SyncRequestsQueue.swift in Sources */,
@@ -2249,6 +2258,7 @@
 				1FE147A420161F8C005DEA29 /* CommitStatistic.swift in Sources */,
 				3A93A0AB1DB8CA2C00A9FEB4 /* RestClient.swift in Sources */,
 				3A93A0AC1DB8CA2C00A9FEB4 /* PaymentDevice.swift in Sources */,
+				91185B7D2061694400E5E1CE /* A2AVerification.swift in Sources */,
 				3767B81D1ED31EDD007443D2 /* RestClientCreditCard.swift in Sources */,
 				3A640B481DDF110E008AD936 /* RtmMessage.swift in Sources */,
 				3A93A0AD1DB8CA2C00A9FEB4 /* JWEHeader.swift in Sources */,
