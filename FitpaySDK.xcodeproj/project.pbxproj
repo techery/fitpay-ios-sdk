@@ -233,6 +233,11 @@
 		8482FE881CA0338900966742 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		8482FE891CA0338900966742 /* FitpaySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8C870F171D00EC630048A1DF /* Transforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C870F161D00EC630048A1DF /* Transforms.swift */; };
+		91185B7620615E0C00E5E1CE /* A2AContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7120615E0C00E5E1CE /* A2AContext.swift */; };
+		91185B7720615E0C00E5E1CE /* A2AIssuerRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7220615E0C00E5E1CE /* A2AIssuerRequest.swift */; };
+		91185B7820615E0C00E5E1CE /* A2AVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7320615E0C00E5E1CE /* A2AVerification.swift */; };
+		91185B7920615E0C00E5E1CE /* A2AVerificationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */; };
+		91185B7A20615E0C00E5E1CE /* A2AVerificationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */; };
 		9A0A12A91CC0FF630088393E /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A18CAB61CABDFD600658223 /* DevicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A18CAB51CABDFD600658223 /* DevicesViewController.swift */; };
@@ -507,6 +512,11 @@
 		8472649E1CA53D0800DE801D /* BLEPackets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEPackets.swift; sourceTree = "<group>"; };
 		8472649F1CA53D0800DE801D /* BluetoothPaymentDeviceConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothPaymentDeviceConnector.swift; sourceTree = "<group>"; };
 		8C870F161D00EC630048A1DF /* Transforms.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transforms.swift; sourceTree = "<group>"; };
+		91185B7120615E0C00E5E1CE /* A2AContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AContext.swift; sourceTree = "<group>"; };
+		91185B7220615E0C00E5E1CE /* A2AIssuerRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AIssuerRequest.swift; sourceTree = "<group>"; };
+		91185B7320615E0C00E5E1CE /* A2AVerification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerification.swift; sourceTree = "<group>"; };
+		91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationError.swift; sourceTree = "<group>"; };
+		91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationRequest.swift; sourceTree = "<group>"; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		9A18CAB51CABDFD600658223 /* DevicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevicesViewController.swift; sourceTree = "<group>"; };
 		9A18CAB71CABE79800658223 /* SingleCreditCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleCreditCardViewController.swift; sourceTree = "<group>"; };
@@ -759,6 +769,7 @@
 		0AD9229F1C1F7EFC007693AB /* FitpaySDK */ = {
 			isa = PBXGroup;
 			children = (
+				91185B7020615E0C00E5E1CE /* A2AVerification */,
 				0AD922A01C1F7EFC007693AB /* FitpaySDK.h */,
 				0AD922A21C1F7EFC007693AB /* Info.plist */,
 				0AD9232B1C20BB38007693AB /* FitpaySDK.swift */,
@@ -901,6 +912,18 @@
 				8472649F1CA53D0800DE801D /* BluetoothPaymentDeviceConnector.swift */,
 			);
 			path = BLE;
+			sourceTree = "<group>";
+		};
+		91185B7020615E0C00E5E1CE /* A2AVerification */ = {
+			isa = PBXGroup;
+			children = (
+				91185B7120615E0C00E5E1CE /* A2AContext.swift */,
+				91185B7220615E0C00E5E1CE /* A2AIssuerRequest.swift */,
+				91185B7320615E0C00E5E1CE /* A2AVerification.swift */,
+				91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */,
+				91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */,
+			);
+			path = A2AVerification;
 			sourceTree = "<group>";
 		};
 		9A2E68C41CA14DE10061D5B3 /* FitpaySDKDemo */ = {
@@ -2007,11 +2030,13 @@
 				37DB88761F0F87A600B070DA /* Image.swift in Sources */,
 				37AB3F8D1E9FEBDC001B2981 /* IntExtensions.swift in Sources */,
 				37D0CFF21EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift in Sources */,
+				91185B7920615E0C00E5E1CE /* A2AVerificationError.swift in Sources */,
 				3A9180BB1DE8824A00C183CE /* FitpayEventsSubscriber.swift in Sources */,
 				CD038952A85B6214173CC785 /* Commit.swift in Sources */,
 				0AF2B4121CDA6F410090CFCF /* WvConfig.swift in Sources */,
 				3767B8211ED32134007443D2 /* RestClientRelationship.swift in Sources */,
 				CD038DC45BF133FC5A0D9A94 /* ResourceLink.swift in Sources */,
+				91185B7720615E0C00E5E1CE /* A2AIssuerRequest.swift in Sources */,
 				9A7C787F1CC77F210097BAB9 /* FitpayBlockEventListener.swift in Sources */,
 				37139BE01F177B04001EEE73 /* SyncRequestsQueue.swift in Sources */,
 				374D0C971F56F8080060A4FC /* RtmMessageHandlerV5.swift in Sources */,
@@ -2024,6 +2049,7 @@
 				1FE147A320161F8C005DEA29 /* CommitStatistic.swift in Sources */,
 				847264A01CA53D0800DE801D /* BLEConstants.swift in Sources */,
 				8426D2511C92BB9D009AACFE /* StringExtensions.swift in Sources */,
+				91185B7620615E0C00E5E1CE /* A2AContext.swift in Sources */,
 				847264A11CA53D0800DE801D /* BLEDeviceInfoCollector.swift in Sources */,
 				847264981CA5263400DE801D /* IPaymentDeviceConnector.swift in Sources */,
 				9A7C78821CC77F210097BAB9 /* FitpayEventDispatcher.swift in Sources */,
@@ -2060,6 +2086,7 @@
 				374B626A1EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift in Sources */,
 				3786F97F1F1E03BA00693B6A /* RtmMessaging.swift in Sources */,
 				CD0385C5EFAB73A715B73025 /* PaymentDevice.swift in Sources */,
+				91185B7A20615E0C00E5E1CE /* A2AVerificationRequest.swift in Sources */,
 				374B62671EC9DAB300A7CE62 /* ApduResponseProtocol.swift in Sources */,
 				3AF3A8F01DDB15AE0037E105 /* BaseOutput.swift in Sources */,
 				3701AE4C1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift in Sources */,
@@ -2079,6 +2106,7 @@
 				3A640B471DDF110E008AD936 /* RtmMessage.swift in Sources */,
 				9A7C78831CC77F210097BAB9 /* FitpayEventListener.swift in Sources */,
 				3701AE581F16180000550890 /* FetchCommitsOperation.swift in Sources */,
+				91185B7820615E0C00E5E1CE /* A2AVerification.swift in Sources */,
 				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
 				8456437C1CAD7F7200351C8E /* CommitsApplyer.swift in Sources */,
 				371CB3031F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,
