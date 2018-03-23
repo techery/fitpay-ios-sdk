@@ -4,13 +4,11 @@ use_frameworks!
 abstract_target 'all' do
   pod 'AlamofireObjectMapper', '~> 5.0'
   pod 'JWTDecode', '2.0.0'
-  pod 'KeychainAccess', '3.0.2'
+  pod 'KeychainAccess', '3.1'
     
   target 'FitpaySDK' do
     pod 'Alamofire', '~> 4.1'
     pod 'ObjectMapper', '~> 3.1'
-    pod 'JWTDecode', '2.0.0'
-    pod 'KeychainAccess', '3.0.2'
     pod 'RxSwift', '~> 4.1'
   end
   

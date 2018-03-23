@@ -35,6 +35,7 @@ public protocol JWT {
     /// jwt string value
     var string: String { get }
 
+
     /// value of `exp` claim if available
     var expiresAt: Date? { get }
     /// value of `iss` claim if available

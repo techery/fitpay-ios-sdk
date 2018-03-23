@@ -214,12 +214,13 @@ class JWTDecodeSpec: QuickSpec {
     }
 }
 
-public func beDecodeErrorWithCode(_ code: DecodeError) -> Predicate<Error> {
-     return Predicate<Error>.define("be decode error with code <\(code)>") { expression, failureMessage -> PredicateResult in
-        guard let actual = try expression.evaluate() as? DecodeError else {
-            return PredicateResult(status: .doesNotMatch, message: failureMessage)
+public func beDecodeErrorWithCode(_ code: DecodeError) -> NonNilMatcherFunc<Error> {
+    return NonNilMatcherFunc { (actualExpression, failureMessage) throws in
+        failureMessage.postfixMessage = "be decode error with code <\(code)>"
+        guard let actual = try actualExpression.evaluate() as? DecodeError else {
+            return false
         }
-        return PredicateResult(bool: actual == code, message: failureMessage)
+        return actual == code
     }
 }
 
