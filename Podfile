@@ -17,11 +17,8 @@ abstract_target 'all' do
   end
 
   target 'FitpaySDKDemo'
-  target 'RTMClientApp'
-  target 'ObjCDemo' 
 
 end
-
 
 target 'FitpaySDKAuthenticationTests' do
     pod 'RxSwift', '~> 4.1’
