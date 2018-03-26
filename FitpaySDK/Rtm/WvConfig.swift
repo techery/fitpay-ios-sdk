@@ -132,7 +132,9 @@ class WvConfigStorage {
     var paymentDevice: PaymentDevice?
     var user: User?
     var device: DeviceInfo?
-    
+    var supportsAppVerification = false
+    var a2aReturnLocation: String? = nil
+
     var rtmConfig: RtmConfigProtocol?
 }
 
@@ -168,6 +170,12 @@ class WvConfigStorage {
         }
     }
 
+    weak open var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
+        didSet {
+            self.rtmMessaging.a2aVerificationDelegate = a2aVerificationDelegate
+        }
+    }
+
     var url = BASE_URL
     let notificationCenter = NotificationCenter.default
     
@@ -191,6 +199,24 @@ class WvConfigStorage {
         }
         set {
             self.configStorage.device = newValue
+        }
+    }
+
+    public var supportsAppVerification: Bool {
+        get {
+            return self.configStorage.supportsAppVerification
+        }
+        set {
+            self.configStorage.supportsAppVerification = newValue
+        }
+    }
+
+     public internal(set) var a2aReturnLocation: String? {
+        get {
+            return self.configStorage.a2aReturnLocation
+        }
+        set {
+            self.configStorage.a2aReturnLocation = newValue
         }
     }
     
