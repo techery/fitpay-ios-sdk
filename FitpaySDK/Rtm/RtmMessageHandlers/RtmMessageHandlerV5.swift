@@ -25,12 +25,12 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
         case idVerification        = "idVerification"
         case supportsIssuerAppVerification = "supportsIssuerAppVerification"
         case appToAppVerification = "appToAppVerification"
-
+        
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
             guard let handlerObject = handlerObject as? RtmMessageHandlerV5 else {
                 return nil
             }
-
+            
             switch self {
             case .userData:
                 return handlerObject.handleSessionData
@@ -57,16 +57,16 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
             }
         }
     }
-
+    
     override func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler? {
         guard let messageAction = RtmMessageTypeVer5(rawValue: rtmMessage) else {
             log.debug("WV_DATA: RtmMessage. Action is missing or unknown: \(rtmMessage)")
             return nil
         }
-
+        
         return messageAction.msgHandlerFor(handlerObject: self)
     }
-
+    
     func handleIdVerificationRequest(_ message: RtmMessage) {
         wvConfigStorage.paymentDevice?.handleIdVerificationRequest(completion: { [weak self] (response) in
             if let delegate = self?.outputDelegate {
@@ -74,52 +74,50 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
             }
         })
     }
-
+    
     func issuerAppVerificationRequest(_ message: RtmMessage) {
-        if let delegate = self.outputDelegate {
-              let data = [RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue : self.wvConfigStorage.supportsAppVerification]
-              delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
-                                                         data: data,
-                                                         type: RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue,
-                                                         success: true), retries: 3)
-            }
+        guard let delegate = self.outputDelegate else { return }
+        let data = [RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue : self.wvConfigStorage.supportsAppVerification]
+        delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
+                                                     data: data,
+                                                     type: RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue,
+                                                     success: true), retries: 3)
     }
-
+    
     func handleAppToAppVerificationRequest(_ message: RtmMessage) {
-        if let delegate = self.outputDelegate {
-
-            func appToAppVerificationFailed(reason: A2AVerificationError) {
-                if let delegate = self.outputDelegate {
-                    let data = ["reason" : reason.rawValue]
-                    delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
-                                                                 data: data,
-                                                                 type: RtmMessageTypeVer5.appToAppVerification.rawValue,
-                                                                 success: false), retries: 3)
-                }
+        guard let delegate = self.outputDelegate else { return }
+        
+        func appToAppVerificationFailed(reason: A2AVerificationError) {
+            guard let delegate = self.outputDelegate else { return }
+            
+            let data = ["reason": reason.rawValue]
+            delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
+                                                         data: data,
+                                                         type: RtmMessageTypeVer5.appToAppVerification.rawValue,
+                                                         success: false), retries: 3)
+        }
+        
+        if (wvConfigStorage.supportsAppVerification) {
+            guard let data = message.data as? [String: Any] else { return }
+            guard let appToAppVerification = Mapper<A2AVerificationRequest>().map(JSONObject: data) else {
+                appToAppVerificationFailed(reason: A2AVerificationError.CantProcess)
+                return
             }
-
-            if self.wvConfigStorage.supportsAppVerification == true {
-                guard let data = message.data as? [String: Any] else { return }
-                guard let appToAppVerification = Mapper<A2AVerificationRequest>().map(JSONObject: data) else {
-                    appToAppVerificationFailed(reason: A2AVerificationError.CantProcess)
-                    return
-                }
-
-                let mastercard = "MASTERCARD"
-                if appToAppVerification.cardType != mastercard {
-                    delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
-                                                                 data: message.data,
-                                                                 type: RtmMessageTypeVer5.appToAppVerification.rawValue,
-                                                                 success: true), retries: 3)
-
-                    a2aVerificationDelegate?.verificationFinished(verificationInfo: appToAppVerification)
-                    self.wvConfigStorage.a2aReturnLocation = appToAppVerification.returnLocation
-                } else {
-                    appToAppVerificationFailed(reason: A2AVerificationError.NotSupported)
-                }
+            
+            let mastercard = "MASTERCARD"
+            if appToAppVerification.cardType != mastercard {
+                delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
+                                                             data: message.data,
+                                                             type: RtmMessageTypeVer5.appToAppVerification.rawValue,
+                                                             success: true), retries: 3)
+                
+                a2aVerificationDelegate?.verificationFinished(verificationInfo: appToAppVerification)
+                self.wvConfigStorage.a2aReturnLocation = appToAppVerification.returnLocation
             } else {
                 appToAppVerificationFailed(reason: A2AVerificationError.NotSupported)
             }
+        } else {
+            appToAppVerificationFailed(reason: A2AVerificationError.NotSupported)
         }
     }
 }
