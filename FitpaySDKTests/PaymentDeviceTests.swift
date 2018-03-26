@@ -113,11 +113,12 @@ class PaymentDeviceTests: XCTestCase
                         XCTAssertNotNil(command)
                         XCTAssert(command!.responseCode == successResponse)
 
-                        expectation.fulfill()
                         commandCounter += 1
 
                         if commandCounter < commands.count {
                             execute(command: commands[commandCounter])
+                        } else {
+                            expectation.fulfill()
                         }
                     })
                 }
