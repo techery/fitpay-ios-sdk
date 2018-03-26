@@ -27,6 +27,7 @@ public enum VerificationResult: String {
         EXPIRED_SESSION                 = "EXPIRED_SESSION"
 }
 
+@objcMembers
 open class VerificationMethod: NSObject, ClientModel, Mappable
 {
     internal var links: [ResourceLink]?
