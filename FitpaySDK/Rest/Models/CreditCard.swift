@@ -21,6 +21,7 @@ enum AcceptTermsError: Error {
     case NoTerms(String)
 }
 
+@objcMembers
 open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links: [ResourceLink]?

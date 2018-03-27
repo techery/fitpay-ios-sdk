@@ -1,6 +1,7 @@
 
 import ObjectMapper
 
+@objcMembers
 open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links: [ResourceLink]?
