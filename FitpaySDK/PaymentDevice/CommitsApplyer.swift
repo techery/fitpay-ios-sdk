@@ -255,7 +255,7 @@ internal class CommitsApplyer {
                     case .next:
                         break
                     }
-                    }.disposed(by: self.disposeBag ?? DisposeBag())
+                    }.disposed(by: self.disposeBag)
             }
         })
     }
