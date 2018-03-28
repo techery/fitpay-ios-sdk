@@ -1,21 +1,21 @@
-# Fitpay iOS SDK - README.md
+# FitPay iOS SDK 
 
+
+[![Build Status](https://travis-ci.org/fitpay/fitpay-ios-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-ios-sdk)
 
 ## Using the SDK
 Fitpay distributes the SDK via cocoapods and carthage. Documentation on using **cocoapods** can be found [here](https://guides.cocoapods.org/using/getting-started.html) and for **carthage** [here](https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos). 
 #### Cocoapods
-Currently we are using cocoapods v1.1.1
+Currently we are using cocoapods v1.4.0
 
 Once you have set up your project to use cocoapods, add the following to your Podfile:
 ```
-ruby
 pod 'FitpaySDK'
 ```
 
 #### Carthage
 Once you have set up your project to use carthage, add the following to your Cartfile:
 ```
-ruby
 github "fitpay/fitpay-ios-sdk" "develop"
 ```
 After that you should follow to default carthage workflow, which is:
@@ -50,21 +50,18 @@ git clone git@github.com:fitpay/fitpay-ios-sdk.git
 cd fitpay-ios-sdk
 pod install  
 ```
-Open Xcode (currently using Xcode 8.3.3), and add a project (->Open another project->/users/yourname/fitpay/fitpay-ios-sdk)  
+Open Xcode (currently using Xcode 9.2), and add a project (->Open another project->/users/yourname/fitpay/fitpay-ios-sdk)  
 
 Select the **FitpaySDK-Universal** build under Product->Scheme. Ensure that the scheme is set to build for Generic iOS Device.
 ## Using a local pod
 In the project Podfile, change the following line:
-```ruby
+```
 pod ‘FitpaySDK’
 ````
 to be:
-```ruby 
+```
 pod ‘FitpaySDK’, :path => ‘~/fitpay/fitpay-ios-sdk’  
 ```
-
-Fit-Pay also utilizes a continuous integration system (travis) to build and test. Current Develop Branch Status: [![Build Status](https://travis-ci.org/fitpay/fitpay-ios-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-ios-sdk)
-
 
 ## Running Tests Locally from XCode UI
 Open the project inside of Xcode

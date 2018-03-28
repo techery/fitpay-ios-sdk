@@ -975,10 +975,6 @@
 					0AD922A61C1F7EFC007693AB = {
 						CreatedOnToolsVersion = 7.2;
 						LastSwiftMigration = 0920;
-						TestTargetID = 1F57AB9E1FEBFEE20047A0AC;
-					};
-					3A46E1441DF023F9002D0270 = {
-						TestTargetID = 1F57AB9E1FEBFEE20047A0AC;
 					};
 				};
 			};
