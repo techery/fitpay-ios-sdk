@@ -16,10 +16,4 @@ abstract_target 'all' do
     pod 'RxBlocking'
   end
 
-  target 'FitpaySDKDemo'
-
-end
-
-target 'FitpaySDKAuthenticationTests' do
-    pod 'RxSwift', '~> 4.1’
 end
