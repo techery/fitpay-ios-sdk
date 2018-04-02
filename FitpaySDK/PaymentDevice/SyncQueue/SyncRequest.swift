@@ -42,6 +42,10 @@ open class SyncRequest {
     }
 
     /// Internal init in the SDK
+    internal convenience init() {
+        self.init(notificationAsc: nil, initiator: .NotDefined)
+    }
+
     internal init(notificationAsc: NotificationDetail? = nil, initiator: SyncInitiator = .NotDefined) {
         self.requestTime = Date()
         self.user = nil
