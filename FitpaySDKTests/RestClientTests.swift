@@ -192,6 +192,59 @@ class RestClientTests: XCTestCase
 
         super.waitForExpectations(timeout: 100, handler: nil)
     }
+
+    func testResetDeviceTasks() {
+        let expectation = super.expectation(description: "'resetDeviceTasks' creates key")
+        self.testHelper.createAndLoginUser(expectation)
+        {
+            [unowned self](user) in
+
+            self.testHelper.createDevice(expectation, user: user)
+            {
+                [unowned self] (user, device) in
+                XCTAssertNotNil(device?.deviceIdentifier)
+                XCTAssertNotNil(user?.id)
+                self.client.resetDeviceTasks(deviceId: device!.deviceIdentifier!, userId: user!.id! , completion: { (error) in
+                    XCTAssertNil(error)
+                    if error != nil
+                    {
+                        expectation.fulfill()
+                        return
+                    }
+
+                    self.testHelper.deleteUser(user, expectation: expectation)
+                })
+            }
+        }
+
+        super.waitForExpectations(timeout: 90, handler: nil)
+    }
+
+    func testResetDeviceStatus() {
+        let expectation = super.expectation(description: "'resetDeviceTasks' creates key")
+        self.testHelper.createAndLoginUser(expectation)
+        {
+            [unowned self](user) in
+
+            self.testHelper.createDevice(expectation, user: user)
+            {
+                [unowned self] (user, device) in
+                self.client.resetDeviceStatus("some_fake_id") { (error) in
+                    XCTAssertNil(error)
+                    if error != nil
+                    {
+                        expectation.fulfill()
+                        return
+                    }
+
+                      self.testHelper.deleteUser(user, expectation: expectation)
+                }
+            }
+        }
+
+        super.waitForExpectations(timeout: 10, handler: nil)
+
+    }
  
     func testUserCreate()
     {
