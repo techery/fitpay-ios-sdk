@@ -1,28 +1,18 @@
-//
-//  MockPaymentDeviceTests.swift
-//  FitpaySDK
-//
-//  Created by Tim Shanahan on 5/6/16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
 import XCTest
 import ObjectMapper
 @testable import FitpaySDK
 
-class MockPaymentDeviceTests: XCTestCase
-{
-    var paymentDevice : PaymentDevice!
+class MockPaymentDeviceTests: XCTestCase {
+    var paymentDevice: PaymentDevice!
     
-    override func setUp()
-    {
+    override func setUp() {
         super.setUp()
         let myPaymentDevice = PaymentDevice()
         self.paymentDevice = myPaymentDevice
         let _ = self.paymentDevice.changeDeviceInterface(MockPaymentDeviceConnector(paymentDevice: myPaymentDevice))
     }
     
-    override func tearDown()
-    {
+    override func tearDown() {
         debugPrint("doing teardown")
         self.paymentDevice.removeAllBindings()
         self.paymentDevice = nil
