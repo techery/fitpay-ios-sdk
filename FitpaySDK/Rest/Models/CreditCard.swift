@@ -347,7 +347,10 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
 }
 
 open class CardMetadata: NSObject, ClientModel, Mappable {
+    
+    @available(*, deprecated, message: "Use foregroundColor instead")
     open var labelColor: String?
+    
     open var foregroundColor: String?
     open var issuerName: String?
     open var shortDescription: String?
@@ -422,7 +425,6 @@ open class CardMetadata: NSObject, ClientModel, Mappable {
     }
 
     open func mapping(map: Map) {
-        self.labelColor <- map["labelColor"]
         self.foregroundColor <- map["foregroundColor"]
         self.issuerName <- map["issuerName"]
         self.shortDescription <- map["shortDescription"]
