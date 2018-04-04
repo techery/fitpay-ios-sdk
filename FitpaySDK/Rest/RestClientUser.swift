@@ -155,9 +155,7 @@ extension RestClient {
     @objc open func user(id: String, completion: @escaping UserHandler)
     {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let strongSelf = self else {
-                return
-            }
+            guard let strongSelf = self else { return }
 
             if let headers = headers {
                 let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users/" + id,
@@ -167,6 +165,7 @@ extension RestClient {
                                                           headers: headers)
                 request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<User>) in
                     DispatchQueue.main.async {
+
                         if let _ = response.result.error {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                             completion(nil, error)

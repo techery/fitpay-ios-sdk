@@ -42,13 +42,9 @@ public enum NotificationsEventType : Int, FitpayEventTypeProtocol {
     }
 }
 
-open class FitpayNotificationsManager : NSObject {
+open class FitpayNotificationsManager {
     open static let sharedInstance = FitpayNotificationsManager()
     fileprivate var restClient: RestClient?
-    
-    override public init() {
-        super.init()
-    }
     
     public typealias NotificationsPayload = [AnyHashable: Any]
     public func setRestClient(_ client: RestClient?) {

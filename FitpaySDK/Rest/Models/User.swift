@@ -1,16 +1,17 @@
 
 import ObjectMapper
 
-open class User : NSObject, ClientModel, Mappable, SecretApplyable
-{
-    internal var links:[ResourceLink]?
-    open var id:String?
-    open var created:String?
-    open var createdEpoch:TimeInterval? //iOS represents epoch as a double, but really represents it as an NSTimeInterval. Java is a long.
-    open var lastModified:String?
-    open var lastModifiedEpoch:TimeInterval?
-    internal var encryptedData:String?
-    internal var info:UserInfo?
+open class User: NSObject, ClientModel, Mappable, SecretApplyable {
+    open var id: String?
+    open var created: String?
+    open var createdEpoch: TimeInterval? //iOS represents epoch as a double, but really represents it as an NSTimeInterval. Java is a long.
+    open var lastModified: String?
+    open var lastModifiedEpoch: TimeInterval?
+    
+    internal var links: [ResourceLink]?
+    internal var encryptedData: String?
+    internal var info: UserInfo?
+    
     fileprivate static let creditCardsResource = "creditCards"
     fileprivate static let devicesResource = "devices"
     fileprivate static let selfResource = "self"
