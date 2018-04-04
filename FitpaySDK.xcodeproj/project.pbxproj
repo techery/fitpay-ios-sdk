@@ -226,6 +226,7 @@
 		91185B7D2061694400E5E1CE /* A2AVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7320615E0C00E5E1CE /* A2AVerification.swift */; };
 		91185B7E2061694400E5E1CE /* A2AVerificationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */; };
 		91185B7F2061694400E5E1CE /* A2AVerificationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */; };
+		9139076E2074B9A1002358BE /* ResetDeviceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9139076D2074B9A1002358BE /* ResetDeviceTask.swift */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A18CAB61CABDFD600658223 /* DevicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A18CAB51CABDFD600658223 /* DevicesViewController.swift */; };
 		9A18CAB81CABE79800658223 /* SingleCreditCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A18CAB71CABE79800658223 /* SingleCreditCardViewController.swift */; };
@@ -428,6 +429,7 @@
 		91185B7320615E0C00E5E1CE /* A2AVerification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerification.swift; sourceTree = "<group>"; };
 		91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationError.swift; sourceTree = "<group>"; };
 		91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationRequest.swift; sourceTree = "<group>"; };
+		9139076D2074B9A1002358BE /* ResetDeviceTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetDeviceTask.swift; sourceTree = "<group>"; };
 		917D7F7537C855C49874C76E /* Pods_all_FitpaySDKDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_all_FitpaySDKDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		9A18CAB51CABDFD600658223 /* DevicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevicesViewController.swift; sourceTree = "<group>"; };
@@ -904,6 +906,7 @@
 				37B85D591EF29FCB00B7616F /* Issuers.swift */,
 				37DB88731F0F844B00B070DA /* ImageAssetOptions.swift */,
 				37DB88751F0F87A600B070DA /* Image.swift */,
+				9139076D2074B9A1002358BE /* ResetDeviceTask.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1586,6 +1589,7 @@
 				37D0CFEB1EDC40860049B5AA /* ScannedCardInfo.swift in Sources */,
 				3701AE471F14C29900550890 /* ConnectDeviceOperation.swift in Sources */,
 				CD0381C2A8FBB873B221A20F /* RawIntValue.swift in Sources */,
+				9139076E2074B9A1002358BE /* ResetDeviceTask.swift in Sources */,
 				37D0CFF51EDDA27E0049B5AA /* RtmMessageHandlerV3.swift in Sources */,
 				3A640B471DDF110E008AD936 /* RtmMessage.swift in Sources */,
 				9A7C78831CC77F210097BAB9 /* FitpayEventListener.swift in Sources */,
