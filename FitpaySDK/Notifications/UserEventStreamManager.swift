@@ -13,7 +13,7 @@ open class UserEventStreamManager {
         client!.user(id: userId) { (user, error) in
             guard let user = user else { return }
             
-            self.userEventStream = UserEventStream(user: user)
+            self.userEventStream = UserEventStream(user: user, client: self.client!)
         }
     }
 }

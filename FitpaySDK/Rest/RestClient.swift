@@ -63,7 +63,7 @@ open class RestClient: NSObject
         return SessionManager(configuration: configuration)
     }()
 
-    fileprivate var key: EncryptionKey?
+    var key: EncryptionKey?
     
     internal var secret: Data {
         let secret = self.keyPair.generateSecretForPublicKey(key?.serverPublicKey ?? "")
@@ -77,8 +77,7 @@ open class RestClient: NSObject
         _session = session;
     }
 
-    internal func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: Error?) -> Void) -> T?
-    {
+    internal func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: Error?) -> Void) -> T? {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             if let headers = headers {
                 let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
@@ -247,12 +246,9 @@ extension RestClient {
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    internal func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler)
-    {
+    internal func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
         let headers = self.defaultHeaders
-        let parameters = [
-            "clientPublicKey": clientPublicKey
-        ]
+        let parameters = ["clientPublicKey": clientPublicKey]
         
         let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
         request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<EncryptionKey>) in

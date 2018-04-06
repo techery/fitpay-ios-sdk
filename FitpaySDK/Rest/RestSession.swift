@@ -1,9 +1,8 @@
-
 import Foundation
 import AlamofireObjectMapper
 import Alamofire
 import ObjectMapper
-import JWTDecode
+import JWT
 
 public enum AuthScope: String {
     case userRead   = "user.read"
@@ -12,8 +11,7 @@ public enum AuthScope: String {
     case tokenWrite = "token.write"
 }
 
-internal class AuthorizationDetails: Mappable
-{
+internal class AuthorizationDetails: Mappable {
     var tokenType: String?
     var accessToken: String?
     var expiresIn: String?
@@ -33,8 +31,7 @@ internal class AuthorizationDetails: Mappable
 }
 
 @objcMembers
-open class RestSession: NSObject
-{
+open class RestSession: NSObject {
     public enum ErrorEnum: Int, Error, RawIntValue {
         case decodeFailure = 1000
         case parsingFailure
@@ -89,15 +86,13 @@ open class RestSession: NSObject
                     completion(error)
                 } else {
                     if let accessToken = details?.accessToken {
-                        guard let jwt = try? decode(jwt: accessToken) else {
+                        guard let claims = try? JWT.decode(accessToken, algorithm: .none, verify: false, audience: nil, issuer: nil, leeway: 10) else {
                             completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
                             return
                         }
 
-                        if let userId = jwt.body["user_id"] as? String {
-                            DispatchQueue.main.async {
-                                [weak self] in
-
+                        if let userId = claims["user_id"] as? String {
+                            DispatchQueue.main.async { [weak self] in
                                 log.verbose("successful login for user: \(userId)")
                                 self?.userId = userId
                                 self?.accessToken = accessToken
@@ -116,8 +111,7 @@ open class RestSession: NSObject
 
     internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
 
-    internal func acquireAccessToken(clientId: String, redirectUri: String, username: String, password: String, completion: @escaping AcquireAccessTokenHandler)
-    {
+    internal func acquireAccessToken(clientId: String, redirectUri: String, username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
         let parameters = [
             "response_type": "token",
@@ -228,3 +222,4 @@ extension RestSession {
     }
 
 }
+

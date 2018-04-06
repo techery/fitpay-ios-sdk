@@ -126,61 +126,30 @@ class RestClientTests: XCTestCase {
     func testDeleteEncryptionKeyDeletesCreatedKey() {
         let expectation = super.expectation(description: "'deleteEncryptionKey' deletes key")
         
-        self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion:
-            {
-                [unowned self](createdEncryptionKey, createdError) -> Void in
-                
+        self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!) { [unowned self](createdEncryptionKey, createdError) -> Void in
                 XCTAssertNil(createdError)
                 XCTAssertNotNil(createdEncryptionKey)
-                
-                if createdError != nil
-                {
-                    expectation.fulfill()
-                    return
-                }
-                
-                self.client.encryptionKey(createdEncryptionKey!.keyId!, completion:
-                    {
-                        (retrievedEncryptionKey, retrievedError) -> Void in
-                        
+
+                self.client.encryptionKey(createdEncryptionKey!.keyId!) { (retrievedEncryptionKey, retrievedError) -> Void in
                         XCTAssertNil(retrievedError)
-                        if retrievedError != nil
-                        {
-                            expectation.fulfill()
-                            return
-                        }
                         
-                        self.client.deleteEncryptionKey((retrievedEncryptionKey?.keyId)!, completion:
-                            {
-                                (error) -> Void in
-                                
+                        self.client.deleteEncryptionKey((retrievedEncryptionKey?.keyId)!) { (error) -> Void in
                                 XCTAssertNil(error)
                                 
-                                if error != nil
-                                {
-                                    expectation.fulfill()
-                                    return
-                                }
-                                
-                                self.client.encryptionKey((retrievedEncryptionKey?.keyId)!, completion:
-                                    {
-                                        (againRetrievedEncryptionKey, againRetrievedError) -> Void in
-                                        
+                                self.client.encryptionKey((retrievedEncryptionKey?.keyId)!) { (againRetrievedEncryptionKey, againRetrievedError) -> Void in
                                         XCTAssertNil(againRetrievedEncryptionKey)
                                         XCTAssertNotNil(againRetrievedError)
                                         
                                         expectation.fulfill()
-                                })
-                        })
-                })
-                
-        })
+                                }
+                        }
+                }
+        }
         
         super.waitForExpectations(timeout: 100, handler: nil)
     }
     
-    func testUserCreate()
-    {
+    func testUserCreate() {
         let expectation = super.expectation(description: "'user' created")
         
         let email = TestHelpers.randomEmail()
@@ -189,9 +158,7 @@ class RestClientTests: XCTestCase {
         self.client.createUser(
             email, password: pin, firstName:nil, lastName:nil, birthDate:nil,
             termsVersion:nil, termsAccepted:nil, origin:nil, originAccountCreated:nil,
-            clientId:clientId ,completion:
-            {
-                (user, error) -> Void in
+            clientId:clientId) { (user, error) -> Void in
                 
                 XCTAssertNotNil(user, "user is nil")
                 XCTAssertNotNil(user?.info)
@@ -202,19 +169,16 @@ class RestClientTests: XCTestCase {
                 XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
                 expectation.fulfill()
-        })
+        }
         
         super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     
-    func testUserCreateAndLogin()
-    {
+    func testUserCreateAndLogin() {
         let expectation = super.expectation(description: "'user' created")
         
-        self.testHelper.createAndLoginUser(expectation)
-        {
-            [unowned self] user in
+        self.testHelper.createAndLoginUser(expectation) { [unowned self] user in
             self.testHelper.deleteUser(user, expectation: expectation)
         }
         

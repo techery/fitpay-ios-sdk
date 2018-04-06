@@ -10,7 +10,6 @@
 		0A1B6A3D1CDBEBF700EBD014 /* RtmConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */; };
 		0A7EE11B1CFE0A2B00503BC8 /* testHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */; };
 		0AD922A11C1F7EFC007693AB /* FitpaySDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD922A01C1F7EFC007693AB /* FitpaySDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0AD922A81C1F7EFC007693AB /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		0AF2B4121CDA6F410090CFCF /* WvConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2B4111CDA6F410090CFCF /* WvConfig.swift */; };
 		1F5BBD802017450200F16B4F /* NotificationDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5BBD7F2017450200F16B4F /* NotificationDetail.swift */; };
 		1F5BBD812017450200F16B4F /* NotificationDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5BBD7F2017450200F16B4F /* NotificationDetail.swift */; };
@@ -26,6 +25,7 @@
 		2786DB02207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		2786DB03207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
+		27E769E62077ED5D00B3CA9D /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E769E52077ED5D00B3CA9D /* JWT.framework */; };
 		3701AE3B1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE3C1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE471F14C29900550890 /* ConnectDeviceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */; };
@@ -115,7 +115,6 @@
 		3A46E14F1DF023F9002D0270 /* testHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */; };
 		3A46E1511DF023F9002D0270 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */; };
 		3A46E1521DF023F9002D0270 /* AlamofireObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */; };
-		3A46E1531DF023F9002D0270 /* JWTDecode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11A1DB8E68E00A9FEB4 /* JWTDecode.framework */; };
 		3A46E1541DF023F9002D0270 /* KeychainAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11B1DB8E68E00A9FEB4 /* KeychainAccess.framework */; };
 		3A46E1551DF023F9002D0270 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */; };
 		3A46E1561DF023F9002D0270 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
@@ -186,17 +185,11 @@
 		3A93A0E51DB8CA2C00A9FEB4 /* FitpaySDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD922A01C1F7EFC007693AB /* FitpaySDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A93A11D1DB8E68E00A9FEB4 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */; };
 		3A93A11E1DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */; };
-		3A93A11F1DB8E68E00A9FEB4 /* JWTDecode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11A1DB8E68E00A9FEB4 /* JWTDecode.framework */; };
 		3A93A1201DB8E68E00A9FEB4 /* KeychainAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11B1DB8E68E00A9FEB4 /* KeychainAccess.framework */; };
 		3A93A1211DB8E68E00A9FEB4 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */; };
 		3AF3A8F01DDB15AE0037E105 /* BaseOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8ED1DDB15AE0037E105 /* BaseOutput.swift */; };
 		3AF3A8F11DDB15AE0037E105 /* ConsoleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8EE1DDB15AE0037E105 /* ConsoleOutput.swift */; };
 		3AF3A8F21DDB15AE0037E105 /* FitpaySDKLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8EF1DDB15AE0037E105 /* FitpaySDKLogger.swift */; };
-		3AF3A9001DDCB9DF0037E105 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */; };
-		3AF3A9011DDDA1B30037E105 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */; };
-		3AF3A9021DDDA1B30037E105 /* AlamofireObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */; };
-		3AF3A9031DDDA1B30037E105 /* JWTDecode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11A1DB8E68E00A9FEB4 /* JWTDecode.framework */; };
-		3AF3A9041DDDA1B30037E105 /* KeychainAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11B1DB8E68E00A9FEB4 /* KeychainAccess.framework */; };
 		4109B037357B19B1DBF61B22 /* Pods_all_FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6183344EC5F4DB31C005E1B /* Pods_all_FitpaySDK.framework */; };
 		8400F8AC1CA130C4003F15B2 /* NSData+CRC32.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */; };
 		8425931B1CAA605B0006FFA6 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8425931A1CAA605B0006FFA6 /* SyncManager.swift */; };
@@ -302,6 +295,7 @@
 		27198B08206D7E9E00BCBFCD /* UserEventStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStream.swift; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStreamManager.swift; sourceTree = "<group>"; };
+		27E769E52077ED5D00B3CA9D /* JWT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JWT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3701AE3A1F13BA1B00550890 /* SyncEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncEvent.swift; sourceTree = "<group>"; };
 		3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectDeviceOperation.swift; sourceTree = "<group>"; };
 		3701AE461F14C29900550890 /* SyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
@@ -444,12 +438,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3AF3A9011DDDA1B30037E105 /* Alamofire.framework in Frameworks */,
-				3AF3A9021DDDA1B30037E105 /* AlamofireObjectMapper.framework in Frameworks */,
-				3AF3A9031DDDA1B30037E105 /* JWTDecode.framework in Frameworks */,
-				3AF3A9041DDDA1B30037E105 /* KeychainAccess.framework in Frameworks */,
-				3AF3A9001DDCB9DF0037E105 /* ObjectMapper.framework in Frameworks */,
-				0AD922A81C1F7EFC007693AB /* FitpaySDK.framework in Frameworks */,
 				26B955012D981BCA351BF353 /* Pods_all_FitpaySDKTestsPods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -460,7 +448,6 @@
 			files = (
 				3A46E1511DF023F9002D0270 /* Alamofire.framework in Frameworks */,
 				3A46E1521DF023F9002D0270 /* AlamofireObjectMapper.framework in Frameworks */,
-				3A46E1531DF023F9002D0270 /* JWTDecode.framework in Frameworks */,
 				3A46E1541DF023F9002D0270 /* KeychainAccess.framework in Frameworks */,
 				3A46E1551DF023F9002D0270 /* ObjectMapper.framework in Frameworks */,
 				3A46E1561DF023F9002D0270 /* FitpaySDK.framework in Frameworks */,
@@ -471,9 +458,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27E769E62077ED5D00B3CA9D /* JWT.framework in Frameworks */,
 				3A93A11D1DB8E68E00A9FEB4 /* Alamofire.framework in Frameworks */,
 				3A93A11E1DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework in Frameworks */,
-				3A93A11F1DB8E68E00A9FEB4 /* JWTDecode.framework in Frameworks */,
 				3A93A1201DB8E68E00A9FEB4 /* KeychainAccess.framework in Frameworks */,
 				3A93A1211DB8E68E00A9FEB4 /* ObjectMapper.framework in Frameworks */,
 			);
@@ -505,6 +492,7 @@
 				0AD9229E1C1F7EFC007693AB /* Products */,
 				B2C94647591B581A09E4A254 /* Frameworks */,
 				006D1FC3632F93941B04336A /* Pods */,
+				27E769EB2077F83D00B3CA9D /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -524,7 +512,6 @@
 			children = (
 				0AD922A01C1F7EFC007693AB /* FitpaySDK.h */,
 				0AD922A21C1F7EFC007693AB /* Info.plist */,
-				0AD9232B1C20BB38007693AB /* FitpaySDK.swift */,
 				3A18E6F91D4B9B01005E471F /* FitpaySDKConfiguration.swift */,
 				91185B7020615E0C00E5E1CE /* A2AVerification */,
 				37D0CFE61EDC3D2A0049B5AA /* CardScanner */,
@@ -559,6 +546,14 @@
 				37330EB420289DCF00948BC6 /* TransactionTests.swift */,
 			);
 			path = FitpaySDKTests;
+			sourceTree = "<group>";
+		};
+		27E769EB2077F83D00B3CA9D /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				27E769E52077ED5D00B3CA9D /* JWT.framework */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		3701AE441F14C27000550890 /* Operations */ = {
@@ -1052,6 +1047,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/RxBlocking.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/JWT.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -1069,8 +1065,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-all-FitpaySDKTestsPods/Pods-all-FitpaySDKTestsPods-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
-				"${BUILT_PRODUCTS_DIR}/JWTDecode/JWTDecode.framework",
-				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
+				"${BUILT_PRODUCTS_DIR}/JSONWebToken/JWT.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RxBlocking/RxBlocking.framework",
@@ -1079,8 +1074,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWTDecode.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWT.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxBlocking.framework",
