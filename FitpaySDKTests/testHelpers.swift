@@ -235,7 +235,7 @@ class TestHelpers {
         }
     }
     
-    func createDefaultDevice(_ userId: String, completion: @escaping RestClient.CreateNewDeviceHandler) {
+    func createDefaultDevice(_ userId: String, completion: @escaping RestClient.DeviceHandler) {
         let deviceType = "WATCH"
         let manufacturerName = "Fitpay"
         let deviceName = "PSPS"

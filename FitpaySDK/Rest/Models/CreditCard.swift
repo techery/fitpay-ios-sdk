@@ -202,7 +202,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
      
      - parameter completion:   DeleteCreditCardHandler closure
      */
-    @objc open func deleteCreditCard(_ completion: @escaping RestClient.DeleteCreditCardHandler) {
+    @objc open func deleteCreditCard(_ completion: @escaping RestClient.DeleteHandler) {
         let resource = CreditCard.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -231,7 +231,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
                            state: String?,
                            postalCode: String?,
                            countryCode: String?,
-                           completion: @escaping RestClient.UpdateCreditCardHandler) {
+                           completion: @escaping RestClient.CreditCardHandler) {
         let resource = CreditCard.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {

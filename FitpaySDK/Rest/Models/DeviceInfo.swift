@@ -2,8 +2,7 @@
 import ObjectMapper
 
 @objcMembers
-open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
-{
+open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     internal var links: [ResourceLink]?
     open var deviceIdentifier: String?
     open var deviceName: String?
@@ -37,47 +36,36 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
     // Extra metadata specific for a particural type of device
     open var metadata: [String: AnyObject]?
 
-    open var userAvailable: Bool
-    {
+    open var userAvailable: Bool {
         return self.links?.url(DeviceInfo.userResource) != nil
     }
 
-    open var listCommitsAvailable: Bool
-    {
+    open var listCommitsAvailable: Bool {
         return self.links?.url(DeviceInfo.commitsResource) != nil
     }
 
-    public var client: RestClient?
-    {
-        get
-        {
+    public var client: RestClient? {
+        get {
             return self._client
         }
-        set
-        {
+        set {
             self._client = newValue
 
-            if let cardRelationships = self.cardRelationships
-                {
-                for cardRelationship in cardRelationships
-                {
+            if let cardRelationships = self.cardRelationships {
+                for cardRelationship in cardRelationships {
                     cardRelationship.client = self.client
                 }
             }
         }
     }
-
+    
     override public init() {
-
     }
 
-    public required init?(map: Map)
-    {
-
+    public required init?(map: Map) {
     }
 
-    open func mapping(map: Map)
-    {
+    open func mapping(map: Map) {
         links <- (map["_links"], ResourceLinkTransformType())
         created <- map["createdTs"]
         createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
@@ -191,7 +179,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion: DeleteDeviceHandler closure
      */
-    @objc open func deleteDeviceInfo(_ completion: @escaping RestClient.DeleteDeviceHandler) {
+    @objc open func deleteDeviceInfo(_ completion: @escaping RestClient.DeleteHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -209,7 +197,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter softwareRevision?: software revision
      - parameter completion:        UpdateDeviceHandler closure
      */
-    @objc open func update(_ firmwareRevision: String?, softwareRevision: String?, notifcationToken: String?, completion: @escaping RestClient.UpdateDeviceHandler) {
+    @objc open func update(_ firmwareRevision: String?, softwareRevision: String?, notifcationToken: String?, completion: @escaping RestClient.DeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -275,7 +263,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
 
-    internal func addNotificationToken(_ token: String, completion: @escaping RestClient.UpdateDeviceHandler) {
+    internal func addNotificationToken(_ token: String, completion: @escaping RestClient.DeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -309,10 +297,10 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
             completion?(false, nil)
         }
     }
+    
 }
 
-open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable
-{
+open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable {
     internal var links: [ResourceLink]?
     open var creditCardId: String?
     open var pan: String?
@@ -323,13 +311,11 @@ open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable
     fileprivate static let selfResource = "self"
     public weak var client: RestClient?
 
-    public required init?(map: Map)
-    {
+    public required init?(map: Map) {
 
     }
 
-    open func mapping(map: Map)
-    {
+    open func mapping(map: Map) {
         links <- (map["_links"], ResourceLinkTransformType())
         creditCardId <- map["creditCardId"]
         encryptedData <- map["encryptedData"]
@@ -338,8 +324,7 @@ open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable
         expYear <- map["expYear"]
     }
 
-    internal func applySecret(_ secret: Data, expectedKeyId: String?)
-    {
+    internal func applySecret(_ secret: Data, expectedKeyId: String?) {
         if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
             self.pan = decryptedObj.pan
             self.expMonth = decryptedObj.expMonth
@@ -355,13 +340,11 @@ open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable
     @objc open func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
         let resource = CardRelationship.selfResource
         let url = self.links?.url(resource)
-        if let url = url, let client = self.client
-            {
+        if let url = url, let client = self.client {
             client.relationship(url, completion: completion)
-        }
-            else
-        {
+        } else {
             completion(nil, NSError.clientUrlError(domain: CardRelationship.self, code: 0, client: client, url: url, resource: resource))
         }
     }
+
 }
