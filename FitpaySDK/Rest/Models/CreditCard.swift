@@ -254,7 +254,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
      
      - parameter completion:   AcceptTermsHandler closure
      */
-    @objc open func acceptTerms(_ completion: @escaping RestClient.AcceptTermsHandler) {
+    @objc open func acceptTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
         let resource = CreditCard.acceptTermsResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -269,7 +269,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
      
      - parameter completion:   DeclineTermsHandler closure
      */
-    @objc open func declineTerms(_ completion: @escaping RestClient.DeclineTermsHandler) {
+    @objc open func declineTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
         let resource = CreditCard.declineTermsResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -286,7 +286,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
      - parameter reason:       deactivation reason
      - parameter completion:   DeactivateHandler closure
      */
-    open func deactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.DeactivateHandler) {
+    open func deactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
         let resource = CreditCard.deactivateResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -303,7 +303,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
      - parameter reason:       reactivation reason
      - parameter completion:   ReactivateHandler closure
      */
-    open func reactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.ReactivateHandler) {
+    open func reactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
         let resource = CreditCard.reactivateResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -318,7 +318,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
      
      - parameter completion:   MakeDefaultHandler closure
      */
-    @objc open func makeDefault(_ completion: @escaping RestClient.MakeDefaultHandler) {
+    @objc open func makeDefault(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
         let resource = CreditCard.makeDefaultResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {

@@ -26,68 +26,69 @@ extension RestClient {
      */
     internal func createRelationship(_ url: String, creditCardId: String, deviceId: String, completion: @escaping RelationshipHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
-            if let headers = headers {
-                let parameters = [
-                    "creditCardId": "\(creditCardId)",
-                    "deviceId": "\(deviceId)"
-                ]
-                let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Relationship>) in
-                    DispatchQueue.main.async {
-                        if response.result.error != nil {
-                            let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                            
-                            completion(nil, error)
-                        } else if let resultValue = response.result.value {
-                            resultValue.client = self
-                            completion(resultValue, response.result.error as NSError?)
-                        } else {
-                            completion(nil, NSError.unhandledError(RestClient.self))
-                        }
+            guard let headers = headers else {
+                completion(nil, error)
+                return
+            }
+            
+            let parameters = ["creditCardId": "\(creditCardId)", "deviceId": "\(deviceId)"]
+            let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
+            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Relationship>) in
+                DispatchQueue.main.async {
+                    if response.result.error != nil {
+                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                        
+                        completion(nil, error)
+                    } else if let resultValue = response.result.value {
+                        resultValue.client = self
+                        completion(resultValue, response.result.error as NSError?)
+                    } else {
+                        completion(nil, NSError.unhandledError(RestClient.self))
                     }
                 }
-            } else {
-                completion(nil, error)
             }
         }
     }
     
     internal func relationship(_ url: String, completion: @escaping RelationshipHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
-            if let headers = headers {
-                let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-                request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Relationship>) in
-                    DispatchQueue.main.async {
-                        if response.result.error != nil {
-                            let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                            
-                            completion(nil, error)
-                        } else if let resultValue = response.result.value {
-                            resultValue.client = self
-                            completion(resultValue, response.result.error as NSError?)
-                        } else {
-                            completion(nil, NSError.unhandledError(RestClient.self))
-                        }
+            guard let headers = headers else {
+                completion(nil, error)
+                return
+            }
+            
+            let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Relationship>) in
+                DispatchQueue.main.async {
+                    if response.result.error != nil {
+                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                        
+                        completion(nil, error)
+                    } else if let resultValue = response.result.value {
+                        resultValue.client = self
+                        completion(resultValue, response.result.error as NSError?)
+                    } else {
+                        completion(nil, NSError.unhandledError(RestClient.self))
                     }
                 }
-            } else {
-                completion(nil, error)
             }
         }
     }
     
     internal func deleteRelationship(_ url: String, completion: @escaping DeleteHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
-            if let headers = headers {
-                let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-                request.validate().responseString { (response: DataResponse<String>) in
-                    DispatchQueue.main.async {
-                        completion(response.result.error as NSError?)
-                    }
-                }
-            } else {
+            guard let headers = headers else {
                 completion(error)
+                return
+            }
+            
+            let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            request.validate().responseString { (response: DataResponse<String>) in
+                DispatchQueue.main.async {
+                    completion(response.result.error as NSError?)
+                }
             }
         }
     }
+    
 }

@@ -35,7 +35,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     fileprivate weak var _client: RestClient?
 
     // Extra metadata specific for a particural type of device
-    open var metadata: [String: AnyObject]?
+    open var metadata: [String: Any]?
 
     open var userAvailable: Bool {
         return self.links?.url(DeviceInfo.userResourceKey) != nil
@@ -112,7 +112,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
             secureElementId <- map["secureElementId"]
         }
 
-        if let cardRelationships = map["cardRelationships"].currentValue as? [AnyObject] {
+        if let cardRelationships = map["cardRelationships"].currentValue as? [Any] {
             if cardRelationships.count > 0 {
                 self.cardRelationships = [CardRelationship]()
 
@@ -124,7 +124,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
             }
         }
 
-        metadata = map.JSON as [String: AnyObject]?
+        metadata = map.JSON as [String: Any]?
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {
@@ -140,47 +140,47 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
         var dic: [String: Any] = [:]
 
         if let deviceType = self.deviceType {
-            dic["deviceType"] = deviceType as AnyObject?
+            dic["deviceType"] = deviceType
         }
 
         if let deviceName = self.deviceName {
-            dic["deviceName"] = deviceName as AnyObject?
+            dic["deviceName"] = deviceName
         }
 
         if let manufacturerName = self.manufacturerName {
-            dic["manufacturerName"] = manufacturerName as AnyObject?
+            dic["manufacturerName"] = manufacturerName
         }
 
         if let modelNumber = self.modelNumber {
-            dic["modelNumber"] = modelNumber as AnyObject?
+            dic["modelNumber"] = modelNumber
         }
 
         if let hardwareRevision = self.hardwareRevision {
-            dic["hardwareRevision"] = hardwareRevision as AnyObject?
+            dic["hardwareRevision"] = hardwareRevision
         }
 
         if let firmwareRevision = self.firmwareRevision {
-            dic["firmwareRevision"] = firmwareRevision as AnyObject?
+            dic["firmwareRevision"] = firmwareRevision
         }
 
         if let softwareRevision = self.softwareRevision {
-            dic["softwareRevision"] = softwareRevision as AnyObject?
+            dic["softwareRevision"] = softwareRevision
         }
 
         if let systemId = self.systemId {
-            dic["systemId"] = systemId as AnyObject?
+            dic["systemId"] = systemId
         }
 
         if let osName = self.osName {
-            dic["osName"] = osName as AnyObject?
+            dic["osName"] = osName
         }
 
         if let licenseKey = self.licenseKey {
-            dic["licenseKey"] = licenseKey as AnyObject?
+            dic["licenseKey"] = licenseKey
         }
 
         if let bdAddress = self.bdAddress {
-            dic["bdAddress"] = bdAddress as AnyObject?
+            dic["bdAddress"] = bdAddress
         }
 
         if let secureElementId = self.secureElementId {
@@ -193,7 +193,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
 
         return String(data: jsonData, encoding: String.Encoding.utf8)
     }
-
+    
     /**
      Delete a single device
      

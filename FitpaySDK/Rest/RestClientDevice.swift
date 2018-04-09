@@ -41,36 +41,31 @@ extension RestClient {
     //MARK: - Functions
     
     internal func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) {
-        let parameters = [
-            "limit": "\(limit)",
-            "offset": "\(offset)"
-        ]
-        
-        self.devices(url, parameters: parameters as [String: AnyObject]?, completion: completion)
+        let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
+        self.devices(url, parameters: parameters, completion: completion)
     }
     
-    internal func devices(_ url: String, parameters: [String: AnyObject]?, completion: @escaping DevicesHandler) {
+    internal func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
+            
             let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<ResultCollection<DeviceInfo>>) in
-                guard let strongSelf = self else {
-                    return
-                }
+                guard let strongSelf = self else { return }
                 
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        
                         completion(nil, error)
+                        
                     } else if let resultValue = response.result.value {
                         resultValue.client = self
                         resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        
                         completion(resultValue, response.result.error as NSError?)
+                        
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
                     }
@@ -226,10 +221,7 @@ extension RestClient {
     }
     
     open func commits(_ url: String, commitsAfter: String?, limit: Int, offset: Int, completion: @escaping CommitsHandler) {
-        var parameters = [
-            "limit": "\(limit)",
-            "offset": "\(offset)"
-        ]
+        var parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         
         if (commitsAfter != nil && commitsAfter!.isEmpty == false) {
             parameters["commitsAfter"] = commitsAfter!
@@ -248,12 +240,13 @@ extension RestClient {
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        
                         completion(nil, error)
+                        
                     } else if let resultValue = response.result.value {
                         resultValue.client = self
                         resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                         completion(resultValue, response.result.error as NSError?)
+                        
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
                     }
@@ -276,12 +269,13 @@ extension RestClient {
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        
                         completion(nil, error)
+                        
                     } else if let resultValue = response.result.value {
                         resultValue.client = self
                         resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                         completion(resultValue, response.result.error as NSError?)
+                        
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
                     }
@@ -304,12 +298,13 @@ extension RestClient {
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        
                         completion(nil, error)
+                        
                     } else if let resultValue = response.result.value {
                         resultValue.client = self
                         resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                         completion(resultValue, response.result.error as NSError?)
+                        
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
                     }
