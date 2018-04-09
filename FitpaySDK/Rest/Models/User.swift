@@ -150,8 +150,8 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
         if  let url = url, let client = self.client {
             client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
                                    modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
-                                   softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName, licenseKey: licenseKey,
-                                   bdAddress: bdAddress, pairing: pairing, secureElementId: secureElementId, casd: nil, completion: completion)
+                                   softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName,
+                                   secureElementId: secureElementId, casd: nil, completion: completion)
         } else {
             completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
         }
@@ -169,9 +169,8 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
             client.createNewDevice(url, deviceType: device.deviceType!, manufacturerName: device.manufacturerName!, deviceName: device.deviceName!,
                                    serialNumber: device.serialNumber, modelNumber: device.modelNumber, hardwareRevision: device.hardwareRevision,
                                    firmwareRevision: device.firmwareRevision, softwareRevision: device.softwareRevision,
-                                   notificationToken: device.notificationToken, systemId: device.systemId,
-                                   osName: device.osName, licenseKey: device.licenseKey, bdAddress: device.bdAddress,
-                                   pairing: device.pairing, secureElementId: device.secureElementId, casd: device.casd, completion: completion)
+                                   notificationToken: device.notificationToken, systemId: device.systemId, osName: device.osName,
+                                   secureElementId: device.secureElementId, casd: device.casd, completion: completion)
         } else {
             completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
         }

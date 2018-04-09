@@ -66,7 +66,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     public required init?(map: Map) {
     }
     
-    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, licenseKey: String?, bdAddress: String?, pairing: String?, secureElementId: String?, casd: String?) {
+    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElementId: String?, casd: String?) {
         self.deviceType = deviceType
         self.manufacturerName = manufacturerName
         self.deviceName = deviceName
@@ -78,9 +78,6 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
         self.notificationToken = notificationToken
         self.systemId = systemId
         self.osName = osName
-        self.licenseKey = licenseKey
-        self.bdAddress = bdAddress
-        self.pairing = pairing
         self.secureElementId = secureElementId
         self.casd = casd
     }
@@ -105,11 +102,12 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
         licenseKey <- map["licenseKey"]
         bdAddress <- map["bdAddress"]
         pairing <- map["pairing"]
-        casd <- map["casd"]
         if let secureElement = map["secureElement"].currentValue as? [String: String] {
             secureElementId = secureElement["secureElementId"]
+            casd = secureElement["casdCert"]
         } else {
             secureElementId <- map["secureElementId"]
+            casd <- map["casdCert"]
         }
 
         if let cardRelationships = map["cardRelationships"].currentValue as? [Any] {

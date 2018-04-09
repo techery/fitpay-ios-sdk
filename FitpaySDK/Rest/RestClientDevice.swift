@@ -76,8 +76,8 @@ extension RestClient {
     
     internal func createNewDevice(_ url: String, deviceType: String, manufacturerName: String, deviceName: String,
                                   serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?,
-                                  softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, licenseKey: String?,
-                                  bdAddress: String?, pairing: String?, secureElementId: String?, casd: String?, completion: @escaping DeviceHandler) {
+                                  softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?,
+                                  secureElementId: String?, casd: String?, completion: @escaping DeviceHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
@@ -95,13 +95,10 @@ extension RestClient {
                 "notificationToken": notificationToken ?? NSNull(),
                 "systemId": systemId ?? NSNull(),
                 "osName": osName ?? NSNull(),
-                "licenseKey": licenseKey ?? NSNull(),
-                "bdAddress": bdAddress ?? NSNull(),
-                "pairingTs": pairing ?? NSNull(),
                 "secureElement": [
-                    "secureElementId": secureElementId
-                ],
-                "casd": casd ?? NSNull()
+                    "secureElementId": secureElementId ?? NSNull(),
+                    "casdCert": casd ?? NSNull()
+                    ] as [String: Any]
                 ]
             
             let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
