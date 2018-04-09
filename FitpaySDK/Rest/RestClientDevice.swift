@@ -74,30 +74,30 @@ extension RestClient {
         }
     }
     
-    internal func createNewDevice(_ url: String, deviceType: String?, manufacturerName: String, deviceName: String,
-                                  serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String,
-                                  softwareRevision: String, notificationToken: String?, systemId: String, osName: String, licenseKey: String,
-                                  bdAddress: String, pairing: String, secureElementId: String?, casd: String?, completion: @escaping DeviceHandler) {
+    internal func createNewDevice(_ url: String, deviceType: String, manufacturerName: String, deviceName: String,
+                                  serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?,
+                                  softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, licenseKey: String?,
+                                  bdAddress: String?, pairing: String?, secureElementId: String?, casd: String?, completion: @escaping DeviceHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
             let params: [String: Any] = [
-                "deviceType": deviceType ?? NSNull(),
+                "deviceType": deviceType,
                 "manufacturerName": manufacturerName,
                 "deviceName": deviceName,
-                "serialNumber": serialNumber,
-                "modelNumber": modelNumber,
-                "hardwareRevision": hardwareRevision,
-                "firmwareRevision": firmwareRevision,
-                "softwareRevision": softwareRevision,
+                "serialNumber": serialNumber ?? NSNull(),
+                "modelNumber": modelNumber ?? NSNull(),
+                "hardwareRevision": hardwareRevision ?? NSNull(),
+                "firmwareRevision": firmwareRevision ?? NSNull(),
+                "softwareRevision": softwareRevision ?? NSNull(),
                 "notificationToken": notificationToken ?? NSNull(),
-                "systemId": systemId,
-                "osName": osName,
-                "licenseKey": licenseKey,
-                "bdAddress": bdAddress,
-                "pairingTs": pairing,
+                "systemId": systemId ?? NSNull(),
+                "osName": osName ?? NSNull(),
+                "licenseKey": licenseKey ?? NSNull(),
+                "bdAddress": bdAddress ?? NSNull(),
+                "pairingTs": pairing ?? NSNull(),
                 "secureElement": [
                     "secureElementId": secureElementId
                 ],
