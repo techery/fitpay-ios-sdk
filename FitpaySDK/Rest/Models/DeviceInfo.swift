@@ -66,7 +66,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     public required init?(map: Map) {
     }
     
-    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String, softwareRevision: String, notificationToken: String?, systemId: String, osName: String, licenseKey: String, bdAddress: String, pairing: String, secureElementId: String?, casd: String?) {
+    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, licenseKey: String?, bdAddress: String?, pairing: String?, secureElementId: String?, casd: String?) {
         self.deviceType = deviceType
         self.manufacturerName = manufacturerName
         self.deviceName = deviceName
