@@ -45,15 +45,14 @@ extension RestClient {
      - parameter email:      email of the user
      - parameter completion: CreateUserHandler closure
      */
-    open func createUser(
-        _ email: String, password: String, firstName: String?, lastName: String?, birthDate: String?,
-        termsVersion: String?, termsAccepted: String?, origin: String?, originAccountCreated: String?,
-        clientId: String, completion: @escaping UserHandler) {
+    open func createUser(_ email: String, password: String, firstName: String?, lastName: String?, birthDate: String?,
+                         termsVersion: String?, termsAccepted: String?, origin: String?, originAccountCreated: String?,
+                         clientId: String, completion: @escaping UserHandler) {
         log.verbose("request create user: \(email)")
         
         self.preparKeyHeader { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
-
+            
             if let headers = headers {
                 log.verbose("got headers: \(headers)")
                 var parameters: [String: Any] = [:]
@@ -139,7 +138,7 @@ extension RestClient {
     @objc open func user(id: String, completion: @escaping UserHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
-
+            
             if let headers = headers {
                 let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users/" + id,
                                                           method: .get,

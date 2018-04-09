@@ -24,13 +24,11 @@ class TestHelpers {
         XCTAssertNotNil(user.info?.email)
     }
     
-    func createUser(_ expectation:XCTestExpectation, email: String, pin: String, completion:@escaping (User?) -> Void) {
+    func createUser(_ expectation:XCTestExpectation, email: String, pin: String, completion: @escaping (User?) -> Void) {
         let currentTime = Date().timeIntervalSince1970 //double or NSTimeInterval
         
-        self.client.createUser(
-            email, password: pin, firstName:nil, lastName:nil, birthDate:nil, termsVersion:nil,
-            termsAccepted:nil, origin:nil, originAccountCreated:nil, clientId: clientId!, completion: {
-                [unowned self] (user, error) in
+        self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
+            termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId!) { [unowned self] (user, error) in
                 
                 XCTAssertNil(error)
                 
@@ -56,46 +54,34 @@ class TestHelpers {
                 XCTAssertEqual(user?.email, email, "Want the emails to match up")
                 
                 completion(user)
-        })
+        }
         
     }
     
     func createAndLoginUser(_ expectation: XCTestExpectation, email: String = TestHelpers.randomEmail(), pin: String = "1234", completion: @escaping (User?) -> Void) {
         createUser(expectation, email: email, pin: pin) { (user) in
-            self.session.login(username: email, password: pin, completion: {
-                (loginError) -> Void in
+            self.session.login(username: email, password: pin) { (loginError) -> Void in
                 XCTAssertNil(loginError)
                 debugPrint("user isAuthorized: \(self.session.isAuthorized)")
                 XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
                 
-                if loginError != nil {
-                    expectation.fulfill()
-                    return
-                }
-                
-                self.client.user(id: self.session.userId!) {
-                    (user, userError) in
+                self.client.user(id: self.session.userId!) { (user, userError) in
                     
                     XCTAssertNotNil(user)
                     if (user !=  nil) { self.userValid(user!) }
                     XCTAssertEqual(user?.email, email, "Want emails to match up after logging in")
                     
                     XCTAssertNil(userError)
-                    if userError != nil {
-                        expectation.fulfill()
-                        return
-                    }
                     
                     completion(user)
                 }
                 
-            })
+            }
         }
     }
     
     func deleteUser(_ user: User?, expectation: XCTestExpectation) {
-        user?.deleteUser {
-            (error) in
+        user?.deleteUser { (error) in
             XCTAssertNil(error)
             expectation.fulfill()
         }
@@ -117,24 +103,19 @@ class TestHelpers {
         let secureElementId = self.generateRandomSeId()
         let pairing = "2016-02-29T21:42:21.469Z"
         
-        user?.createNewDevice(
-            deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
-            modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
-            softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey,
-            bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
-            {
-                (device, error) -> Void in
-                XCTAssertNotNil(user)
-                XCTAssertNil(error)
-                if error != nil {
-                    expectation.fulfill()
-                    return
-                }
-                completion(user, device)
-        })
+        let device = DeviceInfo(deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
+                                modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
+                                softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName,
+                                licenseKey: licenseKey, bdAddress: bdAddress, pairing: pairing, secureElementId: secureElementId, casd: nil)
+        
+        user?.createDevice(device) { (device, error) -> Void in
+            XCTAssertNotNil(user)
+            XCTAssertNil(error)
+            completion(user, device)
+        }
     }
     
-    func assetCreditCard(_ card:CreditCard?) {
+    func assetCreditCard(_ card: CreditCard?) {
         XCTAssertNotNil(card?.links)
         XCTAssertNotNil(card?.creditCardId)
         XCTAssertNotNil(card?.userId)
@@ -159,22 +140,15 @@ class TestHelpers {
         user?.createCreditCard(
             pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", street1: "4883 Dakota Blvd.",
             street2: "Ste. #209-A", street3: "underneath a bird's nest", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
-        ) {
-            [unowned self](card, error) -> Void in
+        ) { [unowned self](card, error) -> Void in
             debugPrint("creating credit card with \(pan)")
             self.assetCreditCard(card)
             
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
             if card?.state == .PENDING_ACTIVE {
-                self.waitForActive(card!, completion: { (activeCard) in
+                self.waitForActive(card!) { (activeCard) in
                     completion(user, activeCard)
-                })
+                }
             } else {
                 completion(user, card)
             }
@@ -182,24 +156,17 @@ class TestHelpers {
     }
     
     func createCreditCard(_ expectation: XCTestExpectation, user: User?, completion: @escaping (_ user: User?, _ creditCard: CreditCard?) -> Void) {
-        user?.createCreditCard(
-            pan: "9999405454540004", expMonth: 10, expYear: 2018, cvv: "133", name: "TEST CARD", street1: "1035 Pearl St",
+        user?.createCreditCard(pan: "9999405454540004", expMonth: 10, expYear: 2018, cvv: "133", name: "TEST CARD", street1: "1035 Pearl St",
             street2: "Street 2", street3: "Street 3", city: "Boulder", state: "CO", postalCode: "80302", country: "US"
-        ) {
-            [unowned self](card, error) -> Void in
+        ) { [unowned self] (card, error) -> Void in
             
             self.assetCreditCard(card)
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
+
             if card?.state == .PENDING_ACTIVE {
-                self.waitForActive(card!, completion: { (activeCard) in
+                self.waitForActive(card!) { (activeCard) in
                     completion(user, activeCard)
-                })
+                }
             } else {
                 completion(user, card)
             }
@@ -207,16 +174,8 @@ class TestHelpers {
     }
     
     func listCreditCards(_ expectation: XCTestExpectation, user: User?, completion: @escaping (_ user: User?, _ result: ResultCollection<CreditCard>?) -> Void) {
-        user?.listCreditCards(excludeState:[], limit: 10, offset: 0) {
-            [unowned self](result, error) -> Void in
-            
+        user?.listCreditCards(excludeState:[], limit: 10, offset: 0) { [unowned self] (result, error) -> Void in
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
             XCTAssertNotNil(result)
             XCTAssertNotNil(result?.limit)
             XCTAssertNotNil(result?.offset)
@@ -251,39 +210,32 @@ class TestHelpers {
         let secureElementId = self.generateRandomSeId()
         let pairing = "2016-02-29T21:42:21.469Z"
         
-        self.client.user(id:userId, completion: {
-            (user, error) -> Void in
-            
+        self.client.user(id: userId) { (user, error) -> Void in
             if (error != nil) {
                 completion(nil, error)
                 return
             }
             
-            user?.createNewDevice(
-                deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
-                modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
-                softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey,
-                bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
-                {
-                    (device, error) -> Void in
-                    completion(device, error)
-            })
-        })
+            let device = DeviceInfo(deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
+                                    modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
+                                    softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName,
+                                    licenseKey: licenseKey, bdAddress: bdAddress, pairing: pairing, secureElementId: secureElementId, casd: nil)
+            
+            user?.createDevice(device) { (device, error) -> Void in
+                XCTAssertNotNil(user)
+                XCTAssertNil(error)
+                completion(device, error)
+            }
+        }
     }
     
     func acceptTermsForCreditCard(_ expectation: XCTestExpectation, card: CreditCard?, completion:@escaping (_ card: CreditCard?) -> Void) {
         debugPrint("acceptingTerms for card: \(String(describing: card))")
-        card?.acceptTerms {
-            (pending, acceptedCard, error) in
+        card?.acceptTerms { (pending, acceptedCard, error) in
             
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
             XCTAssertNotNil(acceptedCard)
+            
             if acceptedCard?.state != .PENDING_VERIFICATION {
                 if acceptedCard?.state != .PENDING_ACTIVE {
                     XCTFail("Need to have a pending verification or active after accepting terms")
@@ -293,9 +245,9 @@ class TestHelpers {
             debugPrint("acceptingTerms done")
             
             if acceptedCard?.state == .PENDING_ACTIVE {
-                self.waitForActive(acceptedCard!, completion: { (activeCard) in
+                self.waitForActive(acceptedCard!) { (activeCard) in
                     completion(activeCard)
-                })
+                }
             } else {
                 completion(acceptedCard)
             }
@@ -323,32 +275,18 @@ class TestHelpers {
     func selectVerificationType(_ expectation: XCTestExpectation, card: CreditCard?, completion: @escaping (_ verificationMethod: VerificationMethod?) -> Void) {
         let verificationMethod = card?.verificationMethods?.first
         
-        verificationMethod?.selectVerificationType {
-            (pending, verificationMethod, error) in
+        verificationMethod?.selectVerificationType { (pending, verificationMethod, error) in
             XCTAssertNotNil(verificationMethod)
             XCTAssertEqual(verificationMethod?.state, .AWAITING_VERIFICATION)
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
             
             completion(verificationMethod)
         }
     }
     
     func verifyCreditCard(_ expectation: XCTestExpectation, verificationMethod: VerificationMethod?, completion: @escaping (_ card: CreditCard?) -> Void) {
-        verificationMethod?.verify("12345") {
-            (pending, verificationMethod, error) -> Void in
-            
+        verificationMethod?.verify("12345") { (pending, verificationMethod, error) -> Void in
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
             XCTAssertNotNil(verificationMethod)
             XCTAssertEqual(verificationMethod?.state, .VERIFIED)
             
@@ -361,15 +299,8 @@ class TestHelpers {
     }
     
     func makeCreditCardDefault(_ expectation: XCTestExpectation, card: CreditCard?, completion: @escaping (_ defaultCreditCard: CreditCard?) -> Void) {
-        card?.makeDefault {
-            (pending, defaultCreditCard, error) -> Void in
+        card?.makeDefault { (pending, defaultCreditCard, error) -> Void in
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
             XCTAssertNotNil(defaultCreditCard)
             XCTAssertTrue(defaultCreditCard!.isDefault!)
             completion(defaultCreditCard)
@@ -398,40 +329,28 @@ class TestHelpers {
         
         DispatchQueue.main.asyncAfter(deadline: time) {
             
-            pendingCard.getCreditCard({ (creditCard, error) in
+            pendingCard.getCreditCard() { (creditCard, error) in
                 guard error == nil else {
                     XCTFail("failed to retrieve credit card will polling for active state")
                     return
                 }
                 
                 self.waitForActive(creditCard!, retries: retries + 1, completion: completion)
-            })
+            }
         }
     }
     
     func createAcceptVerifyAmExCreditCard(_ expectation: XCTestExpectation, pan: String, user: User?, completion: @escaping (_ creditCard: CreditCard?) -> Void) {
-        user?.createCreditCard(
-            pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", street1: "Street 1", street2: "Street 2",
-            street3: "Street 3", city: "New York", state: "NY", postalCode: "80302", country: "USA"
-        ) {
-            [unowned self](creditCard, error) in
+        user?.createCreditCard(pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", street1: "Street 1", street2: "Street 2",
+            street3: "Street 3", city: "New York", state: "NY", postalCode: "80302", country: "USA") { [unowned self] (creditCard, error) in
             
             XCTAssertNil(error)
             
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
             self.assetCreditCard(creditCard)
             
-            self.acceptTermsForCreditCard(expectation, card: creditCard) {
-                (card) in
-                
-                self.selectVerificationType(expectation, card: card) {
-                    (verificationMethod) in
-                    self.verifyCreditCard(expectation, verificationMethod: verificationMethod) {
-                        (card) in
+            self.acceptTermsForCreditCard(expectation, card: creditCard) { (card) in
+                self.selectVerificationType(expectation, card: card) { (verificationMethod) in
+                    self.verifyCreditCard(expectation, verificationMethod: verificationMethod) { (card) in
                         completion(card)
                     }
                 }
@@ -441,16 +360,8 @@ class TestHelpers {
     
     func deactivateCreditCard(_ expectation: XCTestExpectation, creditCard: CreditCard?, completion: @escaping (_ deactivatedCard: CreditCard?) -> Void) {
         debugPrint("deactivateCreditCard")
-        creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card") {
-            (pending, creditCard, error) in
-            
+        creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card") { (pending, creditCard, error) in
             XCTAssertNil(error)
-            
-            if error != nil {
-                expectation.fulfill()
-                return
-            }
-            
             XCTAssertEqual(creditCard?.state, TokenizationState.DEACTIVATED)
             completion(creditCard)
         }
@@ -460,7 +371,7 @@ class TestHelpers {
         let letters: NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         let randomString: NSMutableString = NSMutableString(capacity: len)
         
-        for _ in 0 ... (len-1) {
+        for _ in 0...(len - 1) {
             let length = UInt32 (letters.length)
             let rand = arc4random_uniform(length)
             randomString.appendFormat("%C", letters.character(at: Int(rand)))
@@ -473,7 +384,7 @@ class TestHelpers {
         let letters: NSString = "0123456789"
         let randomString: NSMutableString = NSMutableString(capacity: len)
         
-        for _ in 0 ... (len-1) {
+        for _ in 0...(len - 1) {
             let length = UInt32 (letters.length)
             let rand = arc4random_uniform(length)
             randomString.appendFormat("%C", letters.character(at: Int(rand)))

@@ -1,7 +1,7 @@
 import ObjectMapper
 
 open class User: NSObject, ClientModel, Mappable, SecretApplyable {
-
+    
     open var id: String?
     open var created: String?
     open var createdEpoch: TimeInterval?
@@ -41,7 +41,7 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
     }
     
     public weak var client: RestClient?
-
+    
     public required init?(map: Map) {
         
     }
@@ -55,7 +55,7 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
         lastModifiedEpoch <- (map["lastModifiedTsEpoch"], NSTimeIntervalTransform())
         encryptedData <- map["encryptedData"]
     }
-
+    
     /**
      Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
      
@@ -74,8 +74,8 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
      - parameter completion: CreateCreditCardHandler closure
      */
     @objc open func createCreditCard(pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
-        street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
-        completion: @escaping RestClient.CreditCardHandler) {
+                                     street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
+                                     completion: @escaping RestClient.CreditCardHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
@@ -83,7 +83,7 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
         } else {
             completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
         }
-
+        
     }
     
     /**
@@ -142,13 +142,16 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
      */
     @available(*, deprecated, message: "Use createDevice(_ device:)")
     @objc open func createNewDevice(_ deviceType: String, manufacturerName: String, deviceName: String,
-        serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String,
-        softwareRevision: String, systemId: String, osName: String, licenseKey: String, bdAddress: String,
-        secureElementId: String, pairing: String, completion: @escaping RestClient.DeviceHandler) {
+                                    serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String,
+                                    softwareRevision: String, systemId: String, osName: String, licenseKey: String, bdAddress: String,
+                                    secureElementId: String, pairing: String, completion: @escaping RestClient.DeviceHandler) {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion: completion)
+            client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
+                                   modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
+                                   softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName, licenseKey: licenseKey,
+                                   bdAddress: bdAddress, pairing: pairing, secureElementId: secureElementId, casd: nil, completion: completion)
         } else {
             completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
         }
@@ -157,13 +160,18 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
     /**
      For a single user, create a new device in their profile
      
-     - parameter device: Device Info
+     - parameter device: DeviceInfo
      */
     @objc open func createDevice(_ device: DeviceInfo, completion: @escaping RestClient.DeviceHandler) {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.createNewDevice(url, deviceType: device.deviceType, manufacturerName: device.manufacturerName!, deviceName: device.deviceName!, serialNumber: device.serialNumber!, modelNumber: device.modelNumber!, hardwareRevision: device.hardwareRevision!, firmwareRevision: device.firmwareRevision!, softwareRevision: device.softwareRevision!, systemId: device.systemId!, osName: device.osName!, licenseKey: device.licenseKey!, bdAddress: device.bdAddress!, secureElementId: device.secureElementId!, pairing: device.pairing!, completion: completion)
+            client.createNewDevice(url, deviceType: device.deviceType, manufacturerName: device.manufacturerName!, deviceName: device.deviceName!,
+                                   serialNumber: device.serialNumber!, modelNumber: device.modelNumber!, hardwareRevision: device.hardwareRevision!,
+                                   firmwareRevision: device.firmwareRevision!, softwareRevision: device.softwareRevision!,
+                                   notificationToken: device.notificationToken, systemId: device.systemId!,
+                                   osName: device.osName!, licenseKey: device.licenseKey!, bdAddress: device.bdAddress!,
+                                   pairing: device.pairing!, secureElementId: device.secureElementId, casd: device.casd, completion: completion)
         } else {
             completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
         }
@@ -198,7 +206,7 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
             completion(nil, NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
         }
     }
-
+    
     //MARK: - Private Helpers
     internal func applySecret(_ secret: Data, expectedKeyId: String?) {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
@@ -213,7 +221,7 @@ internal class UserInfo: Mappable {
     var email: String?
     
     required init?(map: Map) {
-
+        
     }
     
     func mapping(map: Map) {
@@ -222,5 +230,5 @@ internal class UserInfo: Mappable {
         self.birthDate <- map["birthDate"]
         self.email <- map["email"]
     }
-
+    
 }

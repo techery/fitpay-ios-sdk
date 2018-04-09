@@ -81,14 +81,14 @@ extension RestClient {
     
     internal func createNewDevice(_ url: String, deviceType: String?, manufacturerName: String, deviceName: String,
                                   serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String,
-                                  softwareRevision: String, systemId: String, osName: String, licenseKey: String, bdAddress: String,
-                                  secureElementId: String, pairing: String, completion: @escaping DeviceHandler) {
+                                  softwareRevision: String, notificationToken: String?, systemId: String, osName: String, licenseKey: String,
+                                  bdAddress: String, pairing: String, secureElementId: String?, casd: String?, completion: @escaping DeviceHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
-            let params = [
+            let params: [String: Any] = [
                 "deviceType": deviceType ?? NSNull(),
                 "manufacturerName": manufacturerName,
                 "deviceName": deviceName,
@@ -97,15 +97,18 @@ extension RestClient {
                 "hardwareRevision": hardwareRevision,
                 "firmwareRevision": firmwareRevision,
                 "softwareRevision": softwareRevision,
+                "notificationToken": notificationToken ?? NSNull(),
                 "systemId": systemId,
                 "osName": osName,
                 "licenseKey": licenseKey,
                 "bdAddress": bdAddress,
+                "pairingTs": pairing,
                 "secureElement": [
                     "secureElementId": secureElementId
                 ],
-                "pairingTs": pairing
-                ] as [String: Any]
+                "casd": casd ?? NSNull()
+                ]
+            
             let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             request?.validate().responseObject( queue: DispatchQueue.global()) { [weak self] (response: DataResponse<DeviceInfo>) in
                 guard let strongSelf = self else { return }

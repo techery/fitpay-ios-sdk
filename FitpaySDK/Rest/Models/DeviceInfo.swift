@@ -4,6 +4,7 @@ import ObjectMapper
 @objcMembers
 open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     internal var links: [ResourceLink]?
+    
     open var deviceIdentifier: String?
     open var deviceName: String?
     open var deviceType: String?
@@ -26,10 +27,10 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     open var secureElementId: String?
     open var casd: String?
     
-    fileprivate static let userResource = "user"
-    fileprivate static let commitsResource = "commits"
-    fileprivate static let selfResource = "self"
-    fileprivate static let lastAckCommitResource = "lastAckCommit"
+    private static let userResourceKey = "user"
+    private static let commitsResourceKey = "commits"
+    private static let selfResourceKey = "self"
+    private static let lastAckCommitResourceKey = "lastAckCommit"
 
     fileprivate weak var _client: RestClient?
 
@@ -37,11 +38,11 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     open var metadata: [String: AnyObject]?
 
     open var userAvailable: Bool {
-        return self.links?.url(DeviceInfo.userResource) != nil
+        return self.links?.url(DeviceInfo.userResourceKey) != nil
     }
 
     open var listCommitsAvailable: Bool {
-        return self.links?.url(DeviceInfo.commitsResource) != nil
+        return self.links?.url(DeviceInfo.commitsResourceKey) != nil
     }
 
     public var client: RestClient? {
@@ -63,6 +64,25 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     }
 
     public required init?(map: Map) {
+    }
+    
+    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String, softwareRevision: String, notificationToken: String?, systemId: String, osName: String, licenseKey: String, bdAddress: String, pairing: String, secureElementId: String?, casd: String?) {
+        self.deviceType = deviceType
+        self.manufacturerName = manufacturerName
+        self.deviceName = deviceName
+        self.serialNumber = serialNumber
+        self.modelNumber = modelNumber
+        self.hardwareRevision = hardwareRevision
+        self.firmwareRevision = firmwareRevision
+        self.softwareRevision = softwareRevision
+        self.notificationToken = notificationToken
+        self.systemId = systemId
+        self.osName = osName
+        self.licenseKey = licenseKey
+        self.bdAddress = bdAddress
+        self.pairing = pairing
+        self.secureElementId = secureElementId
+        self.casd = casd
     }
 
     open func mapping(map: Map) {
@@ -180,7 +200,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
      - parameter completion: DeleteDeviceHandler closure
      */
     @objc open func deleteDeviceInfo(_ completion: @escaping RestClient.DeleteHandler) {
-        let resource = DeviceInfo.selfResource
+        let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deleteDevice(url, completion: completion)
@@ -198,7 +218,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
      - parameter completion:        UpdateDeviceHandler closure
      */
     @objc open func update(_ firmwareRevision: String?, softwareRevision: String?, notifcationToken: String?, completion: @escaping RestClient.DeviceHandler) {
-        let resource = DeviceInfo.selfResource
+        let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             // if notification token not exists on platform then we need to create this field
@@ -229,7 +249,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
      - parameter completion:   CommitsHandler closure
      */
     open func listCommits(commitsAfter: String?, limit: Int, offset: Int, completion: @escaping RestClient.CommitsHandler) {
-        let resource = DeviceInfo.commitsResource
+        let resource = DeviceInfo.commitsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.commits(url, commitsAfter: commitsAfter, limit: limit, offset: offset, completion: completion)
@@ -244,7 +264,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
      - parameter completion: CommitHandler closure
      */
     open func lastAckCommit(completion: @escaping RestClient.CommitHandler) {
-        let resource = DeviceInfo.lastAckCommitResource
+        let resource = DeviceInfo.lastAckCommitResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.commit(url, completion: completion)
@@ -254,7 +274,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     }
 
     @objc open func user(_ completion: @escaping RestClient.UserHandler) {
-        let resource = DeviceInfo.userResource
+        let resource = DeviceInfo.userResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.user(url, completion: completion)
@@ -264,7 +284,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     }
 
     internal func addNotificationToken(_ token: String, completion: @escaping RestClient.DeviceHandler) {
-        let resource = DeviceInfo.selfResource
+        let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.addDeviceProperty(url, propertyPath: "/notificationToken", propertyValue: token, completion: completion)

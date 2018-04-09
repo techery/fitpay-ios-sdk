@@ -179,34 +179,26 @@ class RestClientTests: XCTestCase {
         super.waitForExpectations(timeout: 100, handler: nil)
     }
     
-    func testUserCreate()
-    {
+    func testUserCreate() {
         let expectation = super.expectation(description: "'user' created")
         
         let email = TestHelpers.randomEmail()
         let pin = "1234"
         
-        self.client.createUser(
-            email, password: pin, firstName:nil, lastName:nil, birthDate:nil,
-            termsVersion:nil, termsAccepted:nil, origin:nil, originAccountCreated:nil,
-            clientId:clientId ,completion:
-            {
-                (user, error) -> Void in
-                
-                XCTAssertNotNil(user, "user is nil")
-                XCTAssertNotNil(user?.info)
-                XCTAssertNotNil(user?.created)
-                XCTAssertNotNil(user?.links)
-                XCTAssertNotNil(user?.createdEpoch)
-                XCTAssertNotNil(user?.encryptedData)
-                XCTAssertNotNil(user?.info?.email)
-                XCTAssertNil(error)
-                expectation.fulfill()
-        })
+        self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId) { (user, error) -> Void in
+            XCTAssertNotNil(user, "user is nil")
+            XCTAssertNotNil(user?.info)
+            XCTAssertNotNil(user?.created)
+            XCTAssertNotNil(user?.links)
+            XCTAssertNotNil(user?.createdEpoch)
+            XCTAssertNotNil(user?.encryptedData)
+            XCTAssertNotNil(user?.info?.email)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
         
         super.waitForExpectations(timeout: 10, handler: nil)
     }
-    
     
     func testUserCreateAndLogin()
     {
