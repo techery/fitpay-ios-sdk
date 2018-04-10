@@ -1,7 +1,7 @@
 import XCTest
 @testable import FitpaySDK
 
-class TestHelpers {
+class TestHelper {
     
     let clientId: String!
     let redirectUri: String!
@@ -31,13 +31,8 @@ class TestHelpers {
             termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId!) { [unowned self] (user, error) in
                 
                 XCTAssertNil(error)
+                XCTAssertNotNil(user)
                 
-                if error != nil {
-                    expectation.fulfill()
-                    return
-                }
-                
-                XCTAssertNotNil(user, "user is nil")
                 debugPrint("created user: \(String(describing: user?.info?.email))")
                 if (user != nil) { self.userValid(user!) }
                 
@@ -58,7 +53,7 @@ class TestHelpers {
         
     }
     
-    func createAndLoginUser(_ expectation: XCTestExpectation, email: String = TestHelpers.randomEmail(), pin: String = "1234", completion: @escaping (User?) -> Void) {
+    func createAndLoginUser(_ expectation: XCTestExpectation, email: String = TestHelper.randomEmail(), pin: String = "1234", completion: @escaping (User?) -> Void) {
         createUser(expectation, email: email, pin: pin) { (user) in
             self.session.login(username: email, password: pin) { (loginError) -> Void in
                 XCTAssertNil(loginError)
@@ -193,38 +188,6 @@ class TestHelpers {
         }
     }
     
-    func createDefaultDevice(_ userId: String, completion: @escaping RestClient.DeviceHandler) {
-        let deviceType = "WATCH"
-        let manufacturerName = "Fitpay"
-        let deviceName = "PSPS"
-        let serialNumber = "074DCC022E14"
-        let modelNumber = "FB404"
-        let hardwareRevision = "1.0.0.0"
-        let firmwareRevision = "1030.6408.1309.0001"
-        let softwareRevision = "2.0.242009.6"
-        let systemId = "0x123456FFFE9ABCDE"
-        let osName = "ANDROID"
-        let secureElementId = self.generateRandomSeId()
-        
-        self.client.user(id: userId) { (user, error) -> Void in
-            if (error != nil) {
-                completion(nil, error)
-                return
-            }
-            
-            let device = DeviceInfo(deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
-                                    modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
-                                    softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName,
-                                    secureElementId: secureElementId, casd: nil)
-            
-            user?.createDevice(device) { (device, error) -> Void in
-                XCTAssertNotNil(device)
-                XCTAssertNil(error)
-                completion(device, error)
-            }
-        }
-    }
-    
     func acceptTermsForCreditCard(_ expectation: XCTestExpectation, card: CreditCard?, completion:@escaping (_ card: CreditCard?) -> Void) {
         debugPrint("acceptingTerms for card: \(String(describing: card))")
         card?.acceptTerms { (pending, acceptedCard, error) in
@@ -251,7 +214,7 @@ class TestHelpers {
     }
     
     func editAcceptTermsUrlSuccess(_ card: CreditCard?){
-        let randomText = TestHelpers.randomStringWithLength(10)
+        let randomText = TestHelper.randomStringWithLength(10)
         
         //update acceptTerms url
         do {
@@ -396,7 +359,7 @@ class TestHelpers {
     }
     
     func randomPan() -> String {
-        return "999941111111" + TestHelpers.randomNumbers(4)
+        return "999941111111" + TestHelper.randomNumbers(4)
     }
     
     func generateRandomSeId() -> String {

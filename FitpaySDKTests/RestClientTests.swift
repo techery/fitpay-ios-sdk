@@ -13,7 +13,7 @@ class RestClientTests: XCTestCase {
     
     var session: RestSession!
     var client: RestClient!
-    var testHelper: TestHelpers!
+    var testHelper: TestHelper!
     
     override func invokeTest() {
         // stop test on first failure - kind of like jUnit.  Avoid unexpected null references etc
@@ -44,7 +44,7 @@ class RestClientTests: XCTestCase {
         
         self.session = RestSession(configuration: config)
         self.client = RestClient(session: self.session!)
-        self.testHelper = TestHelpers(clientId: clientId, redirectUri: config.redirectUri, session: self.session, client: self.client)
+        self.testHelper = TestHelper(clientId: clientId, redirectUri: config.redirectUri, session: self.session, client: self.client)
     }
     
     override func tearDown() {
@@ -153,7 +153,7 @@ class RestClientTests: XCTestCase {
     func testUserCreate() {
         let expectation = super.expectation(description: "'user' created")
         
-        let email = TestHelpers.randomEmail()
+        let email = TestHelper.randomEmail()
         let pin = "1234"
         
         self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId) { (user, error) -> Void in
@@ -196,8 +196,8 @@ class RestClientTests: XCTestCase {
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             
-            let firstName = TestHelpers.randomStringWithLength(10)
-            let lastNname = TestHelpers.randomStringWithLength(10)
+            let firstName = TestHelper.randomStringWithLength(10)
+            let lastNname = TestHelper.randomStringWithLength(10)
             
             user?.updateUser(firstName: firstName, lastName: lastNname, birthDate: nil, originAccountCreated: nil, termsAccepted: nil, termsVersion: nil) { (updateUser, updateError) in
                 XCTAssertNil(updateUser)
@@ -419,6 +419,29 @@ class RestClientTests: XCTestCase {
         }
         
         super.waitForExpectations(timeout: 90, handler: nil)
+    }
+    
+    func testDeviceCreateWithMinimum() {
+        let expectation = super.expectation(description: "device created")
+        let deviceType = "WATCH"
+        let manufacturerName = "Fitpay"
+        let deviceName = "PSPS"
+        
+        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
+            let device = DeviceInfo(deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: nil,
+                                    modelNumber: nil, hardwareRevision: nil, firmwareRevision: nil,
+                                    softwareRevision: nil, notificationToken: nil, systemId: nil, osName: nil,
+                                    secureElementId: nil, casd: nil)
+            
+            user?.createDevice(device) { (device, error) -> Void in
+                XCTAssertNotNil(device)
+                XCTAssertNil(error)
+                self.testHelper.deleteUser(user, expectation: expectation)
+            }
+        }
+        
+        super.waitForExpectations(timeout: 20, handler: nil)
+
     }
     
     func testDeactivateCreditCard()

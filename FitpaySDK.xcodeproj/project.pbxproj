@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0A1B6A3D1CDBEBF700EBD014 /* RtmConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */; };
-		0A7EE11B1CFE0A2B00503BC8 /* testHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */; };
+		0A7EE11B1CFE0A2B00503BC8 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* TestHelper.swift */; };
 		0AD922A11C1F7EFC007693AB /* FitpaySDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD922A01C1F7EFC007693AB /* FitpaySDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0AD922A81C1F7EFC007693AB /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD9232B1C20BB38007693AB /* FitpaySDK.swift */; };
@@ -108,7 +108,7 @@
 		3A46E14C1DF023F9002D0270 /* MockPaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */; };
 		3A46E14D1DF023F9002D0270 /* JWETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E431C84A25B00A0E172 /* JWETests.swift */; };
 		3A46E14E1DF023F9002D0270 /* RestClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */; };
-		3A46E14F1DF023F9002D0270 /* testHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */; };
+		3A46E14F1DF023F9002D0270 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* TestHelper.swift */; };
 		3A46E1511DF023F9002D0270 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */; };
 		3A46E1521DF023F9002D0270 /* AlamofireObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */; };
 		3A46E1531DF023F9002D0270 /* JWTDecode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11A1DB8E68E00A9FEB4 /* JWTDecode.framework */; };
@@ -283,7 +283,7 @@
 
 /* Begin PBXFileReference section */
 		0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RtmConfig.swift; path = ../RtmConfig.swift; sourceTree = "<group>"; };
-		0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = testHelpers.swift; sourceTree = "<group>"; };
+		0A7EE11A1CFE0A2B00503BC8 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AD922A01C1F7EFC007693AB /* FitpaySDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FitpaySDK.h; sourceTree = "<group>"; };
 		0AD922A21C1F7EFC007693AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -550,7 +550,7 @@
 				37C94AAD1FE15E96009C0FE7 /* SyncManagerTests.swift */,
 				3701AE521F16137600550890 /* SyncOperationTests.swift */,
 				37D0CFE31ED599C00049B5AA /* SyncRequestsQueueTests.swift */,
-				0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */,
+				0A7EE11A1CFE0A2B00503BC8 /* TestHelper.swift */,
 				37330EB420289DCF00948BC6 /* TransactionTests.swift */,
 			);
 			path = FitpaySDKTests;
@@ -1278,7 +1278,7 @@
 				37330EB620289E2000948BC6 /* TransactionTests.swift in Sources */,
 				37C94AAE1FE15E96009C0FE7 /* SyncManagerTests.swift in Sources */,
 				9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */,
-				0A7EE11B1CFE0A2B00503BC8 /* testHelpers.swift in Sources */,
+				0A7EE11B1CFE0A2B00503BC8 /* TestHelper.swift in Sources */,
 				3701AE551F1613B200550890 /* SyncOperationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1298,7 +1298,7 @@
 				37330EB720289E2100948BC6 /* TransactionTests.swift in Sources */,
 				37C94AAF1FE15E96009C0FE7 /* SyncManagerTests.swift in Sources */,
 				3A46E14E1DF023F9002D0270 /* RestClientTests.swift in Sources */,
-				3A46E14F1DF023F9002D0270 /* testHelpers.swift in Sources */,
+				3A46E14F1DF023F9002D0270 /* TestHelper.swift in Sources */,
 				3701AE561F1613B200550890 /* SyncOperationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

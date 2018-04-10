@@ -83,7 +83,7 @@ extension RestClient {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
-            let params: [String: Any] = [
+            var params: [String: Any] = [
                 "deviceType": deviceType,
                 "manufacturerName": manufacturerName,
                 "deviceName": deviceName,
@@ -94,12 +94,15 @@ extension RestClient {
                 "softwareRevision": softwareRevision ?? NSNull(),
                 "notificationToken": notificationToken ?? NSNull(),
                 "systemId": systemId ?? NSNull(),
-                "osName": osName ?? NSNull(),
-                "secureElement": [
+                "osName": osName ?? NSNull()]
+            
+            if (secureElementId != nil || casd != nil) {
+                params["secureElement"] = [
                     "secureElementId": secureElementId ?? NSNull(),
                     "casdCert": casd ?? NSNull()
                     ] as [String: Any]
-                ]
+            }
+            
             
             let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             request?.validate().responseObject( queue: DispatchQueue.global()) { [weak self] (response: DataResponse<DeviceInfo>) in
