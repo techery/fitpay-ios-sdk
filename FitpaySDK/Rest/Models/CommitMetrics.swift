@@ -4,6 +4,7 @@ public enum SyncInitiator : String {
     case Platform = "PLATFORM"
     case Notification = "NOTIFICATION"
     case WebHook = "WEB_HOOK"
+    case EventStream = "EVENT_STREAM"
     case NotDefined = "NOT DEFINED"
 }
 

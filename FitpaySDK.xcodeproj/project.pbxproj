@@ -22,6 +22,8 @@
 		26B955012D981BCA351BF353 /* Pods_all_FitpaySDKTestsPods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 576F8B977B9F8FB60903CA7D /* Pods_all_FitpaySDKTestsPods.framework */; };
 		27198B09206D7E9E00BCBFCD /* UserEventStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27198B08206D7E9E00BCBFCD /* UserEventStream.swift */; };
 		27198B0A206D7E9E00BCBFCD /* UserEventStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27198B08206D7E9E00BCBFCD /* UserEventStream.swift */; };
+		2773CD8F207BEE0800DFE113 /* StreamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD8E207BEE0800DFE113 /* StreamEvent.swift */; };
+		2773CD91207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */; };
 		2786DB02207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		2786DB03207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
@@ -293,6 +295,8 @@
 		1FE147A220161F8B005DEA29 /* CommitStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommitStatistic.swift; sourceTree = "<group>"; };
 		2645CDC82C8DD28224548656 /* Pods-FitpaySDKAuthenticationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKAuthenticationTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKAuthenticationTests/Pods-FitpaySDKAuthenticationTests.debug.xcconfig"; sourceTree = "<group>"; };
 		27198B08206D7E9E00BCBFCD /* UserEventStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStream.swift; sourceTree = "<group>"; };
+		2773CD8E207BEE0800DFE113 /* StreamEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamEvent.swift; sourceTree = "<group>"; };
+		2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedDecodingContainerExtension.swift; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStreamManager.swift; sourceTree = "<group>"; };
 		27E769E52077ED5D00B3CA9D /* JWT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JWT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -548,6 +552,17 @@
 			path = FitpaySDKTests;
 			sourceTree = "<group>";
 		};
+		2773CD8D207BEDD400DFE113 /* EventStream */ = {
+			isa = PBXGroup;
+			children = (
+				2786DB01207512410079ED15 /* EventSource.swift */,
+				27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */,
+				27198B08206D7E9E00BCBFCD /* UserEventStream.swift */,
+				2773CD8E207BEE0800DFE113 /* StreamEvent.swift */,
+			);
+			path = EventStream;
+			sourceTree = "<group>";
+		};
 		27E769EB2077F83D00B3CA9D /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -604,11 +619,9 @@
 		3A61A47D1D66F0620033256C /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
-				2786DB01207512410079ED15 /* EventSource.swift */,
+				2773CD8D207BEDD400DFE113 /* EventStream */,
 				3A61A47E1D66F0710033256C /* FitpayNotificationsManager.swift */,
 				1F5BBD7F2017450200F16B4F /* NotificationDetail.swift */,
-				27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */,
-				27198B08206D7E9E00BCBFCD /* UserEventStream.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -849,6 +862,7 @@
 				8426D2501C92BB9D009AACFE /* StringExtensions.swift */,
 				8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */,
 				37AB3F8C1E9FEBDC001B2981 /* IntExtensions.swift */,
+				2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1243,6 +1257,7 @@
 				1F5BBD802017450200F16B4F /* NotificationDetail.swift in Sources */,
 				CD038D8BCA3144FBB29E8DE4 /* NSErrorExtensions.swift in Sources */,
 				37D0CFEB1EDC40860049B5AA /* ScannedCardInfo.swift in Sources */,
+				2773CD8F207BEE0800DFE113 /* StreamEvent.swift in Sources */,
 				3701AE471F14C29900550890 /* ConnectDeviceOperation.swift in Sources */,
 				CD0381C2A8FBB873B221A20F /* RawIntValue.swift in Sources */,
 				37D0CFF51EDDA27E0049B5AA /* RtmMessageHandlerV3.swift in Sources */,
@@ -1262,6 +1277,7 @@
 				3701AE3B1F13BA1B00550890 /* SyncEvent.swift in Sources */,
 				CD03814935D90886A777D9EF /* SecretApplyable.swift in Sources */,
 				A306B4CA1CEE457D007F093C /* ApduResultMessage.swift in Sources */,
+				2773CD91207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift in Sources */,
 				9AD24A131CE2459600215AFF /* RestAPIConstants.swift in Sources */,
 				37F781DF1F18B57F00742E15 /* ObjCCompatibilityExtensions.swift in Sources */,
 			);

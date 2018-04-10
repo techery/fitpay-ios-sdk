@@ -63,7 +63,7 @@ open class RestClient: NSObject
         return SessionManager(configuration: configuration)
     }()
 
-    var key: EncryptionKey?
+    internal var key: EncryptionKey?
     
     internal var secret: Data {
         let secret = self.keyPair.generateSecretForPublicKey(key?.serverPublicKey ?? "")
