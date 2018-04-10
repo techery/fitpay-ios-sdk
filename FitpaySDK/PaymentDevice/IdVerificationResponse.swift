@@ -1,11 +1,3 @@
-//
-//  IdVerificationResponse.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 30.08.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 import ObjectMapper
 
@@ -42,7 +34,6 @@ open class IdVerificationResponse: NSObject, Mappable {
     /// Only needed if your device is NOT nfcCapable
     open var nfcCapable: Bool?
     
-    
     /// Country of user's billing address in ISO 3166-1 alpha-2 format, e.g., US; maximum 2 characters
     open var billingCountryCode: String?
     
@@ -61,8 +52,8 @@ open class IdVerificationResponse: NSObject, Mappable {
     /// Time Zone Abbreviation. Example: PDT, MST
     open var deviceTimeZone: String?
     
-    /// 1 - Time Zone Set by Network; 
-    /// 2 - Time Zone Set by User; 
+    /// 1 - Time Zone Set by Network
+    /// 2 - Time Zone Set by User
     /// 3 - Time Zone set by Device Location.
     open var deviceTimeZoneSetBy: Int?
     
