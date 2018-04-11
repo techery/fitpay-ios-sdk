@@ -1,11 +1,3 @@
-//
-//  RtmMessaging.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 18.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 import ObjectMapper
 
@@ -22,6 +14,16 @@ class RtmMessaging {
     weak var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
     
     private(set) var messageHandler: RtmMessageHandler?
+    
+    private var wvConfigStorage: WvConfigStorage
+    
+    private struct BufferedMessage {
+        var message: RtmRawMessage
+        var completion: RtmRawMessageCompletion?
+    }
+    
+    private var preVersionBuffer: [BufferedMessage]
+    private var receivedWrongVersion = false
 
     lazy var handlersMapping: [RtmProtocolVersion: RtmMessageHandler?] = {
         return [RtmProtocolVersion.ver1: nil,
@@ -37,7 +39,7 @@ class RtmMessaging {
     }
     
     typealias RtmRawMessage = [String: Any]
-    typealias RtmRawMessageCompletion = ((_ success:Bool)->Void)
+    typealias RtmRawMessageCompletion = ((_ success: Bool) -> Void)
     
     func received(message: RtmRawMessage, completion: RtmRawMessageCompletion? = nil) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
@@ -113,13 +115,4 @@ class RtmMessaging {
         completion?(true)
     }
     
-    fileprivate var wvConfigStorage: WvConfigStorage
-    
-    fileprivate struct BufferedMessage {
-        var message: RtmRawMessage
-        var completion: RtmRawMessageCompletion?
-    }
-    
-    fileprivate var preVersionBuffer: [BufferedMessage]
-    fileprivate var receivedWrongVersion = false
 }

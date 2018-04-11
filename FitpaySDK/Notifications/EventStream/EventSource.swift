@@ -1,11 +1,3 @@
-//
-//  EventSource.swift
-//  EventSource
-//
-//  Created by Andres on 2/13/15.
-//  Copyright (c) 2015 Inaka. All rights reserved.
-//
-
 import Foundation
 
 public enum EventSourceState {
@@ -24,7 +16,7 @@ open class EventSource: NSObject {
     private var onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)?
     
     open internal(set) var readyState: EventSourceState
-    open fileprivate(set) var retryTime = 3000
+    open private(set) var retryTime = 3000
     
     private var eventListeners = Dictionary<String, (_ id: String?, _ event: String?, _ data: String?) -> Void>()
     private var headers: Dictionary<String, String>
@@ -41,6 +33,25 @@ open class EventSource: NSObject {
     private let validNewlineCharacters = ["\r\n", "\n", "\r"]
     
     var event = Dictionary<String, String>()
+    
+    internal var lastEventID: String? {
+        set {
+            if let lastEventID = newValue {
+                let defaults = UserDefaults.standard
+                defaults.set(lastEventID, forKey: lastEventIDKey)
+                defaults.synchronize()
+            }
+        }
+        
+        get {
+            let defaults = UserDefaults.standard
+            
+            if let lastEventID = defaults.string(forKey: lastEventIDKey) {
+                return lastEventID
+            }
+            return nil
+        }
+    }
     
     public init(url: String, headers: [String: String] = [:]) {
         
@@ -94,17 +105,7 @@ open class EventSource: NSObject {
         self.readyState = EventSourceState.closed
         self.urlSession?.invalidateAndCancel()
     }
-    
-    fileprivate func receivedMessageToClose(_ httpResponse: HTTPURLResponse?) -> Bool {
-        guard let response = httpResponse  else { return false }
-        
-        if response.statusCode == 204 {
-            self.close()
-            return true
-        }
-        return false
-    }
-    
+
     //MARK: - EventListeners
     open func onOpen(_ onOpenCallback: @escaping (() -> Void)) {
         self.onOpenCallback = onOpenCallback
@@ -136,7 +137,7 @@ open class EventSource: NSObject {
     }
 
     //MARK: - Private Helpers
-    fileprivate func extractEventsFromBuffer() -> [String] {
+    private func extractEventsFromBuffer() -> [String] {
         var events = [String]()
         
         // Find first occurrence of delimiter
@@ -163,13 +164,11 @@ open class EventSource: NSObject {
         return events
     }
     
-    fileprivate func searchForEventInRange(_ searchRange: NSRange) -> NSRange? {
+    private func searchForEventInRange(_ searchRange: NSRange) -> NSRange? {
         let delimiters = validNewlineCharacters.map { "\($0)\($0)".data(using: String.Encoding.utf8)! }
         
         for delimiter in delimiters {
-            let foundRange = receivedDataBuffer.range(of: delimiter,
-                                                      options: NSData.SearchOptions(),
-                                                      in: searchRange)
+            let foundRange = receivedDataBuffer.range(of: delimiter, options: NSData.SearchOptions(), in: searchRange)
             if foundRange.location != NSNotFound {
                 return foundRange
             }
@@ -178,12 +177,11 @@ open class EventSource: NSObject {
         return nil
     }
     
-    fileprivate func parseEventStream(_ events: [String]) {
+    private func parseEventStream(_ events: [String]) {
         var parsedEvents: [(id: String?, event: String?, data: String?)] = Array()
         
         for event in events {
             if event.isEmpty { continue }
-            
             if event.hasPrefix(":") { continue }
             
             if event.contains("retry:") {
@@ -214,27 +212,8 @@ open class EventSource: NSObject {
             }
         }
     }
-    
-    internal var lastEventID: String? {
-        set {
-            if let lastEventID = newValue {
-                let defaults = UserDefaults.standard
-                defaults.set(lastEventID, forKey: lastEventIDKey)
-                defaults.synchronize()
-            }
-        }
-        
-        get {
-            let defaults = UserDefaults.standard
-            
-            if let lastEventID = defaults.string(forKey: lastEventIDKey) {
-                return lastEventID
-            }
-            return nil
-        }
-    }
-    
-    fileprivate func parseEvent(_ eventString: String) -> (id: String?, event: String?, data: String?) {
+
+    private func parseEvent(_ eventString: String) -> (id: String?, event: String?, data: String?) {
         var event = Dictionary<String, String>()
         
         for line in eventString.components(separatedBy: CharacterSet.newlines) as [String] {
@@ -257,7 +236,7 @@ open class EventSource: NSObject {
         return (event["id"], event["event"], event["data"])
     }
     
-    fileprivate func parseKeyValuePair(_ line: String) -> (String?, String?) {
+    private func parseKeyValuePair(_ line: String) -> (String?, String?) {
         var key: NSString?, value: NSString?
         let scanner = Scanner(string: line)
         scanner.scanUpTo(":", into: &key)
@@ -272,7 +251,7 @@ open class EventSource: NSObject {
         return (key as String?, value as String?)
     }
     
-    fileprivate func parseRetryTime(_ eventString: String) -> Int? {
+    private func parseRetryTime(_ eventString: String) -> Int? {
         var reconnectTime: Int?
         let separators = CharacterSet(charactersIn: ":")
         if let milli = eventString.components(separatedBy: separators).last {
@@ -285,10 +264,20 @@ open class EventSource: NSObject {
         return reconnectTime
     }
     
-    fileprivate func trim(_ string: String) -> String {
+    private func trim(_ string: String) -> String {
         return string.trimmingCharacters(in: CharacterSet.whitespaces)
     }
  
+    private func receivedMessageToClose(_ httpResponse: HTTPURLResponse?) -> Bool {
+        guard let response = httpResponse  else { return false }
+        
+        if response.statusCode == 204 {
+            self.close()
+            return true
+        }
+        return false
+    }
+    
 }
 
 extension EventSource: URLSessionDataDelegate {

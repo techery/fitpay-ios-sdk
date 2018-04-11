@@ -62,8 +62,7 @@ open class RestSession: NSObject {
     fileprivate (set) internal var baseAPIURL: String
     fileprivate (set) internal var authorizeURL: String
 
-    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil)
-    {
+    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil) {
         self.clientId = configuration.clientId
         self.redirectUri = configuration.redirectUri
         self.authorizeURL = "\(configuration.baseAuthURL)/oauth/authorize"

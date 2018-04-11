@@ -1,6 +1,6 @@
 import ObjectMapper
 
-public enum SyncInitiator : String {
+public enum SyncInitiator: String {
     case Platform = "PLATFORM"
     case Notification = "NOTIFICATION"
     case WebHook = "WEB_HOOK"
@@ -8,8 +8,7 @@ public enum SyncInitiator : String {
     case NotDefined = "NOT DEFINED"
 }
 
-open class CommitMetrics : Mappable
-{
+open class CommitMetrics: Mappable {
     public var syncId: String?
     public var deviceId: String?
     public var userId: String?
@@ -56,7 +55,7 @@ open class CommitMetrics : Mappable
         }
         
         let params = ["params": self.toJSON()]
-        client.makePostCall(completeSync, parameters: params as [String: AnyObject]?) { (error) in
+        client.makePostCall(completeSync, parameters: params as [String: Any]?) { (error) in
             if let error = error {
                 log.error("SYNC_ACKNOWLEDGMENT: completeSync failed to send. Error: \(error)")
             } else {

@@ -18,15 +18,13 @@ class PaymentDeviceTests: XCTestCase {
         super.tearDown()
     }
     
-    func testConnectToDeviceCheck()
-    {
+    func testConnectToDeviceCheck() {
         let expectation = super.expectation(description: "connection to device check")
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-        {
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
             (event) in
             debugPrint("event: \(event), eventData: \(event.eventData)")
-            let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as AnyObject as? DeviceInfo
-            let error = (event.eventData as? [String:Any])?["error"]
+            let deviceInfo = (event.eventData as? [String: Any])?["deviceInfo"] as? DeviceInfo
+            let error = (event.eventData as? [String: Any])?["error"]
             
             XCTAssertNil(error)
             XCTAssertNotNil(deviceInfo)
@@ -129,8 +127,7 @@ class PaymentDeviceTests: XCTestCase {
         super.waitForExpectations(timeout: 20, handler: nil)
     }
 
-    func testSync()
-    {
+    func testSync() {
         let expectation = super.expectation(description: "test sync with commit")
         
         SyncManager.sharedInstance.paymentDevice = self.paymentDevice
@@ -241,4 +238,5 @@ class PaymentDeviceTests: XCTestCase {
         
         super.waitForExpectations(timeout: 180, handler: nil)
     }
+
 }
