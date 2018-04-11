@@ -22,13 +22,16 @@
 		26B955012D981BCA351BF353 /* Pods_all_FitpaySDKTestsPods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 576F8B977B9F8FB60903CA7D /* Pods_all_FitpaySDKTestsPods.framework */; };
 		27198B09206D7E9E00BCBFCD /* UserEventStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27198B08206D7E9E00BCBFCD /* UserEventStream.swift */; };
 		27198B0A206D7E9E00BCBFCD /* UserEventStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27198B08206D7E9E00BCBFCD /* UserEventStream.swift */; };
+		272C9341207E7F9500166820 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
+		272C9342207E7FA600166820 /* StreamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD8E207BEE0800DFE113 /* StreamEvent.swift */; };
+		272C9343207E7FD800166820 /* KeyedDecodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */; };
 		2773CD8F207BEE0800DFE113 /* StreamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD8E207BEE0800DFE113 /* StreamEvent.swift */; };
 		2773CD91207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */; };
+		2773CD96207D546400DFE113 /* IdVerificationResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */; };
 		2786DB02207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		2786DB03207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
 		27E769E62077ED5D00B3CA9D /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E769E52077ED5D00B3CA9D /* JWT.framework */; };
-		2773CD96207D546400DFE113 /* IdVerificationResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */; };
 		3701AE3B1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE3C1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE471F14C29900550890 /* ConnectDeviceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */; };
@@ -298,10 +301,10 @@
 		27198B08206D7E9E00BCBFCD /* UserEventStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStream.swift; sourceTree = "<group>"; };
 		2773CD8E207BEE0800DFE113 /* StreamEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamEvent.swift; sourceTree = "<group>"; };
 		2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedDecodingContainerExtension.swift; sourceTree = "<group>"; };
+		2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdVerificationResponseTests.swift; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStreamManager.swift; sourceTree = "<group>"; };
 		27E769E52077ED5D00B3CA9D /* JWT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JWT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdVerificationResponseTests.swift; sourceTree = "<group>"; };
 		3701AE3A1F13BA1B00550890 /* SyncEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncEvent.swift; sourceTree = "<group>"; };
 		3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectDeviceOperation.swift; sourceTree = "<group>"; };
 		3701AE461F14C29900550890 /* SyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
@@ -566,14 +569,6 @@
 			path = EventStream;
 			sourceTree = "<group>";
 		};
-		27E769EB2077F83D00B3CA9D /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				27E769E52077ED5D00B3CA9D /* JWT.framework */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		2773CD92207D537D00DFE113 /* PaymentDevice */ = {
 			isa = PBXGroup;
 			children = (
@@ -588,6 +583,14 @@
 				2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		27E769EB2077F83D00B3CA9D /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				27E769E52077ED5D00B3CA9D /* JWT.framework */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		3701AE441F14C27000550890 /* Operations */ = {
@@ -1389,6 +1392,7 @@
 				37B85D5B1EF2B5D900B7616F /* Issuers.swift in Sources */,
 				3A93A09A1DB8CA2C00A9FEB4 /* VerificationMethod.swift in Sources */,
 				3A93A09B1DB8CA2C00A9FEB4 /* FitpayEvent.swift in Sources */,
+				272C9343207E7FD800166820 /* KeyedDecodingContainerExtension.swift in Sources */,
 				3A93A09C1DB8CA2C00A9FEB4 /* CreditCard.swift in Sources */,
 				37D0CFF01EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
 				3A93A09D1DB8CA2C00A9FEB4 /* Address.swift in Sources */,
@@ -1439,6 +1443,7 @@
 				3A93A0B31DB8CA2C00A9FEB4 /* RawIntValue.swift in Sources */,
 				3A93A0B41DB8CA2C00A9FEB4 /* FitpayEventListener.swift in Sources */,
 				37139BDC1F164695001EEE73 /* APDUConfirmOperation.swift in Sources */,
+				272C9342207E7FA600166820 /* StreamEvent.swift in Sources */,
 				3A93A0B51DB8CA2C00A9FEB4 /* SECP256R1KeyPair.swift in Sources */,
 				3A93A0B61DB8CA2C00A9FEB4 /* CommitsApplyer.swift in Sources */,
 				3A93A0B71DB8CA2C00A9FEB4 /* NSDataExtensions.swift in Sources */,
@@ -1449,6 +1454,7 @@
 				3A93A0BB1DB8CA2C00A9FEB4 /* ApduResultMessage.swift in Sources */,
 				371CB3041F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,
 				3A93A0BC1DB8CA2C00A9FEB4 /* RestAPIConstants.swift in Sources */,
+				272C9341207E7F9500166820 /* UserEventStreamManager.swift in Sources */,
 				37139BE61F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */,
 				37F781DE1F18B57E00742E15 /* ObjCCompatibilityExtensions.swift in Sources */,
 			);
@@ -1706,7 +1712,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "FitpaySDKTests copy-Info.plist";
+				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1721,7 +1727,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "FitpaySDKTests copy-Info.plist";
+				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
