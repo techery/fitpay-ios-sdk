@@ -116,5 +116,7 @@ Please contact the team via a github issue, OR, feel free to email us: sdk@fit-p
 
 ## Fit Pay Internal Instructions 
 ### Publishing Updated SDKs
+* Please add a name to each release using the following convention: `FitPay SDK for iOS vX.X.X`
+* Please also include notes using proper markdown about each major PR in the release.
 * [How-to publish (deploy) a new version of the iOS FitPay SDK](https://fitpay.atlassian.net/wiki/spaces/ENG/pages/92798977/How-to+publish+deploy+a+new+version+of+the+iOS+FitPay+SDK)
 
