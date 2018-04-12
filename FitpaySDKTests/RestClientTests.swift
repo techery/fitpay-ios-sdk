@@ -204,18 +204,13 @@ class RestClientTests: XCTestCase
                 [unowned self] (user, device) in
                 XCTAssertNotNil(device?.deviceIdentifier)
                 XCTAssertNotNil(user?.id)
-                self.client.resetDeviceTasks(deviceId: device!.deviceIdentifier!, userId: user!.id! , completion: { (resetDeviceTask, error) in
+                self.client.resetDeviceTasks(deviceId: device!.deviceIdentifier!, userId: user!.id! , completion: { (resetDeviceResult, error) in
                     XCTAssertNil(error)
-                    if error != nil
-                    {
-                        expectation.fulfill()
-                        return
-                    }
-
-                    let resetId = resetDeviceTask?.resetId
+                    
+                    let resetId = resetDeviceResult?.resetId
                     XCTAssertNotNil(resetId)
 
-                    self.client.resetDeviceStatus(resetId!) { (resetDeviceTask, error) in
+                    self.client.resetDeviceStatus(resetId!) { (resetDeviceResult, error) in
                         XCTAssertNil(error)
                         if error != nil
                         {

@@ -533,7 +533,7 @@ extension RestClient {
 
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceTask?, _ error: NSError?) -> Void
+    public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
     
     /**
      Creates a request for resetting a device
@@ -553,7 +553,7 @@ extension RestClient {
                 urlComponents.queryItems?.append(userId)
 
                 let request = self._manager.request( urlComponents.url!, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject { (response: DataResponse<ResetDeviceTask>) in
+                request.validate().responseObject { (response: DataResponse<ResetDeviceResult>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
@@ -584,7 +584,7 @@ extension RestClient {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             if let headers = headers {
                 let request = self._manager.request(self._session.baseAPIURL + "/resetDeviceTasks/" + resetId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseObject { (response: DataResponse<ResetDeviceTask>) in
+                request.validate().responseObject { (response: DataResponse<ResetDeviceResult>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {
                             let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
