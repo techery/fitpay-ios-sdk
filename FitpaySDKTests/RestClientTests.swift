@@ -169,11 +169,6 @@ class RestClientTests: XCTestCase {
 
                     self.client.resetDeviceStatus(resetId!) { (resetDeviceResult, error) in
                         XCTAssertNil(error)
-                        if error != nil
-                        {
-                            expectation.fulfill()
-                            return
-                        }
 
                         self.testHelper.deleteUser(user, expectation: expectation)
                     }
