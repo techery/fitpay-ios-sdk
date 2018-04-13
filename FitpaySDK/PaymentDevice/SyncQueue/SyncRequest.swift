@@ -10,7 +10,7 @@ public typealias SyncRequestCompletion = (EventStatus, Error?) -> Void
 
 open class SyncRequest {
     
-    //MARK: - Public
+    // MARK: - Public
     
     public let requestTime: Date
     public private(set) var syncStartTime: Date?
@@ -49,7 +49,7 @@ open class SyncRequest {
         }
     }
     
-    //MARK: - Internal / Private
+    // MARK: - Internal / Private
     
     internal var isEmptyRequest: Bool {
         return user == nil || deviceInfo == nil || paymentDevice == nil
@@ -111,7 +111,7 @@ open class SyncRequest {
         return user?.id == otherRequest.user?.id && deviceInfo?.deviceIdentifier == otherRequest.deviceInfo?.deviceIdentifier
     }
     
-    //MARK: - Deprecated
+    // MARK: - Deprecated
     
     @available(*, deprecated, message: "This constructor depreceted. You should use next one - init(requestTime: Date = Date(), user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice)")
     public init(initiator: SyncInitiator = .NotDefined, notificationAsc: NotificationDetail? = nil) {
