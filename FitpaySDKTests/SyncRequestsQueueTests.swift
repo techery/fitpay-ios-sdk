@@ -4,7 +4,7 @@ import XCTest
 class MockSyncManager: SyncManagerProtocol {
     var synchronousModeOn: Bool = true
     var isSyncing: Bool = false
-    fileprivate let eventsDispatcher = FitpayEventDispatcher()
+    private let eventsDispatcher = FitpayEventDispatcher()
     static var syncCompleteDelay: Double = 0.2
     
     private var lastSyncRequest: SyncRequest?

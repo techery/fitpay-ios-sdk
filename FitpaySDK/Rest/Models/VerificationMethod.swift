@@ -43,9 +43,9 @@ open class VerificationMethod: NSObject, ClientModel, Mappable
     open var verified: String?
     open var verifiedEpoch: TimeInterval?
     open var appToAppContext: A2AContext?
-    fileprivate static let selectResource = "select"
-    fileprivate static let verifyResource = "verify"
-    fileprivate static let cardResource = "card"
+    private static let selectResource = "select"
+    private static let verifyResource = "verify"
+    private static let cardResource = "card"
 
     public weak var client: RestClient?
 

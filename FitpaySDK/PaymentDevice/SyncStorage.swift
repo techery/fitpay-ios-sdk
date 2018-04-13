@@ -8,8 +8,8 @@ public protocol SyncStorageProtocol {
 public class SyncStorage: SyncStorageProtocol {
     public static let sharedInstance = SyncStorage()
     
-    fileprivate var keychain: Keychain
-    fileprivate let keychainFieldName: String = "FitPayLastSyncCommitId"
+    private var keychain: Keychain
+    private let keychainFieldName: String = "FitPayLastSyncCommitId"
     
     init() {
         self.keychain = Keychain(service: "com.masterofcode-llc.FitpaySDK")

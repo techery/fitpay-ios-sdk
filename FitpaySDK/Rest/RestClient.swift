@@ -47,7 +47,7 @@ open class RestClient: NSObject {
     
     internal static let fpKeyIdKey: String = "fp-key-id"
     
-    fileprivate let defaultHeaders = [
+    private let defaultHeaders = [
         "Accept": "application/json",
         "X-FitPay-SDK": "iOS-\(FitpaySDKConfiguration.sdkVersion)"
     ]
@@ -62,7 +62,7 @@ open class RestClient: NSObject {
         return SessionManager(configuration: configuration)
     }()
     
-    fileprivate var key: EncryptionKey?
+    private var key: EncryptionKey?
     
     internal var secret: Data {
         let secret = self.keyPair.generateSecretForPublicKey(key?.serverPublicKey ?? "")
@@ -527,7 +527,7 @@ public protocol AssetWithOptionsRerivable {
 }
 
 
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l < r
@@ -538,7 +538,7 @@ fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l > r

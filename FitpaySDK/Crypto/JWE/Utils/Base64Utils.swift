@@ -23,7 +23,7 @@ extension String {
         return nil
     }
     
-    fileprivate func convertBase64URLtoBase64(_ encodedString: String) -> String {
+    private func convertBase64URLtoBase64(_ encodedString: String) -> String {
         var tempEncodedString = encodedString.replacingOccurrences(of: "-", with: "+", options: NSString.CompareOptions.literal, range: nil)
         tempEncodedString = tempEncodedString.replacingOccurrences(of: "_", with: "/", options: NSString.CompareOptions.literal, range: nil)
         let equalsToBeAdded = (encodedString as NSString).length % 4

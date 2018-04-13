@@ -36,10 +36,9 @@ class RtmMessaging {
         self.preVersionBuffer = []
     }
     
-    typealias RtmRawMessage = [String: Any]
-    typealias RtmRawMessageCompletion = ((_ success:Bool)->Void)
+    typealias RtmRawMessageCompletion = ((_ success: Bool) -> Void)
     
-    func received(message: RtmRawMessage, completion: RtmRawMessageCompletion? = nil) {
+    func received(message: [String: Any], completion: RtmRawMessageCompletion? = nil) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
         guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
@@ -113,13 +112,13 @@ class RtmMessaging {
         completion?(true)
     }
     
-    fileprivate var wvConfigStorage: WvConfigStorage
+    private var wvConfigStorage: WvConfigStorage
     
-    fileprivate struct BufferedMessage {
-        var message: RtmRawMessage
+    private struct BufferedMessage {
+        var message: [String: Any]
         var completion: RtmRawMessageCompletion?
     }
     
-    fileprivate var preVersionBuffer: [BufferedMessage]
-    fileprivate var receivedWrongVersion = false
+    private var preVersionBuffer: [BufferedMessage]
+    private var receivedWrongVersion = false
 }

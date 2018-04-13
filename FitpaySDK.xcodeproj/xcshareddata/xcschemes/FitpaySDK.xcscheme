@@ -42,6 +42,9 @@
                <Test
                   Identifier = "PaymentDeviceTests">
                </Test>
+               <Test
+                  Identifier = "RestClientTests">
+               </Test>
             </SkippedTests>
          </TestableReference>
          <TestableReference

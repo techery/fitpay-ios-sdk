@@ -97,23 +97,23 @@ internal class SyncOperation {
     internal var commitsApplyer: CommitsApplyer
 
     // MARK: private
-    fileprivate var paymentDevice: PaymentDevice
-    fileprivate var connector: IPaymentDeviceConnector
-    fileprivate var deviceInfo: DeviceInfo
-    fileprivate var user: User
-    fileprivate var connectOperation: ConnectDeviceOperationProtocol
-    fileprivate var eventsAdapter: SyncOperationStateToSyncEventAdapter
-    fileprivate var syncStorage: SyncStorage
+    private var paymentDevice: PaymentDevice
+    private var connector: IPaymentDeviceConnector
+    private var deviceInfo: DeviceInfo
+    private var user: User
+    private var connectOperation: ConnectDeviceOperationProtocol
+    private var eventsAdapter: SyncOperationStateToSyncEventAdapter
+    private var syncStorage: SyncStorage
     public var syncRequest: SyncRequest?
     
     // rx
-    fileprivate var syncEventsPublisher: PublishSubject<SyncEvent>
-    fileprivate var state: Variable<SyncOperationState>
-    fileprivate var disposeBag = DisposeBag()
+    private var syncEventsPublisher: PublishSubject<SyncEvent>
+    private var state: Variable<SyncOperationState>
+    private var disposeBag = DisposeBag()
     
-    fileprivate var isSyncing = false
+    private var isSyncing = false
     
-    fileprivate func startSync() {
+    private func startSync() {
         self.connectOperation.start().subscribe() { [weak self] (event) in
             switch event {
             case .error(let error):
@@ -142,7 +142,7 @@ internal class SyncOperation {
         }.disposed(by: self.disposeBag)
     }
     
-    fileprivate func sync() {
+    private func sync() {
         self.fetchCommitsOperation.startWith(limit: 20, andOffset: 0).subscribe() { [weak self] (e) in
             switch e {
             case .error(let error):
@@ -179,7 +179,7 @@ internal class SyncOperation {
         
     }
     
-    fileprivate func sendCommitsMetric() {
+    private func sendCommitsMetric() {
         guard (self.syncRequest?.notificationAsc) != nil else {
             return
         }

@@ -55,15 +55,15 @@ open class RestSession: NSObject
         self.userId = webViewSessionData.userId
     }
 
-    lazy fileprivate var _manager: SessionManager = {
+    lazy private var _manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         return SessionManager(configuration: configuration)
     }()
 
-    fileprivate (set) internal var baseAPIURL: String
-    fileprivate (set) internal var authorizeURL: String
+    private(set) internal var baseAPIURL: String
+    private(set) internal var authorizeURL: String
 
     public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil)
     {

@@ -4,8 +4,8 @@ class SECP256R1KeyPair
 {
     static let sharedInstance = SECP256R1KeyPair()
 
-    fileprivate let keys: (privateKey: Data, publicKey: Data)? = try? CC.EC.generateKeyPair(256)
-    fileprivate let unknownPrefix = "3059301306072a8648ce3d020106082a8648ce3d030107034200" // wtf? Bouncy Castle issue?
+    private let keys: (privateKey: Data, publicKey: Data)? = try? CC.EC.generateKeyPair(256)
+    private let unknownPrefix = "3059301306072a8648ce3d020106082a8648ce3d030107034200" // wtf? Bouncy Castle issue?
     
     // we should provide public key 
     // with unknown prefix
