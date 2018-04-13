@@ -540,12 +540,8 @@
 		0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */ = {
 			isa = PBXGroup;
 			children = (
-				2773CD92207D537D00DFE113 /* PaymentDevice */,
 				0AD922AE1C1F7EFC007693AB /* Info.plist */,
 				1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */,
-				9AB68E431C84A25B00A0E172 /* JWETests.swift */,
-				9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */,
-				8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */,
 				9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */,
 				9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */,
 				37D908211F1E546700AA9F86 /* RtmMessagingTests.swift */,
@@ -554,8 +550,26 @@
 				37D0CFE31ED599C00049B5AA /* SyncRequestsQueueTests.swift */,
 				0A7EE11A1CFE0A2B00503BC8 /* TestHelper.swift */,
 				37330EB420289DCF00948BC6 /* TransactionTests.swift */,
+				27257F44208160CF00633826 /* Crypto */,
+				2773CD92207D537D00DFE113 /* PaymentDevice */,
 			);
 			path = FitpaySDKTests;
+			sourceTree = "<group>";
+		};
+		27257F44208160CF00633826 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				27257F45208160D700633826 /* JWE */,
+			);
+			path = Crypto;
+			sourceTree = "<group>";
+		};
+		27257F45208160D700633826 /* JWE */ = {
+			isa = PBXGroup;
+			children = (
+				9AB68E431C84A25B00A0E172 /* JWETests.swift */,
+			);
+			path = JWE;
 			sourceTree = "<group>";
 		};
 		2773CD8D207BEDD400DFE113 /* EventStream */ = {
@@ -572,6 +586,8 @@
 		2773CD92207D537D00DFE113 /* PaymentDevice */ = {
 			isa = PBXGroup;
 			children = (
+				9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */,
+				8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */,
 				2773CD93207D538B00DFE113 /* Models */,
 			);
 			path = PaymentDevice;
