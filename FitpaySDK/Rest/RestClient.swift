@@ -534,10 +534,10 @@ extension RestClient {
             if let headers = headers {
                 let urlComponents = NSURLComponents(string: self._session.baseAPIURL + "/resetDeviceTasks")!
                 urlComponents.queryItems = []
-                let deviceId = URLQueryItem(name:"deviceId", value: deviceId)
-                urlComponents.queryItems?.append(deviceId)
                 let userId = URLQueryItem(name:"userId", value: userId)
                 urlComponents.queryItems?.append(userId)
+                let deviceId = URLQueryItem(name:"deviceId", value: deviceId)
+                urlComponents.queryItems?.append(deviceId)
 
                 let request = self._manager.request( urlComponents.url!, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
                 request.validate().responseObject { (response: DataResponse<ResetDeviceResult>) in

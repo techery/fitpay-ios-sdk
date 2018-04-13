@@ -167,9 +167,9 @@ class RestClientTests: XCTestCase {
                     let resetId = resetDeviceResult?.resetId
                     XCTAssertNotNil(resetId)
 
-                    self.client.resetDeviceStatus(resetId!) { (resetDeviceResult, error) in
+                    self.client.resetDeviceStatus(resetId ?? "") { (resetDeviceResult, error) in
                         XCTAssertNil(error)
-
+                        expectation.fulfill()
                         self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 })
