@@ -108,9 +108,16 @@ open class IdVerificationResponse: NSObject, Mappable {
     }
     
     private func updateLocale() {
-        if let preferredLanguage = NSLocale.preferredLanguages.first {
+        guard var preferredLanguage = NSLocale.preferredLanguages.first else { return }
+        
+        if (preferredLanguage.count == 2) {
+            guard let region = NSLocale.current.regionCode else { return }
+            preferredLanguage.append("-\(region)")
+            locale = preferredLanguage
+        } else {
             locale = preferredLanguage
         }
+
     }
 
     
