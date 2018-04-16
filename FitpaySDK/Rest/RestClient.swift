@@ -529,17 +529,10 @@ extension RestClient {
      - parameter userId: user id
      - parameter completion:      ResetHandler closure
      */
-    internal func resetDeviceTasks(deviceId: String, userId: String, completion: @escaping ResetHandler) {
+    internal func resetDeviceTasks(resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             if let headers = headers {
-                let urlComponents = NSURLComponents(string: self._session.baseAPIURL + "/resetDeviceTasks")!
-                urlComponents.queryItems = []
-                let userId = URLQueryItem(name:"userId", value: userId)
-                urlComponents.queryItems?.append(userId)
-                let deviceId = URLQueryItem(name:"deviceId", value: deviceId)
-                urlComponents.queryItems?.append(deviceId)
-
-                let request = self._manager.request( urlComponents.url!, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                let request = self._manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
                 request.validate().responseObject { (response: DataResponse<ResetDeviceResult>) in
                     DispatchQueue.main.async {
                         if response.result.error != nil {

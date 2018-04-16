@@ -31,6 +31,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     private static let commitsResourceKey = "commits"
     private static let selfResourceKey = "self"
     private static let lastAckCommitResourceKey = "lastAckCommit"
+    static let deviceResetTasksKey = "deviceResetTasks"
 
     fileprivate weak var _client: RestClient?
 
