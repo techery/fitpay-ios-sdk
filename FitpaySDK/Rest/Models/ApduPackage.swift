@@ -9,7 +9,7 @@ public enum APDUPackageResponseState : String {
 }
 
 @objcMembers
-open class ApduPackage : NSObject, Mappable
+open class ApduPackage : NSObject, Serializable
 {
     internal var links: [ResourceLink]?
     open var seIdType: String?
@@ -52,23 +52,44 @@ open class ApduPackage : NSObject, Mappable
     override init() {
         super.init()
     }
-    
-    public required init?(map: Map)
-    {
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case seIdType = "seIdType"
+        case targetDeviceType = "targetDeviceType"
+        case targetDeviceId = "targetDeviceId"
+        case packageId = "packageId"
+        case seId = "seId"
+        case apduCommands = "commandApdus"
+        case validUntil = "validUntil"
+        case apduPackageUrl = "apduPackageUrl"
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        seIdType = try container.decode(.seIdType)
+        targetDeviceType = try container.decode(.targetDeviceType)
+        targetDeviceId = try container.decode(.targetDeviceId)
+        packageId = try container.decode(.packageId)
+        seId = try container.decode(.seId)
+        apduCommands = try container.decode(.apduCommands)
+        validUntil = try container.decode(.validUntil)
+        validUntilEpoch = try container.decode(.validUntil, transformer: CustomDateFormatTransform(formatString: "yyyy-MM-dd'T'HH:mm:ss.SSSX"))
+        apduPackageUrl = try container.decode(.apduPackageUrl)
     }
     
-    open func mapping(map: Map)
-    {
-        links <- (map["_links"], ResourceLinkTransformType())
-        seIdType <- map["seIdType"]
-        targetDeviceType <- map["targetDeviceType"]
-        targetDeviceId <- map["targetDeviceId"]
-        packageId <- map["packageId"]
-        seId <- map["seId"]
-        apduCommands <- map["commandApdus"]
-        validUntil <- map["validUntil"]
-        validUntilEpoch <- (map["validUntil"], CustomDateFormatTransform(formatString: "yyyy-MM-dd'T'HH:mm:ss.SSSX"))
-        apduPackageUrl <- map["apduPackageUrl"]
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links)
+        try container.encode(seIdType, forKey: .seIdType)
+        try container.encode(targetDeviceType, forKey: .targetDeviceType)
+        try container.encode(targetDeviceId, forKey: .targetDeviceId)
+        try container.encode(packageId, forKey: .packageId)
+        try container.encode(apduCommands, forKey: .apduCommands)
+        try container.encode(validUntil, forKey: .validUntil)
+        try container.encode(validUntilEpoch, forKey: .validUntil)
+        try container.encode(apduPackageUrl, forKey: .apduPackageUrl)
     }
 
     open var isExpired: Bool {

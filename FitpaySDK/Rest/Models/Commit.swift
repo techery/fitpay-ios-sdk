@@ -37,6 +37,35 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
         commit <- map["commitId"]
         encryptedData <- map["encryptedData"]
     }
+
+   /* private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case commitTypeString = "commitType"
+        case created = "createdTs"
+        case previousCommit = "previousCommit"
+        case commit = "commitId"
+        case encryptedData = "encryptedData"
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        commitTypeString = try container.decode(.commitTypeString)
+        created = try container.decode(.created)
+        previousCommit = try container.decode(.previousCommit)
+        commit = try container.decode(.commit)
+        encryptedData = try container.decode(.encryptedData)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links)
+        try container.encode(commitTypeString, forKey: .commitTypeString)
+        try container.encode(created, forKey: .created)
+        try container.encode(previousCommit, forKey: .previousCommit)
+        try container.encode(commit, forKey: .commit)
+        try container.encode(encryptedData, forKey: .encryptedData)
+    }*/
     
     internal func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
@@ -130,7 +159,7 @@ open class Payload : NSObject, Mappable
         }
         else if let _ = info["packageId"]
         {
-            self.apduPackage = Mapper<ApduPackage>().map(JSON: info)
+            self.apduPackage = try? ApduPackage(info)
         }
         
         self.payloadDictionary = info as [String : AnyObject]?

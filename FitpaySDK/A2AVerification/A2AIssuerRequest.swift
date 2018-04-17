@@ -6,35 +6,27 @@
 //
 
 import Foundation
-import ObjectMapper
 
-public enum A2AStepupResult: String {
+public enum A2AStepupResult: String, Serializable {
     case Approved  = "approved"
     case Declined  = "declined"
     case Failure   = "failure"
 }
 
-public class A2AIssuerRequest: NSObject, Mappable  {
+public class A2AIssuerRequest: NSObject, Codable {
     private var response: A2AStepupResult?
     private var authCode: String?
 
-    public init(response: A2AStepupResult, authCode: String) {
+    public init(response: A2AStepupResult, authCode: String?) {
         self.response = response
         self.authCode = authCode
         super.init()
     }
 
-    public required init?(map: Map) {
-        super.init()
-    }
-
-    open func mapping(map: Map) {
-        self.response  <- map["response"]
-        self.authCode <- map["authCode"]
-    }
-
     public func toString() -> String? {
-        return self.toJSONString()
+        let encoder = JSONEncoder()
+        guard let jsonData = try? encoder.encode(self) else { return nil }
+        return String(data: jsonData, encoding: .utf8)!
     }
 
     public func getEncodedString() -> String? {

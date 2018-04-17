@@ -1,5 +1,4 @@
 
-import ObjectMapper
 
 open class Asset: NSObject
 {

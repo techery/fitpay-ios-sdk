@@ -197,7 +197,7 @@ open class FitpayNotificationsManager : NSObject {
     
     fileprivate func notificationDetailFromNotification(_ notification: NotificationsPayload?) -> NotificationDetail? {
         if let fpField2 = notification?["fpField2"] as? String {
-            let notificationDetail = NotificationDetail(JSONString: fpField2)
+            let notificationDetail = try? NotificationDetail(fpField2)
             notificationDetail?.restClient = self.restClient
             return notificationDetail
         }

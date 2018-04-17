@@ -15,7 +15,7 @@ open class SyncRequestQueue {
     public func add(request: SyncRequest, payload: String? = nil, completion: SyncRequestCompletion?) {
         request.completion = completion
         if let payload = payload {
-            if let notificationDetail = NotificationDetail(JSONString: payload) {
+            if let notificationDetail = try? NotificationDetail(payload) {
                 request.syncInitiator = .WebHook
                 request.notificationAsc = notificationDetail
             } else {

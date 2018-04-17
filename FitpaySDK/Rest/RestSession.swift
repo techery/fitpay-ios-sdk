@@ -12,7 +12,7 @@ public enum AuthScope: String {
     case tokenWrite = "token.write"
 }
 
-internal class AuthorizationDetails: Mappable
+internal class AuthorizationDetails: Serializable
 {
     var tokenType: String?
     var accessToken: String?
@@ -20,15 +20,21 @@ internal class AuthorizationDetails: Mappable
     var scope: String?
     var jti: String?
 
-    required init?(map: Map){
+    private enum CodingKeys: String, CodingKey {
+        case tokenType = "token_type"
+        case accessToken = "access_token"
+        case expiresIn = "expires_in"
+        case scope = "scope"
+        case jti = "jti"
     }
 
-    func mapping(map: Map) {
-        tokenType <- map["token_type"]
-        accessToken <- map["access_token"]
-        expiresIn <- map["expires_in"]
-        scope <- map["scope"]
-        jti <- map["jti"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        tokenType = try container.decode(.tokenType)
+        accessToken = try container.decode(.accessToken)
+        expiresIn = try container.decode(.expiresIn)
+        scope = try container.decode(.scope)
+        jti = try container.decode(.jti)
     }
 }
 
@@ -127,7 +133,22 @@ open class RestSession: NSObject
         ]
 
         let request = _manager.request(self.authorizeURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate().responseObject(queue: DispatchQueue.global()) {
+        request.validate().responseJSON(queue: DispatchQueue.global()) {
+            (response) in
+            
+            DispatchQueue.main.async {
+                if let resultError = response.result.error {
+                    completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
+                } else if let resultValue = response.result.value {
+                    completion(try? AuthorizationDetails(resultValue), nil)
+                } else {
+                    completion(nil, NSError.unhandledError(RestClient.self))
+                }
+            }
+        }
+
+
+       /* request.validate().responseObject(queue: DispatchQueue.global()) {
             (response: DataResponse<AuthorizationDetails>) in
 
             DispatchQueue.main.async {
@@ -139,7 +160,7 @@ open class RestSession: NSObject
                     completion(nil, NSError.unhandledError(RestClient.self))
                 }
             }
-        }
+        }*/
     }
 }
 

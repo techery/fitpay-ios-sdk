@@ -144,7 +144,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
         self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
+        self.address = try? Address(map["address"].currentValue)
         self.name <- map["name"]
         self.topOfWalletAPDUCommands <- map["offlineSeActions.topOfWallet.apduCommands"]
     }
@@ -590,7 +590,7 @@ open class CardInfo: Mappable {
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
         self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
+        self.address = try? Address(map["address"].currentValue)
         self.name <- map["name"]
     }
 }

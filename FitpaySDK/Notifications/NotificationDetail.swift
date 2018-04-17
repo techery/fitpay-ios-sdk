@@ -1,6 +1,5 @@
-import ObjectMapper
 
-open class NotificationDetail : Mappable
+open class NotificationDetail : Serializable
 {
     open var ackSync: String?
     open var completeSync: String?
@@ -11,17 +10,25 @@ open class NotificationDetail : Mappable
     open var clientId: String?
     var restClient:RestClient?
 
-    public required init?(map: Map) {
+    private enum CodingKeys: String, CodingKey {
+        case ackSync = "_links.ackSync.href"
+        case completeSync = "_links.completeSync.href"
+        case type = "type"
+        case syncId = "id"
+        case deviceId = "deviceId"
+        case userId = "userId"
+        case clientId = "clientId"
     }
-    
-    open func mapping(map: Map) {
-        ackSync <- map["_links.ackSync.href"]
-        completeSync <- map["_links.completeSync.href"]
-        type <- map["type"]
-        syncId <- map["id"]
-        deviceId <- map["deviceId"]
-        userId <- map["userId"]
-        clientId <- map["clientId"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        ackSync = try container.decode(.ackSync)
+        completeSync = try container.decode(.completeSync)
+        type = try container.decode(.type)
+        syncId = try container.decode(.syncId)
+        deviceId = try container.decode(.deviceId)
+        userId = try container.decode(.userId)
+        clientId = try container.decode(.clientId)
     }
     
     open func sendAckSync() {

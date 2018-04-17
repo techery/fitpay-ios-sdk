@@ -1,13 +1,13 @@
 import ObjectMapper
 
-public enum SyncInitiator : String {
+public enum SyncInitiator : String, Serializable {
     case Platform = "PLATFORM"
     case Notification = "NOTIFICATION"
     case WebHook = "WEB_HOOK"
     case NotDefined = "NOT DEFINED"
 }
 
-open class CommitMetrics : Mappable
+open class CommitMetrics : Serializable
 {
     public var syncId: String?
     public var deviceId: String?
@@ -23,26 +23,33 @@ open class CommitMetrics : Mappable
         }
     }
     
-    public required init?(map: Map) {
-        
+    private enum CodingKeys: String, CodingKey {
+        case syncId = "syncId"
+        case deviceId = "deviceId"
+        case userId = "userId"
+        case sdkVersion = "sdkVersion"
+        case osVersion = "osVersion"
+        case initiator = "initiator"
+        case totalProcessingTimeMs = "totalProcessingTimeMs"
+        case commitStatistics = "commits"
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        syncId = try container.decode(.syncId)
+        userId = try container.decode(.userId)
+        sdkVersion = try container.decode(.sdkVersion)
+        osVersion = try container.decode(.osVersion)
+        initiator = try container.decode(.initiator)
+        totalProcessingTimeMs = try container.decode(.totalProcessingTimeMs)
+        commitStatistics = try container.decode(.commitStatistics)
     }
     
     public init() {
         self.sdkVersion = FitpaySDKVersion
         self.osVersion = UIDevice.current.systemName + " " + UIDevice.current.systemVersion
     }
-    
-    open func mapping(map: Map) {
-        syncId <- map["syncId"]
-        deviceId <- map["deviceId"]
-        userId <- map["userId"]
-        sdkVersion <- map["sdkVersion"]
-        osVersion <- map["osVersion"]
-        initiator <- map["initiator"]
-        totalProcessingTimeMs <- map["totalProcessingTimeMs"]
-        commitStatistics <- map["commits"]
-    }
-    
+
     open func sendCompleteSync() {
         guard let completeSync = self.notificationAsc?.completeSync else {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send completeSync without URL.")
