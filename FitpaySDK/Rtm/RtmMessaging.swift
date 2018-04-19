@@ -13,18 +13,6 @@ class RtmMessaging {
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
     weak var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
     
-    private(set) var messageHandler: RtmMessageHandler?
-    
-    private var wvConfigStorage: WvConfigStorage
-    
-    private struct BufferedMessage {
-        var message: RtmRawMessage
-        var completion: RtmRawMessageCompletion?
-    }
-    
-    private var preVersionBuffer: [BufferedMessage]
-    private var receivedWrongVersion = false
-
     lazy var handlersMapping: [RtmProtocolVersion: RtmMessageHandler?] = {
         return [RtmProtocolVersion.ver1: nil,
                 RtmProtocolVersion.ver2: RtmMessageHandlerV2(wvConfigStorage: self.wvConfigStorage),
@@ -33,15 +21,25 @@ class RtmMessaging {
                 RtmProtocolVersion.ver5: RtmMessageHandlerV5(wvConfigStorage: self.wvConfigStorage)]
     }()
     
+    private(set) var messageHandler: RtmMessageHandler?
+    private var wvConfigStorage: WvConfigStorage
+    
+    private struct BufferedMessage {
+        var message: [String: Any]
+        var completion: RtmRawMessageCompletion?
+    }
+    
+    private var preVersionBuffer: [BufferedMessage]
+    private var receivedWrongVersion = false
+    
     init(wvConfigStorage: WvConfigStorage) {
         self.wvConfigStorage = wvConfigStorage
         self.preVersionBuffer = []
     }
     
-    typealias RtmRawMessage = [String: Any]
     typealias RtmRawMessageCompletion = ((_ success: Bool) -> Void)
     
-    func received(message: RtmRawMessage, completion: RtmRawMessageCompletion? = nil) {
+    func received(message: [String: Any], completion: RtmRawMessageCompletion? = nil) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
         guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {

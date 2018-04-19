@@ -7,15 +7,23 @@ class JWETests: XCTestCase {
     
     func testJWEEncryption() {
         let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: plainText, keyId: nil)
-        XCTAssertNotNil(jweObject as Any)
+        XCTAssertNotNil(jweObject)
         
-        let encryptResult = try? jweObject!.encrypt(sharedSecret!)
-        XCTAssertNotNil(encryptResult as Any)
+        guard let encryptResult = try? jweObject!.encrypt(sharedSecret!) else {
+            XCTFail("Could Not Encrypt")
+            return
+        }
         
-        let jweResult = JWEObject.parse(payload: encryptResult!!)
-        let decryptResult = try? jweResult?.decrypt(sharedSecret!)
-        XCTAssertNotNil(decryptResult as Any)
+        XCTAssertNotNil(encryptResult)
         
-        XCTAssertTrue(plainText == decryptResult!!)
+        let jweResult = JWEObject.parse(payload: encryptResult!)
+        guard let decryptResult = try? jweResult?.decrypt(sharedSecret!) else {
+            XCTFail("Could Not Deycrypt")
+            return
+        }
+        
+        XCTAssertNotNil(decryptResult)
+        
+        XCTAssertTrue(plainText == decryptResult)
     }
 }

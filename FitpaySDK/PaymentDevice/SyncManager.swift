@@ -75,7 +75,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         }
     }
     
-    open fileprivate(set) var isSyncing : Bool = false
+    open private(set) var isSyncing : Bool = false
     
     /**
      Starts sync process with payment device.
@@ -197,7 +197,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         }
     }
     
-    fileprivate func startSyncWith(request: SyncRequest) throws {
+    private func startSyncWith(request: SyncRequest) throws {
         guard let paymentDevice = request.paymentDevice,
             let connector = request.paymentDevice?.deviceInterface,
             let deviceInfo = request.deviceInfo,
@@ -235,11 +235,11 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         }).disposed(by: disposeBag)
     }
     
-    fileprivate var syncOperations = [DeviceInfo:SyncOperation]()
-    fileprivate var disposeBag = DisposeBag()
+    private var syncOperations = [DeviceInfo:SyncOperation]()
+    private var disposeBag = DisposeBag()
     
-    fileprivate let eventsDispatcher = FitpayEventDispatcher()
-    fileprivate var user: User?
+    private let eventsDispatcher = FitpayEventDispatcher()
+    private var user: User?
     
     internal init(syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
         self.syncFactory = syncFactory
@@ -275,7 +275,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         })
     }
     
-    fileprivate func syncFinishedFor(request: SyncRequest, withError error: Error?) {
+    private func syncFinishedFor(request: SyncRequest, withError error: Error?) {
         self.isSyncing = false
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
         

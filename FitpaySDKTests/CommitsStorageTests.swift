@@ -61,8 +61,6 @@ class CommitsStorageTests: XCTestCase {
         let localCommitId = "654321"
         syncStorage.setLastCommitId(self.deviceInfo.deviceIdentifier!, commitId: localCommitId)
         
-        sleep(1)
-        
         let fetch1 = FetchCommitsOperation(deviceInfo: self.deviceInfo,
                                            shouldStartFromSyncedCommit: true,
                                            syncStorage: syncStorage,
@@ -123,13 +121,13 @@ class CommitsStorageTests: XCTestCase {
         
         super.waitForExpectations(timeout: 20, handler: nil)
     }
+
 }
 
-
-// Mocks
-extension CommitsStorageTests {
+extension CommitsStorageTests { // Mocks
     class MockPaymentDeviceConnectorWithStorage: MockPaymentDeviceConnector {
         var commitId: String?
+        
         func getDeviceLastCommitId() -> String {
             return commitId ?? String()
         }
@@ -149,6 +147,7 @@ extension CommitsStorageTests {
 
     class MockPaymentDeviceConnectorWithWrongStorage2: MockPaymentDeviceConnector {
         var commitId: String?
+        
         func getDeviceLastCommitId() -> String {
             return commitId ?? String()
         }
@@ -168,13 +167,15 @@ extension CommitsStorageTests {
     }
 }
 
-extension CommitsStorageTests {
-    func getSyncRequest(connector: MockPaymentDeviceConnector) -> SyncRequest {
+extension CommitsStorageTests { // Private Helplers
+    
+    private func getSyncRequest(connector: MockPaymentDeviceConnector) -> SyncRequest {
         let device = self.paymentDevice!
         let _ = device.changeDeviceInterface(connector)
         let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: self.deviceInfo, paymentDevice: device)
         SyncRequest.syncManager = self.syncManager
         return request
     }
+    
 }
 
