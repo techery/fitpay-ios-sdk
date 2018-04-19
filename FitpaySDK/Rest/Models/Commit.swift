@@ -14,8 +14,8 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     open var commit:String?
     open var executedDuration:Int?
     
-    fileprivate static let apduResponseResource = "apduResponse"
-    fileprivate static let confirmResource = "confirm"
+    private static let apduResponseResource = "apduResponse"
+    private static let confirmResource = "confirm"
     
     public weak var client: RestClient? {
         didSet {

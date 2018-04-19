@@ -224,7 +224,7 @@ class WvConfigStorage {
     
     private var bindings: [FitpayEventBinding] = []
 
-    fileprivate var rtmVersionSent = false
+    private var rtmVersionSent = false
     
     @objc open var demoModeEnabled : Bool {
         get {
@@ -429,22 +429,22 @@ class WvConfigStorage {
         })
     }
     
-    fileprivate var rtmMessaging: RtmMessaging
+    private var rtmMessaging: RtmMessaging
     
-    fileprivate func sendStatusMessage(_ message: String, type: WVMessageType) {
+    private func sendStatusMessage(_ message: String, type: WVMessageType) {
         sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.statusResponseMessage(message: message, type: type) ?? RtmMessageResponse(data:["message":message, "type":type.rawValue], type: "deviceStatus"))
     }
 
-    fileprivate func resolveSync() {
+    private func resolveSync() {
         self.rtmMessaging.messageHandler?.resolveSync()
     }
     
-    fileprivate func sendVersion(version: RtmProtocolVersion) {
+    private func sendVersion(version: RtmProtocolVersion) {
         sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.versionResponseMessage(version: version) ?? RtmMessageResponse(data: ["version":version.rawValue], type: "version"))
         rtmVersionSent = true
     }
 
-    fileprivate func bindEvents() {
+    private func bindEvents() {
         var binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: .syncStarted, completion: { [weak self] (event) in
             self?.showStatusMessage(.syncGettingUpdates)
         })
@@ -505,13 +505,13 @@ class WvConfigStorage {
         }
     }
     
-    fileprivate func unbindEvents() {
+    private func unbindEvents() {
         for binding in self.bindings {
             SyncManager.sharedInstance.removeSyncBinding(binding: binding)
         }
     }
 
-    @objc fileprivate func logout() {
+    @objc private func logout() {
         if let _ = self.configStorage.user {
             sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.logoutResponseMessage() ?? RtmMessageResponse(type: "logout"))
         }

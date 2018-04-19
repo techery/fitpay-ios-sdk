@@ -28,14 +28,14 @@ class JWEObject {
     
     var header : JWEHeader?
     
-    fileprivate var cekCt : Data?
-    fileprivate var iv : Data?
-    fileprivate var ct : Data?
-    fileprivate var tag : Data?
+    private var cekCt : Data?
+    private var iv : Data?
+    private var ct : Data?
+    private var tag : Data?
     
-    fileprivate(set) var encryptedPayload : String?
-    fileprivate(set) var decryptedPayload : String?
-    fileprivate var payloadToEncrypt : String?
+    private(set) var encryptedPayload : String?
+    private(set) var decryptedPayload : String?
+    private var payloadToEncrypt : String?
     
     static func parse(payload:String) -> JWEObject?
     {
@@ -154,11 +154,11 @@ class JWEObject {
         return decryptedPayload
     }
     
-    fileprivate init() {
+    private init() {
         
     }
     
-    fileprivate func A256GCMDecryptData(_ cipherKey:Data, data:Data, iv:Data, tag:Data, aad:Data?) -> Data?
+    private func A256GCMDecryptData(_ cipherKey:Data, data:Data, iv:Data, tag:Data, aad:Data?) -> Data?
     {
         // cryptAuth expects that data will be with tag
         // so appending tag to data
@@ -182,7 +182,7 @@ class JWEObject {
         return decryptedData
     }
     
-    fileprivate func A256GCMEncryptData(_ key: Data, data: Data, iv: Data, aad: Data?) -> (Data?, Data?)
+    private func A256GCMEncryptData(_ key: Data, data: Data, iv: Data, aad: Data?) -> (Data?, Data?)
     {
         var encryptResult: (Data?, Data?) = (nil, nil)
         

@@ -102,7 +102,7 @@ open class FitpaySDKConfiguration : NSObject{
         return nil
     }
     
-    fileprivate func setupLogs() {
+    private func setupLogs() {
         log.addOutput(output: ConsoleOutput())
     }
 }
