@@ -2,7 +2,7 @@
 import Foundation
 import ObjectMapper
 
-public enum TokenizationState: String {
+public enum TokenizationState: String, Codable {
     case NEW,
     NOT_ELIGIBLE,
     ELIGIBLE,
@@ -21,7 +21,7 @@ enum AcceptTermsError: Error {
 }
 
 @objcMembers
-open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
+open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
     internal var links: [ResourceLink]?
     internal var encryptedData: String?
 
@@ -115,8 +115,99 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
         return self.links?.url(CreditCard.transactionsResource) != nil
     }
 
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case creditCardId
+        case userId
+        case isDefault = "default"
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case state
+        case cardType
+        case cardMetaData
+        case termsAssetId
+        case termsAssetReferences
+        case eligibilityExpiration
+        case eligibilityExpirationEpoch
+        case deviceRelationships
+        case encryptedData
+        case targetDeviceId
+        case targetDeviceType
+        case verificationMethods
+        case externalTokenReference
+        case pan
+        case expMonth
+        case expYear
+        case cvv
+        case name
+        case address
+        case topOfWalletAPDUCommands = "offlineSeActions.topOfWallet.apduCommands"
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        creditCardId = try container.decode(.creditCardId)
+        userId = try container.decode(.userId)
+        isDefault = try container.decode(.isDefault)//try container.decode(.links, transformer: DecimalNumberTypeTransform())
+        created = try container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        state = try container.decode(.state)
+        cardType = try container.decode(.cardType)
+       // cardMetaData = try container.decode(.cardMetaData) //TODO Mapper<CardMetadata>().map(JSONObject: map.JSON["cardMetaData"])
+        termsAssetId = try container.decode(.termsAssetId)
+        termsAssetReferences =  try container.decode(.termsAssetReferences, transformer: TermsAssetReferencesTypeTransform())
+        eligibilityExpiration = try container.decode(.eligibilityExpiration)
+        eligibilityExpirationEpoch = try container.decode(.eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
+        deviceRelationships = try container.decode(.deviceRelationships, transformer: DeviceRelationshipsTypeTransform())
+        encryptedData = try container.decode(.encryptedData)
+        targetDeviceId = try container.decode(.targetDeviceId)
+        targetDeviceType = try container.decode(.targetDeviceType)
+        verificationMethods = try container.decode(.deviceRelationships, transformer: VerificationMethodTypeTransform())
+        externalTokenReference = try container.decode(.externalTokenReference)
+        pan = try container.decode(.pan)
+        expMonth = try container.decode(.expMonth)
+        expYear = try container.decode(.expYear)
+        cvv = try container.decode(.cvv)
+        name = try container.decode(.name)
+        address = try container.decode(.address)
+        topOfWalletAPDUCommands = try container.decode(.topOfWalletAPDUCommands)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links)
+        try container.encode(creditCardId, forKey: .creditCardId)
+        try container.encode(userId, forKey: .userId)
+        try container.encode(isDefault, forKey: .isDefault)
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(state, forKey: .state)
+        try container.encode(cardType, forKey: .cardType)
+       // try container.encode(cardMetaData, forKey: .cardMetaData)
+        try container.encode(termsAssetId, forKey: .termsAssetId)
+        try container.encode(termsAssetReferences, forKey: .termsAssetReferences)
+        try container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
+        try container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch)
+        try container.encode(deviceRelationships, forKey: .deviceRelationships)
+        try container.encode(encryptedData, forKey: .encryptedData)
+        try container.encode(targetDeviceId, forKey: .targetDeviceId)
+        try container.encode(targetDeviceType, forKey: .targetDeviceType)
+        try container.encode(verificationMethods, forKey: .verificationMethods)
+        try container.encode(externalTokenReference, forKey: .externalTokenReference)
+        try container.encode(pan, forKey: .pan)
+        try container.encode(expMonth, forKey: .expMonth)
+        try container.encode(expYear, forKey: .expYear)
+        try container.encode(cvv, forKey: .cvv)
+        try container.encode(name, forKey: .name)
+        try container.encode(address, forKey: .address)
+        try container.encode(topOfWalletAPDUCommands, forKey: .topOfWalletAPDUCommands)
+    }
+
+        /*
     public required init?(map: Map){
     }
+
 
     open func mapping(map: Map) {
         self.links <- (map["_links"], ResourceLinkTransformType())
@@ -148,7 +239,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
         self.name <- map["name"]
         self.topOfWalletAPDUCommands <- map["offlineSeActions.topOfWallet.apduCommands"]
     }
-
+*/
     func applySecret(_ secret: Foundation.Data, expectedKeyId: String?) {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
@@ -495,6 +586,32 @@ internal class TermsAssetReferencesTransformType: TransformType {
     }
 }
 
+internal class TermsAssetReferencesTypeTransform: CodingContainerTransformer {
+    typealias Output = [TermsAssetReferences]
+    typealias Input = [[String: AnyObject]]
+
+    func transform(_ decoded: Input?) -> Output? {
+        if let items = decoded {
+            var list = [TermsAssetReferences]()
+
+            for raw in items  {
+                if let item = Mapper<TermsAssetReferences>().map(JSON: raw) {
+                    list.append(item)
+                }
+            }
+
+            return list
+        }
+
+        return nil
+    }
+
+    func transform(_ encoded: Output?) -> Input? {
+        return nil
+    }
+}
+
+
 open class DeviceRelationships: NSObject, ClientModel, Mappable {
     open var deviceType: String?
     internal var links: [ResourceLink]?
@@ -566,6 +683,31 @@ internal class DeviceRelationshipsTransformType: TransformType {
     }
 
     func transformToJSON(_ value: [DeviceRelationships]?) -> [[String: AnyObject]]? {
+        return nil
+    }
+}
+
+internal class DeviceRelationshipsTypeTransform: CodingContainerTransformer {
+    typealias Output = [DeviceRelationships]
+    typealias Input = [[String: AnyObject]]
+
+    func transform(_ decoded: Input?) -> Output? {
+        if let items = decoded {
+            var list = [DeviceRelationships]()
+
+            for raw in items {
+                if let item = Mapper<DeviceRelationships>().map(JSON: raw) {
+                    list.append(item)
+                }
+            }
+
+            return list
+        }
+
+        return nil
+    }
+
+    func transform(_ encoded: Output?) -> Input? {
         return nil
     }
 }

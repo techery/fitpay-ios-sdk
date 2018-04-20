@@ -2,7 +2,7 @@
 import ObjectMapper
 
 @objcMembers
-open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
+open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
     internal var links: [ResourceLink]?
     
     open var deviceIdentifier: String?
@@ -63,9 +63,6 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     override public init() {
     }
 
-    public required init?(map: Map) {
-    }
-    
     init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElementId: String?, casd: String?) {
         self.deviceType = deviceType
         self.manufacturerName = manufacturerName
@@ -82,47 +79,95 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
         self.casd = casd
     }
 
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        created <- map["createdTs"]
-        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        deviceIdentifier <- map["deviceIdentifier"]
-        deviceName <- map["deviceName"]
-        deviceType <- map["deviceType"]
-        manufacturerName <- map["manufacturerName"]
-        state <- map["state"]
-        serialNumber <- map["serialNumber"]
-        modelNumber <- map["modelNumber"]
-        hardwareRevision <- map["hardwareRevision"]
-        firmwareRevision <- map["firmwareRevision"]
-        softwareRevision <- map["softwareRevision"]
-        notificationToken <- map["notificationToken"]
-        osName <- map["osName"]
-        systemId <- map["systemId"]
-        licenseKey <- map["licenseKey"]
-        bdAddress <- map["bdAddress"]
-        pairing <- map["pairing"]
-        if let secureElement = map["secureElement"].currentValue as? [String: String] {
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case created
+        case createdEpoch
+        case deviceIdentifier
+        case deviceName
+        case deviceType
+        case serialNumber
+        case modelNumber
+        case hardwareRevision
+        case firmwareRevision
+        case softwareRevision
+        case notificationToken
+        case osName
+        case systemId
+        case licenseKey
+        case bdAddress
+        case pairing
+        case secureElement
+        case secureElementId
+        case casd = "casdCert"
+        case cardRelationships
+        case metadata
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        created = try container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch)
+        deviceIdentifier = try container.decode(.deviceIdentifier)//try container.decode(.links, transformer: DecimalNumberTypeTransform())
+        deviceName = try container.decode(.deviceName)
+        deviceType = try container.decode(.deviceType)
+        serialNumber = try container.decode(.serialNumber)
+        modelNumber = try container.decode(.modelNumber)
+        hardwareRevision = try container.decode(.hardwareRevision)
+        firmwareRevision =  try container.decode(.firmwareRevision)
+        softwareRevision = try container.decode(.softwareRevision)
+        notificationToken = try container.decode(.notificationToken)
+        osName = try container.decode(.osName)
+        systemId = try container.decode(.systemId)
+        licenseKey = try container.decode(.licenseKey)
+        bdAddress = try container.decode(.bdAddress)
+        pairing = try container.decode(.pairing)
+        if let secureElement: [String: String] = try container.decode(.secureElement)  {
             secureElementId = secureElement["secureElementId"]
             casd = secureElement["casdCert"]
         } else {
-            secureElementId <- map["secureElementId"]
-            casd <- map["casdCert"]
+            secureElementId = try container.decode(.secureElementId)
+            casd = try container.decode(.casd)
         }
 
-        if let cardRelationships = map["cardRelationships"].currentValue as? [Any] {
+        if let cardRelationships: [Any] = try container.decode(.cardRelationships) {
             if cardRelationships.count > 0 {
                 self.cardRelationships = [CardRelationship]()
 
                 for itrObj in cardRelationships {
-                    if let parsedObj = Mapper<CardRelationship>().map(JSON: itrObj as! [String: Any]) {
+                    if let parsedObj = try? CardRelationship(itrObj) {
                         self.cardRelationships!.append(parsedObj)
                     }
                 }
             }
         }
+        metadata = try container.decode(.metadata)
+    }
 
-        metadata = map.JSON as [String: Any]?
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links)
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(deviceType, forKey: .deviceType)
+        try container.encode(serialNumber, forKey: .serialNumber)
+        try container.encode(modelNumber, forKey: .modelNumber)
+        try container.encode(hardwareRevision, forKey: .hardwareRevision)
+        try container.encode(firmwareRevision, forKey: .firmwareRevision)
+        try container.encode(softwareRevision, forKey: .softwareRevision)
+        try container.encode(notificationToken, forKey: .notificationToken)
+        try container.encode(osName, forKey: .osName)
+        try container.encode(systemId, forKey: .systemId)
+        try container.encode(licenseKey, forKey: .licenseKey)
+        try container.encode(bdAddress, forKey: .bdAddress)
+        try container.encode(pairing, forKey: .pairing)
+        try container.encode(secureElementId, forKey: .secureElementId)
+        try container.encode(casd, forKey: .casd)
+        try container.encode(cardRelationships, forKey: .cardRelationships)
+        try container.encode(metadata, forKey: .metadata)
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {
@@ -318,7 +363,7 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable {
     
 }
 
-open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable {
+open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyable {
     internal var links: [ResourceLink]?
     open var creditCardId: String?
     open var pan: String?
@@ -329,25 +374,41 @@ open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable {
     fileprivate static let selfResource = "self"
     public weak var client: RestClient?
 
-    public required init?(map: Map) {
-
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case creditCardId
+        case encryptedData
+        case pan
+        case expMonth
+        case expYear
     }
 
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        creditCardId <- map["creditCardId"]
-        encryptedData <- map["encryptedData"]
-        pan <- map["pan"]
-        expMonth <- map["expMonth"]
-        expYear <- map["expYear"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        creditCardId = try container.decode(.creditCardId)
+        encryptedData = try container.decode(.encryptedData)
+        pan = try container.decode(.pan)
+        expMonth = try container.decode(.expMonth)
+        expYear = try container.decode(.expYear)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links)
+        try container.encode(creditCardId, forKey: .creditCardId)
+        try container.encode(encryptedData, forKey: .encryptedData)
+        try container.encode(pan, forKey: .pan)
+        try container.encode(expMonth, forKey: .expMonth)
+        try container.encode(expYear, forKey: .expYear)
     }
 
     internal func applySecret(_ secret: Data, expectedKeyId: String?) {
-        if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
+      /* TODO if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
             self.pan = decryptedObj.pan
             self.expMonth = decryptedObj.expMonth
             self.expYear = decryptedObj.expYear
-        }
+        }*/
     }
 
     /**

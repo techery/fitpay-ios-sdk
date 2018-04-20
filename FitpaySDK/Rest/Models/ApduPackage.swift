@@ -1,4 +1,3 @@
-import ObjectMapper
 
 public enum APDUPackageResponseState : String {
     case processed    = "PROCESSED"

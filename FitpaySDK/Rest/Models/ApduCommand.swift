@@ -6,8 +6,6 @@
 //  Copyright © 2017 Fitpay. All rights reserved.
 //
 
-import ObjectMapper
-
 open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
     
     internal var links: [ResourceLink]?

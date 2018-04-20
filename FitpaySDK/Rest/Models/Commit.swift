@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
+open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
 {
     var links:[ResourceLink]?
     open var commitType:CommitType? {
@@ -24,27 +24,14 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     }
     
     internal var encryptedData:String?
-    
-    public required init?(map: Map) {
-        
-    }
-    
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        commitTypeString <- map["commitType"]
-        created <- map["createdTs"]
-        previousCommit <- map["previousCommit"]
-        commit <- map["commitId"]
-        encryptedData <- map["encryptedData"]
-    }
 
-   /* private enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case commitTypeString = "commitType"
+        case commitTypeString
         case created = "createdTs"
-        case previousCommit = "previousCommit"
+        case previousCommit
         case commit = "commitId"
-        case encryptedData = "encryptedData"
+        case encryptedData
     }
 
     public required init(from decoder: Decoder) throws {
@@ -65,7 +52,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
         try container.encode(previousCommit, forKey: .previousCommit)
         try container.encode(commit, forKey: .commit)
         try container.encode(encryptedData, forKey: .encryptedData)
-    }*/
+    }
     
     internal func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
@@ -155,7 +142,7 @@ open class Payload : NSObject, Mappable
         
         if let _ = info["creditCardId"]
         {
-            self.creditCard = Mapper<CreditCard>().map(JSON: info)
+            self.creditCard = CreditCard(info)
         }
         else if let _ = info["packageId"]
         {

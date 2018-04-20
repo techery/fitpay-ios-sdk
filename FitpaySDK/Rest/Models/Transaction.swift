@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-open class Transaction : NSObject, ClientModel, Mappable
+open class Transaction : NSObject, ClientModel, Serializable
 {
     internal var links:[ResourceLink]?
     open var transactionId:String?
@@ -17,24 +17,48 @@ open class Transaction : NSObject, ClientModel, Mappable
     
     fileprivate static let selfResource = "self"
     public weak var client:RestClient?
-    
-    public required init?(map: Map)
-    {
-        
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case transactionId
+        case transactionType
+        case amount
+        case currencyCode
+        case authorizationStatus
+        case transactionTime
+        case transactionTimeEpoch
+        case merchantName
+        case merchantCode
+        case merchantType
     }
-    
-    open func mapping(map: Map)
-    {
-        links <- (map["_links"], ResourceLinkTransformType())
-        transactionId <- map["transactionId"]
-        transactionType <- map["transactionType"]
-        amount <- (map["amount"], DecimalNumberTransform())
-        currencyCode <- map["currencyCode"]
-        authorizationStatus <- map["authorizationStatus"]
-        transactionTime <- map["transactionTime"]
-        transactionTimeEpoch <- map["transactionTimeEpoch"]
-        merchantName <- map["merchantName"]
-        merchantCode <- map["merchantCode"]
-        merchantType <- map["merchantType"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        transactionId = try container.decode(.transactionId)
+        transactionType = try container.decode(.transactionType)
+        amount = try container.decode(.links, transformer: DecimalNumberTypeTransform())
+        currencyCode = try container.decode(.currencyCode)
+        authorizationStatus = try container.decode(.authorizationStatus)
+        transactionTime = try container.decode(.transactionTime)
+        transactionTimeEpoch = try container.decode(.transactionTimeEpoch)
+        merchantName = try container.decode(.merchantName)
+        merchantCode = try container.decode(.merchantCode)
+        merchantType = try container.decode(.merchantType)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links)
+        try container.encode(transactionId, forKey: .transactionId)
+        try container.encode(transactionType, forKey: .transactionType)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(currencyCode, forKey: .currencyCode)
+        try container.encode(authorizationStatus, forKey: .authorizationStatus)
+        try container.encode(transactionTime, forKey: .transactionTime)
+        try container.encode(transactionTimeEpoch, forKey: .transactionTimeEpoch)
+        try container.encode(merchantName, forKey: .merchantName)
+        try container.encode(merchantCode, forKey: .merchantCode)
+        try container.encode(merchantType, forKey: .merchantType)
     }
 }

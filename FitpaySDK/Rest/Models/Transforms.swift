@@ -63,7 +63,7 @@ internal class DecimalNumberTransform: TransformType {
 
 internal class NSTimeIntervalTypeTransform: CodingContainerTransformer {
     typealias Output = TimeInterval
-    typealias Input = Any
+    typealias Input = String
 
     func transform(_ decoded: Input?) -> Output? {
         if let timeInt = decoded as? NSNumber {
@@ -79,7 +79,7 @@ internal class NSTimeIntervalTypeTransform: CodingContainerTransformer {
     func transform(_ encoded: Output?) -> Input? {
         if let epoch = encoded {
             let timeInt = Int64(epoch*1000)
-            return timeInt
+            return timeInt as NSTimeIntervalTypeTransform.Input
         }
         return nil
     }

@@ -151,3 +151,28 @@ internal class VerificationMethodTransformType: TransformType
         return nil
     }
 }
+
+internal class VerificationMethodTypeTransform: CodingContainerTransformer {
+    typealias Output = [VerificationMethod]
+    typealias Input = [[String: AnyObject]]
+
+    func transform(_ decoded: Input?) -> Output? {
+        if let items = decoded {
+            var list = [VerificationMethod]()
+
+            for raw in items {
+                if let item = Mapper<VerificationMethod>().map(JSON: raw) {
+                    list.append(item)
+                }
+            }
+
+            return list
+        }
+
+        return nil
+    }
+
+    func transform(_ encoded: Output?) -> Input? {
+        return nil
+    }
+}

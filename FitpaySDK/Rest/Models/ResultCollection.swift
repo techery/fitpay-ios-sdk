@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, SecretApplyable
+open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, SecretApplyable
 {
     open var limit: Int?
     open var offset: Int?
@@ -57,23 +57,38 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
     
     fileprivate weak var _client: RestClient?
 
-    public required init?(map: Map){
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case limit
+        case offset
+        case totalResults
+        case results
     }
 
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        limit <- map["limit"]
-        offset <- map["offset"]
-        totalResults <- map["totalResults"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        limit = try container.decode(.limit)
+        offset = try container.decode(.offset)
+        totalResults = try container.decode(.totalResults)
 
-        if let objectsArray = map["results"].currentValue as? [AnyObject] {
+        results = try container.decode(.results)
+      /*  if let objectsArray = try container.decode(.results) as? [AnyObject] {
             results = [T]()
             for objectMap in objectsArray {
                 if let modelObject = Mapper<T>().map(JSON: objectMap as! [String: Any]) {
                     results!.append(modelObject)
                 }
             }
-        }
+        } */
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links)
+        try container.encode(limit, forKey: .limit)
+        try container.encode(offset, forKey: .offset)
+        try container.encode(totalResults, forKey: .totalResults)
     }
 
     internal func applySecret(_ secret: Data, expectedKeyId: String?) {

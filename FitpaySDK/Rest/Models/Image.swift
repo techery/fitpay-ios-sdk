@@ -101,3 +101,31 @@ internal class ImageTransformType<T: BaseMappable>: TransformType
         return nil
     }
 }
+
+/*
+internal class ImageTypeTransform: CodingContainerTransformer {
+    typealias Output = [Image]?
+    typealias Input = [[String: Data]]?
+
+    func transform(_ decoded: Input) -> Output {
+        if let images = decoded {
+            var list = [Image]()
+
+            for raw in images {
+
+                if let data = try? JSONSerialization.data(withJSONObject: raw, options: .prettyPrinted), let image  = try? JSONDecoder().decode(Image.self, from: data) {
+                    list.append(image)
+                }
+            }
+
+            return list
+        }
+
+        return nil
+    }
+
+    func transform(_ encoded: Output) -> Input {
+        return nil
+    }
+}*/
+

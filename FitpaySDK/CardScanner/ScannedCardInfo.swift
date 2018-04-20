@@ -7,9 +7,8 @@
 //
 
 import Foundation
-import ObjectMapper
 
-@objc public class ScannedCardInfo: NSObject, Mappable {
+@objc public class ScannedCardInfo: NSObject, Serializable {
     public var cardNumber: String?
     public var expiryMonth: UInt?
     public var expiryYear: UInt?
@@ -19,22 +18,11 @@ import ObjectMapper
         super.init()
     }
     
-    public required init?(map: Map) {
-        super.init()
-    }
-    
     @objc open func setExpiryMonth(month: UInt) {
         expiryMonth = month
     }
     
     @objc open func setExpiryYear(year: UInt) {
         expiryYear = year
-    }
-    
-    open func mapping(map: Map) {
-        self.cardNumber  <- map["cardNumber"]
-        self.expiryMonth <- map["expiryMonth"]
-        self.expiryYear  <- map["expiryYear"]
-        self.cvv         <- map["cvv"]
     }
 }
