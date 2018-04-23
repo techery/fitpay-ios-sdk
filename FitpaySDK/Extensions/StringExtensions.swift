@@ -1,7 +1,7 @@
 extension String {
     
     var SHA1: String? {
-        guard let data = self.data(using: String.Encoding.utf8) else{
+        guard let data = self.data(using: String.Encoding.utf8) else {
            return nil
         }
         

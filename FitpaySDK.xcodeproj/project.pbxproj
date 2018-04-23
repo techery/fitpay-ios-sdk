@@ -28,10 +28,13 @@
 		2773CD8F207BEE0800DFE113 /* StreamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD8E207BEE0800DFE113 /* StreamEvent.swift */; };
 		2773CD91207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */; };
 		2773CD96207D546400DFE113 /* IdVerificationResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */; };
+		2778174B208E42A200FE2770 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27781746208E42A100FE2770 /* RxCocoa.framework */; };
+		2778174C208E42A200FE2770 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27781747208E42A200FE2770 /* RxSwift.framework */; };
+		2778174E208E704E00FE2770 /* JWTDecode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2778174D208E704D00FE2770 /* JWTDecode.framework */; };
+		2778175C208E731400FE2770 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		2786DB02207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		2786DB03207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
-		27E769E62077ED5D00B3CA9D /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E769E52077ED5D00B3CA9D /* JWT.framework */; };
 		3701AE3B1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE3C1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE471F14C29900550890 /* ConnectDeviceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */; };
@@ -119,11 +122,6 @@
 		3A46E14D1DF023F9002D0270 /* JWETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E431C84A25B00A0E172 /* JWETests.swift */; };
 		3A46E14E1DF023F9002D0270 /* RestClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */; };
 		3A46E14F1DF023F9002D0270 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* TestHelper.swift */; };
-		3A46E1511DF023F9002D0270 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */; };
-		3A46E1521DF023F9002D0270 /* AlamofireObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */; };
-		3A46E1541DF023F9002D0270 /* KeychainAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11B1DB8E68E00A9FEB4 /* KeychainAccess.framework */; };
-		3A46E1551DF023F9002D0270 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */; };
-		3A46E1561DF023F9002D0270 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		3A61A47F1D66F0710033256C /* FitpayNotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A61A47E1D66F0710033256C /* FitpayNotificationsManager.swift */; };
 		3A640B471DDF110E008AD936 /* RtmMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A640B451DDF110E008AD936 /* RtmMessage.swift */; };
 		3A640B481DDF110E008AD936 /* RtmMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A640B451DDF110E008AD936 /* RtmMessage.swift */; };
@@ -191,7 +189,6 @@
 		3A93A0E51DB8CA2C00A9FEB4 /* FitpaySDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD922A01C1F7EFC007693AB /* FitpaySDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A93A11D1DB8E68E00A9FEB4 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */; };
 		3A93A11E1DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */; };
-		3A93A1201DB8E68E00A9FEB4 /* KeychainAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11B1DB8E68E00A9FEB4 /* KeychainAccess.framework */; };
 		3A93A1211DB8E68E00A9FEB4 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */; };
 		3AF3A8F01DDB15AE0037E105 /* BaseOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8ED1DDB15AE0037E105 /* BaseOutput.swift */; };
 		3AF3A8F11DDB15AE0037E105 /* ConsoleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8EE1DDB15AE0037E105 /* ConsoleOutput.swift */; };
@@ -301,9 +298,13 @@
 		2773CD8E207BEE0800DFE113 /* StreamEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamEvent.swift; sourceTree = "<group>"; };
 		2773CD90207BFA2100DFE113 /* KeyedDecodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedDecodingContainerExtension.swift; sourceTree = "<group>"; };
 		2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdVerificationResponseTests.swift; sourceTree = "<group>"; };
+		27781744208E42A100FE2770 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = Carthage/Build/iOS/RxBlocking.framework; sourceTree = "<group>"; };
+		27781745208E42A100FE2770 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = Carthage/Build/iOS/RxTest.framework; sourceTree = "<group>"; };
+		27781746208E42A100FE2770 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
+		27781747208E42A200FE2770 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
+		2778174D208E704D00FE2770 /* JWTDecode.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JWTDecode.framework; path = Carthage/Build/iOS/JWTDecode.framework; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStreamManager.swift; sourceTree = "<group>"; };
-		27E769E52077ED5D00B3CA9D /* JWT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JWT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3701AE3A1F13BA1B00550890 /* SyncEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncEvent.swift; sourceTree = "<group>"; };
 		3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectDeviceOperation.swift; sourceTree = "<group>"; };
 		3701AE461F14C29900550890 /* SyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
@@ -352,8 +353,6 @@
 		3A93A1161DB8CA2C00A9FEB4 /* FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlamofireObjectMapper.framework; path = Carthage/Build/iOS/AlamofireObjectMapper.framework; sourceTree = "<group>"; };
-		3A93A11A1DB8E68E00A9FEB4 /* JWTDecode.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JWTDecode.framework; path = Carthage/Build/iOS/JWTDecode.framework; sourceTree = "<group>"; };
-		3A93A11B1DB8E68E00A9FEB4 /* KeychainAccess.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KeychainAccess.framework; path = Carthage/Build/iOS/KeychainAccess.framework; sourceTree = "<group>"; };
 		3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
 		3AF3A8ED1DDB15AE0037E105 /* BaseOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseOutput.swift; sourceTree = "<group>"; };
 		3AF3A8EE1DDB15AE0037E105 /* ConsoleOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleOutput.swift; sourceTree = "<group>"; };
@@ -363,7 +362,6 @@
 		8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CRC32.swift"; sourceTree = "<group>"; };
 		8425931A1CAA605B0006FFA6 /* SyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		8425931C1CAA613E0006FFA6 /* SyncStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStorage.swift; sourceTree = "<group>"; };
-		8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
 		8426D2501C92BB9D009AACFE /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDeviceTests.swift; sourceTree = "<group>"; };
 		8456437B1CAD7F7200351C8E /* CommitsApplyer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommitsApplyer.swift; sourceTree = "<group>"; };
@@ -378,7 +376,6 @@
 		91185B7320615E0C00E5E1CE /* A2AVerification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerification.swift; sourceTree = "<group>"; };
 		91185B7420615E0C00E5E1CE /* A2AVerificationError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationError.swift; sourceTree = "<group>"; };
 		91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationRequest.swift; sourceTree = "<group>"; };
-		917D7F7537C855C49874C76E /* Pods_all_FitpaySDKDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_all_FitpaySDKDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		9A58466C1C96B65B00E4ABDC /* ClientModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientModel.swift; sourceTree = "<group>"; };
 		9A62E6B51C8DCA20004ED6C0 /* Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
@@ -400,7 +397,6 @@
 		9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCCompatibilityExtensions.swift; sourceTree = "<group>"; };
 		9B65A33A1CDD1534007A7D7D /* MockPaymentDeviceConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPaymentDeviceConnector.swift; sourceTree = "<group>"; };
 		9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPaymentDeviceTests.swift; sourceTree = "<group>"; };
-		9EC01D3DCF5D3DB9EB585C01 /* Pods_FitpaySDKAuthenticationTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitpaySDKAuthenticationTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A306B4C91CEE457D007F093C /* ApduResultMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduResultMessage.swift; sourceTree = "<group>"; };
 		B6183344EC5F4DB31C005E1B /* Pods_all_FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_all_FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40C8FCCF7E8D0B3045B4E02 /* Pods-all-FitpaySDKTestsPods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-all-FitpaySDKTestsPods.release.xcconfig"; path = "Pods/Target Support Files/Pods-all-FitpaySDKTestsPods/Pods-all-FitpaySDKTestsPods.release.xcconfig"; sourceTree = "<group>"; };
@@ -451,11 +447,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A46E1511DF023F9002D0270 /* Alamofire.framework in Frameworks */,
-				3A46E1521DF023F9002D0270 /* AlamofireObjectMapper.framework in Frameworks */,
-				3A46E1541DF023F9002D0270 /* KeychainAccess.framework in Frameworks */,
-				3A46E1551DF023F9002D0270 /* ObjectMapper.framework in Frameworks */,
-				3A46E1561DF023F9002D0270 /* FitpaySDK.framework in Frameworks */,
+				2778175C208E731400FE2770 /* FitpaySDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,11 +455,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27E769E62077ED5D00B3CA9D /* JWT.framework in Frameworks */,
+				2778174B208E42A200FE2770 /* RxCocoa.framework in Frameworks */,
+				2778174C208E42A200FE2770 /* RxSwift.framework in Frameworks */,
 				3A93A11D1DB8E68E00A9FEB4 /* Alamofire.framework in Frameworks */,
 				3A93A11E1DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework in Frameworks */,
-				3A93A1201DB8E68E00A9FEB4 /* KeychainAccess.framework in Frameworks */,
 				3A93A1211DB8E68E00A9FEB4 /* ObjectMapper.framework in Frameworks */,
+				2778174E208E704E00FE2770 /* JWTDecode.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,7 +486,6 @@
 				0AD9229E1C1F7EFC007693AB /* Products */,
 				B2C94647591B581A09E4A254 /* Frameworks */,
 				006D1FC3632F93941B04336A /* Pods */,
-				27E769EB2077F83D00B3CA9D /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -591,14 +583,6 @@
 				2773CD94207D53A300DFE113 /* IdVerificationResponseTests.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		27E769EB2077F83D00B3CA9D /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				27E769E52077ED5D00B3CA9D /* JWT.framework */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		3701AE441F14C27000550890 /* Operations */ = {
@@ -770,15 +754,15 @@
 		B2C94647591B581A09E4A254 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2778174D208E704D00FE2770 /* JWTDecode.framework */,
+				27781744208E42A100FE2770 /* RxBlocking.framework */,
+				27781746208E42A100FE2770 /* RxCocoa.framework */,
+				27781747208E42A200FE2770 /* RxSwift.framework */,
+				27781745208E42A100FE2770 /* RxTest.framework */,
 				3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */,
 				3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */,
-				3A93A11A1DB8E68E00A9FEB4 /* JWTDecode.framework */,
-				3A93A11B1DB8E68E00A9FEB4 /* KeychainAccess.framework */,
 				3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */,
-				8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */,
-				9EC01D3DCF5D3DB9EB585C01 /* Pods_FitpaySDKAuthenticationTests.framework */,
 				B6183344EC5F4DB31C005E1B /* Pods_all_FitpaySDK.framework */,
-				917D7F7537C855C49874C76E /* Pods_all_FitpaySDKDemo.framework */,
 				576F8B977B9F8FB60903CA7D /* Pods_all_FitpaySDKTestsPods.framework */,
 			);
 			name = Frameworks;
@@ -972,7 +956,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3A46E1581DF023F9002D0270 /* Build configuration list for PBXNativeTarget "FitpaySDKTestsCarthage" */;
 			buildPhases = (
-				3A46E1471DF023F9002D0270 /* Carthage */,
 				3A46E1481DF023F9002D0270 /* Sources */,
 				3A46E1501DF023F9002D0270 /* Frameworks */,
 				3A46E1571DF023F9002D0270 /* Resources */,
@@ -1078,28 +1061,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3A46E1471DF023F9002D0270 /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/AlamofireObjectMapper.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/JWTDecode.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/KeychainAccess.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RxBlocking.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/JWT.framework",
-			);
-			name = Carthage;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
 		52328AFA33B72A924E2C2687 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1109,7 +1070,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-all-FitpaySDKTestsPods/Pods-all-FitpaySDKTestsPods-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
-				"${BUILT_PRODUCTS_DIR}/JSONWebToken/JWT.framework",
+				"${BUILT_PRODUCTS_DIR}/JWTDecode/JWTDecode.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RxBlocking/RxBlocking.framework",
@@ -1118,7 +1079,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWT.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWTDecode.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxBlocking.framework",
@@ -1721,7 +1682,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks $(FRAMEWORK_SEARCH_PATHS) @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -1734,9 +1695,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks $(FRAMEWORK_SEARCH_PATHS) @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;

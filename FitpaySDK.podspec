@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.dependency 'Alamofire', '~> 4.1'
   s.dependency 'ObjectMapper', '~> 3.1'
   s.dependency 'AlamofireObjectMapper', '~> 5.0'
-  s.dependency 'JSONWebToken', '~> 2.2'
+  s.dependency 'JWTDecode', '~> 2.1'
   s.dependency 'RxSwift', '~> 4.1'
 
   s.ios.deployment_target = '9.0'

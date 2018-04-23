@@ -1,5 +1,5 @@
 import ObjectMapper
-import JWT
+import JWTDecode
 
 extension JWEObject {
     
@@ -30,11 +30,11 @@ extension JWEObject {
         
         guard let decryptResult = try? jweResult?.decrypt(secret) else { return nil }
         guard jweResult?.header?.cty == "JWT" else { return nil }
+                
+        let claimSet = try? decode(jwt: decryptResult!)
         
-        let claimSet = try? JWT.decode(decryptResult!, algorithm: .none, verify: false, audience: nil, issuer: nil, leeway: 10)
-        //verify signature and key
+        let payload = claimSet?.claim(name: "data").string
         
-        let payload = claimSet?["data"] as? String
         return payload
 
     }

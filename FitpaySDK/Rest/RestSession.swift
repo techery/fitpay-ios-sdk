@@ -2,7 +2,7 @@ import Foundation
 import AlamofireObjectMapper
 import Alamofire
 import ObjectMapper
-import JWT
+import JWTDecode
 
 public enum AuthScope: String {
     case userRead   = "user.read"
@@ -85,12 +85,12 @@ open class RestSession: NSObject {
                     completion(error)
                 } else {
                     if let accessToken = details?.accessToken {
-                        guard let claims = try? JWT.decode(accessToken, algorithm: .none, verify: false, audience: nil, issuer: nil, leeway: 10) else {
+                        guard let jwt = try? decode(jwt: accessToken) else {
                             completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
                             return
                         }
 
-                        if let userId = claims["user_id"] as? String {
+                        if let userId = jwt.body["user_id"] as? String {
                             DispatchQueue.main.async { [weak self] in
                                 log.verbose("successful login for user: \(userId)")
                                 self?.userId = userId
