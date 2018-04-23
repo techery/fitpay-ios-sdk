@@ -1,14 +1,6 @@
-//
-//  IntExtensions.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 13.04.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
-public func hex<T:BinaryInteger>( v:T) -> String {
+internal func hex<T: BinaryInteger>(v: T) -> String {
     var v = v
     var s = ""
     for _ in 0..<MemoryLayout<T>.size * 2 {
@@ -33,7 +25,7 @@ public func hex<T:BinaryInteger>( v:T) -> String {
 }
 
 extension BinaryInteger {
-    public func hex(preferableLength: Int) -> String {
+    internal func hex(preferableLength: Int) -> String {
         var s = FitpaySDK.hex(v: self)
         let lenght = s.count
         if lenght < preferableLength {
