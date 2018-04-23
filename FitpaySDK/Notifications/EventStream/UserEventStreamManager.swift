@@ -16,7 +16,6 @@ public class UserEventStreamManager {
             guard let user = user else { return }
             
             self.userEventStream = UserEventStream(user: user, client: self.client!, completion: completion)
-            
         }
     }
 }

@@ -21,7 +21,6 @@ class UserEventStream {
                 guard let jwtBodyString = JWEObject.decryptSigned(data, expectedKeyId: client.key?.keyId, secret: client.secret) else { return }
                 guard let streamEvent = try? jsonDecoder.decode(StreamEvent.self, from: jwtBodyString.data(using: String.Encoding.utf8)!) else { return }
                 
-//                print("String:\(jwtBodyString)")
                 log.debug("USER_EVENT_STREAM: message for \(user.id ?? "no user") received: \(streamEvent)")
                 
                 completion(streamEvent)

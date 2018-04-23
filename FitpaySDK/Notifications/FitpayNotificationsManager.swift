@@ -35,7 +35,7 @@ public enum NotificationsEventType: Int, FitpayEventTypeProtocol {
 
 }
 
-open class FitpayNotificationsManager {
+open class FitpayNotificationsManager: NSObject {
     open static let sharedInstance = FitpayNotificationsManager()
     private var restClient: RestClient?
     
