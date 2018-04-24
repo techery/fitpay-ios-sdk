@@ -1,9 +1,8 @@
 
-import ObjectMapper
 
 extension JWEObject
 {
-    class func decrypt<T:Mappable>(_ encryptedData:String?, expectedKeyId:String?, secret:Data )->T?
+    class func decrypt<T>(_ encryptedData:String?, expectedKeyId:String?, secret:Data )->T? where T : Serializable
     {
         if let encryptedData = encryptedData
         {
@@ -16,14 +15,14 @@ extension JWEObject
                     {
                         if let decryptResult = try? jweResult?.decrypt(secret)
                         {
-                            return Mapper<T>().map(JSONString: decryptResult!)
+                            return try? T(decryptResult)
                         }
                     }
                 }
             } else {
                 if let decryptResult = try? jweResult?.decrypt(secret)
                 {
-                    return Mapper<T>().map(JSONString: decryptResult!)
+                    return try? T(decryptResult)
                 }
             }
         }

@@ -35,6 +35,6 @@ internal class BLEDeviceInfoCollector {
             deviceInfoMap["secureElement"] = ["secureElementId" : secureElementId] as NSDictionary
         }
         
-        return DeviceInfo(deviceInfoMap)
+        return try? DeviceInfo(deviceInfoMap)
     }
 }

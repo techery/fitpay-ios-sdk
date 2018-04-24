@@ -44,7 +44,7 @@ open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(commandId, forKey: .commandId)
         try container.encode(groupId, forKey: .groupId)
         try container.encode(sequence, forKey: .sequence)

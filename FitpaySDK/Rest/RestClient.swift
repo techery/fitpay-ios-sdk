@@ -84,16 +84,18 @@ open class RestClient: NSObject {
             }
             
             let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<ResultCollection<T>>) in
+
+            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(nil, error)
                         
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        completion(resultValue, response.result.error)
+                        let result = try? ResultCollection<T>(resultValue)
+                        result?.client = self
+                        result?.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                        completion(result, response.result.error)
                         
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
@@ -207,15 +209,16 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<ResultCollection<Transaction>>) in
+            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(nil, error)
                         
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        completion(resultValue, response.result.error as NSError?)
+                        let transaction = try? ResultCollection<Transaction>(resultValue)
+                        transaction?.client = self
+                        completion(transaction, response.result.error as NSError?)
                         
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))

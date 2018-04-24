@@ -172,7 +172,7 @@ extension CommitsStorageTests {
     func getSyncRequest(connector: MockPaymentDeviceConnector) -> SyncRequest {
         let device = self.paymentDevice!
         let _ = device.changeDeviceInterface(connector)
-        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: self.deviceInfo, paymentDevice: device)
+        let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: self.deviceInfo, paymentDevice: device)
         SyncRequest.syncManager = self.syncManager
         return request
     }

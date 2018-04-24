@@ -1,7 +1,7 @@
 import ObjectMapper
 
 @objcMembers
-open class Relationship: NSObject, ClientModel, Mappable {
+open class Relationship: NSObject, ClientModel, Serializable {
     
     internal var links: [ResourceLink]?
     internal var card: CardInfo?
@@ -12,16 +12,26 @@ open class Relationship: NSObject, ClientModel, Mappable {
     
     public weak var client: RestClient?
     
-    public required init?(map: Map) {
-        
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case card
+        case device
     }
-    
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        card <- map["card"]
-        device <- map["device"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        card = try container.decode(.card)
+        device = try container.decode(.device)
     }
-    
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(card, forKey: .card)
+        try container.encode(device, forKey: .device)
+    }
+
     /**
      Removes a relationship between a device and a creditCard if it exists
      

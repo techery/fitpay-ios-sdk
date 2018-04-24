@@ -41,19 +41,27 @@ public extension KeyedDecodingContainer {
         
                                                                   transformer: Transformer) throws -> Transformer.Output? where Transformer.Input : Decodable {
 
-        let decoded: Transformer.Input? = try self.decode(key)
-
-        return transformer.transform(decoded)
+        do {
+             let decoded: Transformer.Input? = try self.decode(key)
+             return transformer.transform(decoded)
+        } catch {
+            return nil
+        }
     }
 
     public func decode<T>(_ key: KeyedDecodingContainer.Key) throws -> T? where T : Decodable {
-         return try self.decodeIfPresent(T.self, forKey: key)
+        do {
+            let object = try self.decodeIfPresent(T.self, forKey: key)
+            return object
+        } catch {
+            return nil
+        }
     }
 }
 
 public extension KeyedEncodingContainer {
 
-    public mutating func encode<Transformer: EncodingContainerTransformer>(_ value: Transformer.Output,
+    public mutating func encode<Transformer: EncodingContainerTransformer>(_ value: Transformer.Output?,
                                                                            forKey key: KeyedEncodingContainer.Key,
                                                                            transformer: Transformer) throws where Transformer.Input : Encodable {
         let transformed: Transformer.Input? = transformer.transform(value)

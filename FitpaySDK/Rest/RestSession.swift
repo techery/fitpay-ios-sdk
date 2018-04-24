@@ -2,7 +2,6 @@
 import Foundation
 import AlamofireObjectMapper
 import Alamofire
-import ObjectMapper
 import JWTDecode
 
 public enum AuthScope: String {
@@ -147,20 +146,20 @@ open class RestSession: NSObject
             }
         }
 
-
-       /* request.validate().responseObject(queue: DispatchQueue.global()) {
-            (response: DataResponse<AuthorizationDetails>) in
+        request.validate().responseJSON(queue: DispatchQueue.global()) {
+            (response) in
 
             DispatchQueue.main.async {
                 if let resultError = response.result.error {
                     completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
                 } else if let resultValue = response.result.value {
-                    completion(resultValue, nil)
+                    let authorizationDetails = try? AuthorizationDetails(resultValue)
+                    completion(authorizationDetails, nil)
                 } else {
                     completion(nil, NSError.unhandledError(RestClient.self))
                 }
             }
-        }*/
+        }
     }
 }
 

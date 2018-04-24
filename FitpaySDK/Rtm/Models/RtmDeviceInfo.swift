@@ -6,53 +6,96 @@
 //  Copyright © 2017 Fitpay. All rights reserved.
 //
 
-import ObjectMapper
-
 public class RtmDeviceInfo: DeviceInfo {
     public init(deviceInfo: DeviceInfo) {
         super.init()
         copyFieldsFrom(deviceInfo: deviceInfo)
     }
-    
-    public required init?(map: Map) {
-        super.init(map: map)
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case deviceIdentifier
+        case deviceName
+        case deviceType
+        case manufacturerName
+        case serialNumber
+        case modelNumber
+        case hardwareRevision
+        case firmwareRevision
+        case softwareRevision
+        case notificationToken
+        case osName
+        case systemId
+        case licenseKey
+        case bdAddress
+        case pairing
+        case cardRelationships
+        case metadata
     }
-    
-    open override func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        created <- map["createdTs"]
-        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        deviceIdentifier <- map["deviceIdentifier"]
-        deviceName <- map["deviceName"]
-        deviceType <- map["deviceType"]
-        manufacturerName <- map["manufacturerName"]
-        serialNumber <- map["serialNumber"]
-        modelNumber <- map["modelNumber"]
-        hardwareRevision <- map["hardwareRevision"]
-        firmwareRevision <- map["firmwareRevision"]
-        softwareRevision <- map["softwareRevision"]
-        notificationToken <- map["notificationToken"]
-        osName <- map["osName"]
-        systemId <- map["systemId"]
-        licenseKey <- map["licenseKey"]
-        bdAddress <- map["bdAddress"]
-        pairing <- map["pairing"]
-        
-        if let cardRelationships = map["cardRelationships"].currentValue as? [AnyObject] {
+
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        created = try container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch)
+        deviceIdentifier = try container.decode(.deviceIdentifier)//try container.decode(.links, transformer: DecimalNumberTypeTransform())
+        deviceName = try container.decode(.deviceName)
+        deviceType = try container.decode(.deviceType)
+        serialNumber = try container.decode(.serialNumber)
+        modelNumber = try container.decode(.modelNumber)
+        hardwareRevision = try container.decode(.hardwareRevision)
+        firmwareRevision =  try container.decode(.firmwareRevision)
+        softwareRevision = try container.decode(.softwareRevision)
+        notificationToken = try container.decode(.notificationToken)
+        osName = try container.decode(.osName)
+        systemId = try container.decode(.systemId)
+        licenseKey = try container.decode(.licenseKey)
+        bdAddress = try container.decode(.bdAddress)
+        pairing = try container.decode(.pairing)
+
+       /*TODO if let cardRelationships: [Data] = try container.decode(.cardRelationships) {
             if cardRelationships.count > 0 {
                 self.cardRelationships = [CardRelationship]()
-                
+
                 for itrObj in cardRelationships {
-                    if let parsedObj = Mapper<CardRelationship>().map(JSON: itrObj as! [String: Any]) {
+                    if let parsedObj = try? CardRelationship(itrObj) {
                         self.cardRelationships!.append(parsedObj)
                     }
                 }
             }
-        }
-        
-        metadata = map.JSON as [String: AnyObject]?
+        }*/
+        self.cardRelationships = try container.decode(.cardRelationships)
+
+        metadata = self.toJSON()
     }
-    
+
+    override public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(deviceType, forKey: .deviceType)
+        try container.encode(manufacturerName, forKey: .manufacturerName)
+        try container.encode(serialNumber, forKey: .serialNumber)
+        try container.encode(modelNumber, forKey: .modelNumber)
+        try container.encode(hardwareRevision, forKey: .hardwareRevision)
+        try container.encode(firmwareRevision, forKey: .firmwareRevision)
+        try container.encode(softwareRevision, forKey: .softwareRevision)
+        try container.encode(notificationToken, forKey: .notificationToken)
+        try container.encode(osName, forKey: .osName)
+        try container.encode(systemId, forKey: .systemId)
+        try container.encode(licenseKey, forKey: .licenseKey)
+        try container.encode(bdAddress, forKey: .bdAddress)
+        try container.encode(pairing, forKey: .pairing)
+        try container.encode(cardRelationships, forKey: .cardRelationships)
+       // try container.encode(metadata, forKey: .metadata)
+    }
+
     func copyFieldsFrom(deviceInfo: DeviceInfo) {
         self.deviceIdentifier  = deviceInfo.deviceIdentifier
         self.deviceName        = deviceInfo.deviceName

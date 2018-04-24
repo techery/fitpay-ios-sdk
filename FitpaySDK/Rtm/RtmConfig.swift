@@ -1,4 +1,3 @@
-import ObjectMapper
 
 public enum RtmConfigDafaultMappingKey: String {
     case clientId = "clientId"

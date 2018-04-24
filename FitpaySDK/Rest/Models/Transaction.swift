@@ -1,6 +1,4 @@
 
-import ObjectMapper
-
 open class Transaction : NSObject, ClientModel, Serializable
 {
     internal var links:[ResourceLink]?
@@ -37,7 +35,11 @@ open class Transaction : NSObject, ClientModel, Serializable
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         transactionId = try container.decode(.transactionId)
         transactionType = try container.decode(.transactionType)
-        amount = try container.decode(.links, transformer: DecimalNumberTypeTransform())
+        if let stringNumber: String = try container.decode(.amount) {
+            amount = DecimalNumberTypeTransform().transform(stringNumber)
+        } else if let intNumber: Double = try container.decode(.amount) {
+            amount = DecimalNumberTypeTransform().transform(intNumber)
+        }
         currencyCode = try container.decode(.currencyCode)
         authorizationStatus = try container.decode(.authorizationStatus)
         transactionTime = try container.decode(.transactionTime)
@@ -49,10 +51,10 @@ open class Transaction : NSObject, ClientModel, Serializable
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(transactionId, forKey: .transactionId)
         try container.encode(transactionType, forKey: .transactionType)
-        try container.encode(amount, forKey: .amount)
+        try container.encode(amount?.description, forKey: .amount)
         try container.encode(currencyCode, forKey: .currencyCode)
         try container.encode(authorizationStatus, forKey: .authorizationStatus)
         try container.encode(transactionTime, forKey: .transactionTime)

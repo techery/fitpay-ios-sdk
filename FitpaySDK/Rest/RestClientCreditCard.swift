@@ -115,18 +115,19 @@ extension RestClient {
             }
             
             let request = strongSelf._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<ResultCollection<CreditCard>>) in
+            request.validate().responseJSON(queue: DispatchQueue.global()) { [weak self] (response) in
                 guard let strongSelf = self else { return }
                 
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(nil, error)
-                        
+
                     } else if let resultValue = response.result.value {
-                        resultValue.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        resultValue.client = self
-                        completion(resultValue, nil)
+                        let creditCard = try? ResultCollection<CreditCard>(resultValue)
+                        creditCard?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                        creditCard?.client = self
+                        completion(creditCard, nil)
                         
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
@@ -299,15 +300,16 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<VerificationMethod>) in
+            request?.validate().responseJSON(queue: DispatchQueue.global()) { [weak self] (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(false, nil, error)
                         
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        completion(false, resultValue, nil)
+                        let verificationMethod = try? VerificationMethod(resultValue)
+                        verificationMethod?.client = self
+                        completion(false, verificationMethod, nil)
                         
                     } else {
                         self?.handleVerifyResponse(response, completion: completion)
@@ -326,16 +328,17 @@ extension RestClient {
             
             let params = ["verificationCode": verificationCode]
             let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            request?.validate().responseObject(queue: DispatchQueue.global()) { [weak self] (response: DataResponse<VerificationMethod>) in
+            request?.validate().responseJSON(queue: DispatchQueue.global()) { [weak self] (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(false, nil, error)
                         
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        completion(false, resultValue, nil)
-                        
+                        let verificationMethod = try? VerificationMethod(resultValue)
+                        verificationMethod?.client = self
+                        completion(false, verificationMethod, nil)
+
                     } else {
                         self?.handleVerifyResponse(response, completion: completion)
                     }
@@ -458,7 +461,7 @@ extension RestClient {
     }
     
     //MARK: - Private Functions
-    func handleVerifyResponse(_ response: DataResponse<VerificationMethod>, completion: @escaping VerifyHandler) {
+    func handleVerifyResponse(_ response: DataResponse<Any>, completion: @escaping VerifyHandler) {
         guard let statusCode = response.response?.statusCode else {
             completion(false, nil, NSError.unhandledError(RestClient.self))
             return
@@ -472,7 +475,7 @@ extension RestClient {
         }
     }
     
-    func handleTransitionResponse(_ response: DataResponse<CreditCard>, completion: @escaping CreditCardTransitionHandler) {
+    func handleTransitionResponse(_ response: DataResponse<Any>, completion: @escaping CreditCardTransitionHandler) {
         guard let statusCode = response.response?.statusCode else {
             completion(false, nil, NSError.unhandledError(RestClient.self))
             return

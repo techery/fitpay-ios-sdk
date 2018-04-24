@@ -102,7 +102,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             return
         }
 
-        guard let webViewSessionData = Mapper<SessionData>().map(JSONObject: data) else {
+        guard let webViewSessionData = try? SessionData(data) else {
             log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(data)")
             return
         }

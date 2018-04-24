@@ -9,7 +9,7 @@
 import Foundation
 import ObjectMapper
 
-open class Image: NSObject, ClientModel, Mappable, AssetRetrivable
+open class Image: NSObject, ClientModel, Serializable, AssetRetrivable
 {
     internal var links: [ResourceLink]?
     open var mimeType: String?
@@ -17,15 +17,28 @@ open class Image: NSObject, ClientModel, Mappable, AssetRetrivable
     open var width: Int?
     public var client: RestClient?
     fileprivate static let selfResource = "self"
-    
-    public required init?(map: Map) {
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case mimeType = "mimeType"
+        case height = "height"
+        case width = "width"
     }
-    
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.mimeType <- map["mimeType"]
-        self.height <- map["height"]
-        self.width <- map["width"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        mimeType = try container.decode(.mimeType)
+        height = try container.decode(.height)
+        width = try container.decode(.width)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(mimeType, forKey: .mimeType)
+        try container.encode(height, forKey: .height)
+        try container.encode(width, forKey: .width)
     }
     
     open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {

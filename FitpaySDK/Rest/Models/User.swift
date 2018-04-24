@@ -1,6 +1,5 @@
-import ObjectMapper
 
-open class User: NSObject, ClientModel, Mappable, SecretApplyable {
+open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     
     open var id: String?
     open var created: String?
@@ -41,19 +40,44 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
     }
     
     public weak var client: RestClient?
-    
-    public required init?(map: Map) {
-        
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case id
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case lastModified = "lastModifiedTs"
+        case lastModifiedEpoch = "lastModifiedTsEpoch"
+        case encryptedData
     }
-    
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        id <- map["id"]
-        created <- map["createdTs"]
-        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        lastModified <- map["lastModifiedTs"]
-        lastModifiedEpoch <- (map["lastModifiedTsEpoch"], NSTimeIntervalTransform())
-        encryptedData <- map["encryptedData"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        id = try container.decode(.id)
+        created = try container.decode(.created)
+        if let stringNumber: String = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
+        lastModified = try container.decode(.lastModified)
+        if let stringNumber: String = try container.decode(.lastModifiedEpoch) {
+            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.lastModifiedEpoch) {
+            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
+        encryptedData = try container.decode(.encryptedData)
+    }
+
+     public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(lastModified, forKey: .lastModified)
+        try container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch)
+        try container.encode(encryptedData, forKey: .encryptedData)
     }
     
     /**
@@ -213,21 +237,9 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
     
 }
 
-internal class UserInfo: Mappable {
+internal class UserInfo: Serializable {
     var firstName: String?
     var lastName: String?
     var birthDate: String?
     var email: String?
-    
-    required init?(map: Map) {
-        
-    }
-    
-    func mapping(map: Map) {
-        self.firstName <- map["firstName"]
-        self.lastName <- map["lastName"]
-        self.birthDate <- map["birthDate"]
-        self.email <- map["email"]
-    }
-    
 }

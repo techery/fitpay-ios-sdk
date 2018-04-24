@@ -39,7 +39,7 @@ open class EncryptionKey: NSObject, Serializable
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(keyId, forKey: .keyId)
         try container.encode(created, forKey: .created)
         try container.encode(createdEpoch, forKey: .createdEpoch)

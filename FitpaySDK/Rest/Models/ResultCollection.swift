@@ -1,6 +1,4 @@
 
-import ObjectMapper
-
 open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, SecretApplyable
 {
     open var limit: Int?
@@ -85,7 +83,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(limit, forKey: .limit)
         try container.encode(offset, forKey: .offset)
         try container.encode(totalResults, forKey: .totalResults)

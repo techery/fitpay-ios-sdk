@@ -1,6 +1,4 @@
 
-import ObjectMapper
-
 @objcMembers
 open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
     internal var links: [ResourceLink]?
@@ -81,11 +79,13 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case created
-        case createdEpoch
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
         case deviceIdentifier
         case deviceName
         case deviceType
+        case manufacturerName
+        case state
         case serialNumber
         case modelNumber
         case hardwareRevision
@@ -112,6 +112,8 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         deviceIdentifier = try container.decode(.deviceIdentifier)//try container.decode(.links, transformer: DecimalNumberTypeTransform())
         deviceName = try container.decode(.deviceName)
         deviceType = try container.decode(.deviceType)
+        manufacturerName = try container.decode(.manufacturerName)
+        state = try container.decode(.state)
         serialNumber = try container.decode(.serialNumber)
         modelNumber = try container.decode(.modelNumber)
         hardwareRevision = try container.decode(.hardwareRevision)
@@ -131,7 +133,9 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
             casd = try container.decode(.casd)
         }
 
-        if let cardRelationships: [Any] = try container.decode(.cardRelationships) {
+        self.cardRelationships = try container.decode(.cardRelationships)
+        //TODO
+       /* if let cardRelationships: [Data] = try container.decode(.cardRelationships) {
             if cardRelationships.count > 0 {
                 self.cardRelationships = [CardRelationship]()
 
@@ -141,13 +145,15 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
                     }
                 }
             }
-        }
-        metadata = try container.decode(.metadata)
+        }*/
+
+       super.init()
+       metadata = self.toJSON()
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(created, forKey: .created)
         try container.encode(createdEpoch, forKey: .createdEpoch)
         try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
@@ -167,7 +173,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         try container.encode(secureElementId, forKey: .secureElementId)
         try container.encode(casd, forKey: .casd)
         try container.encode(cardRelationships, forKey: .cardRelationships)
-        try container.encode(metadata, forKey: .metadata)
+        //TODO try container.encode(metadata, forKey: .metadata)
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {
@@ -395,7 +401,7 @@ open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyabl
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(creditCardId, forKey: .creditCardId)
         try container.encode(encryptedData, forKey: .encryptedData)
         try container.encode(pan, forKey: .pan)
@@ -404,11 +410,11 @@ open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyabl
     }
 
     internal func applySecret(_ secret: Data, expectedKeyId: String?) {
-      /* TODO if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
+        if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
             self.pan = decryptedObj.pan
             self.expMonth = decryptedObj.expMonth
             self.expYear = decryptedObj.expYear
-        }*/
+        }
     }
 
     /**

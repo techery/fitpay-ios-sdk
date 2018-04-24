@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public enum VerificationMethodType: String {
+public enum VerificationMethodType: String, Serializable {
     case TEXT_TO_CARDHOLDER_NUMBER          = "TEXT_TO_CARDHOLDER_NUMBER",
         EMAIL_TO_CARDHOLDER_ADDRESS         = "EMAIL_TO_CARDHOLDER_ADDRESS",
         CARDHOLDER_TO_CALL_AUTOMATED_NUMBER = "CARDHOLDER_TO_CALL_AUTOMATED_NUMBER",
@@ -11,14 +11,14 @@ public enum VerificationMethodType: String {
         ISSUER_TO_CALL_CARDHOLDER_NUMBER    = "ISSUER_TO_CALL_CARDHOLDER_NUMBER"
 }
 
-public enum VerificationState: String {
+public enum VerificationState: String, Serializable {
     case AVAILABLE_FOR_SELECTION = "AVAILABLE_FOR_SELECTION",
         AWAITING_VERIFICATION    = "AWAITING_VERIFICATION",
         EXPIRED                  = "EXPIRED",
         VERIFIED                 = "VERIFIED"
 }
 
-public enum VerificationResult: String {
+public enum VerificationResult: String, Serializable {
     case SUCCESS                        = "SUCCESS",
         INCORRECT_CODE                  = "INCORRECT_CODE",
         INCORRECT_CODE_RETRIES_EXCEEDED = "INCORRECT_CODE_RETRIES_EXCEEDED",
@@ -28,7 +28,7 @@ public enum VerificationResult: String {
 }
 
 @objcMembers
-open class VerificationMethod: NSObject, ClientModel, Mappable
+open class VerificationMethod: NSObject, ClientModel, Serializable
 {
     internal var links: [ResourceLink]?
     open var verificationId: String?
@@ -64,20 +64,65 @@ open class VerificationMethod: NSObject, ClientModel, Mappable
     public required init?(map: Map){
     }
 
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.verificationId <- map["verificationId"]
-        self.state <- map["state"]
-        self.methodType <- map["methodType"]
-        self.value <- map["value"]
-        self.verificationResult <- map["verificationResult"]
-        self.created <- map["createdTs"]
-        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        self.lastModified <- map["lastModifiedTs"]
-        self.lastModifiedEpoch <- (map["lastModifiedTsEpoch"], NSTimeIntervalTransform())
-        self.verified <- map["verifiedTs"]
-        self.verifiedEpoch <- (map["verifiedTsEpoch"], NSTimeIntervalTransform())
-        self.appToAppContext <- map["appToAppContext"]
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case verificationId
+        case state
+        case methodType
+        case value
+        case verificationResult
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case lastModified = "lastModifiedTs"
+        case lastModifiedEpoch = "lastModifiedTsEpoch"
+        case verified = "verifiedTs"
+        case verifiedEpoch = "verifiedTsEpoch"
+        case appToAppContext
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        verificationId = try container.decode(.verificationId)
+        state = try container.decode(.state)
+        methodType = try container.decode(.methodType)
+        value = try container.decode(.value)
+        verificationResult = try container.decode(.verificationResult)
+        created = try container.decode(.created)
+        if let stringNumber: String = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
+        lastModified =  try container.decode(.lastModified)
+        if let stringNumber: String = try container.decode(.lastModifiedEpoch) {
+            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.lastModifiedEpoch) {
+            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
+        verified = try container.decode(.verified)
+        if let stringNumber: String = try container.decode(.verifiedEpoch) {
+            verifiedEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.verifiedEpoch) {
+            verifiedEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
+        appToAppContext = try container.decode(.appToAppContext)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(verificationId, forKey: .verificationId)
+        try container.encode(state, forKey: .state)
+        try container.encode(methodType, forKey: .methodType)
+        try container.encode(value, forKey: .value)
+        try container.encode(verificationResult, forKey: .verificationResult)
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(lastModified, forKey: .lastModified)
+        try container.encode(verified, forKey: .verified)
+        try container.encode(verifiedEpoch, forKey: .verifiedEpoch)
+        try container.encode(appToAppContext, forKey: .appToAppContext)
     }
 
     /**
@@ -123,56 +168,5 @@ open class VerificationMethod: NSObject, ClientModel, Mappable
         } else {
             completion(nil, NSError.clientUrlError(domain: VerificationMethod.self, code: 0, client: client, url: url, resource: resource))
         }
-    }
-}
-
-internal class VerificationMethodTransformType: TransformType
-{
-    typealias Object = [VerificationMethod]
-    typealias JSON = [[String: AnyObject]]
-
-    func transformFromJSON(_ value: Any?) -> Array<VerificationMethod>? {
-        if let items = value as? [[String: AnyObject]] {
-            var list = [VerificationMethod]()
-
-            for raw in items {
-                if let item = Mapper<VerificationMethod>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [VerificationMethod]?) -> [[String: AnyObject]]? {
-        return nil
-    }
-}
-
-internal class VerificationMethodTypeTransform: CodingContainerTransformer {
-    typealias Output = [VerificationMethod]
-    typealias Input = [[String: AnyObject]]
-
-    func transform(_ decoded: Input?) -> Output? {
-        if let items = decoded {
-            var list = [VerificationMethod]()
-
-            for raw in items {
-                if let item = Mapper<VerificationMethod>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transform(_ encoded: Output?) -> Input? {
-        return nil
     }
 }

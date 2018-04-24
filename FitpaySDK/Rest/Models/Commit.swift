@@ -1,6 +1,4 @@
 
-import ObjectMapper
-
 open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
 {
     var links:[ResourceLink]?
@@ -27,7 +25,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case commitTypeString
+        case commitTypeString = "commitType"
         case created = "createdTs"
         case previousCommit
         case commit = "commitId"
@@ -46,7 +44,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(commitTypeString, forKey: .commitTypeString)
         try container.encode(created, forKey: .created)
         try container.encode(previousCommit, forKey: .previousCommit)
@@ -125,30 +123,34 @@ public enum CommitType : String
     case UNKNOWN                     = "UNKNOWN"
 }
 
-open class Payload : NSObject, Mappable
+open class Payload : NSObject, Serializable
 {
     open var creditCard:CreditCard?
-    internal var payloadDictionary:[String : AnyObject]?
+    internal var payloadDictionary:[String : Any]?
     internal var apduPackage:ApduPackage?
     
-    public required init?(map: Map)
-    {
-        
+    private enum CodingKeys: String, CodingKey {
+        case creditCardId
+        case packageId
     }
-    
-    open func mapping(map: Map)
-    {
-        let info = map.JSON
-        
-        if let _ = info["creditCardId"]
-        {
-            self.creditCard = CreditCard(info)
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        print(decoder)
+         print(container)
+          print(container.codingPath)
+        if let _ : String = try container.decode(.packageId) {
+            apduPackage = try? ApduPackage(from: decoder)
+        } else if let _ : String = try container.decode(.creditCardId) {
+            creditCard = try? CreditCard(from: decoder)
         }
-        else if let _ = info["packageId"]
-        {
-            self.apduPackage = try? ApduPackage(info)
-        }
-        
-        self.payloadDictionary = info as [String : AnyObject]?
+        super.init()
+        self.payloadDictionary = self.toJSON()
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(creditCard, forKey: .creditCardId)
+        try container.encode(apduPackage, forKey: .packageId)
     }
 }

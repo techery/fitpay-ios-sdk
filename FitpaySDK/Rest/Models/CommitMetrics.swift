@@ -1,4 +1,3 @@
-import ObjectMapper
 
 public enum SyncInitiator : String, Serializable {
     case Platform = "PLATFORM"
