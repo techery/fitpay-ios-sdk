@@ -1,6 +1,6 @@
 import Foundation
 
-internal func hex<T: BinaryInteger>(v: T) -> String {
+public func hex<T: BinaryInteger>(v: T) -> String {
     var v = v
     var s = ""
     for _ in 0..<MemoryLayout<T>.size * 2 {
@@ -25,7 +25,7 @@ internal func hex<T: BinaryInteger>(v: T) -> String {
 }
 
 extension BinaryInteger {
-    internal func hex(preferableLength: Int) -> String {
+    public func hex(preferableLength: Int) -> String {
         var s = FitpaySDK.hex(v: self)
         let lenght = s.count
         if lenght < preferableLength {
