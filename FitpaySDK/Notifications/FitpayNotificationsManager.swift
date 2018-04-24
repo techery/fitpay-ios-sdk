@@ -1,19 +1,11 @@
-//
-//  NotificationsManager.swift
-//  FitpaySDK
-//
-//  Created by Anton on 19.08.16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
-
 import Foundation
 
-public enum NotificationsType : String {
+public enum NotificationsType: String {
     case WithSync = "sync"
     case WithoutSync = "withoutsync"
 }
 
-public enum NotificationsEventType : Int, FitpayEventTypeProtocol {
+public enum NotificationsEventType: Int, FitpayEventTypeProtocol {
     case receivedSyncNotification = 0x1
     case receivedSimpleNotification
     
@@ -40,15 +32,12 @@ public enum NotificationsEventType : Int, FitpayEventTypeProtocol {
             return "All notification processed"
         }
     }
+
 }
 
-open class FitpayNotificationsManager : NSObject {
+open class FitpayNotificationsManager: NSObject {
     open static let sharedInstance = FitpayNotificationsManager()
     private var restClient: RestClient?
-    
-    override public init() {
-        super.init()
-    }
     
     public typealias NotificationsPayload = [AnyHashable: Any]
     public func setRestClient(_ client: RestClient?) {
@@ -90,7 +79,7 @@ open class FitpayNotificationsManager : NSObject {
      
      - parameter event: Provides event with payload in eventData property
      */
-    public typealias NotificationsEventBlockHandler = (_ event:FitpayEvent) -> Void
+    public typealias NotificationsEventBlockHandler = (_ event: FitpayEvent) -> Void
     
     /**
      Binds to the event using NotificationsEventType and a block as callback.
@@ -127,15 +116,23 @@ open class FitpayNotificationsManager : NSObject {
         eventsDispatcher.removeAllBindings()
     }
     
+    open func updateRestClientForNotificationDetail(_ notificationDetail: NotificationDetail?) {
+        if let notificationDetail = notificationDetail {
+            if notificationDetail.restClient == nil {
+                notificationDetail.restClient = self.restClient
+            }
+        }
+    }
+
     // MARK: internal
-    internal var notificationsToken : String = ""
+    internal var notificationsToken: String = ""
     
     // MARK: private
     private let eventsDispatcher = FitpayEventDispatcher()
-    private var syncCompletedBinding : FitpayEventBinding?
-    private var syncFailedBinding : FitpayEventBinding?
+    private var syncCompletedBinding: FitpayEventBinding?
+    private var syncFailedBinding: FitpayEventBinding?
     private var notificationsQueue = [NotificationsPayload]()
-    private var currentNotification : NotificationsPayload?
+    private var currentNotification: NotificationsPayload?
     
     private func processNextNotificationIfAvailable() {
         log.verbose("NOTIFICATIONS_DATA: Processing next notification if available.")
@@ -178,7 +175,7 @@ open class FitpayNotificationsManager : NSObject {
     }
     
     private func callReceivedCompletion(_ payload: NotificationsPayload, notificationType: NotificationsType) {
-        var eventType : NotificationsEventType
+        var eventType: NotificationsEventType
         switch notificationType {
         case .WithSync:
             eventType = .receivedSyncNotification
@@ -188,7 +185,7 @@ open class FitpayNotificationsManager : NSObject {
             break
         }
         
-        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: payload as AnyObject))
+        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: payload))
     }
     
     private func callAllNotificationProcessedCompletion() {
@@ -203,12 +200,5 @@ open class FitpayNotificationsManager : NSObject {
         }
         return nil
     }
-    
-    open func updateRestClientForNotificationDetail(_ notificationDetail: NotificationDetail?) {
-        if let notificationDetail = notificationDetail {
-            if notificationDetail.restClient == nil {
-                notificationDetail.restClient = self.restClient
-            }
-        }
-    }
+
 }

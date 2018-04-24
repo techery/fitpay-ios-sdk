@@ -472,10 +472,10 @@ open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivabl
 
 internal class TermsAssetReferencesTransformType: TransformType {
     typealias Object = [TermsAssetReferences]
-    typealias JSON = [[String: AnyObject]]
+    typealias JSON = [[String: Any]]
 
     func transformFromJSON(_ value: Any?) -> [TermsAssetReferences]? {
-        if let items = value as? [[String: AnyObject]] {
+        if let items = value as? [[String: Any]] {
             var list = [TermsAssetReferences]()
 
             for raw in items  {
@@ -490,14 +490,14 @@ internal class TermsAssetReferencesTransformType: TransformType {
         return nil
     }
 
-    func transformToJSON(_ value: [TermsAssetReferences]?) -> [[String: AnyObject]]? {
+    func transformToJSON(_ value: [TermsAssetReferences]?) -> [[String: Any]]? {
         return nil
     }
 }
 
 open class DeviceRelationships: NSObject, ClientModel, Mappable {
+    
     open var deviceType: String?
-    internal var links: [ResourceLink]?
     open var deviceIdentifier: String?
     open var manufacturerName: String?
     open var deviceName: String?
@@ -511,8 +511,11 @@ open class DeviceRelationships: NSObject, ClientModel, Mappable {
     open var osName: String?
     open var systemId: String?
 
-    private static let selfResource = "self"
     public var client: RestClient?
+    
+    internal var links: [ResourceLink]?
+
+    private static let selfResourceKey = "self"
 
     public required init?(map: Map) {
     }
@@ -535,7 +538,7 @@ open class DeviceRelationships: NSObject, ClientModel, Mappable {
     }
 
     @objc func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
-        let resource = DeviceRelationships.selfResource
+        let resource = DeviceRelationships.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.relationship(url, completion: completion)
@@ -547,10 +550,10 @@ open class DeviceRelationships: NSObject, ClientModel, Mappable {
 
 internal class DeviceRelationshipsTransformType: TransformType {
     typealias Object = [DeviceRelationships]
-    typealias JSON = [[String: AnyObject]]
+    typealias JSON = [[String: Any]]
 
     func transformFromJSON(_ value: Any?) -> [DeviceRelationships]? {
-        if let items = value as? [[String: AnyObject]] {
+        if let items = value as? [[String: Any]] {
             var list = [DeviceRelationships]()
 
             for raw in items {
@@ -565,7 +568,7 @@ internal class DeviceRelationshipsTransformType: TransformType {
         return nil
     }
 
-    func transformToJSON(_ value: [DeviceRelationships]?) -> [[String: AnyObject]]? {
+    func transformToJSON(_ value: [DeviceRelationships]?) -> [[String: Any]]? {
         return nil
     }
 }

@@ -11,12 +11,11 @@ Pod::Spec.new do |s|
   s.dependency 'Alamofire', '~> 4.1'
   s.dependency 'ObjectMapper', '~> 3.1'
   s.dependency 'AlamofireObjectMapper', '~> 5.0'
-  s.dependency 'JWTDecode', '2.0.0'
-  s.dependency 'KeychainAccess', '3.1'
+  s.dependency 'JWTDecode', '~> 2.1'
   s.dependency 'RxSwift', '~> 4.1'
 
   s.ios.deployment_target = '9.0'
   s.swift_version = '4.0'
-  s.source_files  = "{FitpaySDK}/**/*.swift"
+  s.source_files  = "{FitpaySDK}/**/*.{h,m,swift}"
 
 end

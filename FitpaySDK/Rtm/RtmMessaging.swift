@@ -1,11 +1,3 @@
-//
-//  RtmMessaging.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 18.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 import ObjectMapper
 
@@ -21,8 +13,6 @@ class RtmMessaging {
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
     weak var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
     
-    private(set) var messageHandler: RtmMessageHandler?
-
     lazy var handlersMapping: [RtmProtocolVersion: RtmMessageHandler?] = {
         return [RtmProtocolVersion.ver1: nil,
                 RtmProtocolVersion.ver2: RtmMessageHandlerV2(wvConfigStorage: self.wvConfigStorage),
@@ -30,6 +20,17 @@ class RtmMessaging {
                 RtmProtocolVersion.ver4: RtmMessageHandlerV4(wvConfigStorage: self.wvConfigStorage),
                 RtmProtocolVersion.ver5: RtmMessageHandlerV5(wvConfigStorage: self.wvConfigStorage)]
     }()
+    
+    private(set) var messageHandler: RtmMessageHandler?
+    private var wvConfigStorage: WvConfigStorage
+    
+    private struct BufferedMessage {
+        var message: [String: Any]
+        var completion: RtmRawMessageCompletion?
+    }
+    
+    private var preVersionBuffer: [BufferedMessage]
+    private var receivedWrongVersion = false
     
     init(wvConfigStorage: WvConfigStorage) {
         self.wvConfigStorage = wvConfigStorage
@@ -112,13 +113,4 @@ class RtmMessaging {
         completion?(true)
     }
     
-    private var wvConfigStorage: WvConfigStorage
-    
-    private struct BufferedMessage {
-        var message: [String: Any]
-        var completion: RtmRawMessageCompletion?
-    }
-    
-    private var preVersionBuffer: [BufferedMessage]
-    private var receivedWrongVersion = false
 }

@@ -18,15 +18,13 @@ class PaymentDeviceTests: XCTestCase {
         super.tearDown()
     }
     
-    func testConnectToDeviceCheck()
-    {
+    func testConnectToDeviceCheck() {
         let expectation = super.expectation(description: "connection to device check")
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-        {
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
             (event) in
             debugPrint("event: \(event), eventData: \(event.eventData)")
-            let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as AnyObject as? DeviceInfo
-            let error = (event.eventData as? [String:Any])?["error"]
+            let deviceInfo = (event.eventData as? [String: Any])?["deviceInfo"] as? DeviceInfo
+            let error = (event.eventData as? [String: Any])?["error"]
             
             XCTAssertNil(error)
             XCTAssertNotNil(deviceInfo)
@@ -129,33 +127,24 @@ class PaymentDeviceTests: XCTestCase {
         super.waitForExpectations(timeout: 20, handler: nil)
     }
 
-    func testSync()
-    {
+    func testSync() {
         let expectation = super.expectation(description: "test sync with commit")
         
         SyncManager.sharedInstance.paymentDevice = self.paymentDevice
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDevice)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDevice) { (event) -> Void in
             print("connecting to device started")
         }
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDeviceCompleted)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDeviceCompleted) { (event) -> Void in
             print("connecting to device finished")
         }
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncStarted)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncStarted) { (event) -> Void in
             print("sync started")
         }
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed) { (event) -> Void in
             print("sync failed", event.eventData)
             
             XCTAssertNil(event.eventData)
@@ -165,38 +154,28 @@ class PaymentDeviceTests: XCTestCase {
             expectation.fulfill()
         }
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.commitProcessed)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.commitProcessed) { (event) -> Void in
             print("COMMIT_PROCESSED")
         }
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncProgress)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncProgress) { (event) -> Void in
             print("sync progress", event.eventData)
         }
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.apduCommandsProgress)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.apduCommandsProgress) { (event) -> Void in
             print("apdu progress", event.eventData)
         }
         
-        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted)
-        {
-            (event) -> Void in
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted) { (event) -> Void in
             print("sync finished", event.eventData)
             
             SyncManager.sharedInstance.removeAllSyncBindings()
             expectation.fulfill()
         }
         
-        let _ = SyncManager.sharedInstance.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onNotificationReceived, completion:
-        {
-            (notificationData)->Void in
+        let _ = SyncManager.sharedInstance.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onNotificationReceived) { (notificationData) -> Void in
             print("notification:", notificationData)
-        })
+        }
         
         var clientId = "fp_webapp_pJkVp2Rl"
         let redirectUri = "https://webapp.fit-pay.com"
@@ -213,32 +192,23 @@ class PaymentDeviceTests: XCTestCase {
         let restSession:RestSession = RestSession(configuration: config)
         let restClient:RestClient = RestClient(session: restSession)
         
-        restSession.login(username: username, password: password)
-        {
-            (error) -> Void in
+        restSession.login(username: username, password: password) { (error) -> Void in
             XCTAssertNil(error)
             XCTAssertTrue(restSession.isAuthorized)
             
-            if !restSession.isAuthorized
-            {
+            if !restSession.isAuthorized {
                 return
             }
             
-            restClient.user(id: restSession.userId!, completion:
-                {
-                    (user, error) -> Void in
-                    
+            restClient.user(id: restSession.userId!) { (user, error) -> Void in
                     XCTAssertNil(error)
                     XCTAssertNotNil(user)
-                    
-                    //                user?.createNewDevice("SMART_STRAP", manufacturerName: "Fitpay", deviceName: "TestDevice2", serialNumber: "1.0.1", modelNumber: "1.0.0.0.1", hardwareRevision: "1.0.0.0.0.0.0.0.0.0.1", firmwareRevision: "1.0.851", softwareRevision: "1.0.0.1", systemId: "0x123456FFFE9ABCDE", osName: "ANDROID", licenseKey: "Some key", bdAddress: "", secureElementId: "4215b2c7-9999-1111-b224-388820601642", pairing: "2016-02-29T21:42:21.469Z", completion: { (device, error) -> Void in
+                
                     let _ = SyncManager.sharedInstance.sync(user!)
-                    //                })
-                    
-                    
-            })
+            }
         }
         
         super.waitForExpectations(timeout: 180, handler: nil)
     }
+
 }

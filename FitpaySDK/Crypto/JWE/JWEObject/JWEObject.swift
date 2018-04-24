@@ -1,10 +1,10 @@
+import Foundation
 
-
-enum JWEAlgorithm : String {
+enum JWEAlgorithm: String {
     case A256GCMKW = "A256GCMKW"
 }
 
-enum JWEEncryption : String {
+enum JWEEncryption: String {
     case A256GCM = "A256GCM"
 }
 
@@ -26,20 +26,19 @@ class JWEObject {
     static let CekIVSize = 12
     static let PayloadIVSize = 16
     
-    var header : JWEHeader?
+    var header: JWEHeader?
     
-    private var cekCt : Data?
-    private var iv : Data?
-    private var ct : Data?
-    private var tag : Data?
+    private var cekCt: Data?
+    private var iv: Data?
+    private var ct: Data?
+    private var tag: Data?
     
-    private(set) var encryptedPayload : String?
-    private(set) var decryptedPayload : String?
-    private var payloadToEncrypt : String?
+    private(set) var encryptedPayload: String?
+    private(set) var decryptedPayload: String?
+    private var payloadToEncrypt: String?
     
-    static func parse(payload:String) -> JWEObject?
-    {
-        let jweObject : JWEObject = JWEObject()
+    static func parse(payload: String) -> JWEObject? {
+        let jweObject = JWEObject()
         jweObject.encryptedPayload = payload
         
         let jwe = payload.components(separatedBy: ".")
@@ -52,20 +51,16 @@ class JWEObject {
         return jweObject
     }
     
-    static func createNewObject(_ alg: JWEAlgorithm, enc: JWEEncryption, payload: String, keyId: String?) throws -> JWEObject
-    {
-        
+    static func createNewObject(_ alg: JWEAlgorithm, enc: JWEEncryption, payload: String, keyId: String?) throws -> JWEObject {
         let jweObj = JWEObject()
         jweObj.header = JWEHeader(encryption: enc, algorithm: alg)
         jweObj.header!.kid = keyId
-        
         jweObj.payloadToEncrypt = payload
         
         return jweObj
     }
     
-    func encrypt(_ sharedSecret: Data) throws -> String?
-    {
+    func encrypt(_ sharedSecret: Data) throws -> String? {
         guard payloadToEncrypt != nil else {
             return nil
         }
@@ -111,8 +106,7 @@ class JWEObject {
         return encryptedPayload
     }
     
-    func decrypt(_ sharedSecret: Data) throws -> String?
-    {
+    func decrypt(_ sharedSecret: Data) throws -> String? {
         guard header != nil else {
             throw JWEObjectError.headerNotSpecified
         }
@@ -158,8 +152,7 @@ class JWEObject {
         
     }
     
-    private func A256GCMDecryptData(_ cipherKey:Data, data:Data, iv:Data, tag:Data, aad:Data?) -> Data?
-    {
+    private func A256GCMDecryptData(_ cipherKey: Data, data: Data, iv: Data, tag: Data, aad: Data?) -> Data? {
         // cryptAuth expects that data will be with tag
         // so appending tag to data
         var dataWithTag = data
@@ -182,8 +175,7 @@ class JWEObject {
         return decryptedData
     }
     
-    private func A256GCMEncryptData(_ key: Data, data: Data, iv: Data, aad: Data?) -> (Data?, Data?)
-    {
+    private func A256GCMEncryptData(_ key: Data, data: Data, iv: Data, aad: Data?) -> (Data?, Data?) {
         var encryptResult: (Data?, Data?) = (nil, nil)
         
         do {

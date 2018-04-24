@@ -66,7 +66,7 @@ open class ResultCollection<T: Mappable>: NSObject, ClientModel, Mappable, Secre
         offset <- map["offset"]
         totalResults <- map["totalResults"]
 
-        if let objectsArray = map["results"].currentValue as? [AnyObject] {
+        if let objectsArray = map["results"].currentValue as? [Any] {
             results = [T]()
             for objectMap in objectsArray {
                 if let modelObject = Mapper<T>().map(JSON: objectMap as! [String: Any]) {
