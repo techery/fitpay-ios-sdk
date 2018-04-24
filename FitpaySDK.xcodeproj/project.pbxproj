@@ -43,6 +43,8 @@
 		27EA81DE208F96F700FFBB56 /* UserEventStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81DB208F96F700FFBB56 /* UserEventStream.swift */; };
 		27EA81DF208F96F700FFBB56 /* StreamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81DC208F96F700FFBB56 /* StreamEvent.swift */; };
 		27EA81E0208F96F700FFBB56 /* StreamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81DC208F96F700FFBB56 /* StreamEvent.swift */; };
+		27EA81E2208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81E1208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift */; };
+		27EA81E3208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81E1208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift */; };
 		3701AE3B1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE3C1F13BA1B00550890 /* SyncEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE3A1F13BA1B00550890 /* SyncEvent.swift */; };
 		3701AE471F14C29900550890 /* ConnectDeviceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */; };
@@ -314,6 +316,7 @@
 		27EA81D8208F8BF400FFBB56 /* PaymentDeviceUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDeviceUtilsTests.swift; sourceTree = "<group>"; };
 		27EA81DB208F96F700FFBB56 /* UserEventStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEventStream.swift; sourceTree = "<group>"; };
 		27EA81DC208F96F700FFBB56 /* StreamEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamEvent.swift; sourceTree = "<group>"; };
+		27EA81E1208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyedDecodingContainerExtension.swift; sourceTree = "<group>"; };
 		3701AE3A1F13BA1B00550890 /* SyncEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncEvent.swift; sourceTree = "<group>"; };
 		3701AE451F14C29900550890 /* ConnectDeviceOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectDeviceOperation.swift; sourceTree = "<group>"; };
 		3701AE461F14C29900550890 /* SyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
@@ -877,16 +880,17 @@
 		CD0389AD6419ED1E01710351 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */,
-				CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */,
-				CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */,
-				CD0382E7C3731302B80C1CBE /* NSErrorExtensions.swift */,
-				CD038C64E5144812C865F0AA /* NSDataExtensions.swift */,
-				9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */,
 				9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */,
-				8426D2501C92BB9D009AACFE /* StringExtensions.swift */,
-				8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */,
+				CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */,
 				37AB3F8C1E9FEBDC001B2981 /* IntExtensions.swift */,
+				9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */,
+				27EA81E1208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift */,
+				8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */,
+				CD038C64E5144812C865F0AA /* NSDataExtensions.swift */,
+				CD0382E7C3731302B80C1CBE /* NSErrorExtensions.swift */,
+				CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */,
+				9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */,
+				8426D2501C92BB9D009AACFE /* StringExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1256,6 +1260,7 @@
 				CD038163A93FFC2353B572A0 /* DictionaryExtensions.swift in Sources */,
 				9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */,
 				37D0CFE81EDC3D5E0049B5AA /* IFitpayCardScanner.swift in Sources */,
+				27EA81E2208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift in Sources */,
 				371CB3001F444ACF0019A766 /* NonAPDUConfirmOperation.swift in Sources */,
 				1F5BBD802017450200F16B4F /* NotificationDetail.swift in Sources */,
 				CD038D8BCA3144FBB29E8DE4 /* NSErrorExtensions.swift in Sources */,
@@ -1350,6 +1355,7 @@
 				3A46E1431DEEE499002D0270 /* FitpayEventsSubscriber.swift in Sources */,
 				3A93A08A1DB8CA2C00A9FEB4 /* Relationship.swift in Sources */,
 				91185B7E2061694400E5E1CE /* A2AVerificationError.swift in Sources */,
+				27EA81E3208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift in Sources */,
 				3A93A08B1DB8CA2C00A9FEB4 /* Commit.swift in Sources */,
 				3767B8221ED32AE5007443D2 /* RestClientRelationship.swift in Sources */,
 				91185B7B2061694400E5E1CE /* A2AContext.swift in Sources */,
