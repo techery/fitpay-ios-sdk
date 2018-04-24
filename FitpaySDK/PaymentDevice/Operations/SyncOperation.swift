@@ -1,11 +1,3 @@
-//
-//  SyncOperation.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 10.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 import RxSwift
 
@@ -20,14 +12,10 @@ internal enum SyncOperationError: Error {
 
 internal class SyncOperation {
     
-    init(paymentDevice: PaymentDevice,
-         connector: IPaymentDeviceConnector,
-         deviceInfo: DeviceInfo,
-         user: User,
-         syncFactory: SyncFactory,
-         syncStorage: SyncStorage = SyncStorage.sharedInstance,
-         request: SyncRequest? = nil)
-    {
+    init(paymentDevice: PaymentDevice, connector: IPaymentDeviceConnector,
+         deviceInfo: DeviceInfo, user: User, syncFactory: SyncFactory,
+         syncStorage: SyncStorage = SyncStorage.sharedInstance, request: SyncRequest? = nil) {
+        
         self.paymentDevice = paymentDevice
         self.connector     = connector
         self.deviceInfo    = deviceInfo
@@ -45,7 +33,7 @@ internal class SyncOperation {
                                                                           publisher: self.syncEventsPublisher)
         
         self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo, connector: connector)
-            
+        
         self.syncStorage = syncStorage
         self.syncRequest = request
     }
@@ -62,19 +50,13 @@ internal class SyncOperation {
     func start() -> Observable<SyncEvent> {
         self.state.asObservable().subscribe(onNext: { [weak self] (state) in
             switch state {
-            case .waiting:
+            case .waiting, .connected, .connecting, .commitsReceived:
                 break
             case .started:
                 self?.isSyncing = true
                 break
-            case .connected:
-                break
-            case .connecting:
-                break
             case .completed:
                 self?.isSyncing = false
-                break
-            case .commitsReceived:
                 break
             }
         }).disposed(by: disposeBag)
@@ -91,11 +73,11 @@ internal class SyncOperation {
         
         return self.eventsAdapter.startAdapting()
     }
-
+    
     // MARK: internal
     internal var fetchCommitsOperation: FetchCommitsOperationProtocol // Dependency Injection
     internal var commitsApplyer: CommitsApplyer
-
+    
     // MARK: private
     private var paymentDevice: PaymentDevice
     private var connector: IPaymentDeviceConnector
@@ -136,10 +118,9 @@ internal class SyncOperation {
                 }
                 break
             case .completed:
-                print("REMOVE ME! completed")
                 break
             }
-        }.disposed(by: self.disposeBag)
+            }.disposed(by: self.disposeBag)
     }
     
     private func sync() {
@@ -175,17 +156,14 @@ internal class SyncOperation {
                 self?.sendCommitsMetric()
                 break
             }
-        }.disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
     }
     
     private func sendCommitsMetric() {
-        guard (self.syncRequest?.notificationAsc) != nil else {
-            return
-        }
+        guard (self.syncRequest?.notificationAsc) != nil else { return }
         
         let currentTimestamp = Date().timeIntervalSince1970
-        
         
         let metric = CommitMetrics()
         metric.commitStatistics = self.commitsApplyer.commitStatistics
@@ -194,7 +172,7 @@ internal class SyncOperation {
         metric.initiator = self.syncRequest?.syncInitiator
         metric.notificationAsc = self.syncRequest?.notificationAsc
         metric.totalProcessingTimeMs = Int((currentTimestamp - (self.syncRequest?.syncStartTime?.timeIntervalSince1970)!)*1000)
-
+        
         metric.sendCompleteSync()
     }
 }

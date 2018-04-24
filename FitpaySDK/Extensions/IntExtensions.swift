@@ -10,9 +10,7 @@ public func hex<T: BinaryInteger>(v: T) -> String {
     
     var firstZeroCounter = 0
     for char in s {
-        if char != "0" {
-            break
-        }
+        if char != "0" { break }
         firstZeroCounter += 1
     }
     

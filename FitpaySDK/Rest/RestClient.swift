@@ -62,7 +62,7 @@ open class RestClient: NSObject {
         return SessionManager(configuration: configuration)
     }()
     
-    private var key: EncryptionKey?
+    internal var key: EncryptionKey?
     
     internal var secret: Data {
         let secret = self.keyPair.generateSecretForPublicKey(key?.serverPublicKey ?? "")
@@ -75,7 +75,7 @@ open class RestClient: NSObject {
     public init(session: RestSession) {
         _session = session;
     }
-    
+
     internal func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: Error?) -> Void) -> T? {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
