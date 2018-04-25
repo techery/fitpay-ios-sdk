@@ -134,20 +134,6 @@ open class RestSession: NSObject
         let request = _manager.request(self.authorizeURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
         request.validate().responseJSON(queue: DispatchQueue.global()) {
             (response) in
-            
-            DispatchQueue.main.async {
-                if let resultError = response.result.error {
-                    completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
-                } else if let resultValue = response.result.value {
-                    completion(try? AuthorizationDetails(resultValue), nil)
-                } else {
-                    completion(nil, NSError.unhandledError(RestClient.self))
-                }
-            }
-        }
-
-        request.validate().responseJSON(queue: DispatchQueue.global()) {
-            (response) in
 
             DispatchQueue.main.async {
                 if let resultError = response.result.error {

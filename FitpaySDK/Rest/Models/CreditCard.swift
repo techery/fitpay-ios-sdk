@@ -1,6 +1,5 @@
 
 import Foundation
-import ObjectMapper
 
 public enum TokenizationState: String, Codable {
     case NEW,
@@ -599,9 +598,6 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
 
     fileprivate static let selfResource = "self"
     public var client: RestClient?
-
-    public required init?(map: Map) {
-    }
 
     private enum CodingKeys: String, CodingKey {
         case deviceType

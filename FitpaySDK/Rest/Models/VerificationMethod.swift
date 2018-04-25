@@ -1,6 +1,4 @@
 
-import ObjectMapper
-
 public enum VerificationMethodType: String, Serializable {
     case TEXT_TO_CARDHOLDER_NUMBER          = "TEXT_TO_CARDHOLDER_NUMBER",
         EMAIL_TO_CARDHOLDER_ADDRESS         = "EMAIL_TO_CARDHOLDER_ADDRESS",
@@ -59,9 +57,6 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
 
     open var cardAvailable: Bool {
         return self.links?.url(VerificationMethod.cardResource) != nil
-    }
-
-    public required init?(map: Map){
     }
 
     private enum CodingKeys: String, CodingKey {

@@ -1193,7 +1193,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 300, handler: nil)
     }
     
     func testAssetsRetrievesAsset() {
@@ -1357,8 +1357,8 @@ class RestClientTests: XCTestCase {
         let expectation = super.expectation(description: "NSTimeInterval converted to int correctly")
         
         let currentTime = Date().timeIntervalSince1970
-        let timeTransform = NSTimeIntervalTransform()
-        guard let timeAsInt = timeTransform.transformToJSON(currentTime) else {
+        let timeTransform = NSTimeIntervalTypeTransform()
+        guard let timeAsInt = timeTransform.transform(currentTime) else {
             XCTAssert(false, "Can't get int value for time.")
             return
         }

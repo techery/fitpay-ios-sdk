@@ -1,4 +1,3 @@
-import ObjectMapper
 
 @objcMembers
 open class Relationship: NSObject, ClientModel, Serializable {

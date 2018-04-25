@@ -7,26 +7,52 @@
 //
 
 import UIKit
-import ObjectMapper
 
 public typealias RtmMessageType = String
 
-open class RtmMessage: NSObject, Mappable {
+open class RtmMessage: NSObject, Serializable {
     open var callBackId: Int?
     open var data: Any?
     open var type: String?
     
-    public required init?(map: Map) {
-        
-    }
+
     
     internal override init() {
         super.init()
     }
-        
-    open func mapping(map: Map) {
-        callBackId <- map["callBackId"]
-        data <- map["data"]
-        type <- map["type"]
+
+    private enum CodingKeys: String, CodingKey {
+        case callBackId
+        case data
+        case type
+    }
+
+    struct JSONCodingKeys: CodingKey {
+        var stringValue: String
+
+        init?(stringValue: String) {
+            self.stringValue = stringValue
+        }
+
+        var intValue: Int?
+
+        init?(intValue: Int) {
+            self.init(stringValue: "\(intValue)")
+            self.intValue = intValue
+        }
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        callBackId = try container.decode(.callBackId)
+        data = try container.decode([String: Any].self, forKey: .data)
+        type = try container.decode(.type)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(callBackId, forKey: .callBackId)
+        //TODO try container.encode(data, forKey: .data)
+        try container.encode(type, forKey: .type)
     }
 }

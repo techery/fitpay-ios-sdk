@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 class RtmMessageHandlerV5: RtmMessageHandlerV4 {
     enum RtmMessageTypeVer5: RtmMessageType, RtmMessageTypeWithHandler {
