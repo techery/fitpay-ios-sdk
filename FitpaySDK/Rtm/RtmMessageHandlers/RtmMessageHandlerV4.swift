@@ -1,17 +1,9 @@
-//
-//  RtmMessageHandlerV4.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 17.08.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 class RtmMessageHandlerV4: RtmMessageHandlerV3 {
     var cardScanner: IFitpayCardScanner?
     
-    enum RtmMessageTypeVer4: RtmMessageType, RtmMessageTypeWithHandler {
+    enum RtmMessageTypeVer4: String, RtmMessageTypeWithHandler {
         case rtmVersion        = "version"
         case sync              = "sync"
         case deviceStatus      = "deviceStatus"
@@ -48,7 +40,7 @@ class RtmMessageHandlerV4: RtmMessageHandlerV3 {
         }
     }
     
-    override func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler? {
+    override func handlerFor(rtmMessage: String) -> MessageTypeHandler? {
         guard let messageAction = RtmMessageTypeVer4(rawValue: rtmMessage) else {
             log.debug("WV_DATA: RtmMessage. Action is missing or unknown: \(rtmMessage)")
             return nil

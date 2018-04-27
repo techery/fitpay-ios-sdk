@@ -1,157 +1,8 @@
-
 import Foundation
 import WebKit
 import ObjectMapper
 
-@objc public enum WVMessageType: Int {
-    case error = 0
-    case success
-    case progress
-    case pending
-}
-
-@objc public enum WVDeviceStatuses: Int {
-    case disconnected
-    case pairing
-    case syncGettingUpdates
-    case syncNoUpdates
-    case syncUpdatingConnectingToDevice
-    case syncUpdatingConnectionFailed
-    case syncUpdating
-    case syncComplete
-    case syncError
-    
-    func statusMessageType() -> WVMessageType {
-        switch self {
-        case .disconnected:
-            return .pending
-        case .syncGettingUpdates,
-             .syncNoUpdates,
-             .syncUpdatingConnectionFailed,
-             .syncComplete:
-            return .success
-        case .pairing,
-             .syncUpdating,
-             .syncUpdatingConnectingToDevice:
-            return .progress
-        case .syncError:
-            return .error
-        }
-    }
-    
-    func defaultMessage() -> String {
-        switch self {
-        case .disconnected:
-            return "Device is disconnected."
-        case .syncGettingUpdates:
-            return "Checking for wallet updates ..."
-        case .syncNoUpdates:
-            return "No pending updates for device"
-        case .pairing:
-            return "Pairing with device..."
-        case .syncUpdatingConnectingToDevice:
-            return "Connecting to device..."
-        case .syncUpdatingConnectionFailed:
-            return "Updates available for wallet - unable to connect to device - check connection"
-        case .syncUpdating:
-            return "Syncing updates to device..."
-        case .syncComplete:
-            return "Sync complete - device up to date - no updates available"
-        case .syncError:
-            return "Sync error"
-        }
-    }
-}
-
-@objc public enum RtmProtocolVersion: Int {
-    case ver1 = 1
-    case ver2
-    case ver3
-    case ver4
-    case ver5
-    
-    static func currentlySupportedVersion() -> RtmProtocolVersion {
-        return .ver5
-    }
-}
-
-@objc public protocol WvRTMDelegate: NSObjectProtocol {
-    /**
-     This method will be called after successful user authorization.
-     */
-    func didAuthorizeWithEmail(_ email: String?)
-    
-    /**
-     This method can be used for user messages customization.
-     
-     Will be called when status has changed and system going to show message.
-     
-     - parameter status:         New device status
-     - parameter defaultMessage: Default message for new status
-     - parameter error:          If we had an error during status change than it will be here.
-     For now error will be used with SyncError status
-     
-     - returns:                  Message string which will be shown on status board.
-     */
-    @objc optional func willDisplayStatusMessage(_ status: WVDeviceStatuses, defaultMessage: String, error: NSError?) -> String
-    
-    /**
-     Called when the message from wv was delivered to SDK.
-     
-     - parameter message: message from web view
-     */
-    @objc optional func onWvMessageReceived(message: RtmMessage)
-}
-
-
-/**
- These responses must conform to what is expected by the web-view. Changing their structure also requires
- changing them in the rtmIosImpl.js
- */
-internal enum WVResponse: Int {
-    
-    case success = 0
-    case failed
-    case successStillWorking
-    case noSessionData
-    
-    func dictionaryRepresentation(param: Any? = nil) -> [String:Any]{
-        switch self {
-        case .success, .noSessionData:
-        	return ["status": rawValue]
-        case .failed:
-            return ["status": rawValue, "reason": param ?? "unknown"]
-        case .successStillWorking:
-            return ["status": rawValue, "count": param ?? "unknown"]
-        }
-    }
-}
-
-class WvConfigStorage {
-    var sdkConfiguration: FitpaySDKConfiguration?
-    var paymentDevice: PaymentDevice?
-    var user: User?
-    var device: DeviceInfo?
-    var supportsAppVerification = false
-    var a2aReturnLocation: String? = nil
-
-    var rtmConfig: RtmConfigProtocol?
-}
-
 @objcMembers open class WvConfig: NSObject, WKScriptMessageHandler {
-    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
-        case unknownError       = 0
-        case deviceDataNotValid = 10002
-        
-        public var description: String {
-            switch self {
-            case .unknownError:
-                return "Unknown error"
-            case .deviceDataNotValid:
-                return "Could not open connection. OnDeviceConnected event did not supply valid device data."
-            }
-        }
-    }
     
     weak open var rtmDelegate: WvRTMDelegate? {
         didSet {
@@ -174,14 +25,6 @@ class WvConfigStorage {
             self.rtmMessaging.a2aVerificationDelegate = a2aVerificationDelegate
         }
     }
-
-    var url = BASE_URL
-    let notificationCenter = NotificationCenter.default
-    
-    var webview: WKWebView?
-    var connectionBinding: FitpayEventBinding?
-    var sessionDataCallBack: RtmMessage?
-    var syncCallBacks = [RtmMessage]()
 
     public var user: User? {
         get {
@@ -219,12 +62,6 @@ class WvConfigStorage {
         }
     }
     
-    var configStorage = WvConfigStorage()
-    
-    private var bindings: [FitpayEventBinding] = []
-
-    private var rtmVersionSent = false
-    
     @objc open var demoModeEnabled: Bool {
         get {
             if let isEnabled = self.configStorage.rtmConfig?.jsonDict()[RtmConfigDafaultMappingKey.demoMode.rawValue] as? Bool {
@@ -236,6 +73,23 @@ class WvConfigStorage {
             self.configStorage.rtmConfig?.update(value: newValue, forKey: RtmConfigDafaultMappingKey.demoMode.rawValue)
         }
     }
+    
+    //MARK: - Internal and Private Variables
+    
+    var configStorage = WvConfigStorage()
+    
+    private var bindings: [FitpayEventBinding] = []
+    private var rtmVersionSent = false
+    
+    var url = BASE_URL
+    let notificationCenter = NotificationCenter.default
+    
+    var webview: WKWebView?
+    var connectionBinding: FitpayEventBinding?
+    var sessionDataCallBack: RtmMessage?
+    var syncCallBacks = [RtmMessage]()
+    
+    //MARK: - Lifecycle
     
     @objc public convenience init(clientId: String, redirectUri: String, paymentDevice: PaymentDevice, userEmail: String?, isNewAccount: Bool) {
         self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(clientId: clientId, redirectUri: redirectUri, userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount), SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL))
@@ -265,32 +119,32 @@ class WvConfigStorage {
         self.unbindEvents()
     }
     
+    //MARK: - Public Functions
+    
     /**
       In order to open a web-view the SDK must have a connection to the payment device in order to gather data about 
       that device. This will attempt to connect, and call the completion with either an error or nil if the connection 
       attempt is successful.
      */
     @objc open func openDeviceConnection(_ completion: @escaping (_ error: NSError?) -> Void) {
-        self.connectionBinding = self.configStorage.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
-            [weak self] (event) in
-            
+        self.connectionBinding = self.configStorage.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected) { [weak self] (event) in
             guard let strongSelf = self else { return }
             
             strongSelf.configStorage.paymentDevice!.removeBinding(binding: strongSelf.connectionBinding!)
 
-            if let error = (event.eventData as! [String: Any])["error"] as? NSError {
+            if let error = (event.eventData as? [String: Any])?["error"] as? NSError {
                 completion(error)
                 return
             }
 
-            if let deviceInfo = (event.eventData as! [String: Any])["deviceInfo"] as? DeviceInfo {
+            if let deviceInfo = (event.eventData as? [String: Any])?["deviceInfo"] as? DeviceInfo {
                 strongSelf.configStorage.rtmConfig?.deviceInfo = deviceInfo
                 completion(nil)
                 return
             }
             
             completion(NSError.error(code:WvConfig.ErrorCode.deviceDataNotValid, domain: WvConfig.self))
-        })
+        }
         
         self.configStorage.paymentDevice!.connect()
     }
@@ -300,9 +154,7 @@ class WvConfigStorage {
      Make sure that webViewPageLoaded() will be called, otherwise RTM will not work.
      */
     @objc open func setWebView(_ webview:WKWebView!) {
-        guard self.webview != webview else {
-            return
-        }
+        guard self.webview != webview else { return }
         
         self.rtmVersionSent = false
         self.webview = webview
@@ -326,16 +178,18 @@ class WvConfigStorage {
         
         class LeakAvoider: NSObject, WKScriptMessageHandler {
             weak var delegate: WKScriptMessageHandler?
+            
             init(delegate: WKScriptMessageHandler) {
                 self.delegate = delegate
                 super.init()
             }
+            
             func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
                 self.delegate?.userContentController(userContentController, didReceive: message)
             }
         }
 
-        let config:WKWebViewConfiguration = WKWebViewConfiguration()
+        let config = WKWebViewConfiguration()
         config.userContentController.add(LeakAvoider(delegate: self), name: "rtmBridge")
         
         return config
@@ -425,6 +279,8 @@ class WvConfigStorage {
             }
         })
     }
+
+    //MARK: - Private
     
     private var rtmMessaging: RtmMessaging
     
@@ -515,6 +371,7 @@ class WvConfigStorage {
 }
 
 extension WvConfig: RtmOutputDelegate {
+    
     func send(rtmMessage: RtmMessageResponse, retries: Int) {
         self.sendRtmMessage(rtmMessage: rtmMessage, retries: retries)
     }
@@ -522,4 +379,119 @@ extension WvConfig: RtmOutputDelegate {
     func show(status: WVDeviceStatuses, message: String?, error: Error?) {
         self.showStatusMessage(status, message: message, error: error)
     }
+    
+}
+
+//MARK: - Enums
+extension WvConfig {
+    
+    @objc public enum WVMessageType: Int {
+        case error = 0
+        case success
+        case progress
+        case pending
+    }
+    
+    @objc public enum WVDeviceStatuses: Int {
+        case disconnected
+        case pairing
+        case syncGettingUpdates
+        case syncNoUpdates
+        case syncUpdatingConnectingToDevice
+        case syncUpdatingConnectionFailed
+        case syncUpdating
+        case syncComplete
+        case syncError
+        
+        func statusMessageType() -> WVMessageType {
+            switch self {
+            case .disconnected:
+                return .pending
+            case .syncGettingUpdates,
+                 .syncNoUpdates,
+                 .syncUpdatingConnectionFailed,
+                 .syncComplete:
+                return .success
+            case .pairing,
+                 .syncUpdating,
+                 .syncUpdatingConnectingToDevice:
+                return .progress
+            case .syncError:
+                return .error
+            }
+        }
+        
+        func defaultMessage() -> String {
+            switch self {
+            case .disconnected:
+                return "Device is disconnected."
+            case .syncGettingUpdates:
+                return "Checking for wallet updates ..."
+            case .syncNoUpdates:
+                return "No pending updates for device"
+            case .pairing:
+                return "Pairing with device..."
+            case .syncUpdatingConnectingToDevice:
+                return "Connecting to device..."
+            case .syncUpdatingConnectionFailed:
+                return "Updates available for wallet - unable to connect to device - check connection"
+            case .syncUpdating:
+                return "Syncing updates to device..."
+            case .syncComplete:
+                return "Sync complete - device up to date - no updates available"
+            case .syncError:
+                return "Sync error"
+            }
+        }
+    }
+    
+    @objc public enum RtmProtocolVersion: Int {
+        case ver1 = 1
+        case ver2
+        case ver3
+        case ver4
+        case ver5
+        
+        static func currentlySupportedVersion() -> RtmProtocolVersion {
+            return .ver5
+        }
+    }
+    
+    @objc public enum ErrorCode: Int, RawIntValue, Error, CustomStringConvertible {
+        case unknownError       = 0
+        case deviceDataNotValid = 10002
+        
+        public var description: String {
+            switch self {
+            case .unknownError:
+                return "Unknown error"
+            case .deviceDataNotValid:
+                return "Could not open connection. OnDeviceConnected event did not supply valid device data."
+            }
+        }
+    }
+    
+    /**
+     These responses must conform to what is expected by the web-view. Changing their structure also requires
+     changing them in the rtmIosImpl.js
+     */
+    enum WVResponse: Int {
+        case success = 0
+        case failed
+        case successStillWorking
+        case noSessionData
+        
+        func dictionaryRepresentation(param: Any? = nil) -> [String: Any] {
+            switch self {
+            case .success, .noSessionData:
+                return ["status": rawValue]
+            case .failed:
+                return ["status": rawValue, "reason": param ?? "unknown"]
+            case .successStillWorking:
+                return ["status": rawValue, "count": param ?? "unknown"]
+            }
+        }
+    }
+
+    
 }

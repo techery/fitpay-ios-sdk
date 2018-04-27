@@ -6,7 +6,7 @@ import RxSwift
  
  - parameter event: Provides event with payload in eventData property
  */
-public typealias SyncEventBlockHandler = (_ event:FitpayEvent) -> Void
+public typealias SyncEventBlockHandler = (_ event: FitpayEvent) -> Void
 
 protocol SyncManagerProtocol {
     func syncWith(request: SyncRequest) throws
@@ -36,8 +36,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     public private(set) var deviceInfo : DeviceInfo?
 
     
-    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
-    {
+    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
         case unknownError                   = 0
         case cantConnectToDevice            = 10001
         case cantApplyAPDUCommand           = 10002
@@ -49,7 +48,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         case userIsNill                     = 10008
         case notEnoughData                  = 10009
         
-        public var description : String {
+        public var description: String {
             switch self {
             case .unknownError:
                 return "Unknown error"

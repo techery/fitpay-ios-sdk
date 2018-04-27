@@ -1,19 +1,9 @@
-//
-//  RtmMessageHandler.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 30.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 public typealias MessageTypeHandler = (_ message: RtmMessage) -> Void
 
 protocol RtmMessageTypeWithHandler {
-    init?(rawValue: RtmMessageType)
-    
-    
+    init?(rawValue: String)
     func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler?
 }
 
@@ -29,7 +19,7 @@ protocol RtmMessageHandler {
     init(wvConfigStorage: WvConfigStorage)
     
     func handle(message: [String: Any])
-    func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler?
+    func handlerFor(rtmMessage: String) -> MessageTypeHandler?
     
     func handleSync(_ message: RtmMessage)
     func handleSessionData(_ message: RtmMessage)
@@ -39,8 +29,8 @@ protocol RtmMessageHandler {
     func resolveSync()
     
     func logoutResponseMessage() -> RtmMessageResponse?
-    func statusResponseMessage(message: String, type: WVMessageType) -> RtmMessageResponse?
-    func versionResponseMessage(version: RtmProtocolVersion) -> RtmMessageResponse?
+    func statusResponseMessage(message: String, type: WvConfig.WVMessageType) -> RtmMessageResponse?
+    func versionResponseMessage(version: WvConfig.RtmProtocolVersion) -> RtmMessageResponse?
 
 }
 

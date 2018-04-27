@@ -9,7 +9,6 @@
 import UIKit
 import ObjectMapper
 
-public typealias RtmMessageType = String
 
 open class RtmMessage: NSObject, Mappable {
     open var callBackId: Int?

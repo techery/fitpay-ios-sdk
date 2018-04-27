@@ -3,7 +3,7 @@ import ObjectMapper
 
 protocol RtmOutputDelegate: class {
     func send(rtmMessage: RtmMessageResponse, retries: Int)
-    func show(status: WVDeviceStatuses, message: String?, error: Error?)
+    func show(status: WvConfig.WVDeviceStatuses, message: String?, error: Error?)
 }
 
 class RtmMessaging {
@@ -13,12 +13,12 @@ class RtmMessaging {
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
     weak var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
     
-    lazy var handlersMapping: [RtmProtocolVersion: RtmMessageHandler?] = {
-        return [RtmProtocolVersion.ver1: nil,
-                RtmProtocolVersion.ver2: RtmMessageHandlerV2(wvConfigStorage: self.wvConfigStorage),
-                RtmProtocolVersion.ver3: RtmMessageHandlerV3(wvConfigStorage: self.wvConfigStorage),
-                RtmProtocolVersion.ver4: RtmMessageHandlerV4(wvConfigStorage: self.wvConfigStorage),
-                RtmProtocolVersion.ver5: RtmMessageHandlerV5(wvConfigStorage: self.wvConfigStorage)]
+    lazy var handlersMapping: [WvConfig.RtmProtocolVersion: RtmMessageHandler?] = {
+        return [WvConfig.RtmProtocolVersion.ver1: nil,
+                WvConfig.RtmProtocolVersion.ver2: RtmMessageHandlerV2(wvConfigStorage: self.wvConfigStorage),
+                WvConfig.RtmProtocolVersion.ver3: RtmMessageHandlerV3(wvConfigStorage: self.wvConfigStorage),
+                WvConfig.RtmProtocolVersion.ver4: RtmMessageHandlerV4(wvConfigStorage: self.wvConfigStorage),
+                WvConfig.RtmProtocolVersion.ver5: RtmMessageHandlerV5(wvConfigStorage: self.wvConfigStorage)]
     }()
     
     private(set) var messageHandler: RtmMessageHandler?
@@ -68,7 +68,7 @@ class RtmMessaging {
                 return
             }
             
-            guard let version = RtmProtocolVersion(rawValue: versionInt) else {
+            guard let version = WvConfig.RtmProtocolVersion(rawValue: versionInt) else {
                 log.error("WV_DATA: Unknown rtm version - \(versionInt).")
                 receivedWrongVersion = true
                 completion?(false)

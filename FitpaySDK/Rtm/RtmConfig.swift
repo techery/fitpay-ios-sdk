@@ -1,6 +1,6 @@
 import ObjectMapper
 
-public enum RtmConfigDafaultMappingKey: String {
+internal enum RtmConfigDafaultMappingKey: String {
     case clientId = "clientId"
     case redirectUri = "redirectUri"
     case userEmail = "userEmail"
@@ -135,4 +135,5 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         }
         return dict
     }
+
 }

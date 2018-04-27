@@ -137,11 +137,10 @@ open class RestSession: NSObject {
 }
 
 extension RestSession {
-    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
-    {
-        case unknownError                   = 0
-        case deviceNotFound                 = 10001
-        case userOrDeviceEmpty				= 10002
+    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
+        case unknownError       = 0
+        case deviceNotFound     = 10001
+        case userOrDeviceEmpty  = 10002
         
         public var description : String {
             switch self {
@@ -176,7 +175,7 @@ extension RestSession {
                 return
             }
             
-            user?.listDevices(limit: 20, offset: 0, completion: { (devicesColletion, error) in
+            user?.listDevices(limit: 20, offset: 0) { (devicesColletion, error) in
                 guard user != nil && error == nil else {
                     completion(nil, nil, error)
                     return
@@ -189,7 +188,7 @@ extension RestSession {
                     }
                 }
                 
-                devicesColletion?.collectAllAvailable({ (devices, error) in
+                devicesColletion?.collectAllAvailable() { (devices, error) in
                     guard error == nil, let devices = devices else {
                         completion(nil, nil, error as NSError?)
                         return
@@ -203,8 +202,8 @@ extension RestSession {
                     }
                     
                     completion(nil, nil, NSError.error(code: RestSession.ErrorCode.deviceNotFound, domain: RestSession.self))
-                })
-            })
+                }
+            }
         }
         
         return client
