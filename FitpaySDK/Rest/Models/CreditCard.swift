@@ -348,9 +348,6 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
 
 open class CardMetadata: NSObject, ClientModel, Mappable {
     
-    @available(*, deprecated, message: "Use foregroundColor instead")
-    open var labelColor: String?
-    
     open var foregroundColor: String?
     open var issuerName: String?
     open var shortDescription: String?

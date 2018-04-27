@@ -25,16 +25,10 @@ open class SyncManager : NSObject, SyncManagerProtocol {
     open var synchronousModeOn = true
     
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
-    open var paymentDevice : PaymentDevice?
+    open var paymentDevice: PaymentDevice?
     
     @available(*, deprecated, message: "you can use lastSyncRequest instead")
-    open var userId : String? {
-        return user?.id
-    }
-    
-    @available(*, deprecated, message: "you can use lastSyncRequest instead")
-    public private(set) var deviceInfo : DeviceInfo?
-
+    public private(set) var deviceInfo: DeviceInfo?
     
     public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
         case unknownError                   = 0
@@ -74,63 +68,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         }
     }
     
-    open private(set) var isSyncing : Bool = false
-    
-    /**
-     Starts sync process with payment device.
-     If device disconnected, than system tries to connect.
-     
-     - parameter user:	 user from API to whom device belongs to.
-     - parameter device: device which we will sync with. If nil then we will use first one with secureElemendId.
-     */
-    @available(*, deprecated, message: "use SyncRequestQueue: instead")
-    open func sync(_ user: User, device: DeviceInfo? = nil, deviceConnector: IPaymentDeviceConnector? = nil) -> NSError? {
-        log.debug("SYNC_DATA: Starting sync.")
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        
-        guard !self.isSyncing else {
-            log.warning("SYNC_DATA: Already syncing so can't sync.")
-            return NSError.error(code: SyncManager.ErrorCode.syncAlreadyStarted, domain: SyncManager.self)
-        }
-        
-        guard let device = device, let paymentDevice = self.paymentDevice else {
-            return NSError.error(code: SyncManager.ErrorCode.notEnoughData, domain: SyncManager.self)
-        }
-        
-        self.isSyncing = true
-        self.user = user
-        self.deviceInfo = device
-        
-        if let deviceConnector = deviceConnector {
-            if let error = self.paymentDevice?.changeDeviceInterface(deviceConnector) {
-                return error
-            }
-        }
-        
-        do {
-            try syncWith(request: SyncRequest(user: user, deviceInfo: device, paymentDevice: paymentDevice))
-        } catch {
-            return error as NSError
-        }
-        
-        return nil
-    }
-    
-    /**
-     Tries to make sync with last user.
-     
-     If device disconnected, than system tries to connect.
-     
-     - parameter user: user from API to whom device belongs to.
-     */
-    @available(*, deprecated, message: "use SyncRequestQueue: instead")
-    open func tryToMakeSyncWithLastUser() -> NSError? {
-        guard let user = self.user else {
-            return NSError.error(code: SyncManager.ErrorCode.userIsNill, domain: SyncManager.self)
-        }
-        
-        return sync(user, device: deviceInfo)
-    }
+    open private(set) var isSyncing: Bool = false
     
     /**
      Binds to the sync event using SyncEventType and a block as callback.

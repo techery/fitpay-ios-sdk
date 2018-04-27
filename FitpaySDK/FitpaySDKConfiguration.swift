@@ -74,19 +74,11 @@ open class FitpaySDKConfiguration: NSObject {
         log.addOutput(output: ConsoleOutput())
     }
     
-    // MARK: - Deprecated
-    
-    @available(*, deprecated, message: "Use commitProcessingTimeoutSecs")
-    open var commitErrorTimeout: Int {
-        set {
-            commitProcessingTimeoutSecs = Double(newValue)
-        }
-        get {
-            return Int(commitProcessingTimeoutSecs)
-        }
-    }
-    
-    //MARK: - Nested Objects
+}
+
+//MARK: - Nested Objects
+
+extension FitpaySDKConfiguration {
     
     enum EnvironmentLoadingErrors: Error {
         case clientIdIsEmpty
@@ -96,6 +88,3 @@ open class FitpaySDKConfiguration: NSObject {
     }
     
 }
-
-@available(*, deprecated, message: "Use FitpaySDKConfiguration sdkVersion")
-public let FitpaySDKVersion = "0.5.0"

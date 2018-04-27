@@ -111,29 +111,4 @@ open class SyncRequest {
         return user?.id == otherRequest.user?.id && deviceInfo?.deviceIdentifier == otherRequest.deviceInfo?.deviceIdentifier
     }
     
-    // MARK: - Deprecated
-    
-    @available(*, deprecated, message: "This constructor depreceted. You should use next one - init(requestTime: Date = Date(), user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice)")
-    public init(initiator: SyncInitiator = .NotDefined, notificationAsc: NotificationDetail? = nil) {
-        self.requestTime = Date()
-        self.user = nil
-        self.deviceInfo = nil
-        self.paymentDevice = nil
-        self.syncInitiator = initiator
-        self.notificationAsc = notificationAsc
-
-        if SyncRequest.syncManager.synchronousModeOn == false {
-            if (user != nil && deviceInfo != nil && paymentDevice != nil) == false {
-                assert(false, "You should pass all params to SyncRequest in parallel sync mode.")
-            }
-        }
-        
-        // capture restClient reference
-        if user?.client != nil {
-            self.restClient = user?.client
-        } else if deviceInfo?.client != nil {
-            self.restClient = deviceInfo?.client
-        }
-    }
-    
 }

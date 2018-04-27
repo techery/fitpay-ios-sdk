@@ -124,42 +124,6 @@ open class User: NSObject, ClientModel, Mappable, SecretApplyable {
     /**
      For a single user, create a new device in their profile
      
-     - parameter deviceType:       device type
-     - parameter manufacturerName: manufacturer name
-     - parameter deviceName:       device name
-     - parameter serialNumber:     serial number
-     - parameter modelNumber:      model number
-     - parameter hardwareRevision: hardware revision
-     - parameter firmwareRevision: firmware revision
-     - parameter softwareRevision: software revision
-     - parameter systemId:         system id
-     - parameter osName:           os name
-     - parameter licenseKey:       license key
-     - parameter bdAddress:        bd address //TODO: provide better description
-     - parameter secureElementId:  secure element id
-     - parameter pairing:          pairing date [MM-DD-YYYY]
-     - parameter completion:       CreateNewDeviceHandler closure
-     */
-    @available(*, deprecated, message: "Use createDevice(_ device:)")
-    @objc open func createNewDevice(_ deviceType: String, manufacturerName: String, deviceName: String,
-                                    serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String,
-                                    softwareRevision: String, systemId: String, osName: String, licenseKey: String, bdAddress: String,
-                                    secureElementId: String, pairing: String, completion: @escaping RestClient.DeviceHandler) {
-        let resource = User.devicesResourceKey
-        let url = self.links?.url(resource)
-        if  let url = url, let client = self.client {
-            client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
-                                   modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
-                                   softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName,
-                                   secureElementId: secureElementId, casd: nil, completion: completion)
-        } else {
-            completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
-        }
-    }
-    
-    /**
-     For a single user, create a new device in their profile
-     
      - parameter device: DeviceInfo
      */
     @objc open func createDevice(_ device: DeviceInfo, completion: @escaping RestClient.DeviceHandler) {
