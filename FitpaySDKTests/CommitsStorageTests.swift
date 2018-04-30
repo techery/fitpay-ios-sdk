@@ -96,6 +96,9 @@ class CommitsStorageTests: XCTestCase {
         fetcher.commits = [fetcher.getAPDUCommit()]
         
         let connector = MockPaymentDeviceConnectorWithStorage(paymentDevice: self.paymentDevice)
+        connector.connectDelayTime = 0.2
+        connector.disconnectDelayTime = 0.2
+        connector.apduExecuteDelayTime = 0.1
         
         self.syncQueue.add(request: getSyncRequest(connector: connector)) { (status, error) in
             let storedDeviceCommitId = connector.getDeviceLastCommitId()
@@ -112,6 +115,9 @@ class CommitsStorageTests: XCTestCase {
         fetcher.commits = [fetcher.getAPDUCommit()]
         
         let connector = MockPaymentDeviceConnectorWithWrongStorage1(paymentDevice: self.paymentDevice)
+        connector.connectDelayTime = 0.2
+        connector.disconnectDelayTime = 0.2
+        connector.apduExecuteDelayTime = 0.1
         
         self.syncQueue.add(request: getSyncRequest(connector: connector)) { (status, error) in
             let storedDeviceCommitId = MockSyncStorage.sharedMockInstance.getLastCommitId(self.deviceInfo.deviceIdentifier!)
