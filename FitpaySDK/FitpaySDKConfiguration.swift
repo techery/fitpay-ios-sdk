@@ -98,4 +98,4 @@ open class FitpaySDKConfiguration: NSObject {
 }
 
 @available(*, deprecated, message: "Use FitpaySDKConfiguration sdkVersion")
-public let FitpaySDKVersion = "0.5.0"
+public let FitpaySDKVersion = "0.5.1"
