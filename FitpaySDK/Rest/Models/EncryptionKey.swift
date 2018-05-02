@@ -14,14 +14,14 @@ open class EncryptionKey: NSObject, Serializable
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case keyId = "keyId"
+        case keyId
         case created = "createdTs"
         case createdEpoch = "createdTsEpoch"
         case expiration = "expirationTs"
         case expirationEpoch = "expirationTsEpoch"
-        case serverPublicKey = "serverPublicKey"
-        case clientPublicKey = "clientPublicKey"
-        case active = "active"
+        case serverPublicKey
+        case clientPublicKey
+        case active
     }
 
     public required init(from decoder: Decoder) throws {

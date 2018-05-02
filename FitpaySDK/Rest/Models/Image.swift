@@ -19,9 +19,9 @@ open class Image: NSObject, ClientModel, Serializable, AssetRetrivable
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case mimeType = "mimeType"
-        case height = "height"
-        case width = "width"
+        case mimeType
+        case height
+        case width
     }
 
     public required init(from decoder: Decoder) throws {

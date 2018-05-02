@@ -24,12 +24,12 @@ open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
     
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case commandId = "commandId"
-        case groupId = "groupId"
-        case sequence = "sequence"
-        case command = "command"
-        case type = "type"
-        case continueOnFailure = "continueOnFailure"
+        case commandId
+        case groupId
+        case sequence
+        case command
+        case type
+        case continueOnFailure 
     }
 
     public required init(from decoder: Decoder) throws {

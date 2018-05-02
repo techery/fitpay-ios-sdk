@@ -17,7 +17,7 @@ open class Issuers: Serializable, ClientModel {
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case countries = "countries"
+        case countries 
     }
 
     public required init(from decoder: Decoder) throws {

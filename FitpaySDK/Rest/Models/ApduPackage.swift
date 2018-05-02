@@ -54,14 +54,14 @@ open class ApduPackage : NSObject, Serializable
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
-        case seIdType = "seIdType"
-        case targetDeviceType = "targetDeviceType"
-        case targetDeviceId = "targetDeviceId"
-        case packageId = "packageId"
-        case seId = "seId"
+        case seIdType
+        case targetDeviceType
+        case targetDeviceId
+        case packageId
+        case seId
         case apduCommands = "commandApdus"
-        case validUntil = "validUntil"
-        case apduPackageUrl = "apduPackageUrl"
+        case validUntil
+        case apduPackageUrl
     }
 
     public required init(from decoder: Decoder) throws {
