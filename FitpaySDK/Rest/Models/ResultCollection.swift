@@ -69,16 +69,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         limit = try container.decode(.limit)
         offset = try container.decode(.offset)
         totalResults = try container.decode(.totalResults)
-
         results = try container.decode(.results)
-      /*  if let objectsArray = try container.decode(.results) as? [AnyObject] {
-            results = [T]()
-            for objectMap in objectsArray {
-                if let modelObject = Mapper<T>().map(JSON: objectMap as! [String: Any]) {
-                    results!.append(modelObject)
-                }
-            }
-        } */
     }
 
     public func encode(to encoder: Encoder) throws {

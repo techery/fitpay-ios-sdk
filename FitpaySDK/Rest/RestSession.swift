@@ -26,15 +26,6 @@ internal class AuthorizationDetails: Serializable
         case scope = "scope"
         case jti = "jti"
     }
-
-    public required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        tokenType = try container.decode(.tokenType)
-        accessToken = try container.decode(.accessToken)
-        expiresIn = try container.decode(.expiresIn)
-        scope = try container.decode(.scope)
-        jti = try container.decode(.jti)
-    }
 }
 
 @objcMembers

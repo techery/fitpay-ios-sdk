@@ -23,25 +23,14 @@ open class CommitMetrics : Serializable
     }
     
     private enum CodingKeys: String, CodingKey {
-        case syncId = "syncId"
-        case deviceId = "deviceId"
-        case userId = "userId"
-        case sdkVersion = "sdkVersion"
-        case osVersion = "osVersion"
-        case initiator = "initiator"
-        case totalProcessingTimeMs = "totalProcessingTimeMs"
+        case syncId
+        case deviceId
+        case userId
+        case sdkVersion
+        case osVersion
+        case initiator
+        case totalProcessingTimeMs
         case commitStatistics = "commits"
-    }
-
-    public required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        syncId = try container.decode(.syncId)
-        userId = try container.decode(.userId)
-        sdkVersion = try container.decode(.sdkVersion)
-        osVersion = try container.decode(.osVersion)
-        initiator = try container.decode(.initiator)
-        totalProcessingTimeMs = try container.decode(.totalProcessingTimeMs)
-        commitStatistics = try container.decode(.commitStatistics)
     }
     
     public init() {

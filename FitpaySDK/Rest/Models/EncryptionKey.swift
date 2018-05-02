@@ -29,7 +29,11 @@ open class EncryptionKey: NSObject, Serializable
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         keyId = try container.decode(.keyId)
         created = try container.decode(.created)
-        createdEpoch = try container.decode(.createdEpoch)
+        if let stringNumber: String = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
         expiration = try container.decode(.expiration)
         expirationEpoch = try container.decode(.expirationEpoch)
         serverPublicKey = try container.decode(.serverPublicKey)
@@ -42,7 +46,7 @@ open class EncryptionKey: NSObject, Serializable
         try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(keyId, forKey: .keyId)
         try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
         try container.encode(expiration, forKey: .expiration)
         try container.encode(expirationEpoch, forKey: .expirationEpoch)
         try container.encode(serverPublicKey, forKey: .serverPublicKey)

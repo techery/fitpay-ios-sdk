@@ -19,17 +19,6 @@ open class NotificationDetail : Serializable
         case userId = "userId"
         case clientId = "clientId"
     }
-
-    public required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        ackSync = try container.decode(.ackSync)
-        completeSync = try container.decode(.completeSync)
-        type = try container.decode(.type)
-        syncId = try container.decode(.syncId)
-        deviceId = try container.decode(.deviceId)
-        userId = try container.decode(.userId)
-        clientId = try container.decode(.clientId)
-    }
     
     open func sendAckSync() {
         guard let ackSync = self.ackSync else {

@@ -6,22 +6,25 @@
 //  Copyright © 2018 Fitpay. All rights reserved.
 //
 
-protocol Serializable: Codable {
+public protocol Serializable: Codable {
+      func toJSON() -> [String: Any]?
+      func toJSONString() -> String?
+      init(_ any: Any?) throws
 }
 
 extension Serializable {
-    func toJSONString() -> String? {
+    public func toJSONString() -> String? {
         guard let jsonData = try? JSONEncoder().encode(self) else { return nil }
         return String(data: jsonData, encoding: .utf8)!
     }
 
-    func toJSON() -> [String: Any]? {
+    public func toJSON() -> [String: Any]? {
         guard let jsonData = try? JSONEncoder().encode(self) else { return nil }
         let jsonDictionary = try? JSONSerialization.jsonObject(with: jsonData, options : .allowFragments) as! [String: Any]
         return jsonDictionary
     }
 
-    init(_ any: Any?) throws {
+    public init(_ any: Any?) throws {
         var data =  Data()
 
         if let stringJson = any as? String, let stringData = stringJson.data(using: .utf8) {

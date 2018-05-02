@@ -74,9 +74,9 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
         try container.encode(lastModified, forKey: .lastModified)
-        try container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch)
+        try container.encode(NSTimeIntervalTypeTransform().transform(lastModifiedEpoch), forKey: .lastModifiedEpoch)
         try container.encode(encryptedData, forKey: .encryptedData)
     }
     

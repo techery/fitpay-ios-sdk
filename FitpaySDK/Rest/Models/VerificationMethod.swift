@@ -113,10 +113,11 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
         try container.encode(value, forKey: .value)
         try container.encode(verificationResult, forKey: .verificationResult)
         try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
         try container.encode(lastModified, forKey: .lastModified)
+        try container.encode(NSTimeIntervalTypeTransform().transform(lastModifiedEpoch), forKey: .createdEpoch)
         try container.encode(verified, forKey: .verified)
-        try container.encode(verifiedEpoch, forKey: .verifiedEpoch)
+        try container.encode(NSTimeIntervalTypeTransform().transform(verifiedEpoch), forKey: .verifiedEpoch)
         try container.encode(appToAppContext, forKey: .appToAppContext)
     }
 

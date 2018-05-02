@@ -108,8 +108,12 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         created = try container.decode(.created)
-        createdEpoch = try container.decode(.createdEpoch)
-        deviceIdentifier = try container.decode(.deviceIdentifier)//try container.decode(.links, transformer: DecimalNumberTypeTransform())
+        if let stringNumber: String = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
+        deviceIdentifier = try container.decode(.deviceIdentifier)
         deviceName = try container.decode(.deviceName)
         deviceType = try container.decode(.deviceType)
         manufacturerName = try container.decode(.manufacturerName)
@@ -134,28 +138,14 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         }
 
         self.cardRelationships = try container.decode(.cardRelationships)
-        //TODO
-       /* if let cardRelationships: [Data] = try container.decode(.cardRelationships) {
-            if cardRelationships.count > 0 {
-                self.cardRelationships = [CardRelationship]()
-
-                for itrObj in cardRelationships {
-                    if let parsedObj = try? CardRelationship(itrObj) {
-                        self.cardRelationships!.append(parsedObj)
-                    }
-                }
-            }
-        }*/
-
-       super.init()
-       metadata = self.toJSON()
+        metadata = try container.decode([String : Any].self)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch)
+        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
         try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
         try container.encode(deviceName, forKey: .deviceName)
         try container.encode(deviceType, forKey: .deviceType)
@@ -173,7 +163,6 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         try container.encode(secureElementId, forKey: .secureElementId)
         try container.encode(casd, forKey: .casd)
         try container.encode(cardRelationships, forKey: .cardRelationships)
-        //TODO try container.encode(metadata, forKey: .metadata)
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {

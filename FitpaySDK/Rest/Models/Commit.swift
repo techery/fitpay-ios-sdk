@@ -51,6 +51,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         try container.encode(commit, forKey: .commit)
         try container.encode(encryptedData, forKey: .encryptedData)
     }
+
     
     internal func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
@@ -67,7 +68,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         }
         
         let resource = Commit.confirmResource
-        guard let url = self.links?.url(resource) else {
+      /* TODO guard let url = self.links?.url(resource) else {
             completion(nil)
             return
         }
@@ -77,7 +78,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
             return
         }
         
-        client.confirm(url, executionResult: result, completion: completion)
+        client.confirm(url, executionResult: result, completion: completion)*/
     }
     
     internal func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
@@ -88,7 +89,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         }
         
         let resource = Commit.apduResponseResource
-        guard let url = self.links?.url(resource) else {
+         /* TODO  guard let url = self.links?.url(resource) else {
             completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
             return
         }
@@ -105,6 +106,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         
         log.verbose("apdu package \(apduPackage)")
         client.confirmAPDUPackage(url, package: apduPackage, completion: completion)
+ */
     }
 }
 
@@ -136,16 +138,13 @@ open class Payload : NSObject, Serializable
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        print(decoder)
-         print(container)
-          print(container.codingPath)
         if let _ : String = try container.decode(.packageId) {
             apduPackage = try? ApduPackage(from: decoder)
         } else if let _ : String = try container.decode(.creditCardId) {
             creditCard = try? CreditCard(from: decoder)
         }
-        super.init()
-        self.payloadDictionary = self.toJSON()
+
+        self.payloadDictionary = try container.decode([String : Any].self)
     }
 
     public func encode(to encoder: Encoder) throws {

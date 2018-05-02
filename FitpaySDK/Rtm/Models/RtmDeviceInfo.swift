@@ -40,8 +40,12 @@ public class RtmDeviceInfo: DeviceInfo {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         created = try container.decode(.created)
-        createdEpoch = try container.decode(.createdEpoch)
-        deviceIdentifier = try container.decode(.deviceIdentifier)//try container.decode(.links, transformer: DecimalNumberTypeTransform())
+        if let stringNumber: String = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
+        } else if let intNumber: Int = try container.decode(.createdEpoch) {
+            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
+        }
+        deviceIdentifier = try container.decode(.deviceIdentifier)
         deviceName = try container.decode(.deviceName)
         deviceType = try container.decode(.deviceType)
         serialNumber = try container.decode(.serialNumber)
@@ -55,21 +59,8 @@ public class RtmDeviceInfo: DeviceInfo {
         licenseKey = try container.decode(.licenseKey)
         bdAddress = try container.decode(.bdAddress)
         pairing = try container.decode(.pairing)
-
-       /*TODO if let cardRelationships: [Data] = try container.decode(.cardRelationships) {
-            if cardRelationships.count > 0 {
-                self.cardRelationships = [CardRelationship]()
-
-                for itrObj in cardRelationships {
-                    if let parsedObj = try? CardRelationship(itrObj) {
-                        self.cardRelationships!.append(parsedObj)
-                    }
-                }
-            }
-        }*/
-        self.cardRelationships = try container.decode(.cardRelationships)
-
-        metadata = self.toJSON()
+        cardRelationships = try container.decode(.cardRelationships)
+        metadata = try container.decode([String : Any].self)
     }
 
     override public func encode(to encoder: Encoder) throws {
@@ -93,7 +84,6 @@ public class RtmDeviceInfo: DeviceInfo {
         try container.encode(bdAddress, forKey: .bdAddress)
         try container.encode(pairing, forKey: .pairing)
         try container.encode(cardRelationships, forKey: .cardRelationships)
-       // try container.encode(metadata, forKey: .metadata)
     }
 
     func copyFieldsFrom(deviceInfo: DeviceInfo) {
