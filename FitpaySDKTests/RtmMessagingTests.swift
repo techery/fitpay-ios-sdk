@@ -2,6 +2,7 @@ import XCTest
 @testable import FitpaySDK
 
 class MockRtmMessageHandler: RtmMessageHandler {
+    
     var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
     
     weak var wvConfigStorage: WvConfigStorage!
@@ -21,7 +22,7 @@ class MockRtmMessageHandler: RtmMessageHandler {
         completion?(message)
     }
     
-    func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler? {
+    func handlerFor(rtmMessage: String) -> MessageTypeHandler? {
         return nil
     }
     
@@ -40,11 +41,11 @@ class MockRtmMessageHandler: RtmMessageHandler {
         return nil
     }
     
-    func statusResponseMessage(message: String, type: WVMessageType) -> RtmMessageResponse? {
+    func statusResponseMessage(message: String, type: WvConfig.WVMessageType) -> RtmMessageResponse? {
         return nil
     }
     
-    func versionResponseMessage(version: RtmProtocolVersion) -> RtmMessageResponse? {
+    func versionResponseMessage(version: WvConfig.RtmProtocolVersion) -> RtmMessageResponse? {
         return nil
     }
     
@@ -65,7 +66,7 @@ class RtmMessagingTests: XCTestCase {
         let expectation = super.expectation(description: "rtm messaging")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver3: handler]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver3: handler]
         
         handler.completion = { (_) in
             expectation.fulfill()
@@ -84,7 +85,7 @@ class RtmMessagingTests: XCTestCase {
         let expectation = super.expectation(description: "rtm messaging")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver3: handler]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver3: handler]
         
         rtmMessaging.received(message: ["type":"version","callBackId":0,"data":["version":99]], completion: { (success) in
             XCTAssertFalse(success)
@@ -102,8 +103,8 @@ class RtmMessagingTests: XCTestCase {
         let expectation = super.expectation(description: "rtm messaging")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver2: handler,
-                                        RtmProtocolVersion.ver3: MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver2: handler,
+                                        WvConfig.RtmProtocolVersion.ver3: MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)]
         
         handler.completion = { (_) in
             expectation.fulfill()
@@ -124,7 +125,7 @@ class RtmMessagingTests: XCTestCase {
         let expectation = super.expectation(description: "rtm messaging - unknown message type")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver2: handler]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver2: handler]
         
         handler.completion = { (message) in
             expectation.fulfill()

@@ -250,9 +250,9 @@ class TestHelper {
             XCTAssertEqual(verificationMethod?.state, .VERIFIED)
             
             verificationMethod?.retrieveCreditCard { (creditCard, error) in
-                self.waitForActive(creditCard!, completion: { (activeCard) in
+                self.waitForActive(creditCard!) { (activeCard) in
                     completion(activeCard)
-                })
+                }
             }
         }
     }

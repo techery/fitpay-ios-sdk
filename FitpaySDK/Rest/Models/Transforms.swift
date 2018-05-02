@@ -1,17 +1,7 @@
-//
-//  Transforms.swift
-//  FitpaySDK
-//
-//  Created by Jakub Borowski on 6/2/16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
-
 import Foundation
-
 import ObjectMapper
 
-internal class NSTimeIntervalTransform: TransformType
-{
+internal class NSTimeIntervalTransform: TransformType {
     typealias Object = TimeInterval
     typealias JSON = Int64
     
