@@ -8,9 +8,9 @@
 
 public class RtmSecureDeviceInfo: RtmDeviceInfo {
     private enum CodingKeys: String, CodingKey {
-        case casdCert = "casdCert"
-        case secureElement = "secureElement"
-        case secureElementId = "secureElementId"
+        case casdCert 
+        case secureElement
+        case secureElementId
     }
 
     public required init(from decoder: Decoder) throws {

@@ -13,11 +13,11 @@ open class NotificationDetail : Serializable
     private enum CodingKeys: String, CodingKey {
         case ackSync = "_links.ackSync.href"
         case completeSync = "_links.completeSync.href"
-        case type = "type"
+        case type
         case syncId = "id"
-        case deviceId = "deviceId"
-        case userId = "userId"
-        case clientId = "clientId"
+        case deviceId
+        case userId
+        case clientId
     }
     
     open func sendAckSync() {

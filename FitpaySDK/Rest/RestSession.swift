@@ -23,8 +23,8 @@ internal class AuthorizationDetails: Serializable
         case tokenType = "token_type"
         case accessToken = "access_token"
         case expiresIn = "expires_in"
-        case scope = "scope"
-        case jti = "jti"
+        case scope
+        case jti 
     }
 }
 
