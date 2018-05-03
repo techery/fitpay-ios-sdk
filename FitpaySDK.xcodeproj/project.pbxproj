@@ -509,7 +509,7 @@
 		0AD9229F1C1F7EFC007693AB /* FitpaySDK */ = {
 			isa = PBXGroup;
 			children = (
-				276CD25D209A5CF800076648 /* Public Interface */,
+				276CD25D209A5CF800076648 /* PublicInterface */,
 				0AD922A01C1F7EFC007693AB /* FitpaySDK.h */,
 				0AD922A21C1F7EFC007693AB /* Info.plist */,
 				91185B7020615E0C00E5E1CE /* A2AVerification */,
@@ -561,12 +561,12 @@
 			path = JWE;
 			sourceTree = "<group>";
 		};
-		276CD25D209A5CF800076648 /* Public Interface */ = {
+		276CD25D209A5CF800076648 /* PublicInterface */ = {
 			isa = PBXGroup;
 			children = (
 				276CD25E209A5D1700076648 /* FitpaySDKConfig.swift */,
 			);
-			path = "Public Interface";
+			path = PublicInterface;
 			sourceTree = "<group>";
 		};
 		2773CD8D207BEDD400DFE113 /* EventStream */ = {

@@ -102,11 +102,11 @@ extension RestClient {
                 }
             }
             
-            log.verbose("user creation url: \(FitpaySDKConfig.ApiURL)/users")
+            log.verbose("user creation url: \(FitpaySDKConfig.apiURL)/users")
             log.verbose("Headers: \(headers)")
             log.verbose("user creation json: \(parameters)")
             
-            let request = strongSelf._manager.request(FitpaySDKConfig.ApiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = strongSelf._manager.request(FitpaySDKConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             
             request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<User>) in
                 DispatchQueue.main.async {
@@ -141,7 +141,7 @@ extension RestClient {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
-            let request = strongSelf._manager.request(FitpaySDKConfig.ApiURL + "/users/" + id,
+            let request = strongSelf._manager.request(FitpaySDKConfig.apiURL + "/users/" + id,
                                                       method: .get,
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,

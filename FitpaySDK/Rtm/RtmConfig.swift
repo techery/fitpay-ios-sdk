@@ -45,6 +45,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
     open var customs: [String:Any]?
     
     public init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
+        self.clientId = FitpaySDKConfig.clientId
         self.redirectUri = FitpaySDKConfig.redirectURL
         self.userEmail = userEmail
         self.deviceInfo = deviceInfo

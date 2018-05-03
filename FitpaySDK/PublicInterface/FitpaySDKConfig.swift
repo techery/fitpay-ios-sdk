@@ -15,14 +15,12 @@ public class FitpaySDKConfig: NSObject {
     public static var redirectURL = "https://webapp.fit-pay.com"
     
     /// Used for API calls
-    public static var ApiURL = "https://api.fit-pay.com"
+    public static var apiURL = "https://api.fit-pay.com"
     
     /// Used during login
     public static var authURL = "https://auth.fit-pay.com"
     
-    //rederict url
-    
-    //sse
+    //sse enabled
     
     /// App 2 App step-up method supported by your app
     /// Only recommended for iOS 10+
@@ -55,7 +53,7 @@ public class FitpaySDKConfig: NSObject {
         }
         
         if let baseAPIUrl = envDict["SDK_API_BASE_URL"], !baseAPIUrl.isEmpty {
-            FitpaySDKConfig.ApiURL = baseAPIUrl
+            FitpaySDKConfig.apiURL = baseAPIUrl
         }
         
         if let baseAuthUrl = envDict["SDK_AUTHORIZE_BASE_URL"], !baseAuthUrl.isEmpty {
@@ -72,7 +70,9 @@ public class FitpaySDKConfig: NSObject {
 extension FitpaySDKConfig {
     
     public class Web: NSObject {
-        
+
+        // demo mode
+
     }
     
 }
