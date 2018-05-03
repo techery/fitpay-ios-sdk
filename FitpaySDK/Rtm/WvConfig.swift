@@ -81,7 +81,7 @@ import ObjectMapper
     private var bindings: [FitpayEventBinding] = []
     private var rtmVersionSent = false
     
-    var url = BASE_URL
+    var url = FitpaySDKConfig.webURL
     let notificationCenter = NotificationCenter.default
     
     var webview: WKWebView?
@@ -91,15 +91,15 @@ import ObjectMapper
     
     //MARK: - Lifecycle
     
-    @objc public convenience init(clientId: String, redirectUri: String, paymentDevice: PaymentDevice, userEmail: String?, isNewAccount: Bool) {
-        self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(clientId: clientId, redirectUri: redirectUri, userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount), SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL))
+    @objc public convenience init(paymentDevice: PaymentDevice, userEmail: String?, isNewAccount: Bool) {
+        self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount), SDKConfiguration: FitpaySDKConfiguration())
     }
     
     @objc public init(paymentDevice: PaymentDevice, rtmConfig: RtmConfigProtocol, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
         self.configStorage.paymentDevice = paymentDevice
         self.configStorage.rtmConfig = rtmConfig
         self.configStorage.sdkConfiguration = SDKConfiguration
-        self.url = SDKConfiguration.webViewURL
+        self.url = FitpaySDKConfig.webURL
         
         self.rtmMessaging = RtmMessaging(wvConfigStorage: self.configStorage)
 

@@ -46,8 +46,7 @@ extension RestClient {
      - parameter completion: CreateUserHandler closure
      */
     open func createUser(_ email: String, password: String, firstName: String?, lastName: String?, birthDate: String?,
-                         termsVersion: String?, termsAccepted: String?, origin: String?, originAccountCreated: String?,
-                         clientId: String, completion: @escaping UserHandler) {
+                         termsVersion: String?, termsAccepted: String?, origin: String?, originAccountCreated: String?, completion: @escaping UserHandler) {
         log.verbose("request create user: \(email)")
         
         self.preparKeyHeader { [weak self] (headers, error) in
@@ -75,7 +74,7 @@ extension RestClient {
                 parameters += ["originAccountCreatedTsEpoch": originAccountCreated!]
             }
             
-            parameters["client_id"] = clientId
+            parameters["client_id"] = FitpaySDKConfig.clientId
             
             var rawUserInfo: [String: Any] = ["email": email, "pin": password ]
             
@@ -102,11 +101,11 @@ extension RestClient {
                 }
             }
             
-            log.verbose("user creation url: \(strongSelf._session.baseAPIURL)/users")
+            log.verbose("user creation url: \(FitpaySDKConfig.ApiURL)/users")
             log.verbose("Headers: \(headers)")
             log.verbose("user creation json: \(parameters)")
             
-            let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = strongSelf._manager.request(FitpaySDKConfig.ApiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             
             request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<User>) in
                 DispatchQueue.main.async {
@@ -141,7 +140,7 @@ extension RestClient {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
-            let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users/" + id,
+            let request = strongSelf._manager.request(FitpaySDKConfig.ApiURL + "/users/" + id,
                                                       method: .get,
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,

@@ -27,24 +27,10 @@ class RestClientTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        let config: FitpaySDKConfiguration
-        if shouldLoadEnvironmentVariables {
-            config = FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
-            
-            if let error = config.loadEnvironmentVariables() {
-                print("Can't load config from environment. Error: \(error)")
-            } else {
-                clientId = config.clientId
-            }
-        } else {
-            config = FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, baseAuthURL: baseAuthUrl, baseAPIURL: baseApiUrl)
-            clientId = config.clientId
-        }
-        
-        self.session = RestSession(configuration: config)
+
+        self.session = RestSession()
         self.client = RestClient(session: self.session!)
-        self.testHelper = TestHelper(clientId: clientId, redirectUri: config.redirectUri, session: self.session, client: self.client)
+        self.testHelper = TestHelper(session: self.session, client: self.client)
     }
     
     override func tearDown() {
@@ -156,7 +142,7 @@ class RestClientTests: XCTestCase {
         let email = TestHelper.randomEmail()
         let pin = "1234"
         
-        self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId) { (user, error) -> Void in
+        self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil) { (user, error) -> Void in
             XCTAssertNotNil(user, "user is nil")
             XCTAssertNotNil(user?.info)
             XCTAssertNotNil(user?.created)
@@ -485,7 +471,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 35, handler: nil)
     }
     
     func testUserListDevisesListsDevices() {

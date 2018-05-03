@@ -5,12 +5,6 @@ internal let log = FitpaySDKLogger.sharedInstance
 open class FitpaySDKConfiguration: NSObject {
     open static let defaultConfiguration = FitpaySDKConfiguration()
     
-    open var clientId: String
-    open var redirectUri: String
-    open var baseAuthURL: String
-    open var baseAPIURL: String
-    open var webViewURL: String
-    
     open var commitProcessingTimeoutSecs: Double = 30.0
     
     open static let sdkVersion = Bundle(for: FitpaySDKConfiguration.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "unk"
@@ -18,24 +12,6 @@ open class FitpaySDKConfiguration: NSObject {
     // MARK: - Lifecycle
     
     override public init() {
-        self.clientId = ""
-        self.redirectUri = BASE_URL
-        self.baseAuthURL = AUTHORIZE_BASE_URL
-        self.baseAPIURL = API_BASE_URL
-        self.webViewURL = BASE_URL
-        
-        super.init()
-        
-        self.setupLogs()
-    }
-    
-    public init(clientId: String, redirectUri: String, baseAuthURL: String, baseAPIURL: String, webViewURL: String = BASE_URL) {
-        self.clientId = clientId
-        self.redirectUri = redirectUri
-        self.baseAuthURL = baseAuthURL
-        self.baseAPIURL = baseAPIURL
-        self.webViewURL = webViewURL
-        
         super.init()
         
         self.setupLogs()
@@ -61,9 +37,8 @@ open class FitpaySDKConfiguration: NSObject {
             return EnvironmentLoadingErrors.authorizeURLIsEmpty
         }
         
-        self.clientId = clientId
-        self.baseAuthURL = baseAuthBaseUrl
-        self.baseAPIURL = baseAPIUrl
+        FitpaySDKConfig.authURL = baseAuthBaseUrl
+        FitpaySDKConfig.ApiURL = baseAPIUrl
         
         return nil
     }

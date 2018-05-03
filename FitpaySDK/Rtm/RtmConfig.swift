@@ -17,7 +17,6 @@ internal enum RtmConfigDafaultMappingKey: String {
 }
 
 @objc public protocol RtmConfigProtocol {
-    var clientId: String? { get }
     var redirectUri: String? { get }
     var deviceInfo: DeviceInfo? { get set }
     var accessToken: String? { get set }
@@ -45,13 +44,8 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
     
     open var customs: [String:Any]?
     
-    public init(clientId:String = FitpaySDKConfiguration.defaultConfiguration.clientId,
-                redirectUri:String = FitpaySDKConfiguration.defaultConfiguration.redirectUri,
-                userEmail:String?,
-                deviceInfo:DeviceInfo?,
-                hasAccount:Bool = false) {
-        self.clientId = clientId
-        self.redirectUri = redirectUri
+    public init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
+        self.redirectUri = FitpaySDKConfig.redirectURL
         self.userEmail = userEmail
         self.deviceInfo = deviceInfo
         self.hasAccount = hasAccount

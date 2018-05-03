@@ -38,9 +38,6 @@ open class RestSession: NSObject {
         case accessTokenFailure
     }
 
-    private(set) var clientId: String
-    private(set) var redirectUri: String
-
     open var userId: String?
     open var accessToken: String?
     open var isAuthorized: Bool {
@@ -59,15 +56,7 @@ open class RestSession: NSObject {
         return SessionManager(configuration: configuration)
     }()
 
-    private(set) internal var baseAPIURL: String
-    private(set) internal var authorizeURL: String
-
-    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil) {
-        self.clientId = configuration.clientId
-        self.redirectUri = configuration.redirectUri
-        self.authorizeURL = "\(configuration.baseAuthURL)/oauth/authorize"
-        self.baseAPIURL = configuration.baseAPIURL
-        
+    public init(sessionData: SessionData? = nil) {
         if let sessionData = sessionData {
             self.accessToken = sessionData.token
             self.userId = sessionData.userId
@@ -77,7 +66,7 @@ open class RestSession: NSObject {
     public typealias LoginHandler = (_ error: NSError?) -> Void
     
     @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
-        self.acquireAccessToken(clientId: self.clientId, redirectUri: self.redirectUri, username: username, password: password, completion: {
+        self.acquireAccessToken(username: username, password: password, completion: {
             (details: AuthorizationDetails?, error: NSError?) in
 
             DispatchQueue.global().async {
@@ -110,16 +99,16 @@ open class RestSession: NSObject {
 
     internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
 
-    internal func acquireAccessToken(clientId: String, redirectUri: String, username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
+    internal func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
         let parameters = [
             "response_type": "token",
-            "client_id": clientId,
-            "redirect_uri": redirectUri,
+            "client_id": FitpaySDKConfig.clientId,
+            "redirect_uri": FitpaySDKConfig.redirectURL,
             "credentials": ["username": username, "password": password].JSONString!
         ]
 
-        let request = _manager.request(self.authorizeURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        let request = _manager.request(FitpaySDKConfig.authURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
         request.validate().responseObject(queue: DispatchQueue.global()) {
             (response: DataResponse<AuthorizationDetails>) in
 
@@ -164,7 +153,7 @@ extension RestSession {
             return nil
         }
         
-        let session = RestSession(configuration: sdkConfiguration, sessionData: sessionData)
+        let session = RestSession(sessionData: sessionData)
         let client = RestClient(session: session)
         
         

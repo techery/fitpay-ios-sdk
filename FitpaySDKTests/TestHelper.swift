@@ -8,9 +8,9 @@ class TestHelper {
     var session: RestSession!
     var client: RestClient!
     
-    init(clientId: String, redirectUri: String, session: RestSession, client: RestClient) {
-        self.clientId = clientId
-        self.redirectUri = redirectUri
+    init(session: RestSession, client: RestClient) {
+        self.clientId = FitpaySDKConfig.clientId
+        self.redirectUri = FitpaySDKConfig.redirectURL
         self.session = session
         self.client = client
     }
@@ -28,7 +28,7 @@ class TestHelper {
         let currentTime = Date().timeIntervalSince1970 //double or NSTimeInterval
         
         self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
-            termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId!) { [unowned self] (user, error) in
+            termsAccepted: nil, origin: nil, originAccountCreated: nil) { [unowned self] (user, error) in
                 
                 XCTAssertNil(error)
                 XCTAssertNotNil(user)
