@@ -45,8 +45,9 @@ extension RestClient {
      - parameter email:      email of the user
      - parameter completion: CreateUserHandler closure
      */
-    open func createUser(_ email: String, password: String, firstName: String?, lastName: String?, birthDate: String?,
-                         termsVersion: String?, termsAccepted: String?, origin: String?, originAccountCreated: String?, completion: @escaping UserHandler) {
+    open func createUser(_ email: String, password: String, firstName: String?, lastName: String?,
+                         birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?,
+                         originAccountCreated: String?, completion: @escaping UserHandler) {
         log.verbose("request create user: \(email)")
         
         self.preparKeyHeader { [weak self] (headers, error) in

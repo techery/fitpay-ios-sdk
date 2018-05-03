@@ -105,10 +105,8 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             return
         }
 
-
         self.webViewSessionData = webViewSessionData
-        self.restClient = RestSession.GetUserAndDeviceWith(sessionData: webViewSessionData,
-                                                           sdkConfiguration: self.wvConfigStorage.sdkConfiguration!) { [weak self] (user, device, error) in
+        self.restClient = RestSession.GetUserAndDeviceWith(sessionData: webViewSessionData) { [weak self] (user, device, error) in
             guard error == nil else {
                 if let delegate = self?.outputDelegate {
                     delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,

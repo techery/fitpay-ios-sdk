@@ -34,7 +34,7 @@ class TestHelper {
                 XCTAssertNotNil(user)
                 
                 debugPrint("created user: \(String(describing: user?.info?.email))")
-                if (user != nil) { self.userValid(user!) }
+                self.userValid(user!)
                 
                 //additional sanity checks that we created a meaningful user
                 //PLAT-1388 has a bug on the number of links returned when creating a user. When that gets fixed, reenable this.

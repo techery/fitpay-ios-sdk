@@ -5,12 +5,7 @@ class RestClientTests: XCTestCase {
     var clientId = "fp_webapp_pJkVp2Rl"
     let redirectUri = "https://webapp.fit-pay.com"
     let password = "1029"
-    let shouldLoadEnvironmentVariables = true
-    
-    // if shouldLoadEnvironmentVariables == false then we will use next urls:
-    let baseAuthUrl = "https://some.url"
-    let baseApiUrl = "https://some.url/api"
-    
+
     var session: RestSession!
     var client: RestClient!
     var testHelper: TestHelper!
@@ -28,6 +23,7 @@ class RestClientTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        FitpaySDKConfig.config(clientId: clientId)
         self.session = RestSession()
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelper(session: self.session, client: self.client)

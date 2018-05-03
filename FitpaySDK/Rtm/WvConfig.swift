@@ -92,13 +92,12 @@ import ObjectMapper
     //MARK: - Lifecycle
     
     @objc public convenience init(paymentDevice: PaymentDevice, userEmail: String?, isNewAccount: Bool) {
-        self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount), SDKConfiguration: FitpaySDKConfiguration())
+        self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount))
     }
     
-    @objc public init(paymentDevice: PaymentDevice, rtmConfig: RtmConfigProtocol, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
+    @objc public init(paymentDevice: PaymentDevice, rtmConfig: RtmConfigProtocol) {
         self.configStorage.paymentDevice = paymentDevice
         self.configStorage.rtmConfig = rtmConfig
-        self.configStorage.sdkConfiguration = SDKConfiguration
         self.url = FitpaySDKConfig.webURL
         
         self.rtmMessaging = RtmMessaging(wvConfigStorage: self.configStorage)

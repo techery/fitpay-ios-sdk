@@ -49,7 +49,7 @@ open class RestClient: NSObject {
     
     private let defaultHeaders = [
         "Accept": "application/json",
-        "X-FitPay-SDK": "iOS-\(FitpaySDKConfiguration.sdkVersion)"
+        "X-FitPay-SDK": "iOS-\(FitpaySDKConfig.sdkVersion)"
     ]
     
     internal var _session: RestSession

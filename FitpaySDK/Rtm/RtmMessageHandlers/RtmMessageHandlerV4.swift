@@ -60,7 +60,7 @@ class RtmMessageHandlerV4: RtmMessageHandlerV3 {
     }
     
     func handleSdkVersion(_ message: RtmMessage) {
-        let result = [RtmMessageTypeVer4.sdkVersion.rawValue : "iOS-\(FitpaySDKConfiguration.sdkVersion)"]
+        let result = [RtmMessageTypeVer4.sdkVersion.rawValue : "iOS-\(FitpaySDKConfig.sdkVersion)"]
         if let delegate = self.outputDelegate {
             delegate.send(rtmMessage: RtmMessageResponse(data: result, type: RtmMessageTypeVer4.sdkVersion.rawValue, success: true), retries: 3)
         }

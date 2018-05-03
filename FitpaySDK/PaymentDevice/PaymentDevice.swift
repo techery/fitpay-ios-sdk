@@ -317,14 +317,14 @@
                 self?.apduResponseHandler = completion
                 log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
                 
-                DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs, execute: {
+                DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfig.PaymentDevice.commitProcessingTimeout) {
                     if !isCompleteExecute {
                         self?.apduResponseHandler = nil
                         self?.removeDisconnectedBinding()
                         log.error("APDU_DATA: Received timeout during execute APDU's.")
                         completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduSendingTimeout, domain: PaymentDevice.self))
                     }
-                })
+                }
                 
                 self?.deviceInterface.executeAPDUCommand(apduCommand)
             }
@@ -350,13 +350,13 @@
             })
             
             var isCompleteProcessing = false
-            DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs, execute: {
+            DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfig.PaymentDevice.commitProcessingTimeout) {
                 if !isCompleteProcessing {
                     log.error("APDU_DATA: Received timeout during process non-APDU commit.")
                     self.removeDisconnectedBinding()
                     completion(.failed, NSError.error(code: PaymentDevice.ErrorCode.nonApduProcessingTimeout, domain: PaymentDevice.self))
                 }
-            })
+            }
             
             processNonAPDUCommit(commit) { (state, error) in
                 isCompleteProcessing = true

@@ -28,7 +28,7 @@ open class CommitMetrics: Mappable {
     }
     
     public init() {
-        self.sdkVersion = FitpaySDKConfiguration.sdkVersion
+        self.sdkVersion = FitpaySDKConfig.sdkVersion
         self.osVersion = UIDevice.current.systemName + " " + UIDevice.current.systemVersion
     }
     

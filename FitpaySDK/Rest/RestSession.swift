@@ -66,8 +66,7 @@ open class RestSession: NSObject {
     public typealias LoginHandler = (_ error: NSError?) -> Void
     
     @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
-        self.acquireAccessToken(username: username, password: password, completion: {
-            (details: AuthorizationDetails?, error: NSError?) in
+        self.acquireAccessToken(username: username, password: password) { (details: AuthorizationDetails?, error: NSError?) in
 
             DispatchQueue.global().async {
                 if let error = error {
@@ -94,23 +93,22 @@ open class RestSession: NSObject {
                     }
                 }
             }
-        })
+        }
     }
 
     internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
 
     internal func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
-        let parameters = [
+        let parameters: [String: String] = [
             "response_type": "token",
             "client_id": FitpaySDKConfig.clientId,
             "redirect_uri": FitpaySDKConfig.redirectURL,
             "credentials": ["username": username, "password": password].JSONString!
         ]
 
-        let request = _manager.request(FitpaySDKConfig.authURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate().responseObject(queue: DispatchQueue.global()) {
-            (response: DataResponse<AuthorizationDetails>) in
+        let request = _manager.request(FitpaySDKConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<AuthorizationDetails>) in
 
             DispatchQueue.main.async {
                 if let resultError = response.result.error {
@@ -145,9 +143,7 @@ extension RestSession {
     
     public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, NSError?) -> Void
 
-    class func GetUserAndDeviceWith(sessionData: SessionData,
-                                    sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
-                                    completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
+    class func GetUserAndDeviceWith(sessionData: SessionData, completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
         guard let userId = sessionData.userId, let deviceId = sessionData.deviceId else {
             completion(nil, nil, NSError.error(code: RestSession.ErrorCode.userOrDeviceEmpty, domain: RestSession.self))
             return nil
@@ -198,14 +194,8 @@ extension RestSession {
         return client
     }
     
-    class func GetUserAndDeviceWith(token: String,
-                                    userId: String,
-                                    deviceId: String,
-                                    sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
-                                    completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
-        return RestSession.GetUserAndDeviceWith(sessionData: SessionData(token: token, userId: userId, deviceId: deviceId),
-                                                sdkConfiguration: sdkConfiguration,
-                                                completion: completion)
+    class func GetUserAndDeviceWith(token: String, userId: String, deviceId: String, completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
+        return RestSession.GetUserAndDeviceWith(sessionData: SessionData(token: token, userId: userId, deviceId: deviceId), completion: completion)
     }
 
 }

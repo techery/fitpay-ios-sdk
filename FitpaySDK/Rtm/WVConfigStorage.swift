@@ -1,7 +1,6 @@
 import Foundation
 
 class WvConfigStorage {
-    var sdkConfiguration: FitpaySDKConfiguration?
     var paymentDevice: PaymentDevice?
     var user: User?
     var device: DeviceInfo?
