@@ -44,15 +44,6 @@ import ObjectMapper
         }
     }
 
-    public var supportsAppVerification: Bool {
-        get {
-            return self.configStorage.supportsAppVerification
-        }
-        set {
-            self.configStorage.supportsAppVerification = newValue
-        }
-    }
-
      public internal(set) var a2aReturnLocation: String? {
         get {
             return self.configStorage.a2aReturnLocation

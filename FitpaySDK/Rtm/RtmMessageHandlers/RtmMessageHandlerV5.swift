@@ -69,7 +69,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
     
     func issuerAppVerificationRequest(_ message: RtmMessage) {
         guard let delegate = self.outputDelegate else { return }
-        let data = [RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue : self.wvConfigStorage.supportsAppVerification]
+        let data = [RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue: FitpaySDKConfig.supportsApp2App]
         delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
                                                      data: data,
                                                      type: RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue,
@@ -89,7 +89,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
                                                          success: false), retries: 3)
         }
         
-        if (wvConfigStorage.supportsAppVerification) {
+        if (FitpaySDKConfig.supportsApp2App) {
             guard let data = message.data as? [String: Any] else { return }
             guard let appToAppVerification = Mapper<A2AVerificationRequest>().map(JSONObject: data) else {
                 appToAppVerificationFailed(reason: A2AVerificationError.CantProcess)

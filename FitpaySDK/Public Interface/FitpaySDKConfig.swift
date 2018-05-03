@@ -8,10 +8,10 @@ public class FitpaySDKConfig: NSObject {
     /// Implicit allows you to get a single user token
     public static var clientId: String!
     
-    /// Used for Seb calls
+    /// Used for Web calls
     public static var webURL = "https://webapp.fit-pay.com"
     
-    /// Used for redirects?
+    /// Used for redirects
     public static var redirectURL = "https://webapp.fit-pay.com"
     
     /// Used for API calls
@@ -24,13 +24,18 @@ public class FitpaySDKConfig: NSObject {
     
     //sse
     
-    //app2app
+    /// App 2 App step-up method supported by your app
+    /// Only recommended for iOS 10+
+    public static var supportsApp2App = false
     
     public static let sdkVersion = Bundle(for: FitpaySDKConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
 
     //MARK: - Functions
     
     /// Setup FitpaySDK
+    ///
+    /// Call this method in the AppDelegate `didFinishLaunchingWithOptions:`
+    /// before doing anything else with the FItpaySDK
     ///
     /// - Parameter clientId: clientId from Fitpay
     public static func config(clientId: String) {
@@ -78,7 +83,7 @@ extension FitpaySDKConfig {
     
     public class PaymentDevice: NSObject {
         
-        /// Timeout in Seconds
+        /// Commit timeout in Seconds
         public static var commitProcessingTimeout: Double = 30
 
         //apdu transport mode
