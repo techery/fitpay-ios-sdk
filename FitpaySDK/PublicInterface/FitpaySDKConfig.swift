@@ -1,8 +1,6 @@
 import Foundation
 
-internal let log = FitpaySDKLogger.sharedInstance // TODO: do this differently?
-
-/// General Configuration Object
+/// Main Configuration Object
 public class FitpaySDKConfig: NSObject {
     
     /// Implicit allows you to get a single user token
@@ -71,7 +69,10 @@ extension FitpaySDKConfig {
     
     public class Web: NSObject {
 
-        // demo mode
+        /// Shows autofill options on the add card page when enabled
+        public static var demoMode = false
+
+        public static var cssURL: String?
 
     }
     

@@ -1,11 +1,3 @@
-//
-//  ConsoleOutput.swift
-//  FitpaySDK
-//
-//  Created by Anton on 15.11.16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 @objc open class ConsoleOutput: BaseLogsOutput {

@@ -1,12 +1,6 @@
-//
-//  FitpaySDKLogger.swift
-//  FitpaySDK
-//
-//  Created by Anton on 14.11.16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
-
 import Foundation
+
+internal let log = FitpaySDKLogger.sharedInstance
 
 @objc open class FitpaySDKLogger: NSObject {
     public static let sharedInstance = FitpaySDKLogger()

@@ -1,11 +1,3 @@
-//
-//  BaseOutput.swift
-//  FitpaySDK
-//
-//  Created by Anton on 14.11.16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 @objc public enum LogLevel: Int {
@@ -15,21 +7,21 @@ import Foundation
     case warning
     case error
     
-    var string : String {
-        var stringRepresentation = ""
+    var string: String {
+        
         switch self {
         case .verbose:
-            stringRepresentation = "VERBOSE"
+            return "VERBOSE"
         case .debug:
-            stringRepresentation = "DEBUG"
+            return "DEBUG"
         case .info:
-            stringRepresentation = "INFO"
+            return "INFO"
         case .warning:
-            stringRepresentation = "WARNING"
+            return "WARNING"
         case .error:
-            stringRepresentation = "ERROR"
+            return "ERROR"
         }
-        return stringRepresentation
+        
     }
 }
 
@@ -37,8 +29,9 @@ import Foundation
     func send(level: LogLevel, message: String, file: String, function: String, line: Int)
 }
 
-open class BaseLogsOutput : NSObject, LogsOutputProtocol {
+open class BaseLogsOutput: NSObject, LogsOutputProtocol {
     let formatter = DateFormatter()
+    
     var date: String {
         return formatter.string(from: Date())
     }
@@ -67,10 +60,7 @@ open class BaseLogsOutput : NSObject, LogsOutputProtocol {
     
     public func fileNameOfFile(_ file: String) -> String {
         let fileParts = file.components(separatedBy: "/")
-        if let lastPart = fileParts.last {
-            return lastPart
-        }
-        return ""
+        return fileParts.last ?? ""
     }
     
     public func fileNameWithoutSuffix(_ file: String) -> String {
@@ -78,9 +68,7 @@ open class BaseLogsOutput : NSObject, LogsOutputProtocol {
         
         if !fileName.isEmpty {
             let fileNameParts = fileName.components(separatedBy: ".")
-            if let firstPart = fileNameParts.first {
-                return firstPart
-            }
+            return fileNameParts.first ?? ""
         }
         return ""
     }

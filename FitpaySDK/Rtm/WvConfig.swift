@@ -53,18 +53,6 @@ import ObjectMapper
         }
     }
     
-    @objc open var demoModeEnabled: Bool {
-        get {
-            if let isEnabled = self.configStorage.rtmConfig?.jsonDict()[RtmConfigDafaultMappingKey.demoMode.rawValue] as? Bool {
-                return isEnabled
-            }
-            return false
-        }
-        set {
-            self.configStorage.rtmConfig?.update(value: newValue, forKey: RtmConfigDafaultMappingKey.demoMode.rawValue)
-        }
-    }
-    
     //MARK: - Internal and Private Variables
     
     var configStorage = WvConfigStorage()
@@ -97,8 +85,6 @@ import ObjectMapper
         
         self.rtmMessaging.outputDelagate = self
         
-        self.demoModeEnabled = false
-
         self.notificationCenter.addObserver(self, selector: #selector(logout), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         self.bindEvents()
     }
