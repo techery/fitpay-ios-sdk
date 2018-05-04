@@ -6,7 +6,7 @@ public class FitpaySDKConfig: NSObject {
     /// Implicit allows you to get a single user token
     public static var clientId: String!
     
-    /// Used for Web calls
+    /// Used for web calls
     public static var webURL = "https://webapp.fit-pay.com"
     
     /// Used for redirects
@@ -18,14 +18,13 @@ public class FitpaySDKConfig: NSObject {
     /// Used during login
     public static var authURL = "https://auth.fit-pay.com"
     
-    //sse enabled
-    
-    /// App 2 App step-up method supported by your app
+    /// Turn on when you are ready to implement App 2 App stepup methods
     /// Only recommended for iOS 10+
-    public static var supportsApp2App = false
+    public static var supportApp2App = false
     
+    /// SDK Version using semantic versioning MAJOR.MINOR.PATCH
     public static let sdkVersion = Bundle(for: FitpaySDKConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-
+    
     //MARK: - Functions
     
     /// Setup FitpaySDK
@@ -60,20 +59,24 @@ public class FitpaySDKConfig: NSObject {
         
     }
     
-
 }
 
 // MARK: - WebConfig
 
 extension FitpaySDKConfig {
     
+    /// Configuration options related to the Web specifically
     public class Web: NSObject {
 
         /// Shows autofill options on the add card page when enabled
         public static var demoMode = false
 
+        /// Overrides the default CSS
         public static var cssURL: String?
 
+        /// Turn on when you are ready to implement card scanning methods
+        public static var supportCardScanner = false
+        
     }
     
 }
@@ -82,9 +85,10 @@ extension FitpaySDKConfig {
 
 extension FitpaySDKConfig {
     
+    /// Configuration options related to the Payment Device specifically
     public class PaymentDevice: NSObject {
         
-        /// Commit timeout in Seconds
+        /// Commit timeout in seconds
         public static var commitProcessingTimeout: Double = 30
 
         //apdu transport mode
@@ -93,19 +97,6 @@ extension FitpaySDKConfig {
         
         //public var apduSecsTimeout: Double = 5
         
-
     }
     
 }
-
-// MARK: - HttpConfig
-
-extension FitpaySDKConfig {
-    
-    public class Http: NSObject {
-        
-
-    }
-    
-}
-

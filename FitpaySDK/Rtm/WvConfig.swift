@@ -103,7 +103,7 @@ import ObjectMapper
       attempt is successful.
      */
     @objc open func openDeviceConnection(_ completion: @escaping (_ error: NSError?) -> Void) {
-        self.connectionBinding = self.configStorage.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected) { [weak self] (event) in
+        self.connectionBinding = self.configStorage.paymentDevice!.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) { [weak self] (event) in
             guard let strongSelf = self else { return }
             
             strongSelf.configStorage.paymentDevice!.removeBinding(binding: strongSelf.connectionBinding!)

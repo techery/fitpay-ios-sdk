@@ -82,7 +82,7 @@ open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
             self.paymentDevice.removeBinding(binding: binding)
         }
         
-        self.deviceConnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected) {
+        self.deviceConnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) {
             [weak self] (event) in
             
             let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
@@ -102,7 +102,7 @@ open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
             observable.onNext(.connected)
         }
         
-        self.deviceDisconnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
+        self.deviceDisconnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
             [weak self] (event) in
             
             if let binding = self?.deviceConnectedBinding {

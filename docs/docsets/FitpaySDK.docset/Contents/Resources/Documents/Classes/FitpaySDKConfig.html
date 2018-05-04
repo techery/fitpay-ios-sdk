@@ -127,13 +127,10 @@
                 <a href="../Classes/FitpaySDKConfig.html">FitpaySDKConfig</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/FitpaySDKConfig.html#/s:9FitpaySDK0A9SDKConfigC3WebC">– Web</a>
+                <a href="../Classes/FitpaySDKConfig/Web.html">– Web</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/FitpaySDKConfig/PaymentDevice.html">– PaymentDevice</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/FitpaySDKConfig.html#/s:9FitpaySDK0A9SDKConfigC4HttpC">– Http</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/FitpaySDKLogger.html">FitpaySDKLogger</a>
@@ -170,6 +167,18 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/PaymentDevice/ErrorCode.html">– ErrorCode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PaymentDevice/SecurityNFCState.html">– SecurityNFCState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PaymentDevice/DeviceControlState.html">– DeviceControlState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PaymentDevice/ConnectionState.html">– ConnectionState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PaymentDevice/PaymentDeviceEventTypes.html">– PaymentDeviceEventTypes</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/Relationship.html">Relationship</a>
@@ -276,13 +285,7 @@
                 <a href="../Enums/CommitType.html">CommitType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ConnectionState.html">ConnectionState</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/CreditCardInitiator.html">CreditCardInitiator</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/DeviceControlState.html">DeviceControlState</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/EventSourceState.html">EventSourceState</a>
@@ -304,12 +307,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/NotificationsType.html">NotificationsType</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/PaymentDeviceEventTypes.html">PaymentDeviceEventTypes</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/SecurityNFCState.html">SecurityNFCState</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/StreamEventType.html">StreamEventType</a>
@@ -470,7 +467,7 @@
 
                 </div>
               </div>
-            <p>General Configuration Object</p>
+            <p>Main Configuration Object</p>
 
           </section>
           <section class="section task-group-section">
@@ -516,7 +513,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Used for Web calls</p>
+                        <p>Used for web calls</p>
 
                       </div>
                       <div class="declaration">
@@ -614,9 +611,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A9SDKConfigC15supportsApp2AppSbvpZ"></a>
-                    <a name="//apple_ref/swift/Variable/supportsApp2App" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A9SDKConfigC15supportsApp2AppSbvpZ">supportsApp2App</a>
+                    <a name="/s:9FitpaySDK0A9SDKConfigC14supportApp2AppSbvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/supportApp2App" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK0A9SDKConfigC14supportApp2AppSbvpZ">supportApp2App</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -624,7 +621,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>App 2 App step-up method supported by your app
+                        <p>Turn on when you are ready to implement App 2 App stepup methods
 Only recommended for iOS 10+</p>
 
                       </div>
@@ -632,7 +629,7 @@ Only recommended for iOS 10+</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">supportsApp2App</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">supportApp2App</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
 
                         </div>
                       </div>
@@ -652,7 +649,7 @@ Only recommended for iOS 10+</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>SDK Version using semantic versioning MAJOR.MINOR.PATCH</p>
 
                       </div>
                       <div class="declaration">
@@ -743,8 +740,9 @@ before doing anything else with the FItpaySDK</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Configuration options related to the Web specifically</p>
 
+                        <a href="../Classes/FitpaySDKConfig/Web.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -774,7 +772,7 @@ before doing anything else with the FItpaySDK</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Configuration options related to the Payment Device specifically</p>
 
                         <a href="../Classes/FitpaySDKConfig/PaymentDevice.html" class="slightly-smaller">See more</a>
                       </div>
@@ -791,41 +789,10 @@ before doing anything else with the FItpaySDK</p>
                 </li>
               </ul>
             </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK0A9SDKConfigC4HttpC"></a>
-                    <a name="//apple_ref/swift/Class/Http" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A9SDKConfigC4HttpC">Http</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Http</span><span class="p">:</span> <span class="kt">NSObject</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-03)</p>
+          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-04)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

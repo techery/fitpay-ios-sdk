@@ -11,21 +11,23 @@ public enum TestingType: UInt64 {
     case fullSimulationMode    = 0xDEADBEEF0000
 }
 
-open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
-    weak var paymentDevice : PaymentDevice!
-    var responseData : ApduResultMessage!
+open class MockPaymentDeviceConnector: NSObject, IPaymentDeviceConnector {
+    weak var paymentDevice: PaymentDevice!
+    
+    var responseData: ApduResultMessage!
     var connected = false
-    var _nfcState = SecurityNFCState.disabled
-    var sendingAPDU : Bool = false
-    let maxPacketSize : Int = 20
-    let apduSecsTimeout : Double = 5
+    var _nfcState = PaymentDevice.SecurityNFCState.disabled
+    var sendingAPDU: Bool = false
+
     var sequenceId: UInt16 = 0
     var testingType: TestingType
     var connectDelayTime: Double = 4 
     var disconnectDelayTime: Double = 4
     var apduExecuteDelayTime: Double = 0.5
-
-    var timeoutTimer : Timer?
+    var timeoutTimer: Timer?
+    
+    let maxPacketSize: Int = 20
+    let apduSecsTimeout: Double = 5
     
     required public init(paymentDevice device:PaymentDevice, testingType: TestingType = .fullSimulationMode) {
         self.paymentDevice = device
@@ -36,19 +38,19 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         log.verbose("connecting")
         DispatchQueue.main.asyncAfter(deadline: .now() + connectDelayTime, execute: {
             self.connected = true
-            self._nfcState = SecurityNFCState.enabled
+            self._nfcState = PaymentDevice.SecurityNFCState.enabled
             let deviceInfo = self.deviceInfo()
             log.verbose("triggering device data")
-            self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo": deviceInfo!])
-            self.paymentDevice?.connectionState = ConnectionState.connected
+            self.paymentDevice?.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo": deviceInfo!])
+            self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.connected
         })
     }
     
     open func disconnect() {
         DispatchQueue.main.asyncAfter(deadline: .now() + disconnectDelayTime, execute: {
             self.connected = false
-            self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceDisconnected)
-            self.paymentDevice?.connectionState = ConnectionState.disconnected
+            self.paymentDevice?.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceDisconnected)
+            self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.disconnected
         })
     }
     

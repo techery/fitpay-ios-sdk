@@ -28,19 +28,19 @@ internal enum RtmConfigDafaultMappingKey: String {
 }
 
 open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
-    open var clientId: String?
-    open var redirectUri: String?
-    open var userEmail: String?
-    open var deviceInfo: DeviceInfo?
-    open var hasAccount: Bool = false
-    open var version: String?
-    open var demoMode: Bool?
-    open var customCSSUrl: String?
-    open var demoCardGroup: String?
-    open var accessToken: String?
-    open var language: String?
-    open var baseLanguageUrl: String?
-    open var useWebCardScanner: Bool?
+    private var clientId: String?
+    public var redirectUri: String?
+    private var userEmail: String?
+    public var deviceInfo: DeviceInfo?
+    public var hasAccount: Bool = false
+    private var version: String?
+    private var demoMode: Bool?
+    private var customCSSUrl: String?
+    private var demoCardGroup: String?
+    public var accessToken: String?
+    private var language: String?
+    private var baseLanguageUrl: String?
+    private var useWebCardScanner: Bool?
     
     open var customs: [String: Any]?
     
@@ -49,6 +49,8 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         self.redirectUri = FitpaySDKConfig.redirectURL
         self.demoMode = FitpaySDKConfig.Web.demoMode
         self.customCSSUrl = FitpaySDKConfig.Web.cssURL
+        self.useWebCardScanner = !FitpaySDKConfig.Web.supportCardScanner
+        
         self.userEmail = userEmail
         self.deviceInfo = deviceInfo
         self.hasAccount = hasAccount

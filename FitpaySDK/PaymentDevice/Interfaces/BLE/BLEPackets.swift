@@ -134,7 +134,7 @@ struct DeviceControlMessage {
     let op : UInt8
     let msg : NSMutableData
     
-    init(operation: DeviceControlState) {
+    init(operation: PaymentDevice.DeviceControlState) {
         op = UInt8(operation.rawValue)
         msg = NSMutableData()
         var op8 = op
