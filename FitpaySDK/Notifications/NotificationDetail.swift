@@ -8,7 +8,7 @@ open class NotificationDetail : Serializable
     open var deviceId: String?
     open var userId: String?
     open var clientId: String?
-    var restClient:RestClient?
+    var restClient: RestClient?
 
     private enum CodingKeys: String, CodingKey {
         case ackSync = "_links.ackSync.href"

@@ -3,6 +3,7 @@ public enum SyncInitiator : String, Serializable {
     case Platform = "PLATFORM"
     case Notification = "NOTIFICATION"
     case WebHook = "WEB_HOOK"
+    case EventStream = "EVENT_STREAM"
     case NotDefined = "NOT DEFINED"
 }
 
@@ -34,7 +35,7 @@ open class CommitMetrics : Serializable
     }
     
     public init() {
-        self.sdkVersion = FitpaySDKVersion
+        self.sdkVersion = FitpaySDKConfiguration.sdkVersion
         self.osVersion = UIDevice.current.systemName + " " + UIDevice.current.systemVersion
     }
 
@@ -50,7 +51,7 @@ open class CommitMetrics : Serializable
         }
         
         let params = ["params": self.toJSON()]
-        client.makePostCall(completeSync, parameters: params as [String: AnyObject]?) { (error) in
+        client.makePostCall(completeSync, parameters: params as [String: Any]?) { (error) in
             if let error = error {
                 log.error("SYNC_ACKNOWLEDGMENT: completeSync failed to send. Error: \(error)")
             } else {

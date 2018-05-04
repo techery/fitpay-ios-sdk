@@ -1,6 +1,4 @@
-
 import Foundation
-import AlamofireObjectMapper
 import Alamofire
 import JWTDecode
 
@@ -29,8 +27,7 @@ internal class AuthorizationDetails: Serializable
 }
 
 @objcMembers
-open class RestSession: NSObject
-{
+open class RestSession: NSObject {
     public enum ErrorEnum: Int, Error, RawIntValue {
         case decodeFailure = 1000
         case parsingFailure
@@ -51,18 +48,17 @@ open class RestSession: NSObject
         self.userId = webViewSessionData.userId
     }
 
-    lazy fileprivate var _manager: SessionManager = {
+    lazy private var _manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         return SessionManager(configuration: configuration)
     }()
 
-    fileprivate (set) internal var baseAPIURL: String
-    fileprivate (set) internal var authorizeURL: String
+    private(set) internal var baseAPIURL: String
+    private(set) internal var authorizeURL: String
 
-    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil)
-    {
+    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil) {
         self.clientId = configuration.clientId
         self.redirectUri = configuration.redirectUri
         self.authorizeURL = "\(configuration.baseAuthURL)/oauth/authorize"
@@ -91,9 +87,7 @@ open class RestSession: NSObject
                         }
 
                         if let userId = jwt.body["user_id"] as? String {
-                            DispatchQueue.main.async {
-                                [weak self] in
-
+                            DispatchQueue.main.async { [weak self] in
                                 log.verbose("successful login for user: \(userId)")
                                 self?.userId = userId
                                 self?.accessToken = accessToken
@@ -112,8 +106,7 @@ open class RestSession: NSObject
 
     internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
 
-    internal func acquireAccessToken(clientId: String, redirectUri: String, username: String, password: String, completion: @escaping AcquireAccessTokenHandler)
-    {
+    internal func acquireAccessToken(clientId: String, redirectUri: String, username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
         let parameters = [
             "response_type": "token",
@@ -225,3 +218,4 @@ extension RestSession {
     }
 
 }
+

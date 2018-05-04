@@ -41,22 +41,19 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
     open var verified: String?
     open var verifiedEpoch: TimeInterval?
     open var appToAppContext: A2AContext?
-    fileprivate static let selectResource = "select"
-    fileprivate static let verifyResource = "verify"
-    fileprivate static let cardResource = "card"
 
     public weak var client: RestClient?
 
     open var selectAvailable: Bool {
-        return self.links?.url(VerificationMethod.selectResource) != nil
+        return self.links?.url(VerificationMethod.selectResourceKey) != nil
     }
 
     open var verifyAvailable: Bool {
-        return self.links?.url(VerificationMethod.verifyResource) != nil
+        return self.links?.url(VerificationMethod.verifyResourceKey) != nil
     }
 
     open var cardAvailable: Bool {
-        return self.links?.url(VerificationMethod.cardResource) != nil
+        return self.links?.url(VerificationMethod.cardResourceKey) != nil
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -74,6 +71,10 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
         case verifiedEpoch = "verifiedTsEpoch"
         case appToAppContext
     }
+
+    private static let selectResourceKey = "select"
+    private static let verifyResourceKey = "verify"
+    private static let cardResourceKey = "card"
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -127,7 +128,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
      - parameter completion:    VerifyHandler closure
      */
     @objc open func selectVerificationType(_ completion: @escaping RestClient.VerifyHandler) {
-        let resource = VerificationMethod.selectResource
+        let resource = VerificationMethod.selectResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.selectVerificationType(url, completion: completion)
@@ -142,7 +143,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
      - parameter completion:    VerifyHandler closure
      */
     @objc open func verify(_ verificationCode: String, completion: @escaping RestClient.VerifyHandler) {
-        let resource = VerificationMethod.verifyResource
+        let resource = VerificationMethod.verifyResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.verify(url, verificationCode: verificationCode, completion: completion)
@@ -157,7 +158,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
      - parameter completion:    CreditCardHandler closure
      */
     @objc open func retrieveCreditCard(_ completion: @escaping RestClient.CreditCardHandler) {
-        let resource = VerificationMethod.cardResource
+        let resource = VerificationMethod.cardResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.retrieveCreditCard(url, completion: completion)

@@ -1,11 +1,3 @@
-//
-//  Image.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 07.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 open class Image: NSObject, ClientModel, Serializable, AssetRetrivable
@@ -15,7 +7,7 @@ open class Image: NSObject, ClientModel, Serializable, AssetRetrivable
     open var height: Int?
     open var width: Int?
     public var client: RestClient?
-    fileprivate static let selfResource = "self"
+    fileprivate static let selfResourceKey = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
@@ -41,7 +33,7 @@ open class Image: NSObject, ClientModel, Serializable, AssetRetrivable
     }
     
     open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
-        let resource = Image.selfResource
+        let resource = Image.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.assets(url, completion: completion)
@@ -54,7 +46,7 @@ open class Image: NSObject, ClientModel, Serializable, AssetRetrivable
 
 open class ImageWithOptions: Image {
     open func retrieveAssetWith(options: [ImageAssetOption] = [], completion: @escaping RestClient.AssetsHandler) {
-        let resource = Image.selfResource
+        let resource = Image.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client, let urlString = updateUrlAssetWith(urlString: url, options: options) {
             print(urlString)

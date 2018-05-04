@@ -6,9 +6,9 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
     open var totalResults: Int?
     open var results: [T]?
     internal var links: [ResourceLink]?
-    fileprivate let lastResourse = "last"
-    fileprivate let nextResourse = "next"
-    fileprivate let previousResource = "previous"
+    private let lastResourse = "last"
+    private let nextResourse = "next"
+    private let previousResource = "previous"
 
     open var nextAvailable: Bool {
         return self.links?.url(self.nextResourse) != nil
@@ -53,7 +53,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         }
     }
     
-    fileprivate weak var _client: RestClient?
+    private weak var _client: RestClient?
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
@@ -105,7 +105,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         }
     }
 
-    fileprivate func collectAllAvailable(_ storage: [T], nextUrl: String, completion: @escaping CollectAllAvailableCompletion) {
+    private func collectAllAvailable(_ storage: [T], nextUrl: String, completion: @escaping CollectAllAvailableCompletion) {
         if let client = self.client {
             let _: T? = client.collectionItems(nextUrl)
             {

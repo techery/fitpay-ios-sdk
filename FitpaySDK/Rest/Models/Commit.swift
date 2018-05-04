@@ -6,12 +6,12 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         return CommitType(rawValue: commitTypeString ?? "") ?? .UNKNOWN
     }
     open var commitTypeString: String?
-    open var payload:Payload?
-    open var created:CLong?
-    open var previousCommit:String?
-    open var commit:String?
-    open var executedDuration:Int?
-    
+    open var payload: Payload?
+    open var created: CLong?
+    open var previousCommit: String?
+    open var commit: String?
+    open var executedDuration: Int?
+
     fileprivate static let apduResponseResource = "apduResponse"
     fileprivate static let confirmResource = "confirm"
     
@@ -68,7 +68,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         }
         
         let resource = Commit.confirmResource
-      /* TODO guard let url = self.links?.url(resource) else {
+       guard let url = self.links?.url(resource) else {
             completion(nil)
             return
         }
@@ -78,7 +78,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
             return
         }
         
-        client.confirm(url, executionResult: result, completion: completion)*/
+        client.confirm(url, executionResult: result, completion: completion)
     }
     
     internal func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
@@ -89,7 +89,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         }
         
         let resource = Commit.apduResponseResource
-         /* TODO  guard let url = self.links?.url(resource) else {
+        guard let url = self.links?.url(resource) else {
             completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
             return
         }
@@ -106,12 +106,10 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         
         log.verbose("apdu package \(apduPackage)")
         client.confirmAPDUPackage(url, package: apduPackage, completion: completion)
- */
     }
 }
 
-public enum CommitType : String
-{
+public enum CommitType: String {
     case CREDITCARD_CREATED          = "CREDITCARD_CREATED"
     case CREDITCARD_DEACTIVATED      = "CREDITCARD_DEACTIVATED"
     case CREDITCARD_ACTIVATED        = "CREDITCARD_ACTIVATED"

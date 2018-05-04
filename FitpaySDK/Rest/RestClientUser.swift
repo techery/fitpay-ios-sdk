@@ -1,6 +1,5 @@
 import Foundation
 import Alamofire
-import AlamofireObjectMapper
 
 extension RestClient {
     
@@ -301,6 +300,7 @@ extension RestClient {
                     }
                 }
             }
+            
         }
     }
     
