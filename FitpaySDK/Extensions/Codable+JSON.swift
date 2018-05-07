@@ -40,18 +40,15 @@ extension Serializable {
 }
 
 public extension KeyedDecodingContainer {
-    public func decode<Transformer: DecodingContainerTransformer>(_ key: KeyedDecodingContainer.Key,
-        
-                                                                  transformer: Transformer) throws -> Transformer.Output? where Transformer.Input : Decodable {
-
+    public func decode<Transformer: DecodingContainerTransformer>(_ key: KeyedDecodingContainer.Key, transformer: Transformer) throws -> Transformer.Output? where Transformer.Input : Decodable {
         do {
-             let decoded: Transformer.Input? = try self.decode(key)
-             return transformer.transform(decoded)
+            let decoded: Transformer.Input? = try self.decode(key)
+            return transformer.transform(decoded)
         } catch {
             return nil
         }
     }
-
+    
     public func decode<T>(_ key: KeyedDecodingContainer.Key) throws -> T? where T : Decodable {
         do {
             let object = try self.decodeIfPresent(T.self, forKey: key)
