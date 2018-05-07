@@ -15,7 +15,7 @@
      
      - parameter event: Provides event with payload in eventData property
      */
-    public typealias PaymentDeviceEventBlockHandler = (_ event:FitpayEvent) -> Void
+    public typealias PaymentDeviceEventBlockHandler = (_ event: FitpayEvent) -> Void
     
     /**
      Binds to the event using SyncEventType and a block as callback. 

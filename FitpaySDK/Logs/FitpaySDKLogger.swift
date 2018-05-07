@@ -3,51 +3,50 @@ import Foundation
 internal let log = FitpaySDKLogger.sharedInstance
 
 @objc open class FitpaySDKLogger: NSObject {
-    public static let sharedInstance = FitpaySDKLogger()
+    @objc public static let sharedInstance = FitpaySDKLogger()
     
-    public private(set) var outputs: [LogsOutputProtocol] = []
-
-    open var minLogLevel: LogLevel = LogLevel.info
+    @objc public private(set) var outputs: [LogsOutputProtocol] = []
     
-    @objc open func addOutput(output: LogsOutputProtocol) {
+    @objc public func addOutput(output: LogsOutputProtocol) {
         outputs.append(output)
     }
     
-    open func removeOutput(output: LogsOutputProtocol) {
+    @objc public func removeOutput(output: LogsOutputProtocol) {
+        //TODO: Clean up remove
         for (index, itr) in outputs.enumerated() {
-            if itr as AnyObject === output as AnyObject {
+            if itr === output {
                 outputs.remove(at: index)
                 return
             }
         }
     }
     
-    open func clearOutputs() {
+    @objc public func clearOutputs() {
         outputs = []
     }
     
-    open func verbose(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
+    public func verbose(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
         send(level: .verbose, message: message() as! String, file: file, function: function, line: line)
     }
     
-    open func debug(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
+    public func debug(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
         send(level: .debug, message: message() as! String, file: file, function: function, line: line)
     }
     
-    open func info(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
+    public func info(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
         send(level: .info, message: message() as! String, file: file, function: function, line: line)
     }
     
-    open func warning(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
+    public func warning(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
         send(level: .warning, message: message() as! String, file: file, function: function, line: line)
     }
     
-    open func error(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
+    public func error(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, line: Int = #line) {
         send(level: .error, message: message() as! String, file: file, function: function, line: line)
     }
     
-    open func send(level: LogLevel, message: String, file: String, function: String, line: Int) {
-        if minLogLevel.rawValue > level.rawValue {
+    public func send(level: LogLevel, message: String, file: String, function: String, line: Int) {
+        if FitpaySDKConfig.minLogLevel.rawValue > level.rawValue {
             return
         }
         

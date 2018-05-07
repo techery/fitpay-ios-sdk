@@ -69,12 +69,7 @@ class SyncOperationTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        if log.outputs.count == 0 {
-            log.addOutput(output: ConsoleOutput())
-        }
-        log.minLogLevel = .debug
-        
+                
         disposeBag = DisposeBag()
         
         mocksFactory.commitsFetcher = commitsFetcher

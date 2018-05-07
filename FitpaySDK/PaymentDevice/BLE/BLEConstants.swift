@@ -2,12 +2,12 @@ import CoreBluetooth
 
 internal let PAYMENTDEVICE_DEVICE_NAME = "FitPayPD"
 
-enum FitpayServiceUUID: String {
+internal enum FitpayServiceUUID: String {
     case PaymentServiceUUID    = "d7cc1dc2-3603-4e71-bce6-e3b1551633e0"
     case DeviceInfoServiceUUID = "0000180a-0000-1000-8000-00805f9b34fb"
 }
 
-enum FitpayPaymentCharacteristicUUID: String {
+internal enum FitpayPaymentCharacteristicUUID: String {
     
     case APDUControlCharacteristic         = "0761f49b-5f56-4008-b203-fd2406db8c20"
     case APDUResultCharacteristic          = "840f2622-ff4a-4a56-91ab-b1e6dd977db4"
@@ -21,7 +21,7 @@ enum FitpayPaymentCharacteristicUUID: String {
     case ApplicationControlCharacteristic  = "6fea71ab-14ca-4921-b166-e8742e349975"
 }
 
-enum FitpayDeviceInfoCharacteristicUUID: String {
+internal enum FitpayDeviceInfoCharacteristicUUID: String {
     
     case CHARACTERISTIC_MANUFACTURER_NAME_STRING = "00002a29-0000-1000-8000-00805f9b34fb"
     case CHARACTERISTIC_MODEL_NUMBER_STRING      = "00002a24-0000-1000-8000-00805f9b34fb"

@@ -22,6 +22,9 @@ public class FitpaySDKConfig: NSObject {
     /// Only recommended for iOS 10+
     public static var supportApp2App = false
     
+    /// Logs will be sent for every level equal or above what is set
+    public static var minLogLevel: LogLevel = LogLevel.info
+    
     /// SDK Version using semantic versioning MAJOR.MINOR.PATCH
     public static let sdkVersion = Bundle(for: FitpaySDKConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     

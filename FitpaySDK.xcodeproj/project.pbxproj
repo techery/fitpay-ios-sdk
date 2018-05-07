@@ -564,6 +564,7 @@
 		276CD25D209A5CF800076648 /* PublicInterface */ = {
 			isa = PBXGroup;
 			children = (
+				847264971CA5263400DE801D /* IPaymentDeviceConnector.swift */,
 				276CD25E209A5D1700076648 /* FitpaySDKConfig.swift */,
 			);
 			path = PublicInterface;
@@ -666,9 +667,6 @@
 		847264961CA5261400DE801D /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
-				9B65A3391CDD14CD007A7D7D /* Mock */,
-				8472649B1CA53C9100DE801D /* BLE */,
-				847264971CA5263400DE801D /* IPaymentDeviceConnector.swift */,
 			);
 			path = Interfaces;
 			sourceTree = "<group>";
@@ -743,11 +741,13 @@
 				9B65A33A1CDD1534007A7D7D /* MockPaymentDeviceConnector.swift */,
 			);
 			name = Mock;
+			path = Interfaces;
 			sourceTree = "<group>";
 		};
 		A306B4C81CEE4535007F093C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9B65A3391CDD14CD007A7D7D /* Mock */,
 				A306B4C91CEE457D007F093C /* ApduResultMessage.swift */,
 				374B62661EC9DAB300A7CE62 /* ApduResponseProtocol.swift */,
 				3701AE3A1F13BA1B00550890 /* SyncEvent.swift */,
@@ -838,6 +838,7 @@
 				9A7C78781CC77F130097BAB9 /* EventListeners */,
 				847264961CA5261400DE801D /* Interfaces */,
 				A306B4C81CEE4535007F093C /* Models */,
+				8472649B1CA53C9100DE801D /* BLE */,
 				3701AE441F14C27000550890 /* Operations */,
 				37139BDE1F177AE9001EEE73 /* SyncQueue */,
 			);

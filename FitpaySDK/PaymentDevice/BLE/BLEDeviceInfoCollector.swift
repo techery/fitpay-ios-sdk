@@ -2,7 +2,7 @@ import CoreBluetooth
 import ObjectMapper
 
 internal class BLEDeviceInfoCollector {
-    static let characteristicBindings : [CBUUID:String] = [
+    static let characteristicBindings: [CBUUID: String] = [
         PAYMENT_CHARACTERISTIC_UUID_MANUFACTURER_NAME : "manufacturerName",
         PAYMENT_CHARACTERISTIC_UUID_MODEL_NUMBER      : "modelNumber",
         PAYMENT_CHARACTERISTIC_UUID_SERIAL_NUMBER     : "serialNumber",
@@ -13,26 +13,24 @@ internal class BLEDeviceInfoCollector {
         PAYMENT_CHARACTERISTIC_UUID_SECURE_ELEMENT_ID : "secureElementId"
     ]
     
-    private var deviceInfoMap : [String:AnyObject] = [:]
+    private var deviceInfoMap: [String: Any] = [:]
     
     func collectDataFromCharacteristicIfPossible(_ characteristic: CBCharacteristic) {
         if let deviceInfoKey = BLEDeviceInfoCollector.characteristicBindings[characteristic.uuid],
            let value = characteristic.value {
-            deviceInfoMap[deviceInfoKey] = String(data: value, encoding: String.Encoding.utf8) as AnyObject?
+            deviceInfoMap[deviceInfoKey] = String(data: value, encoding: String.Encoding.utf8)
         }
     }
     
-    var isCollected : Bool {
+    var isCollected: Bool {
         return deviceInfoMap.count == BLEDeviceInfoCollector.characteristicBindings.count
     }
     
-    var deviceInfo : DeviceInfo? {
-        guard isCollected else {
-            return nil
-        }
+    var deviceInfo: DeviceInfo? {
+        guard isCollected else { return nil }
         
         if let secureElementId = deviceInfoMap["secureElementId"] {
-            deviceInfoMap["secureElement"] = ["secureElementId" : secureElementId] as NSDictionary
+            deviceInfoMap["secureElement"] = ["secureElementId": secureElementId]
         }
         
         return Mapper<DeviceInfo>().map(JSON: deviceInfoMap)

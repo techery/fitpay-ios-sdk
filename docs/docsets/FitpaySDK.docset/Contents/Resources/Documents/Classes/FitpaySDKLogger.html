@@ -14,7 +14,7 @@
     <a title="FitpaySDKLogger Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">FitpaySDK Docs</a> (13% documented)</p>
+        <p><a href="../index.html">FitpaySDK Docs</a> (14% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -77,9 +77,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ConnectDeviceOperation.html">ConnectDeviceOperation</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/ConsoleOutput.html">ConsoleOutput</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/CreditCard.html">CreditCard</a>
@@ -476,9 +473,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A9SDKLoggerC14sharedInstanceACvpZ"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(cpy)sharedInstance"></a>
                     <a name="//apple_ref/swift/Variable/sharedInstance" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A9SDKLoggerC14sharedInstanceACvpZ">sharedInstance</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(cpy)sharedInstance">sharedInstance</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -493,7 +490,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">sharedInstance</span> <span class="o">=</span> <span class="kt">FitpaySDKLogger</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">sharedInstance</span> <span class="o">=</span> <span class="kt">FitpaySDKLogger</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -503,9 +500,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A9SDKLoggerC7outputsSayAA18LogsOutputProtocol_pGvp"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(py)outputs"></a>
                     <a name="//apple_ref/swift/Property/outputs" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A9SDKLoggerC7outputsSayAA18LogsOutputProtocol_pGvp">outputs</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(py)outputs">outputs</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -520,34 +517,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">outputs</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK0A9SDKLoggerC11minLogLevelAA0eF0Ovp"></a>
-                    <a name="//apple_ref/swift/Property/minLogLevel" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A9SDKLoggerC11minLogLevelAA0eF0Ovp">minLogLevel</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">minLogLevel</span><span class="p">:</span> <span class="kt"><a href="../Enums/LogLevel.html">LogLevel</a></span> <span class="o">=</span> <span class="kt"><a href="../Enums/LogLevel.html">LogLevel</a></span><span class="o">.</span><span class="n">info</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">outputs</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></code></pre>
 
                         </div>
                       </div>
@@ -574,7 +544,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">addOutput</span><span class="p">(</span><span class="nv">output</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">addOutput</span><span class="p">(</span><span class="nv">output</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -584,9 +554,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A9SDKLoggerC12removeOutputyAA04LogsE8Protocol_p6output_tF"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(im)removeOutputWithOutput:"></a>
                     <a name="//apple_ref/swift/Method/removeOutput(output:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A9SDKLoggerC12removeOutputyAA04LogsE8Protocol_p6output_tF">removeOutput(output:)</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(im)removeOutputWithOutput:">removeOutput(output:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -601,7 +571,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">removeOutput</span><span class="p">(</span><span class="nv">output</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeOutput</span><span class="p">(</span><span class="nv">output</span><span class="p">:</span> <span class="kt"><a href="../Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -611,9 +581,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A9SDKLoggerC12clearOutputsyyF"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(im)clearOutputs"></a>
                     <a name="//apple_ref/swift/Method/clearOutputs()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A9SDKLoggerC12clearOutputsyyF">clearOutputs()</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpaySDKLogger(im)clearOutputs">clearOutputs()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -628,7 +598,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">clearOutputs</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">clearOutputs</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -655,7 +625,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">verbose</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">verbose</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -682,7 +652,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">debug</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">debug</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -709,7 +679,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">info</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">info</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -736,7 +706,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">warning</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">warning</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -763,7 +733,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">error</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">error</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kd">@autoclosure</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">,</span> <span class="n">_</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#file</span><span class="p">,</span> <span class="n">_</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -790,7 +760,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">level</span><span class="p">:</span> <span class="kt"><a href="../Enums/LogLevel.html">LogLevel</a></span><span class="p">,</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">level</span><span class="p">:</span> <span class="kt"><a href="../Enums/LogLevel.html">LogLevel</a></span><span class="p">,</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -802,7 +772,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-04)</p>
+          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-07)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

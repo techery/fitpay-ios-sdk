@@ -48,7 +48,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
         self.wvConfigStorage = wvConfigStorage
     }
     
-    func handle(message: [String : Any]) {
+    func handle(message: [String: Any]) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
         guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
@@ -125,7 +125,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             self?.wvConfigStorage.paymentDevice?.deviceInfo?.client = self?.wvConfigStorage.user?.client
 
             if let delegate = self?.wvRtmDelegate {
-                delegate.didAuthorizeWithEmail(user?.email)
+                delegate.didAuthorizeWithEmail?(user?.email)
             }
 
             if self?.wvConfigStorage.rtmConfig?.hasAccount == false {

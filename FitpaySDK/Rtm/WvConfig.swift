@@ -246,9 +246,9 @@ import ObjectMapper
             if let error = error {
                 if retries > 0 {
                     log.warning("WV_DATA: Can't send message to wv... retrying...")
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         self?.sendRtmMessage(rtmMessage: rtmMessage, retries: retries - 1)
-                    })
+                    }
                 } else {
                     log.error("WV_DATA: Can't send message to wv, error: \(error)")
                 }

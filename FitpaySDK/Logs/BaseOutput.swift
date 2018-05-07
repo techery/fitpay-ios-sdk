@@ -1,5 +1,6 @@
 import Foundation
 
+//TODO: Where does LogLevel live?
 @objc public enum LogLevel: Int {
     case verbose = 0
     case debug
@@ -45,7 +46,7 @@ open class BaseLogsOutput: NSObject, LogsOutputProtocol {
         // send somewhere
     }
     
-    open func formMessage(level: LogLevel, message: String, file: String, function: String, line: Int) -> String {
+    func formMessage(level: LogLevel, message: String, file: String, function: String, line: Int) -> String {
         let fileName = fileNameWithoutSuffix(file)
         var messageResult = message
         switch level {
@@ -58,12 +59,12 @@ open class BaseLogsOutput: NSObject, LogsOutputProtocol {
         return messageResult
     }
     
-    public func fileNameOfFile(_ file: String) -> String {
+    private func fileNameOfFile(_ file: String) -> String {
         let fileParts = file.components(separatedBy: "/")
         return fileParts.last ?? ""
     }
     
-    public func fileNameWithoutSuffix(_ file: String) -> String {
+    private func fileNameWithoutSuffix(_ file: String) -> String {
         let fileName = fileNameOfFile(file)
         
         if !fileName.isEmpty {
