@@ -35,9 +35,7 @@ After that you should follow to default carthage workflow, which is:
  
   ```
   $(SRCROOT)/Carthage/Build/iOS/Alamofire.framework
-  $(SRCROOT)/Carthage/Build/iOS/AlamofireObjectMapper.framework
   $(SRCROOT)/Carthage/Build/iOS/JSONWebToken.framework
-  $(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework
   $(SRCROOT)/Carthage/Build/iOS/FitpaySDK.framework
   ```
 

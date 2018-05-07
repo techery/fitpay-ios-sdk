@@ -197,8 +197,6 @@
 		3A93A0BC1DB8CA2C00A9FEB4 /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD200751CE235450009CDA6 /* RestAPIConstants.swift */; };
 		3A93A0E51DB8CA2C00A9FEB4 /* FitpaySDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD922A01C1F7EFC007693AB /* FitpaySDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A93A11D1DB8E68E00A9FEB4 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */; };
-		3A93A11E1DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */; };
-		3A93A1211DB8E68E00A9FEB4 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */; };
 		3AF3A8F01DDB15AE0037E105 /* BaseOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8ED1DDB15AE0037E105 /* BaseOutput.swift */; };
 		3AF3A8F11DDB15AE0037E105 /* ConsoleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8EE1DDB15AE0037E105 /* ConsoleOutput.swift */; };
 		3AF3A8F21DDB15AE0037E105 /* FitpaySDKLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8EF1DDB15AE0037E105 /* FitpaySDKLogger.swift */; };
@@ -470,8 +468,6 @@
 				2778174B208E42A200FE2770 /* RxCocoa.framework in Frameworks */,
 				2778174C208E42A200FE2770 /* RxSwift.framework in Frameworks */,
 				3A93A11D1DB8E68E00A9FEB4 /* Alamofire.framework in Frameworks */,
-				3A93A11E1DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework in Frameworks */,
-				3A93A1211DB8E68E00A9FEB4 /* ObjectMapper.framework in Frameworks */,
 				2778174E208E704E00FE2770 /* JWTDecode.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
