@@ -1,4 +1,3 @@
-
 @objc public enum NonAPDUCommitState: Int {
     case success = 0 // will continue commits execution
     case skipped     // will continue commits execution
@@ -16,8 +15,10 @@
     }
 }
 
-@objc public protocol IPaymentDeviceConnector
-{
+@objc public protocol IPaymentDeviceConnector {
+    
+    // MARK: - Required
+    
     /// Connects to the payment device
     /// As result event PaymentDeviceEventTypes.onDeviceConnected should be called
     func connect()
@@ -34,19 +35,27 @@
     /// and device is ready for communications
     func validateConnection(completion: @escaping (_ isValid: Bool, _ error: NSError?) -> Void)
 
-    /// Do what you need before executing apdu package
-    ///
-    /// - Parameters:
-    ///   - apduPackage: apduPackage object
-    ///   - completion: call completion when your task is done
-    @objc optional func onPreApduPackageExecute(_ apduPackage: ApduPackage, completion: @escaping (_ error: NSError?) -> Void)
-
     /// Should execute APDU command on payment device.
     /// Should call PaymentDevice.apduResponseHandler when preocessed
     ///
     /// - Parameter apduCommand: apduCommand object
     func executeAPDUCommand(_ apduCommand: APDUCommand)
 
+    /// - Returns: DeviceInfo if phone already connected to payment device
+    func deviceInfo() -> DeviceInfo?
+    
+    /// Reset to default state
+    func resetToDefaultState()
+    
+    // MARK: - Optional
+    
+    /// Do what you need before executing apdu package
+    ///
+    /// - Parameters:
+    ///   - apduPackage: apduPackage object
+    ///   - completion: call completion when your task is done
+    @objc optional func onPreApduPackageExecute(_ apduPackage: ApduPackage, completion: @escaping (_ error: NSError?) -> Void)
+    
     /// Should execute APDU package on payment device.
     ///
     /// - Parameters:
@@ -73,13 +82,11 @@
     ///
     /// - Parameter completion: when completion will be called, then the response will be sent to RTM
     @objc optional func handleIdVerificationRequest(completion: @escaping (IdVerificationResponse)->Void)
-
-    /// - Returns: DeviceInfo if phone already connected to payment device
-    func deviceInfo() -> DeviceInfo?
-
-    func resetToDefaultState()
     
-    /// If you need to store lastCommitId on OEM device, then you need to implement this methods
+    /// If you need to store lastCommitId on OEM device, then implement this method
     @objc optional func getDeviceLastCommitId() -> String
+    
+    /// If you need to get lastCommitId from your OEM device, then implement this method
     @objc optional func setDeviceLastCommitId(_ commitId: String)
+    
 }

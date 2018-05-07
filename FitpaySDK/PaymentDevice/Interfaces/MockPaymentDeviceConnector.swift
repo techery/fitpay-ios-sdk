@@ -1,24 +1,11 @@
-//
-//  MockPaymentDeviceConnector.swift
-//  FitpaySDK
-//
-//  Created by Tim Shanahan on 5/6/16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
-
-public enum TestingType: UInt64 {
-    case partialSimulationMode = 0xBADC0FFEE000
-    case fullSimulationMode    = 0xDEADBEEF0000
-}
-
-open class MockPaymentDeviceConnector: NSObject, IPaymentDeviceConnector {
+public class MockPaymentDeviceConnector: NSObject {
     weak var paymentDevice: PaymentDevice!
     
     var responseData: ApduResultMessage!
     var connected = false
-    var _nfcState = PaymentDevice.SecurityNFCState.disabled
+    var nfcState = PaymentDevice.SecurityNFCState.disabled
     var sendingAPDU: Bool = false
-
+    
     var sequenceId: UInt16 = 0
     var testingType: TestingType
     var connectDelayTime: Double = 4 
@@ -29,53 +16,20 @@ open class MockPaymentDeviceConnector: NSObject, IPaymentDeviceConnector {
     let maxPacketSize: Int = 20
     let apduSecsTimeout: Double = 5
     
-    required public init(paymentDevice device:PaymentDevice, testingType: TestingType = .fullSimulationMode) {
+    required public init(paymentDevice device: PaymentDevice, testingType: TestingType = .fullSimulationMode) {
         self.paymentDevice = device
         self.testingType = testingType
     }
     
-    open func connect() {
-        log.verbose("connecting")
-        DispatchQueue.main.asyncAfter(deadline: .now() + connectDelayTime, execute: {
-            self.connected = true
-            self._nfcState = PaymentDevice.SecurityNFCState.enabled
-            let deviceInfo = self.deviceInfo()
-            log.verbose("triggering device data")
-            self.paymentDevice?.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo": deviceInfo!])
-            self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.connected
-        })
-    }
-    
-    open func disconnect() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + disconnectDelayTime, execute: {
+    public func disconnect() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + disconnectDelayTime) {
             self.connected = false
             self.paymentDevice?.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceDisconnected)
             self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.disconnected
-        })
-    }
-    
-    open func isConnected() -> Bool {
-        log.verbose("checking is connected")
-        return connected
-    }
-    
-    open func validateConnection(completion: @escaping (Bool, NSError?) -> Void) {
-        completion(isConnected(), nil)
-    }
-    
-    
-    open func executeAPDUCommand(_ apduCommand: APDUCommand) {
-        guard let commandData = apduCommand.command?.hexToData() else {
-            if let completion = self.paymentDevice.apduResponseHandler {
-                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
-            }
-            return
         }
-        
-        sendAPDUData(commandData as Data, sequenceNumber: UInt16(apduCommand.sequence))
     }
-    
-    open func sendAPDUData(_ data: Data, sequenceNumber: UInt16) {
+
+    private func sendAPDUData(_ data: Data, sequenceNumber: UInt16) {
         let response = "9000"
         let packet = ApduResultMessage(hexResult: response)
         
@@ -87,8 +41,51 @@ open class MockPaymentDeviceConnector: NSObject, IPaymentDeviceConnector {
         }
     }
     
+    private func generateRandomSeId() -> String {
+        return testingType.rawValue.hex(preferableLength: 12) +
+            "528704504258" +
+            UInt64(Date().timeIntervalSince1970).hex(preferableLength: 12) +
+        "FFFF427208236250082462502041FFFF082562502041FFFF"
+    }
     
-    open func deviceInfo() -> DeviceInfo? {
+}
+
+// MARK: - IPaymentDeviceConnector
+extension MockPaymentDeviceConnector: IPaymentDeviceConnector {
+    
+    public func connect() {
+        log.verbose("connecting")
+        DispatchQueue.main.asyncAfter(deadline: .now() + connectDelayTime) {
+            self.connected = true
+            self.nfcState = PaymentDevice.SecurityNFCState.enabled
+            let deviceInfo = self.deviceInfo()
+            log.verbose("triggering device data")
+            self.paymentDevice?.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo": deviceInfo!])
+            self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.connected
+        }
+    }
+    
+    public func isConnected() -> Bool {
+        log.verbose("checking is connected")
+        return connected
+    }
+    
+    public func validateConnection(completion: @escaping (Bool, NSError?) -> Void) {
+        completion(isConnected(), nil)
+    }
+    
+    public func executeAPDUCommand(_ apduCommand: APDUCommand) {
+        guard let commandData = apduCommand.command?.hexToData() else {
+            if let completion = self.paymentDevice.apduResponseHandler {
+                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
+            }
+            return
+        }
+        
+        sendAPDUData(commandData as Data, sequenceNumber: UInt16(apduCommand.sequence))
+    }
+    
+    public func deviceInfo() -> DeviceInfo? {
         let deviceInfo = DeviceInfo()
         
         deviceInfo.deviceType = "WATCH"
@@ -105,20 +102,21 @@ open class MockPaymentDeviceConnector: NSObject, IPaymentDeviceConnector {
         deviceInfo.bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
         deviceInfo.secureElementId = self.generateRandomSeId()
         deviceInfo.casd = "7F218201097F218201049310201608231634158F370493B60000000342038949325F200C434552542E434153442E43549501825F2504201607015F240420210701450CA000000151535043415344005314C0AC3B49223485BE2FCFECBC19CFE14CE01CD9795F378180C0F41E9813FDC0C4522AA72CA6DDFFCFEE5432A01D7FDCF37246C23B138C2C7E5F91431E7E445932A812E0473A713919E594002E257311E67A324F130CA56EDF13FE36616C6EDE85437F30450ADA2549122C0C879B1BF55D1C83FEC7F8AB5CC45DE3A36110226F1A7DC35D86B39445EBBC9325C2F7FDF79FA0410DF55074ABE25F3822905ACD4030B40F9B8BAF35678C439EB7F6862D198BE58CFB053F6BE4A3ECAE148D05"
-
-        return deviceInfo;
-    }
-
-    open func resetToDefaultState() {
         
+        return deviceInfo
     }
-
-    func generateRandomSeId() -> String {
-        return  testingType.rawValue.hex(preferableLength: 12) +
-                "528704504258" +
-                UInt64(Date().timeIntervalSince1970).hex(preferableLength: 12) +
-                "FFFF427208236250082462502041FFFF082562502041FFFF"
+    
+    public func resetToDefaultState() {
+        
     }
     
 }
+
+// TODO: where to put testing type
+public enum TestingType: UInt64 {
+    case partialSimulationMode = 0xBADC0FFEE000
+    case fullSimulationMode    = 0xDEADBEEF0000
+}
+
+
 

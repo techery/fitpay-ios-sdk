@@ -81,7 +81,7 @@ extension FitpaySDKConfig {
     
 }
 
-// MARK: - DeviceConfig
+// MARK: - PaymentDeviceConfig
 
 extension FitpaySDKConfig {
     
