@@ -52,6 +52,9 @@ open class ApduPackage : NSObject, Serializable
         super.init()
     }
 
+    //Date format for date transformation
+    private let dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
         case seIdType
@@ -74,7 +77,7 @@ open class ApduPackage : NSObject, Serializable
         seId = try container.decode(.seId)
         apduCommands = try container.decode(.apduCommands)
         validUntil = try container.decode(.validUntil)
-        validUntilEpoch = try container.decode(.validUntil, transformer: CustomDateFormatTransform(formatString: "yyyy-MM-dd'T'HH:mm:ss.SSSX"))
+        validUntilEpoch = try container.decode(.validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
         apduPackageUrl = try container.decode(.apduPackageUrl)
     }
     
@@ -87,7 +90,7 @@ open class ApduPackage : NSObject, Serializable
         try container.encode(packageId, forKey: .packageId)
         try container.encode(apduCommands, forKey: .apduCommands)
         try container.encode(validUntil, forKey: .validUntil)
-        try container.encode(validUntilEpoch, forKey: .validUntil, transformer: CustomDateFormatTransform(formatString: "yyyy-MM-dd'T'HH:mm:ss.SSSX"))
+        try container.encode(validUntilEpoch, forKey: .validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
         try container.encode(apduPackageUrl, forKey: .apduPackageUrl)
     }
 
