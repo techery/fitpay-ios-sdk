@@ -102,6 +102,15 @@
                 <a href="Classes/FitpayBlockEventListener.html">FitpayBlockEventListener</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/FitpayConfig.html">FitpayConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FitpayConfig/Web.html">– Web</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/FitpayConfig/PaymentDevice.html">– PaymentDevice</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/FitpayEvent.html">FitpayEvent</a>
               </li>
               <li class="nav-group-task">
@@ -118,15 +127,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Classes/FitpayNotificationsManager.html">FitpayNotificationsManager</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/FitpaySDKConfig.html">FitpaySDKConfig</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/FitpaySDKConfig/Web.html">– Web</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/FitpaySDKConfig/PaymentDevice.html">– PaymentDevice</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/FitpaySDKLogger.html">FitpaySDKLogger</a>
@@ -404,13 +404,13 @@
                 <a href="Protocols/IFitpayCardScanner.html">IFitpayCardScanner</a>
               </li>
               <li class="nav-group-task">
-                <a href="Protocols/IPaymentDeviceConnector.html">IPaymentDeviceConnector</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a>
               </li>
               <li class="nav-group-task">
                 <a href="Protocols/NonAPDUConfirmOperationProtocol.html">NonAPDUConfirmOperationProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/PaymentDeviceConnectable.html">PaymentDeviceConnectable</a>
               </li>
               <li class="nav-group-task">
                 <a href="Protocols/RtmConfigProtocol.html">RtmConfigProtocol</a>
@@ -558,13 +558,20 @@
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/TODO:%20where%20should%20this%20go?"></a>
+                <a name="//apple_ref/swift/Section/TODO: where should this go?" class="dashAnchor"></a>
+                <a href="#/TODO:%20where%20should%20this%20go?">
+                  <h3 class="section-name">TODO: where should this go?</h3>
+                </a>
+              </div>
               <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:@M@FitpaySDK@objc(pl)IPaymentDeviceConnector"></a>
-                    <a name="//apple_ref/swift/Protocol/IPaymentDeviceConnector" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(pl)IPaymentDeviceConnector">IPaymentDeviceConnector</a>
+                    <a name="/c:@M@FitpaySDK@objc(pl)PaymentDeviceConnectable"></a>
+                    <a name="//apple_ref/swift/Protocol/PaymentDeviceConnectable" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(pl)PaymentDeviceConnectable">PaymentDeviceConnectable</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -572,15 +579,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Implement for your payment device Connnector</p>
 
-                        <a href="Protocols/IPaymentDeviceConnector.html" class="slightly-smaller">See more</a>
+                        <a href="Protocols/PaymentDeviceConnectable.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">IPaymentDeviceConnector</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PaymentDeviceConnectable</span></code></pre>
 
                         </div>
                       </div>
@@ -1155,7 +1162,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-07)</p>
+          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

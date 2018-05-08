@@ -49,7 +49,7 @@ open class RestClient: NSObject {
     
     private let defaultHeaders = [
         "Accept": "application/json",
-        "X-FitPay-SDK": "iOS-\(FitpaySDKConfig.sdkVersion)"
+        "X-FitPay-SDK": "iOS-\(FitpayConfig.sdkVersion)"
     ]
     
     internal var _session: RestSession
@@ -247,7 +247,7 @@ extension RestClient {
         let headers = self.defaultHeaders
         let parameters = ["clientPublicKey": clientPublicKey]
         
-        let request = _manager.request(FitpaySDKConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
         request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<EncryptionKey>) in
             DispatchQueue.main.async {
                 if response.result.error != nil {
@@ -280,7 +280,7 @@ extension RestClient {
      */
     internal func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
-        let request = _manager.request(FitpaySDKConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
         request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<EncryptionKey>) in
             DispatchQueue.main.async {
                 if response.result.error != nil {
@@ -313,7 +313,7 @@ extension RestClient {
      */
     internal func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler) {
         let headers = self.defaultHeaders
-        let request = _manager.request(FitpaySDKConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
         request.validate().responseString { (response: DataResponse<String>) in
             DispatchQueue.main.async {
                 completion(response.result.error)
@@ -407,7 +407,7 @@ extension RestClient {
                 return
             }
             
-            let request = strongSelf._manager.request(FitpaySDKConfig.apiURL + "/issuers",
+            let request = strongSelf._manager.request(FitpayConfig.apiURL + "/issuers",
                                                       method: .get,
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,

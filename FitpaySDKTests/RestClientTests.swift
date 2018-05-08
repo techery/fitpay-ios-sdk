@@ -23,7 +23,7 @@ class RestClientTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        FitpaySDKConfig.config(clientId: clientId)
+        FitpayConfig.config(clientId: clientId)
         self.session = RestSession()
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelper(session: self.session, client: self.client)

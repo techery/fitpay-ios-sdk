@@ -9,14 +9,14 @@
 import Foundation
 
 public protocol SyncFactory {
-    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: IPaymentDeviceConnector?) -> FetchCommitsOperationProtocol
+    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol
     func apduConfirmOperation() -> APDUConfirmOperationProtocol
     func nonApduConfirmOperation() -> NonAPDUConfirmOperationProtocol
     func connectDeviceOperationWith(paymentDevice: PaymentDevice) -> ConnectDeviceOperationProtocol
 }
 
 extension SyncFactory {
-    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: IPaymentDeviceConnector?) -> FetchCommitsOperationProtocol {
+    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
         return FetchCommitsOperation(deviceInfo: deviceInfo, shouldStartFromSyncedCommit: true, syncStorage: SyncStorage.sharedInstance, connector: connector)
     }
     

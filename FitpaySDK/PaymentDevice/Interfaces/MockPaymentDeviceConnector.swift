@@ -50,8 +50,8 @@ public class MockPaymentDeviceConnector: NSObject {
     
 }
 
-// MARK: - IPaymentDeviceConnector
-extension MockPaymentDeviceConnector: IPaymentDeviceConnector {
+// MARK: - PaymentDeviceConnectable
+extension MockPaymentDeviceConnector: PaymentDeviceConnectable {
     
     public func connect() {
         log.verbose("connecting")
@@ -77,7 +77,7 @@ extension MockPaymentDeviceConnector: IPaymentDeviceConnector {
     public func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
             if let completion = self.paymentDevice.apduResponseHandler {
-                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
+                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: PaymentDeviceConnectable.self))
             }
             return
         }

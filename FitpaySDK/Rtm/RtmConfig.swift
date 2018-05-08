@@ -45,11 +45,11 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
     open var customs: [String: Any]?
     
     public init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
-        self.clientId = FitpaySDKConfig.clientId
-        self.redirectUri = FitpaySDKConfig.redirectURL
-        self.demoMode = FitpaySDKConfig.Web.demoMode
-        self.customCSSUrl = FitpaySDKConfig.Web.cssURL
-        self.useWebCardScanner = !FitpaySDKConfig.Web.supportCardScanner
+        self.clientId = FitpayConfig.clientId
+        self.redirectUri = FitpayConfig.redirectURL
+        self.demoMode = FitpayConfig.Web.demoMode
+        self.customCSSUrl = FitpayConfig.Web.cssURL
+        self.useWebCardScanner = !FitpayConfig.Web.supportCardScanner
         
         self.userEmail = userEmail
         self.deviceInfo = deviceInfo

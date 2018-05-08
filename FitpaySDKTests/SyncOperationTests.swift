@@ -52,7 +52,7 @@ class MocksFactory: SyncFactory {
         return MockNonAPDUConfirm()
     }
     
-    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: IPaymentDeviceConnector?) -> FetchCommitsOperationProtocol {
+    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
         return commitsFetcher
     }
 }

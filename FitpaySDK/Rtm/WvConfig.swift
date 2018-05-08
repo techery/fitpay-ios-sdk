@@ -60,7 +60,7 @@ import ObjectMapper
     private var bindings: [FitpayEventBinding] = []
     private var rtmVersionSent = false
     
-    var url = FitpaySDKConfig.webURL
+    var url = FitpayConfig.webURL
     let notificationCenter = NotificationCenter.default
     
     var webview: WKWebView?
@@ -77,7 +77,7 @@ import ObjectMapper
     @objc public init(paymentDevice: PaymentDevice, rtmConfig: RtmConfigProtocol) {
         self.configStorage.paymentDevice = paymentDevice
         self.configStorage.rtmConfig = rtmConfig
-        self.url = FitpaySDKConfig.webURL
+        self.url = FitpayConfig.webURL
         
         self.rtmMessaging = RtmMessaging(wvConfigStorage: self.configStorage)
 

@@ -9,8 +9,8 @@ class TestHelper {
     var client: RestClient!
     
     init(session: RestSession, client: RestClient) {
-        self.clientId = FitpaySDKConfig.clientId
-        self.redirectUri = FitpaySDKConfig.redirectURL
+        self.clientId = FitpayConfig.clientId
+        self.redirectUri = FitpayConfig.redirectURL
         self.session = session
         self.client = client
     }

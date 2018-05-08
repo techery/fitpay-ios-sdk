@@ -46,7 +46,7 @@ internal let log = FitpaySDKLogger.sharedInstance
     }
     
     public func send(level: LogLevel, message: String, file: String, function: String, line: Int) {
-        if FitpaySDKConfig.minLogLevel.rawValue > level.rawValue {
+        if FitpayConfig.minLogLevel.rawValue > level.rawValue {
             return
         }
         

@@ -1,9 +1,19 @@
-@objc public enum NonAPDUCommitState: Int {
-    case success = 0 // will continue commits execution
-    case skipped     // will continue commits execution
-    case failed      // will stop sync
+
+
+// TODO: where should this go?
+@objc public enum NonAPDUCommitState: Int, CustomStringConvertible {
     
-    var description: String {
+    /// will continue commits execution
+    case success = 0
+    
+    /// will continue commits execution
+    case skipped
+   
+    /// will stop sync
+    case failed
+    
+    /// description
+    public var description: String {
         switch self {
         case .failed:
             return "FAILED"
@@ -15,7 +25,8 @@
     }
 }
 
-@objc public protocol IPaymentDeviceConnector {
+/// Implement for your payment device Connnector
+@objc public protocol PaymentDeviceConnectable {
     
     // MARK: - Required
     

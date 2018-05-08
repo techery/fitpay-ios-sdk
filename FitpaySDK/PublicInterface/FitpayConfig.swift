@@ -1,7 +1,7 @@
 import Foundation
 
 /// Main Configuration Object
-public class FitpaySDKConfig: NSObject {
+public class FitpayConfig: NSObject {
     
     /// Implicit allows you to get a single user token
     public static var clientId: String!
@@ -26,7 +26,7 @@ public class FitpaySDKConfig: NSObject {
     public static var minLogLevel: LogLevel = LogLevel.info
     
     /// SDK Version using semantic versioning MAJOR.MINOR.PATCH
-    public static let sdkVersion = Bundle(for: FitpaySDKConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    public static let sdkVersion = Bundle(for: FitpayConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     
     //MARK: - Functions
     
@@ -49,15 +49,15 @@ public class FitpaySDKConfig: NSObject {
         let envDict = ProcessInfo.processInfo.environment
         
         if let clientId = envDict["SDK_CLIENT_ID"], !clientId.isEmpty {
-            FitpaySDKConfig.clientId = clientId
+            FitpayConfig.clientId = clientId
         }
         
         if let baseAPIUrl = envDict["SDK_API_BASE_URL"], !baseAPIUrl.isEmpty {
-            FitpaySDKConfig.apiURL = baseAPIUrl
+            FitpayConfig.apiURL = baseAPIUrl
         }
         
         if let baseAuthUrl = envDict["SDK_AUTHORIZE_BASE_URL"], !baseAuthUrl.isEmpty {
-            FitpaySDKConfig.authURL = baseAuthUrl
+            FitpayConfig.authURL = baseAuthUrl
         }
         
     }
@@ -66,7 +66,7 @@ public class FitpaySDKConfig: NSObject {
 
 // MARK: - WebConfig
 
-extension FitpaySDKConfig {
+extension FitpayConfig {
     
     /// Configuration options related to the Web specifically
     public class Web: NSObject {
@@ -86,7 +86,7 @@ extension FitpaySDKConfig {
 
 // MARK: - PaymentDeviceConfig
 
-extension FitpaySDKConfig {
+extension FitpayConfig {
     
     /// Configuration options related to the Payment Device specifically
     public class PaymentDevice: NSObject {

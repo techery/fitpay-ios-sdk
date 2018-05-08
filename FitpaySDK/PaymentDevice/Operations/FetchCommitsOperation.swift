@@ -17,7 +17,7 @@ public protocol FetchCommitsOperationProtocol {
 
 open class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
-    public init(deviceInfo: DeviceInfo, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance, connector: IPaymentDeviceConnector? = nil) {
+    public init(deviceInfo: DeviceInfo, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance, connector: PaymentDeviceConnectable? = nil) {
         self.deviceInfo = deviceInfo
         self.startFromSyncedCommit = shouldStartFromSyncedCommit
         self.syncStorage = syncStorage
@@ -113,7 +113,7 @@ open class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
     
     public var deviceInfo: DeviceInfo!
-    private var connector: IPaymentDeviceConnector?
+    private var connector: PaymentDeviceConnectable?
     
     // private
     private let syncStorage: SyncStorage

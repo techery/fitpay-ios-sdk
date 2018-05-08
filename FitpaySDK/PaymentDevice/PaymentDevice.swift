@@ -117,10 +117,10 @@
     
     /**
      Changes interface with payment device. Default is BLE (BluetoothPaymentDeviceConnector).
-     If you want to implement your own interface than it should confirm IPaymentDeviceConnector protocol.
+     If you want to implement your own interface than it should confirm PaymentDeviceConnectable protocol.
      Also implementation should call PaymentDevice.callCompletionForEvent() for events.
      */
-    @objc open func changeDeviceInterface(_ interface: IPaymentDeviceConnector) -> NSError? {
+    @objc open func changeDeviceInterface(_ interface: PaymentDeviceConnectable) -> NSError? {
         self.deviceInterface = interface
         return nil
     }
@@ -158,7 +158,7 @@
     private var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
     private weak var deviceDisconnectedBinding: FitpayEventBinding?
     
-    internal var deviceInterface: IPaymentDeviceConnector!
+    internal var deviceInterface: PaymentDeviceConnectable!
 
     internal typealias APDUExecutionHandler = (_ apduCommand: APDUCommand?, _ state: APDUPackageResponseState?, _ error: Error?) -> Void
     
@@ -205,7 +205,7 @@
                 self?.apduResponseHandler = completion
                 log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
                 
-                DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfig.PaymentDevice.commitProcessingTimeout) {
+                DispatchQueue.global().asyncAfter(deadline: .now() + FitpayConfig.PaymentDevice.commitProcessingTimeout) {
                     if !isCompleteExecute {
                         self?.apduResponseHandler = nil
                         self?.removeDisconnectedBinding()
@@ -238,7 +238,7 @@
             })
             
             var isCompleteProcessing = false
-            DispatchQueue.global().asyncAfter(deadline: .now() + FitpaySDKConfig.PaymentDevice.commitProcessingTimeout) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + FitpayConfig.PaymentDevice.commitProcessingTimeout) {
                 if !isCompleteProcessing {
                     log.error("APDU_DATA: Received timeout during process non-APDU commit.")
                     self.removeDisconnectedBinding()

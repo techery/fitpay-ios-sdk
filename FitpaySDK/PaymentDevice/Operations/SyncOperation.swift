@@ -12,7 +12,7 @@ internal enum SyncOperationError: Error {
 
 internal class SyncOperation {
     
-    init(paymentDevice: PaymentDevice, connector: IPaymentDeviceConnector,
+    init(paymentDevice: PaymentDevice, connector: PaymentDeviceConnectable,
          deviceInfo: DeviceInfo, user: User, syncFactory: SyncFactory,
          syncStorage: SyncStorage = SyncStorage.sharedInstance, request: SyncRequest? = nil) {
         
@@ -80,7 +80,7 @@ internal class SyncOperation {
     
     // MARK: private
     private var paymentDevice: PaymentDevice
-    private var connector: IPaymentDeviceConnector
+    private var connector: PaymentDeviceConnectable
     private var deviceInfo: DeviceInfo
     private var user: User
     private var connectOperation: ConnectDeviceOperationProtocol

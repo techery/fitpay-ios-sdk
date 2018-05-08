@@ -193,13 +193,13 @@ class SyncManagerTests: XCTestCase {
         connector.disconnectDelayTime = 0.1
         _ = device.changeDeviceInterface(connector)
         
-        FitpaySDKConfig.PaymentDevice.commitProcessingTimeout = 0.2
+        FitpayConfig.PaymentDevice.commitProcessingTimeout = 0.2
         
         self.syncQueue.add(request: getSyncRequest1(device: device)) { (status, error) in
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
             XCTAssertEqual((error as NSError?)?.code, PaymentDevice.ErrorCode.apduSendingTimeout.rawValue)
-            FitpaySDKConfig.PaymentDevice.commitProcessingTimeout = 30 // return to default state
+            FitpayConfig.PaymentDevice.commitProcessingTimeout = 30 // return to default state
             expectation.fulfill()
         }
         
@@ -217,13 +217,13 @@ class SyncManagerTests: XCTestCase {
         connector.disconnectDelayTime = 0.1
         _ = device.changeDeviceInterface(connector)
         
-        FitpaySDKConfig.PaymentDevice.commitProcessingTimeout = 0.2
+        FitpayConfig.PaymentDevice.commitProcessingTimeout = 0.2
         
         self.syncQueue.add(request: getSyncRequest1(device: device)) { (status, error) in
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
             XCTAssertEqual((error as NSError?)?.code, PaymentDevice.ErrorCode.nonApduProcessingTimeout.rawValue)
-            FitpaySDKConfig.PaymentDevice.commitProcessingTimeout = 30 // return to default state
+            FitpayConfig.PaymentDevice.commitProcessingTimeout = 30 // return to default state
             expectation.fulfill()
         }
         
@@ -268,7 +268,7 @@ extension SyncManagerTests {
             return MockNonAPDUConfirm()
         }
         
-        func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: IPaymentDeviceConnector?) -> FetchCommitsOperationProtocol {
+        func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
             return commitsFetcher
         }
     }

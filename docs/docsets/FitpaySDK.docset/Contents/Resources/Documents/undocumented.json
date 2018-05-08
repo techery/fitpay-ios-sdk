@@ -3004,13 +3004,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/FitpaySDKConfig.swift",
-      "line": 25,
-      "symbol": "FitpaySDKConfig.minLogLevel",
-      "symbol_kind": "source.lang.swift.decl.var.static",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/IPaymentDeviceConnector.swift",
       "line": 1,
       "symbol": "NonAPDUCommitState",

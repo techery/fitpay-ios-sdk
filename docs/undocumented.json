@@ -3004,38 +3004,10 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/IPaymentDeviceConnector.swift",
-      "line": 1,
+      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/PaymentDeviceConnectable.swift",
+      "line": 4,
       "symbol": "NonAPDUCommitState",
       "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/IPaymentDeviceConnector.swift",
-      "line": 2,
-      "symbol": "NonAPDUCommitState.success",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/IPaymentDeviceConnector.swift",
-      "line": 3,
-      "symbol": "NonAPDUCommitState.skipped",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/IPaymentDeviceConnector.swift",
-      "line": 4,
-      "symbol": "NonAPDUCommitState.failed",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/PublicInterface/IPaymentDeviceConnector.swift",
-      "line": 18,
-      "symbol": "IPaymentDeviceConnector",
-      "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     },
     {

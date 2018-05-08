@@ -1,6 +1,6 @@
 import CoreBluetooth
 
-internal class BluetoothPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
+internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
     weak var paymentDevice : PaymentDevice!
     
     var centralManager : CBCentralManager?
@@ -84,7 +84,7 @@ internal class BluetoothPaymentDeviceConnector : NSObject, IPaymentDeviceConnect
     func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
             if let completion = self.paymentDevice.apduResponseHandler {
-                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
+                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: PaymentDeviceConnectable.self))
             }
             return
         }

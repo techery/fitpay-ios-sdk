@@ -102,12 +102,12 @@ open class RestSession: NSObject {
         let headers = ["Accept": "application/json"]
         let parameters: [String: String] = [
             "response_type": "token",
-            "client_id": FitpaySDKConfig.clientId,
-            "redirect_uri": FitpaySDKConfig.redirectURL,
+            "client_id": FitpayConfig.clientId,
+            "redirect_uri": FitpayConfig.redirectURL,
             "credentials": ["username": username, "password": password].JSONString!
         ]
 
-        let request = _manager.request(FitpaySDKConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        let request = _manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
         request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<AuthorizationDetails>) in
 
             DispatchQueue.main.async {
