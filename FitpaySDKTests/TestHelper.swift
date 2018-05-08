@@ -319,7 +319,7 @@ class TestHelper {
     
     func deactivateCreditCard(_ expectation: XCTestExpectation, creditCard: CreditCard?, completion: @escaping (_ deactivatedCard: CreditCard?) -> Void) {
         debugPrint("deactivateCreditCard")
-        creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card") { (pending, creditCard, error) in
+        creditCard?.deactivate(causedBy: .cardholder, reason: "lost card") { (pending, creditCard, error) in
             XCTAssertNil(error)
             XCTAssertEqual(creditCard?.state, TokenizationState.DEACTIVATED)
             completion(creditCard)

@@ -77,12 +77,12 @@ extension Data
      for the crc. Pre- and post-conditioning (one's complement) is performed
      within this function so it shouldn't be done by the application.<br>
      Usage example:
-     Var crc: UInt32 = crc32(0, nil, 0);
+     Var crc: UInt32 = crc32(0, nil, 0)
      
      while (read_buffer(buffer, length) != EOF) {
      crc = crc32(crc, buffer: buffer, length: length)
      }
-     if (crc != original_crc) error();
+     if (crc != original_crc) error()
      */
     internal func crc32(_ crc: UInt32, buffer: UnsafePointer<UInt8>?, length: Int) -> UInt32 {
         if buffer == nil {
@@ -111,6 +111,6 @@ extension Data
             } while len != 0
         }
         
-        return crc1 ^ 0xffffffff;
+        return crc1 ^ 0xffffffff
     }
 }

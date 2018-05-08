@@ -8,7 +8,7 @@ extension String {
         return data.SHA1
     }
     
-    public func hexToData() -> Data? {
+    func hexToData() -> Data? {
         let trimmedString = self.trimmingCharacters(in: CharacterSet(charactersIn: "<> ")).replacingOccurrences(of: " ", with: "")
         let regex = try! NSRegularExpression(pattern: "^[0-9a-f]*$", options: .caseInsensitive)
         let found = regex.firstMatch(in: trimmedString, options: [], range: NSMakeRange(0, trimmedString.count))
@@ -29,4 +29,5 @@ extension String {
         
         return data as Data?
     }
+
 }

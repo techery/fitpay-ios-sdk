@@ -338,24 +338,10 @@
             <a href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Extensions/BinaryInteger.html">BinaryInteger</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/String.html">String</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:9FitpaySDK2eeoiSbAA0A12EventBindingC_ADtF">==(_:_:)</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:9FitpaySDK3hexSSx1v_ts13BinaryIntegerRzlF">hex(v:)</a>
               </li>
             </ul>
           </li>
@@ -430,9 +416,6 @@
           <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Structs.html#/s:9FitpaySDK25ApplicationControlMessageV">ApplicationControlMessage</a>
-              </li>
               <li class="nav-group-task">
                 <a href="../Structs/StreamEvent.html">StreamEvent</a>
               </li>
@@ -635,6 +618,88 @@
                               <td>
                                 <div>
                                   <p>Provides error object, or nil if no error occurs</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9FitpaySDK10RestClientC18createRelationshipySS_SS12creditCardIdSS06deviceI0yAA0F0CSg_So7NSErrorCSgtc10completiontF"></a>
+                    <a name="//apple_ref/swift/Method/createRelationship(_:creditCardId:deviceId:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK10RestClientC18createRelationshipySS_SS12creditCardIdSS06deviceI0yAA0F0CSg_So7NSErrorCSgtc10completiontF">createRelationship(_:creditCardId:deviceId:completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a relationship between a device and a creditCard</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">createRelationship</span><span class="p">(</span><span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">creditCardId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">deviceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/RestClient.html#/s:9FitpaySDK10RestClientC19RelationshipHandlera">RelationshipHandler</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>userId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>user id</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>creditCardId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>credit card id</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>deviceId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>device id</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>CreateRelationshipHandler closure</p>
                                 </div>
                               </td>
                             </tr>

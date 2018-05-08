@@ -398,7 +398,7 @@ class RestClientTests: XCTestCase {
                             self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod) { (verifiedCreditCard) in
                                 self.testHelper.deactivateCreditCard(expectation, creditCard: verifiedCreditCard) { (deactivatedCard) in
                                     
-                                    deactivatedCard?.reactivate(causedBy: .CARDHOLDER, reason: "found card") { (pending, creditCard, error) in
+                                    deactivatedCard?.reactivate(causedBy: .cardholder, reason: "found card") { (pending, creditCard, error) in
                                         XCTAssertNil(error)
                                         XCTAssertEqual(creditCard?.state, .ACTIVE)
                                         

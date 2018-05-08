@@ -602,6 +602,6 @@ open class CardInfo: Mappable {
  - ISSUER:     issuer
  */
 public enum CreditCardInitiator: String {
-    case CARDHOLDER
-    case ISSUER
+    case cardholder = "CARDHOLDER"
+    case issuer = "ISSUER"
 }

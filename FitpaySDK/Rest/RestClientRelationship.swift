@@ -24,7 +24,7 @@ extension RestClient {
      - parameter deviceId:     device id
      - parameter completion:   CreateRelationshipHandler closure
      */
-    internal func createRelationship(_ url: String, creditCardId: String, deviceId: String, completion: @escaping RelationshipHandler) {
+    public func createRelationship(_ url: String, creditCardId: String, deviceId: String, completion: @escaping RelationshipHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(nil, error)

@@ -1,6 +1,7 @@
 import Foundation
 
 /// Main Configuration Object
+/// Set variables before instantiating other primary Fitpay objects
 public class FitpayConfig: NSObject {
     
     /// Implicit allows you to get a single user token
@@ -72,7 +73,12 @@ extension FitpayConfig {
     public class Web: NSObject {
 
         /// Shows autofill options on the add card page when enabled
+        /// Turning on in production does nothing
         public static var demoMode = false
+        
+        /// Changes autofill options to include a default and auto-verify version of one card type
+        /// demoMode must be true and not in production for this to work
+        public static var demoCardGroup: String?
 
         /// Overrides the default CSS
         public static var cssURL: String?
@@ -96,10 +102,7 @@ extension FitpayConfig {
 
         //apdu transport mode
         
-        //public var maxPacketSize = 20
-        
-        //public var apduSecsTimeout: Double = 5
-        
+
     }
     
 }

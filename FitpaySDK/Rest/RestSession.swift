@@ -17,10 +17,10 @@ internal class AuthorizationDetails: Mappable {
     var expiresIn: String?
     var scope: String?
     var jti: String?
-
+    
     required init?(map: Map){
     }
-
+    
     func mapping(map: Map) {
         tokenType <- map["token_type"]
         accessToken <- map["access_token"]
@@ -37,37 +37,37 @@ open class RestSession: NSObject {
         case parsingFailure
         case accessTokenFailure
     }
-
+    
     open var userId: String?
     open var accessToken: String?
     open var isAuthorized: Bool {
         return self.accessToken != nil
     }
-
+    
     open func setWebViewAuthorization(_ webViewSessionData: SessionData) {
         self.accessToken = webViewSessionData.token
         self.userId = webViewSessionData.userId
     }
-
+    
     lazy private var _manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         return SessionManager(configuration: configuration)
     }()
-
+    
     public init(sessionData: SessionData? = nil) {
         if let sessionData = sessionData {
             self.accessToken = sessionData.token
             self.userId = sessionData.userId
         }
     }
-
+    
     public typealias LoginHandler = (_ error: NSError?) -> Void
     
     @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
         self.acquireAccessToken(username: username, password: password) { (details: AuthorizationDetails?, error: NSError?) in
-
+            
             DispatchQueue.global().async {
                 if let error = error {
                     completion(error)
@@ -77,7 +77,7 @@ open class RestSession: NSObject {
                             completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
                             return
                         }
-
+                        
                         if let userId = jwt.body["user_id"] as? String {
                             DispatchQueue.main.async { [weak self] in
                                 log.verbose("successful login for user: \(userId)")
@@ -95,9 +95,9 @@ open class RestSession: NSObject {
             }
         }
     }
-
+    
     internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
-
+    
     internal func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
         let parameters: [String: String] = [
@@ -106,10 +106,10 @@ open class RestSession: NSObject {
             "redirect_uri": FitpayConfig.redirectURL,
             "credentials": ["username": username, "password": password].JSONString!
         ]
-
+        
         let request = _manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
         request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<AuthorizationDetails>) in
-
+            
             DispatchQueue.main.async {
                 if let resultError = response.result.error {
                     completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
@@ -142,7 +142,7 @@ extension RestSession {
     }
     
     public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, NSError?) -> Void
-
+    
     class func GetUserAndDeviceWith(sessionData: SessionData, completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
         guard let userId = sessionData.userId, let deviceId = sessionData.deviceId else {
             completion(nil, nil, NSError.error(code: RestSession.ErrorCode.userOrDeviceEmpty, domain: RestSession.self))
@@ -152,9 +152,7 @@ extension RestSession {
         let session = RestSession(sessionData: sessionData)
         let client = RestClient(session: session)
         
-        
         client.user(id: userId) { (user, error) in
-
             guard user != nil && error == nil else {
                 completion(nil, nil, error)
                 return
@@ -197,6 +195,6 @@ extension RestSession {
     class func GetUserAndDeviceWith(token: String, userId: String, deviceId: String, completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
         return RestSession.GetUserAndDeviceWith(sessionData: SessionData(token: token, userId: userId, deviceId: deviceId), completion: completion)
     }
-
+    
 }
 

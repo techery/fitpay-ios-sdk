@@ -1,11 +1,11 @@
 import CoreBluetooth
 
 internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
-    weak var paymentDevice : PaymentDevice!
+    weak var paymentDevice: PaymentDevice!
     
-    var centralManager : CBCentralManager?
-    var wearablePeripheral : CBPeripheral?
-    var lastState : CBCentralManagerState = CBCentralManagerState.poweredOff
+    var centralManager: CBCentralManager?
+    var wearablePeripheral: CBPeripheral?
+    var lastState: CBCentralManagerState = CBCentralManagerState.poweredOff
     
     var continuationCharacteristicControl: CBCharacteristic?
     var continuationCharacteristicPacket: CBCharacteristic?
@@ -15,18 +15,19 @@ internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectab
     var applicationControlCharacteristic: CBCharacteristic?
     var notificationCharacteristic: CBCharacteristic?
     
-    var continuation : Continuation = Continuation()
-    var deviceInfoCollector : BLEDeviceInfoCollector?
-    
-    private var _deviceInfo : DeviceInfo?
-    private var _nfcState : PaymentDevice.SecurityNFCState?
-    
-    let maxPacketSize : Int = 20
-    let apduSecsTimeout : Double = 5
+    var continuation: Continuation = Continuation()
+    var deviceInfoCollector: BLEDeviceInfoCollector?
+
     var sequenceId: UInt16 = 0
-    var sendingAPDU : Bool = false
+    var sendingAPDU = false
     
-    var timeoutTimer : Timer?
+    var timeoutTimer: Timer?
+    
+    let maxPacketSize: Int = 20
+    let apduSecsTimeout: Double = 5
+    
+    private var _deviceInfo: DeviceInfo?
+    private var _nfcState: PaymentDevice.SecurityNFCState?
     
     required init(paymentDevice device: PaymentDevice) {
         self.paymentDevice = device
@@ -66,7 +67,7 @@ internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectab
         guard let wearablePeripheral = self.wearablePeripheral else {
             return false
         }
-        return wearablePeripheral.state == CBPeripheralState.connected && self._deviceInfo != nil
+        return wearablePeripheral.state == CBPeripheralState.connected && _deviceInfo != nil
     }
     
     func validateConnection(completion: @escaping (Bool, NSError?) -> Void) {
@@ -74,11 +75,11 @@ internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectab
     }
     
     func deviceInfo() -> DeviceInfo? {
-        return self._deviceInfo
+        return _deviceInfo
     }
     
     func nfcState() -> PaymentDevice.SecurityNFCState {
-        return self._nfcState ?? PaymentDevice.SecurityNFCState.disabled
+        return _nfcState ?? PaymentDevice.SecurityNFCState.disabled
     }
     
     func executeAPDUCommand(_ apduCommand: APDUCommand) {
@@ -108,7 +109,6 @@ internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectab
             }
             return
         }
-        
         
         self.sequenceId = sequenceNumber
         
@@ -183,6 +183,8 @@ internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectab
         
         return nil
     }
+    
+    // MARK: - Private Helpers
     
     private func sendAPDUContinuation(_ data: Data) {
         guard let continuationCharacteristicPacket = self.continuationCharacteristicPacket else {
@@ -276,9 +278,11 @@ internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectab
             apduResponseHandler(packet, nil, nil)
         }
     }
+
 }
 
 extension BluetoothPaymentDeviceConnector: CBCentralManagerDelegate {
+    
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state.rawValue == CBCentralManagerState.poweredOn.rawValue {
             self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.initialized
@@ -328,9 +332,10 @@ extension BluetoothPaymentDeviceConnector: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         self.paymentDevice.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected, params: ["error": error as AnyObject])
     }
+
 }
 
-extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
+extension BluetoothPaymentDeviceConnector: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         for service in peripheral.services! {
@@ -382,7 +387,7 @@ extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
                 deviceInfoCollector.collectDataFromCharacteristicIfPossible(characteristic)
                 if deviceInfoCollector.isCollected {
                     _deviceInfo = deviceInfoCollector.deviceInfo
-                    self.paymentDevice.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo":_deviceInfo!])
+                    self.paymentDevice.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo": _deviceInfo!])
                     self.deviceInfoCollector = nil
                 }
             }
@@ -391,6 +396,7 @@ extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
         if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_APDU_RESULT {
             let apduResultMessage = BLEApduResultMessage(msg: characteristic.value!)
             processAPDUResponse(apduResultMessage)
+            
         } else if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_CONTINUATION_CONTROL {
             let continuationControlMessage = ContinuationControlMessage(msg: characteristic.value!)
             if (continuationControlMessage.isBeginning) {
@@ -438,11 +444,13 @@ extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
             }
             
         } else if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_CONTINUATION_PACKET {
-            let msg : ContinuationPacketMessage = ContinuationPacketMessage(msg: characteristic.value!)
-            let pos = Int(msg.sortOrder);
+            let msg = ContinuationPacketMessage(msg: characteristic.value!)
+            let pos = Int(msg.sortOrder)
             continuation.dataParts[pos] = msg.data
+            
         } else if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_NOTIFICATION {
             self.paymentDevice.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onNotificationReceived, params: ["notificationData":characteristic.value as AnyObject])
+        
         } else if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ {
             if let value = characteristic.value {
                 let msg = SecurityStateMessage(msg: value)
@@ -452,10 +460,12 @@ extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
                     self.paymentDevice.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onSecurityStateChanged, params: ["securityState": securityState.rawValue as AnyObject])
                 }
             }
+            
         } else if characteristic.uuid == PAYMENT_CHARACTERISTIC_UUID_APPLICATION_CONTROL {
             if let value = characteristic.value {
                 self.paymentDevice.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onSecurityStateChanged, params: ["applicationControl": value as AnyObject])
             }
         }
     }
+
 }

@@ -527,12 +527,12 @@ public extension CreditCard
     
     @objc public static var CreditCardInitiator_CARDHOLDER:String
     {
-        return CreditCardInitiator.CARDHOLDER.rawValue
+        return CreditCardInitiator.cardholder.rawValue
     }
     
     @objc public static var CreditCardInitiator_ISSUER:String
     {
-        return CreditCardInitiator.ISSUER.rawValue
+        return CreditCardInitiator.issuer.rawValue
     }
     
     public var stateObjC:String?

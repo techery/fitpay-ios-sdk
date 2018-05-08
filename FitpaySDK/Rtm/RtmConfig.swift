@@ -28,26 +28,28 @@ internal enum RtmConfigDafaultMappingKey: String {
 }
 
 open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
-    private var clientId: String?
     public var redirectUri: String?
-    private var userEmail: String?
     public var deviceInfo: DeviceInfo?
     public var hasAccount: Bool = false
+    public var accessToken: String?
+    
+    private var clientId: String?
+    private var userEmail: String?
     private var version: String?
     private var demoMode: Bool?
     private var customCSSUrl: String?
     private var demoCardGroup: String?
-    public var accessToken: String?
     private var language: String?
     private var baseLanguageUrl: String?
     private var useWebCardScanner: Bool?
     
-    open var customs: [String: Any]?
+    private var customs: [String: Any]?
     
     public init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
         self.clientId = FitpayConfig.clientId
         self.redirectUri = FitpayConfig.redirectURL
         self.demoMode = FitpayConfig.Web.demoMode
+        self.demoCardGroup = FitpayConfig.Web.demoCardGroup
         self.customCSSUrl = FitpayConfig.Web.cssURL
         self.useWebCardScanner = !FitpayConfig.Web.supportCardScanner
         
