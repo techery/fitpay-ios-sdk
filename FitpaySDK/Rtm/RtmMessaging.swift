@@ -8,7 +8,7 @@ protocol RtmOutputDelegate: class {
 
 class RtmMessaging {
     weak var outputDelagate: RtmOutputDelegate?
-    weak var rtmDelegate: WvRTMDelegate?
+    weak var rtmDelegate: RTMDelegate?
     weak var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate?
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
     weak var a2aVerificationDelegate: FitpayA2AVerificationDelegate?

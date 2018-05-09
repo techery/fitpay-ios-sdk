@@ -1,11 +1,15 @@
 import Foundation
 import WebKit
 
+/// Main Object for interacting with Fitpay Web app
 @objc open class FitpayWeb: NSObject {
     
+    /// Use this singleton
     public static let shared = FitpayWeb()
 
-    weak open var rtmDelegate: WvRTMDelegate? {
+    /// Set the rtmDelegate to receive authorization and other messages from the webview
+    /// Needed for capturing a back button press
+    weak open var rtmDelegate: RTMDelegate? {
         didSet {
             self.wvConfig.rtmDelegate = rtmDelegate
         }
@@ -14,7 +18,7 @@ import WebKit
     private var wkWebView: WKWebView!
     private var wvConfig: WvConfig!
     
-    /// Setup a WKWebview for use
+    /// Setup a Fitpay WKWebview for use
     /// You must use WKWebview returned by this function
     /// This must be called before any other methods
     ///
@@ -42,7 +46,7 @@ import WebKit
         
         wvConfig!.setWebView(wkWebView)
         
-        wkWebView!.navigationDelegate = self // need docs on overriding
+        wkWebView!.navigationDelegate = self
         
         return wkWebView!
     }
@@ -50,18 +54,13 @@ import WebKit
     /// Loads the main page on Fitpay based on user variables
     @objc open func load() {
         wkWebView.load(wvConfig!.wvRequest())
-        wvConfig.webViewPageLoaded()
     }
     
     /// Should be called once the webview is loaded
-    /// You can use `WKNavigationDelegate.webView(_ webView: WKWebView, didFinish navigation: WKNavigation!)` for managing page state.
+    /// This is called automatically unless you become the navigationDelegate in which case you must set it manually
+    /// You can use `WKNavigationDelegate.webView(_ webView: WKWebView, didFinish navigation: WKNavigation!)` for managing page state
     @objc open func webViewPageLoaded() {
          wvConfig.webViewPageLoaded()
-    }
-    
-    
-    @objc open func showCustomStatusMessage(_ message: String, type: WvConfig.WVMessageType) {
-        wvConfig?.sendStatusMessage(message, type: type)
     }
     
 }

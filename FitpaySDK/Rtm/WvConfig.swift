@@ -4,7 +4,7 @@ import ObjectMapper
 
 @objc public class WvConfig: NSObject, WKScriptMessageHandler {
     
-    weak var rtmDelegate: WvRTMDelegate? {
+    weak var rtmDelegate: RTMDelegate? {
         didSet {
             self.rtmMessaging.rtmDelegate = rtmDelegate
         }

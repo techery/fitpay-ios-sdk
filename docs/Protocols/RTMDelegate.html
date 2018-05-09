@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>EventSourceState Enumeration Reference</title>
+    <title>RTMDelegate Protocol Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Enum/EventSourceState" class="dashAnchor"></a>
-    <a title="EventSourceState Enumeration Reference"></a>
+    <a name="//apple_ref/swift/Protocol/RTMDelegate" class="dashAnchor"></a>
+    <a title="RTMDelegate Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">FitpaySDK Docs</a> (15% documented)</p>
@@ -21,7 +21,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">FitpaySDK Reference</a>
         <img id="carat" src="../img/carat.png" />
-        EventSourceState Enumeration Reference
+        RTMDelegate Protocol Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -390,14 +390,14 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>EventSourceState</h1>
+            <h1>RTMDelegate</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">EventSourceState</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">RTMDelegate</span><span class="p">:</span> <span class="kt">NSObjectProtocol</span></code></pre>
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>Delegate to get Ream Time Messages to and from the Webview</p>
 
           </section>
           <section class="section task-group-section">
@@ -406,9 +406,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK16EventSourceStateO10connectingA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/connecting" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK16EventSourceStateO10connectingA2CmF">connecting</a>
+                    <a name="/c:@M@FitpaySDK@objc(pl)RTMDelegate(im)didAuthorizeWithEmail:"></a>
+                    <a name="//apple_ref/swift/Method/didAuthorizeWith(email:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(pl)RTMDelegate(im)didAuthorizeWithEmail:">didAuthorizeWith(email:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -416,30 +416,45 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>This method will be called after successful user authorization.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">connecting</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">func</span> <span class="nf">didAuthorizeWith</span><span class="p">(</span><span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>email</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>email that was authorized</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK16EventSourceStateO4openA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/open" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK16EventSourceStateO4openA2CmF">open</a>
+                    <a name="/c:@M@FitpaySDK@objc(pl)RTMDelegate(im)willDisplayStatusMessage:defaultMessage:error:"></a>
+                    <a name="//apple_ref/swift/Method/willDisplayStatusMessage(_:defaultMessage:error:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(pl)RTMDelegate(im)willDisplayStatusMessage:defaultMessage:error:">willDisplayStatusMessage(_:defaultMessage:error:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -447,30 +462,74 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>This method can be used for user messages customization.
+Will be called when status has changed and system going to show message.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="kd">open</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">willDisplayStatusMessage</span><span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Classes/WvConfig.html">WvConfig</a></span><span class="o">.</span><span class="kt">WVDeviceStatuses</span><span class="p">,</span> <span class="n">defaultMessage</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>status</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>New device status</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>defaultMessage</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Default message for new status</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>error</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>If there was an error during status change than it will be here.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Message string which will be shown on status board.</p>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK16EventSourceStateO6closedA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/closed" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK16EventSourceStateO6closedA2CmF">closed</a>
+                    <a name="/c:@M@FitpaySDK@objc(pl)RTMDelegate(im)onWvMessageReceivedWithMessage:"></a>
+                    <a name="//apple_ref/swift/Method/onWvMessageReceived(message:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(pl)RTMDelegate(im)onWvMessageReceivedWithMessage:">onWvMessageReceived(message:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -478,16 +537,35 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Called when the message from wv was delivered to SDK.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">closed</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">onWvMessageReceived</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Classes/RtmMessage.html">RtmMessage</a></span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>message from web view</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>

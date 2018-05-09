@@ -1,6 +1,6 @@
 import Foundation
 
-public typealias MessageTypeHandler = (_ message: RtmMessage) -> Void
+typealias MessageTypeHandler = (_ message: RtmMessage) -> Void
 
 protocol RtmMessageTypeWithHandler {
     init?(rawValue: String)
@@ -11,7 +11,7 @@ protocol RtmMessageHandler {
     var wvConfigStorage: WvConfigStorage! { get }
     
     var outputDelegate: RtmOutputDelegate? { get set }
-    var wvRtmDelegate: WvRTMDelegate? { get set }
+    var wvRtmDelegate: RTMDelegate? { get set }
     var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? { get set }
     var cardScannerDataSource: FitpayCardScannerDataSource? { get set }
     var a2aVerificationDelegate: FitpayA2AVerificationDelegate? { get set }

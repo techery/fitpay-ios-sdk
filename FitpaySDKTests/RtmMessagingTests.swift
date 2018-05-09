@@ -8,7 +8,7 @@ class MockRtmMessageHandler: RtmMessageHandler {
     weak var wvConfigStorage: WvConfigStorage!
     
     weak var outputDelegate: RtmOutputDelegate?
-    weak var wvRtmDelegate: WvRTMDelegate?
+    weak var wvRtmDelegate: RTMDelegate?
     weak var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate?
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
     
