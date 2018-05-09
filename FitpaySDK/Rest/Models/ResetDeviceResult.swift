@@ -8,12 +8,12 @@
 
 import ObjectMapper
 
-public enum DeviceResetStatus {
-    case IN_PROGRESS,
-    RESET_COMPLETE,
-    DELETED,
-    DELETE_FAILED,
-    RESET_FAILED
+public enum DeviceResetStatus: String {
+    case InProgress  = "IN_PROGRESS"
+    case ResetComplete  = "RESET_COMPLETE"
+    case Deleted   = "DELETED"
+    case DeleteFailed  = "DELETE_FAILED"
+    case ResetFailed   = "RESET_FAILED"
 }
 
 @objcMembers

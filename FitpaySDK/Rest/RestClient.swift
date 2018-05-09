@@ -529,7 +529,7 @@ extension RestClient {
      - parameter userId: user id
      - parameter completion:      ResetHandler closure
      */
-    internal func resetDeviceTasks(resetUrl: URL, completion: @escaping ResetHandler) {
+    internal func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             if let headers = headers {
                 let request = self._manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)

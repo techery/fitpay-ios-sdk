@@ -159,12 +159,12 @@ class RestClientTests: XCTestCase {
             self.testHelper.createDevice(expectation, user: user)
             {
                 [unowned self] (user, device) in
-                let resetUrlString = device?.links?.url(DeviceInfo.deviceResetTasksKey)
+                let resetUrlString = device?.deviceResetUrl
                 XCTAssertNotNil(resetUrlString)
                 let resetUrl = URL(string: resetUrlString!)
                 XCTAssertNotNil(resetUrl)
 
-                self.client.resetDeviceTasks(resetUrl: resetUrl! , completion: { (resetDeviceResult, error) in
+                self.client.resetDeviceTasks(resetUrl! , completion: { (resetDeviceResult, error) in
                     XCTAssertNil(error)
                     
                     let resetId = resetDeviceResult?.resetId
