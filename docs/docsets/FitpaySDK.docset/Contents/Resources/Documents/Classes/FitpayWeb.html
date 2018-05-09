@@ -100,12 +100,6 @@
                 <a href="../Classes/EventSource.html">EventSource</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/FetchCommitsOperation.html">FetchCommitsOperation</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/FetchCommitsOperation/ErrorCode.html">– ErrorCode</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Classes/FitpayBlockEventListener.html">FitpayBlockEventListener</a>
               </li>
               <li class="nav-group-task">
@@ -158,6 +152,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/Issuers/CardNetwork.html">– CardNetwork</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MockPaymentDeviceConnector.html">MockPaymentDeviceConnector</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MockPaymentDeviceConnector/TestingType.html">– TestingType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/NotificationDetail.html">NotificationDetail</a>
@@ -230,9 +230,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/SyncRequestQueue.html">SyncRequestQueue</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/SyncStorage.html">SyncStorage</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/Transaction.html">Transaction</a>
@@ -326,9 +323,6 @@
             <a href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Protocols/APDUConfirmOperationProtocol.html">APDUConfirmOperationProtocol</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/APDUResponseProtocol.html">APDUResponseProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -339,12 +333,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/AssetWithOptionsRerivable.html">AssetWithOptionsRerivable</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/ConnectDeviceOperationProtocol.html">ConnectDeviceOperationProtocol</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/FetchCommitsOperationProtocol.html">FetchCommitsOperationProtocol</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/FitpayA2AVerificationDelegate.html">FitpayA2AVerificationDelegate</a>
@@ -371,16 +359,7 @@
                 <a href="../Protocols/LogsOutputProtocol.html">LogsOutputProtocol</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/NonAPDUConfirmOperationProtocol.html">NonAPDUConfirmOperationProtocol</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/PaymentDeviceConnectable.html">PaymentDeviceConnectable</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/SyncFactory.html">SyncFactory</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/SyncStorageProtocol.html">SyncStorageProtocol</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/WvRTMDelegate.html">WvRTMDelegate</a>
@@ -484,9 +463,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A3WebC05setupC4ViewSo05WKWebE0CSSSg9userEmail_Sb0g3HasA7AccountAA13PaymentDeviceC07paymentL0AA0kL11Connectable_p0mL9ConnectorSC6CGRectV5frameSo12WKUserScriptCSg6scripttF"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)setupWebViewWithUserEmail:userHasFitpayAccount:paymentDevice:paymentDeviceConnector:frame:script:"></a>
                     <a name="//apple_ref/swift/Method/setupWebView(userEmail:userHasFitpayAccount:paymentDevice:paymentDeviceConnector:frame:script:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A3WebC05setupC4ViewSo05WKWebE0CSSSg9userEmail_Sb0g3HasA7AccountAA13PaymentDeviceC07paymentL0AA0kL11Connectable_p0mL9ConnectorSC6CGRectV5frameSo12WKUserScriptCSg6scripttF">setupWebView(userEmail:userHasFitpayAccount:paymentDevice:paymentDeviceConnector:frame:script:)</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)setupWebViewWithUserEmail:userHasFitpayAccount:paymentDevice:paymentDeviceConnector:frame:script:">setupWebView(userEmail:userHasFitpayAccount:paymentDevice:paymentDeviceConnector:frame:script:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -503,7 +482,7 @@ This must be called before any other methods</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">setupWebView</span><span class="p">(</span><span class="nv">userEmail</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">userHasFitpayAccount</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">paymentDevice</span><span class="p">:</span> <span class="kt"><a href="../Classes/PaymentDevice.html">PaymentDevice</a></span><span class="p">,</span> <span class="nv">paymentDeviceConnector</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PaymentDeviceConnectable.html">PaymentDeviceConnectable</a></span><span class="p">,</span> <span class="nv">frame</span><span class="p">:</span> <span class="kt">CGRect</span><span class="p">,</span> <span class="nv">script</span><span class="p">:</span> <span class="kt">WKUserScript</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">WKWebView</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">setupWebView</span><span class="p">(</span><span class="nv">userEmail</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">userHasFitpayAccount</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">paymentDevice</span><span class="p">:</span> <span class="kt"><a href="../Classes/PaymentDevice.html">PaymentDevice</a></span><span class="p">,</span> <span class="nv">paymentDeviceConnector</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PaymentDeviceConnectable.html">PaymentDeviceConnectable</a></span><span class="p">,</span> <span class="nv">frame</span><span class="p">:</span> <span class="kt">CGRect</span><span class="p">,</span> <span class="nv">script</span><span class="p">:</span> <span class="kt">WKUserScript</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">WKWebView</span></code></pre>
 
                         </div>
                       </div>
@@ -584,9 +563,9 @@ This must be called before any other methods</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A3WebC4loadyyF"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)load"></a>
                     <a name="//apple_ref/swift/Method/load()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A3WebC4loadyyF">load()</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)load">load()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -601,7 +580,62 @@ This must be called before any other methods</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">load</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">load</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)webViewPageLoaded"></a>
+                    <a name="//apple_ref/swift/Method/webViewPageLoaded()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)webViewPageLoaded">webViewPageLoaded()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Should be called once the webview is loaded
+You can use <code>WKNavigationDelegate.webView(_ webView: WKWebView, didFinish navigation: WKNavigation!)</code> for managing page state.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">webViewPageLoaded</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)showCustomStatusMessage:type:"></a>
+                    <a name="//apple_ref/swift/Method/showCustomStatusMessage(_:type:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)FitpayWeb(im)showCustomStatusMessage:type:">showCustomStatusMessage(_:type:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">showCustomStatusMessage</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Classes/WvConfig.html">WvConfig</a></span><span class="o">.</span><span class="kt">WVMessageType</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>

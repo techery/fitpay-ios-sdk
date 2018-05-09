@@ -1,14 +1,6 @@
-//
-//  SyncFactory.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 16.08.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
-public protocol SyncFactory {
+protocol SyncFactory {
     func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol
     func apduConfirmOperation() -> APDUConfirmOperationProtocol
     func nonApduConfirmOperation() -> NonAPDUConfirmOperationProtocol

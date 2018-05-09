@@ -53,8 +53,15 @@ import WebKit
         wvConfig.webViewPageLoaded()
     }
     
+    /// Should be called once the webview is loaded
+    /// You can use `WKNavigationDelegate.webView(_ webView: WKWebView, didFinish navigation: WKNavigation!)` for managing page state.
     @objc open func webViewPageLoaded() {
          wvConfig.webViewPageLoaded()
+    }
+    
+    
+    @objc open func showCustomStatusMessage(_ message: String, type: WvConfig.WVMessageType) {
+        wvConfig?.sendStatusMessage(message, type: type)
     }
     
 }

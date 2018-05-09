@@ -15,7 +15,7 @@ public enum SyncOperationConnectionState {
     case disconnected
 }
 
-public protocol ConnectDeviceOperationProtocol {
+protocol ConnectDeviceOperationProtocol {
     func start() -> Observable<SyncOperationConnectionState>
 }
 

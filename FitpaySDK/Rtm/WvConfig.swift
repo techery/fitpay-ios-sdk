@@ -230,10 +230,6 @@ import ObjectMapper
         sendStatusMessage(realMessage, type: status.statusMessageType())
     }
     
-    func showCustomStatusMessage(_ message: String, type: WVMessageType) {
-        sendStatusMessage(message, type: type)
-    }
-    
     func sendRtmMessage(rtmMessage: RtmMessageResponse, retries: Int = 3) {
         guard let jsonRepresentation = rtmMessage.toJSONString(prettyPrint: false) else {
             log.error("WV_DATA: Can't create json representation for rtm message.")
@@ -256,14 +252,14 @@ import ObjectMapper
         })
     }
 
+    func sendStatusMessage(_ message: String, type: WVMessageType) {
+        sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.statusResponseMessage(message: message, type: type) ?? RtmMessageResponse(data:["message": message, "type": type.rawValue], type: "deviceStatus"))
+    }
+    
     //MARK: - Private
     
     private var rtmMessaging: RtmMessaging
     
-    private func sendStatusMessage(_ message: String, type: WVMessageType) {
-        sendRtmMessage(rtmMessage: self.rtmMessaging.messageHandler?.statusResponseMessage(message: message, type: type) ?? RtmMessageResponse(data:["message":message, "type":type.rawValue], type: "deviceStatus"))
-    }
-
     private func resolveSync() {
         self.rtmMessaging.messageHandler?.resolveSync()
     }
@@ -447,10 +443,9 @@ extension WvConfig {
         }
     }
     
-    /**
-     These responses must conform to what is expected by the web-view. Changing their structure also requires
-     changing them in the rtmIosImpl.js
-     */
+
+    // These responses must conform to what is expected by the web-view. Changing their structure also requires
+    // changing them in the rtmIosImpl.js
     enum WVResponse: Int {
         case success = 0
         case failed

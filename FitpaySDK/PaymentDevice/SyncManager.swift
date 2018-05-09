@@ -19,9 +19,10 @@ protocol SyncManagerProtocol {
     func callCompletionForSyncEvent(_ event: SyncEventType, params: [String: Any])
 }
 
-@objcMembers
-open class SyncManager : NSObject, SyncManagerProtocol {
+@objcMembers open class SyncManager: NSObject, SyncManagerProtocol {
+    
     open static let sharedInstance = SyncManager(syncFactory: DefaultSyncFactory())
+    
     open var synchronousModeOn = true
     
     @available(*, deprecated, message: "use SyncRequestQueue: instead")
@@ -105,7 +106,7 @@ open class SyncManager : NSObject, SyncManagerProtocol {
         eventsDispatcher.removeAllBindings()
     }
     
-    open var commitFetcherOperationProducer: () -> FetchCommitsOperationProtocol? = {
+    var commitFetcherOperationProducer: () -> FetchCommitsOperationProtocol? = {
         return FetchCommitsOperation(deviceInfo: DeviceInfo())
     }
     

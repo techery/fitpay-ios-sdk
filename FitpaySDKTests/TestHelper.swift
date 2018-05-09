@@ -224,7 +224,7 @@ class TestHelper {
             let acceptTermsUrl = card?.getAcceptTermsUrl()
             XCTAssertEqual(acceptTermsUrl, randomText)
             
-        } catch AcceptTermsError.NoTerms(let errorMessage) {
+        } catch CreditCard.AcceptTermsError.NoTerms(let errorMessage) {
             XCTFail(errorMessage)
         } catch {
             XCTFail("some error")
@@ -269,12 +269,12 @@ class TestHelper {
     func waitForActive(_ pendingCard: CreditCard, retries: Int = 0, completion: @escaping (_ activeCard: CreditCard) -> Void) {
         debugPrint("pending card state is \(String(describing: pendingCard.state))")
         
-        if pendingCard.state == TokenizationState.ACTIVE {
+        if pendingCard.state == CreditCard.TokenizationState.ACTIVE {
             completion(pendingCard)
             return
         }
         
-        if pendingCard.state != TokenizationState.PENDING_ACTIVE {
+        if pendingCard.state != CreditCard.TokenizationState.PENDING_ACTIVE {
             XCTFail("Cards that aren't in pending active state will not transition to active")
             return
         }
@@ -321,7 +321,7 @@ class TestHelper {
         debugPrint("deactivateCreditCard")
         creditCard?.deactivate(causedBy: .cardholder, reason: "lost card") { (pending, creditCard, error) in
             XCTAssertNil(error)
-            XCTAssertEqual(creditCard?.state, TokenizationState.DEACTIVATED)
+            XCTAssertEqual(creditCard?.state, CreditCard.TokenizationState.DEACTIVATED)
             completion(creditCard)
         }
     }
