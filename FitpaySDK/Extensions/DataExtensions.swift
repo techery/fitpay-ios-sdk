@@ -5,23 +5,23 @@ extension Data {
     var UTF8String: String? {
         return self.stringWithEncoding(String.Encoding.utf8)
     }
-
+    
     @inline(__always) func stringWithEncoding(_ encoding: String.Encoding) -> String? {
         return String(data: self, encoding: encoding)
     }
-
+    
     var dictionary: Dictionary<String, Any>? {
         guard let dictionary: [String: Any] = try? JSONSerialization.jsonObject(with: self, options:.mutableContainers) as! [String: Any] else {
             return nil
         }
-
+        
         return dictionary
     }
     
     var bytesArray: [UInt8] {
         return [UInt8](self)
     }
-
+    
     var errorMessages: [String]? {
         var messages: [String]? = []
         
@@ -77,11 +77,20 @@ extension Data {
         let out = Data(bytes: UnsafePointer<UInt8>(outData), count: outData.count)
         return out
     }
-}
-
-extension Data {
+    
+    func base64URLencoded() -> String {
+        var base64 = self.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+        
+        base64 = base64.replacingOccurrences(of: "/", with: "_")
+        base64 = base64.replacingOccurrences(of: "+", with: "-")
+        base64 = base64.replacingOccurrences(of: "=", with: "")
+        
+        return base64
+    }
+    
     func subdata(in range: ClosedRange<Index>) -> Data {
         return subdata(in: range.lowerBound..<range.upperBound + 1)
     }
+    
 }
 

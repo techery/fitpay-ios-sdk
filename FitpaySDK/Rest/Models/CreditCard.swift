@@ -1,27 +1,7 @@
-
 import Foundation
 import ObjectMapper
 
-public enum TokenizationState: String {
-    case NEW,
-    NOT_ELIGIBLE,
-    ELIGIBLE,
-    DECLINED_TERMS_AND_CONDITIONS,
-    PENDING_ACTIVE,
-    PENDING_VERIFICATION,
-    DELETED,
-    ACTIVE,
-    DEACTIVATED,
-    ERROR,
-    DECLINED
-}
-
-enum AcceptTermsError: Error {
-    case NoTerms(String)
-}
-
-@objcMembers
-open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
+@objcMembers open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
     internal var links: [ResourceLink]?
     internal var encryptedData: String?
 
@@ -441,57 +421,6 @@ open class CardMetadata: NSObject, ClientModel, Mappable {
     }
 }
 
-open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivable {
-    internal var links: [ResourceLink]?
-    open var mimeType: String?
-    public var client: RestClient?
-    private static let selfResource = "self"
-
-    public required init?(map: Map) {
-    }
-
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.mimeType <- map["mimeType"]
-    }
-
-    @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
-        let resource = TermsAssetReferences.selfResource
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.assets(url, completion: completion)
-        } else {
-            let error = NSError.clientUrlError(domain: TermsAssetReferences.self, code: 0, client: client, url: url, resource: resource)
-            completion(nil, error)
-        }
-    }
-}
-
-internal class TermsAssetReferencesTransformType: TransformType {
-    typealias Object = [TermsAssetReferences]
-    typealias JSON = [[String: Any]]
-
-    func transformFromJSON(_ value: Any?) -> [TermsAssetReferences]? {
-        if let items = value as? [[String: Any]] {
-            var list = [TermsAssetReferences]()
-
-            for raw in items  {
-                if let item = Mapper<TermsAssetReferences>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [TermsAssetReferences]?) -> [[String: Any]]? {
-        return nil
-    }
-}
-
 open class DeviceRelationships: NSObject, ClientModel, Mappable {
     
     open var deviceType: String?
@@ -605,3 +534,88 @@ public enum CreditCardInitiator: String {
     case cardholder = "CARDHOLDER"
     case issuer = "ISSUER"
 }
+
+//MARK: - Nested Objects
+
+extension CreditCard {
+    
+    public enum TokenizationState: String {
+        case NEW,
+        NOT_ELIGIBLE,
+        ELIGIBLE,
+        DECLINED_TERMS_AND_CONDITIONS,
+        PENDING_ACTIVE,
+        PENDING_VERIFICATION,
+        DELETED,
+        ACTIVE,
+        DEACTIVATED,
+        ERROR,
+        DECLINED
+    }
+    
+    enum AcceptTermsError: Error {
+        case NoTerms(String)
+    }
+    
+    open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivable {
+        open var mimeType: String?
+        
+        public var client: RestClient?
+        
+        var links: [ResourceLink]?
+        
+        private static let selfResource = "self"
+        
+        public required init?(map: Map) {
+        }
+        
+        open func mapping(map: Map) {
+            self.links <- (map["_links"], ResourceLinkTransformType())
+            self.mimeType <- map["mimeType"]
+        }
+        
+        @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
+            let resource = TermsAssetReferences.selfResource
+            let url = self.links?.url(resource)
+            if let url = url, let client = self.client {
+                client.assets(url, completion: completion)
+            } else {
+                let error = NSError.clientUrlError(domain: TermsAssetReferences.self, code: 0, client: client, url: url, resource: resource)
+                completion(nil, error)
+            }
+        }
+    }
+
+    class TermsAssetReferencesTransformType: TransformType {
+        typealias Object = [TermsAssetReferences]
+        typealias JSON = [[String: Any]]
+        
+        func transformFromJSON(_ value: Any?) -> [TermsAssetReferences]? {
+            if let items = value as? [[String: Any]] {
+                var list = [TermsAssetReferences]()
+                
+                for raw in items  {
+                    if let item = Mapper<TermsAssetReferences>().map(JSON: raw) {
+                        list.append(item)
+                    }
+                }
+                
+                return list
+            }
+            
+            return nil
+        }
+        
+        func transformToJSON(_ value: [TermsAssetReferences]?) -> [[String: Any]]? {
+            return nil
+        }
+    }
+    
+}
+
+
+
+
+
+
+

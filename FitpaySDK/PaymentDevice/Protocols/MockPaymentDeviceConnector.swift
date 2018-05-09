@@ -112,11 +112,16 @@ extension MockPaymentDeviceConnector: PaymentDeviceConnectable {
     
 }
 
-// TODO: where to put testing type
-public enum TestingType: UInt64 {
-    case partialSimulationMode = 0xBADC0FFEE000
-    case fullSimulationMode    = 0xDEADBEEF0000
-}
 
+//MARK: - Nested Objects
+
+extension MockPaymentDeviceConnector {
+
+    public enum TestingType: UInt64 {
+        case partialSimulationMode = 0xBADC0FFEE000
+        case fullSimulationMode    = 0xDEADBEEF0000
+    }
+    
+}
 
 

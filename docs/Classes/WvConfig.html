@@ -82,6 +82,12 @@
                 <a href="../Classes/CreditCard.html">CreditCard</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/CreditCard/TokenizationState.html">– TokenizationState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/CreditCard/TermsAssetReferences.html">– TermsAssetReferences</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/DeviceInfo.html">DeviceInfo</a>
               </li>
               <li class="nav-group-task">
@@ -133,6 +139,9 @@
                 <a href="../Classes/FitpaySDKLogger.html">FitpaySDKLogger</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/FitpayWeb.html">FitpayWeb</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/IdVerificationResponse.html">IdVerificationResponse</a>
               </li>
               <li class="nav-group-task">
@@ -149,9 +158,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/Issuers/CardNetwork.html">– CardNetwork</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/MockPaymentDeviceConnector.html">MockPaymentDeviceConnector</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/NotificationDetail.html">NotificationDetail</a>
@@ -202,9 +208,6 @@
                 <a href="../Classes/ResultCollectionObjC.html">ResultCollectionObjC</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/RtmConfig.html">RtmConfig</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Classes/RtmMessage.html">RtmMessage</a>
               </li>
               <li class="nav-group-task">
@@ -232,9 +235,6 @@
                 <a href="../Classes/SyncStorage.html">SyncStorage</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/TermsAssetReferences.html">TermsAssetReferences</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Classes/Transaction.html">Transaction</a>
               </li>
               <li class="nav-group-task">
@@ -254,12 +254,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/WvConfig/WVDeviceStatuses.html">– WVDeviceStatuses</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/WvConfig/RtmProtocolVersion.html">– RtmProtocolVersion</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/WvConfig/ErrorCode.html">– ErrorCode</a>
               </li>
             </ul>
           </li>
@@ -318,12 +312,6 @@
                 <a href="../Enums/SyncOperationConnectionState.html">SyncOperationConnectionState</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/TestingType.html">TestingType</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/TokenizationState.html">TokenizationState</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/VerificationMethodType.html">VerificationMethodType</a>
               </li>
               <li class="nav-group-task">
@@ -331,17 +319,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/VerificationState.html">VerificationState</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="../Extensions.html">Extensions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Extensions/Data.html">Data</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/String.html">String</a>
               </li>
             </ul>
           </li>
@@ -400,9 +377,6 @@
                 <a href="../Protocols/PaymentDeviceConnectable.html">PaymentDeviceConnectable</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/RtmConfigProtocol.html">RtmConfigProtocol</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Protocols/SyncFactory.html">SyncFactory</a>
               </li>
               <li class="nav-group-task">
@@ -443,7 +417,7 @@
             <h1>WvConfig</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">@objcMembers</span> <span class="kd">open</span> <span class="kd">class</span> <span class="kt">WvConfig</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">WKScriptMessageHandler</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">WvConfig</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">WKScriptMessageHandler</span></code></pre>
 
                 </div>
               </div>
@@ -451,264 +425,6 @@
 
           </section>
           <section class="section task-group-section">
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(py)rtmDelegate"></a>
-                    <a name="//apple_ref/swift/Property/rtmDelegate" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(py)rtmDelegate">rtmDelegate</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">weak</span> <span class="kd">open</span> <span class="k">var</span> <span class="nv">rtmDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/WvRTMDelegate.html">WvRTMDelegate</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(py)cardScannerPresenterDelegate"></a>
-                    <a name="//apple_ref/swift/Property/cardScannerPresenterDelegate" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(py)cardScannerPresenterDelegate">cardScannerPresenterDelegate</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">weak</span> <span class="kd">open</span> <span class="k">var</span> <span class="nv">cardScannerPresenterDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/FitpayCardScannerPresenterDelegate.html">FitpayCardScannerPresenterDelegate</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(py)cardScannerDataSource"></a>
-                    <a name="//apple_ref/swift/Property/cardScannerDataSource" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(py)cardScannerDataSource">cardScannerDataSource</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">weak</span> <span class="kd">open</span> <span class="k">var</span> <span class="nv">cardScannerDataSource</span><span class="p">:</span> <span class="kt"><a href="../Protocols/FitpayCardScannerDataSource.html">FitpayCardScannerDataSource</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(py)a2aVerificationDelegate"></a>
-                    <a name="//apple_ref/swift/Property/a2aVerificationDelegate" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(py)a2aVerificationDelegate">a2aVerificationDelegate</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">weak</span> <span class="kd">open</span> <span class="k">var</span> <span class="nv">a2aVerificationDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/FitpayA2AVerificationDelegate.html">FitpayA2AVerificationDelegate</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(py)user"></a>
-                    <a name="//apple_ref/swift/Property/user" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(py)user">user</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Classes/User.html">User</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(py)device"></a>
-                    <a name="//apple_ref/swift/Property/device" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(py)device">device</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">device</span><span class="p">:</span> <span class="kt"><a href="../Classes/DeviceInfo.html">DeviceInfo</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(py)a2aReturnLocation"></a>
-                    <a name="//apple_ref/swift/Property/a2aReturnLocation" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(py)a2aReturnLocation">a2aReturnLocation</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">a2aReturnLocation</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Lifecycle"></a>
-                <a name="//apple_ref/swift/Section/Lifecycle" class="dashAnchor"></a>
-                <a href="#/Lifecycle">
-                  <h3 class="section-name">Lifecycle</h3>
-                </a>
-              </div>
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)initWithPaymentDevice:userEmail:isNewAccount:"></a>
-                    <a name="//apple_ref/swift/Method/init(paymentDevice:userEmail:isNewAccount:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)initWithPaymentDevice:userEmail:isNewAccount:">init(paymentDevice:userEmail:isNewAccount:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">(</span><span class="nv">paymentDevice</span><span class="p">:</span> <span class="kt"><a href="../Classes/PaymentDevice.html">PaymentDevice</a></span><span class="p">,</span> <span class="nv">userEmail</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="nv">isNewAccount</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)initWithPaymentDevice:rtmConfig:"></a>
-                    <a name="//apple_ref/swift/Method/init(paymentDevice:rtmConfig:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)initWithPaymentDevice:rtmConfig:">init(paymentDevice:rtmConfig:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">paymentDevice</span><span class="p">:</span> <span class="kt"><a href="../Classes/PaymentDevice.html">PaymentDevice</a></span><span class="p">,</span> <span class="nv">rtmConfig</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RtmConfigProtocol.html">RtmConfigProtocol</a></span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
             <div class="task-group">
               <div class="task-name-container">
                 <a name="/Public%20Functions"></a>
@@ -718,146 +434,6 @@
                 </a>
               </div>
               <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)openDeviceConnection:"></a>
-                    <a name="//apple_ref/swift/Method/openDeviceConnection(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)openDeviceConnection:">openDeviceConnection(_:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>In order to open a web-view the SDK must have a connection to the payment device in order to gather data about 
-that device. This will attempt to connect, and call the completion with either an error or nil if the connection 
-attempt is successful.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">openDeviceConnection</span><span class="p">(</span><span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)setWebView:"></a>
-                    <a name="//apple_ref/swift/Method/setWebView(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)setWebView:">setWebView(_:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Sets webview which will be used by fitpay platform.
-Make sure that webViewPageLoaded() will be called, otherwise RTM will not work.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">setWebView</span><span class="p">(</span><span class="n">_</span> <span class="nv">webview</span><span class="p">:</span><span class="kt">WKWebView</span><span class="o">!</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)webViewPageLoaded"></a>
-                    <a name="//apple_ref/swift/Method/webViewPageLoaded()" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)webViewPageLoaded">webViewPageLoaded()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Should be called when webview will be loaded.
-You can use WKNavigationDelegate.webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) for managing page state.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">webViewPageLoaded</span><span class="p">()</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)wvConfig"></a>
-                    <a name="//apple_ref/swift/Method/wvConfig()" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)wvConfig">wvConfig()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that
-the value <q>rtmBridge</q> is an agreeded upon value between this and the web-view.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">wvConfig</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">WKWebViewConfiguration</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)wvRequest"></a>
-                    <a name="//apple_ref/swift/Method/wvRequest()" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)wvRequest">wvRequest()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>This returns the request object clients will require in order to open a WKWebView</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">wvRequest</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">URLRequest</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -892,34 +468,7 @@ that will be called with the result of the action once completed. It expects a m
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">userContentController</span><span class="p">(</span><span class="n">_</span> <span class="nv">userContentController</span><span class="p">:</span> <span class="kt">WKUserContentController</span><span class="p">,</span> <span class="n">didReceive</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">WKScriptMessage</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)showStatusMessage:message:error:"></a>
-                    <a name="//apple_ref/swift/Method/showStatusMessage(_:message:error:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)showStatusMessage:message:error:">showStatusMessage(_:message:error:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">showStatusMessage</span><span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Classes/WvConfig/WVDeviceStatuses.html">WVDeviceStatuses</a></span><span class="p">,</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">userContentController</span><span class="p">(</span><span class="n">_</span> <span class="nv">userContentController</span><span class="p">:</span> <span class="kt">WKUserContentController</span><span class="p">,</span> <span class="n">didReceive</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">WKScriptMessage</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -946,34 +495,7 @@ that will be called with the result of the action once completed. It expects a m
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">showCustomStatusMessage</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span><span class="kt">String</span><span class="p">,</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Classes/WvConfig/WVMessageType.html">WVMessageType</a></span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@M@FitpaySDK@objc(cs)WvConfig(im)sendRtmMessageWithRtmMessage:retries:"></a>
-                    <a name="//apple_ref/swift/Method/sendRtmMessage(rtmMessage:retries:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)WvConfig(im)sendRtmMessageWithRtmMessage:retries:">sendRtmMessage(rtmMessage:retries:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">sendRtmMessage</span><span class="p">(</span><span class="nv">rtmMessage</span><span class="p">:</span> <span class="kt"><a href="../Classes/RtmMessageResponse.html">RtmMessageResponse</a></span><span class="p">,</span> <span class="nv">retries</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">showCustomStatusMessage</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Classes/WvConfig/WVMessageType.html">WVMessageType</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1040,68 +562,12 @@ that will be called with the result of the action once completed. It expects a m
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK8WvConfigC18RtmProtocolVersionO"></a>
-                    <a name="//apple_ref/swift/Enum/RtmProtocolVersion" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK8WvConfigC18RtmProtocolVersionO">RtmProtocolVersion</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                        <a href="../Classes/WvConfig/RtmProtocolVersion.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">enum</span> <span class="kt">RtmProtocolVersion</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK8WvConfigC9ErrorCodeO"></a>
-                    <a name="//apple_ref/swift/Enum/ErrorCode" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK8WvConfigC9ErrorCodeO">ErrorCode</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                        <a href="../Classes/WvConfig/ErrorCode.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ErrorCode</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt">RawIntValue</span><span class="p">,</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-08)</p>
+          <p>&copy; 2018 <a class="link" href="https://github.com/fitpay/fitpay-ios-sdk" target="_blank" rel="external">Fit Pay, Inc</a>. All rights reserved. (Last updated: 2018-05-09)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

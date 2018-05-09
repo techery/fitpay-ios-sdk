@@ -1,5 +1,12 @@
 @objcMembers open class PaymentDevice: NSObject {
 
+    private let eventsDispatcher = FitpayEventDispatcher()
+    
+    private var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
+    private weak var deviceDisconnectedBinding: FitpayEventBinding?
+    
+    internal var deviceInterface: PaymentDeviceConnectable!
+
     // MARK: - Lifecycle
     
     override public init() {
@@ -152,13 +159,6 @@
     }
 
     // MARK: - Private / Internal
-    
-    private let eventsDispatcher = FitpayEventDispatcher()
-
-    private var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
-    private weak var deviceDisconnectedBinding: FitpayEventBinding?
-    
-    internal var deviceInterface: PaymentDeviceConnectable!
 
     internal typealias APDUExecutionHandler = (_ apduCommand: APDUCommand?, _ state: APDUPackageResponseState?, _ error: Error?) -> Void
     

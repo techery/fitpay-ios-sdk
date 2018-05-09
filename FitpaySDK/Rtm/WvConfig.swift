@@ -2,31 +2,31 @@ import Foundation
 import WebKit
 import ObjectMapper
 
-@objcMembers open class WvConfig: NSObject, WKScriptMessageHandler {
+@objc public class WvConfig: NSObject, WKScriptMessageHandler {
     
-    weak open var rtmDelegate: WvRTMDelegate? {
+    weak var rtmDelegate: WvRTMDelegate? {
         didSet {
             self.rtmMessaging.rtmDelegate = rtmDelegate
         }
     }
-    weak open var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? {
+    weak var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? {
         didSet {
             self.rtmMessaging.cardScannerPresenterDelegate = cardScannerPresenterDelegate
         }
     }
-    weak open var cardScannerDataSource: FitpayCardScannerDataSource? {
+    weak var cardScannerDataSource: FitpayCardScannerDataSource? {
         didSet {
             self.rtmMessaging.cardScannerDataSource = cardScannerDataSource
         }
     }
 
-    weak open var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
+    weak var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
         didSet {
             self.rtmMessaging.a2aVerificationDelegate = a2aVerificationDelegate
         }
     }
 
-    public var user: User? {
+    var user: User? {
         get {
             return self.configStorage.user
         }
@@ -35,7 +35,7 @@ import ObjectMapper
         }
     }
     
-    public var device: DeviceInfo? {
+    var device: DeviceInfo? {
         get {
             return self.configStorage.device
         }
@@ -44,7 +44,7 @@ import ObjectMapper
         }
     }
 
-     public internal(set) var a2aReturnLocation: String? {
+     var a2aReturnLocation: String? {
         get {
             return self.configStorage.a2aReturnLocation
         }
@@ -70,17 +70,17 @@ import ObjectMapper
     
     //MARK: - Lifecycle
     
-    @objc public convenience init(paymentDevice: PaymentDevice, userEmail: String?, isNewAccount: Bool) {
+    convenience init(paymentDevice: PaymentDevice, userEmail: String?, isNewAccount: Bool) {
         self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount))
     }
     
-    @objc public init(paymentDevice: PaymentDevice, rtmConfig: RtmConfigProtocol) {
+    init(paymentDevice: PaymentDevice, rtmConfig: RtmConfigProtocol) {
         self.configStorage.paymentDevice = paymentDevice
         self.configStorage.rtmConfig = rtmConfig
         self.url = FitpayConfig.webURL
         
         self.rtmMessaging = RtmMessaging(wvConfigStorage: self.configStorage)
-
+        
         super.init()
         
         self.rtmMessaging.outputDelagate = self
@@ -102,7 +102,7 @@ import ObjectMapper
       that device. This will attempt to connect, and call the completion with either an error or nil if the connection 
       attempt is successful.
      */
-    @objc open func openDeviceConnection(_ completion: @escaping (_ error: NSError?) -> Void) {
+    func openDeviceConnection(_ completion: @escaping (_ error: NSError?) -> Void) {
         self.connectionBinding = self.configStorage.paymentDevice!.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) { [weak self] (event) in
             guard let strongSelf = self else { return }
             
@@ -129,7 +129,7 @@ import ObjectMapper
      Sets webview which will be used by fitpay platform.
      Make sure that webViewPageLoaded() will be called, otherwise RTM will not work.
      */
-    @objc open func setWebView(_ webview:WKWebView!) {
+    func setWebView(_ webview:WKWebView!) {
         guard self.webview != webview else { return }
         
         self.rtmVersionSent = false
@@ -140,7 +140,7 @@ import ObjectMapper
      Should be called when webview will be loaded.
      You can use WKNavigationDelegate.webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) for managing page state.
      */
-    @objc open func webViewPageLoaded() {
+    func webViewPageLoaded() {
         if !rtmVersionSent {
             sendVersion(version: RtmProtocolVersion.currentlySupportedVersion())
         }
@@ -150,7 +150,7 @@ import ObjectMapper
      This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that
      the value "rtmBridge" is an agreeded upon value between this and the web-view.
      */
-    @objc open func wvConfig() -> WKWebViewConfiguration {
+    func wvConfig() -> WKWebViewConfiguration {
         
         class LeakAvoider: NSObject, WKScriptMessageHandler {
             weak var delegate: WKScriptMessageHandler?
@@ -174,7 +174,7 @@ import ObjectMapper
     /**
      This returns the request object clients will require in order to open a WKWebView
      */
-    @objc open func wvRequest() -> URLRequest {
+    func wvRequest() -> URLRequest {
         if let accessToken = self.configStorage.user?.client?._session.accessToken {
             self.configStorage.rtmConfig!.accessToken = accessToken
         }
@@ -212,7 +212,7 @@ import ObjectMapper
             }
         }
      */
-    @objc open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    @objc public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let sentData = message.body as? [String: Any] else {
             log.error("WV_DATA: Received message from \(message.name), but can't convert it to dictionary type.")
             return
@@ -221,7 +221,7 @@ import ObjectMapper
         self.rtmMessaging.received(message: sentData)
     }
     
-    @objc open func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
+    func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
         var realMessage = message ?? status.defaultMessage()
         if let newMessage = rtmDelegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage, error: error as NSError?) {
             realMessage = newMessage
@@ -230,11 +230,11 @@ import ObjectMapper
         sendStatusMessage(realMessage, type: status.statusMessageType())
     }
     
-    @objc open func showCustomStatusMessage(_ message:String, type: WVMessageType) {
+    func showCustomStatusMessage(_ message: String, type: WVMessageType) {
         sendStatusMessage(message, type: type)
     }
     
-    @objc open func sendRtmMessage(rtmMessage: RtmMessageResponse, retries: Int = 3) {
+    func sendRtmMessage(rtmMessage: RtmMessageResponse, retries: Int = 3) {
         guard let jsonRepresentation = rtmMessage.toJSONString(prettyPrint: false) else {
             log.error("WV_DATA: Can't create json representation for rtm message.")
             return
@@ -421,7 +421,7 @@ extension WvConfig {
         }
     }
     
-    @objc public enum RtmProtocolVersion: Int {
+    enum RtmProtocolVersion: Int {
         case ver1 = 1
         case ver2
         case ver3
@@ -433,7 +433,7 @@ extension WvConfig {
         }
     }
     
-    @objc public enum ErrorCode: Int, RawIntValue, Error, CustomStringConvertible {
+    enum ErrorCode: Int, RawIntValue, Error, CustomStringConvertible {
         case unknownError       = 0
         case deviceDataNotValid = 10002
         

@@ -4,7 +4,7 @@ import Foundation
     /**
      This method will be called after successful user authorization.
      */
-    @objc optional func didAuthorizeWithEmail(_ email: String?)
+    @objc func didAuthorizeWith(email: String)
     
     /**
      This method can be used for user messages customization.

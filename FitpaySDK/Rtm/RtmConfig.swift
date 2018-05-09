@@ -1,6 +1,6 @@
 import ObjectMapper
 
-internal enum RtmConfigDafaultMappingKey: String {
+enum RtmConfigDafaultMappingKey: String {
     case clientId = "clientId"
     case redirectUri = "redirectUri"
     case userEmail = "userEmail"
@@ -16,7 +16,7 @@ internal enum RtmConfigDafaultMappingKey: String {
     case useWebCardScanner = "useWebCardScanner"
 }
 
-@objc public protocol RtmConfigProtocol {
+protocol RtmConfigProtocol {
     var redirectUri: String? { get }
     var deviceInfo: DeviceInfo? { get set }
     var accessToken: String? { get set }
@@ -27,11 +27,11 @@ internal enum RtmConfigDafaultMappingKey: String {
     func jsonDict() -> [String: Any]
 }
 
-open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
-    public var redirectUri: String?
-    public var deviceInfo: DeviceInfo?
-    public var hasAccount: Bool = false
-    public var accessToken: String?
+class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
+    var redirectUri: String?
+    var deviceInfo: DeviceInfo?
+    var hasAccount: Bool = false
+    var accessToken: String?
     
     private var clientId: String?
     private var userEmail: String?
@@ -45,7 +45,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
     
     private var customs: [String: Any]?
     
-    public init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
+    init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
         self.clientId = FitpayConfig.clientId
         self.redirectUri = FitpayConfig.redirectURL
         self.demoMode = FitpayConfig.Web.demoMode
@@ -62,7 +62,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         
     }
     
-    open func mapping(map: Map) {
+    func mapping(map: Map) {
         clientId        <- map[RtmConfigDafaultMappingKey.clientId.rawValue]
         redirectUri     <- map[RtmConfigDafaultMappingKey.redirectUri.rawValue]
         userEmail       <- map[RtmConfigDafaultMappingKey.userEmail.rawValue]
@@ -78,7 +78,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         useWebCardScanner <- map[RtmConfigDafaultMappingKey.useWebCardScanner.rawValue]
     }
     
-    public func update(value: Any, forKey key: String) {
+    func update(value: Any, forKey key: String) {
         if let mappingKey = RtmConfigDafaultMappingKey(rawValue: key) {
             switch mappingKey {
             case .accessToken:
@@ -129,7 +129,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         }
     }
     
-    public func jsonDict() -> [String: Any] {
+    func jsonDict() -> [String: Any] {
         var dict = self.toJSON()
         if let customs = self.customs {
             dict += customs
