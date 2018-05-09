@@ -3,7 +3,7 @@ import ObjectMapper
 
 open class IdVerificationResponse: NSObject, Mappable {
     
-    /// Most recent date this user update their: Billing Address, Name, Email, password, 
+    /// Most recent date this user updated their: Billing Address, Name, Email, password,
     /// or other Personally Identifiable Information associated to their account.
     open var oemAccountInfoUpdatedDate: Date?
     
@@ -66,7 +66,8 @@ open class IdVerificationResponse: NSObject, Mappable {
     open var billingState: String?
     open var billingZip: String?
     
-    private var locale: String? //[language designator ISO-639-1]‌‌‌‌-[region designator ISO 3166-1 alpha-2]
+    /// [language designator ISO-639-1]‌‌‌‌-[region designator ISO 3166-1 alpha-2]
+    public private(set) var locale: String?
     
     public override init() {
         super.init()
@@ -108,10 +109,11 @@ open class IdVerificationResponse: NSObject, Mappable {
     }
     
     private func updateLocale() {
-        if let preferredLanguage = NSLocale.preferredLanguages.first {
-            locale = preferredLanguage
-        }
+        guard let preferredLanguage = NSLocale.preferredLanguages.first else { return }
+        guard let languageCode = NSLocale.current.languageCode else { return }
+        guard let regionCode = NSLocale.current.regionCode else { return }
+        
+        locale = PaymentDeviceUtils.getStandardLocale(preferredLanguage: preferredLanguage, languageCode: languageCode, regionCode: regionCode)
     }
 
-    
 }
