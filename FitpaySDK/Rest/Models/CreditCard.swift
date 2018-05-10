@@ -1,25 +1,6 @@
 import Foundation
 
-public enum TokenizationState: String, Codable {
-    case NEW,
-    NOT_ELIGIBLE,
-    ELIGIBLE,
-    DECLINED_TERMS_AND_CONDITIONS,
-    PENDING_ACTIVE,
-    PENDING_VERIFICATION,
-    DELETED,
-    ACTIVE,
-    DEACTIVATED,
-    ERROR,
-    DECLINED
-}
-
-enum AcceptTermsError: Error {
-    case NoTerms(String)
-}
-
-@objcMembers
-open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
+@objcMembers open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
     internal var links: [ResourceLink]?
     internal var encryptedData: String?
 
@@ -683,6 +664,31 @@ open class CardInfo: Serializable {
         address = try container.decode(.address)
         name = try container.decode(.name)
     }
+
+}
+
+// MARK: - Nested Objects
+
+extension CreditCard {
+    
+    public enum TokenizationState: String, Codable {
+        case NEW,
+        NOT_ELIGIBLE,
+        ELIGIBLE,
+        DECLINED_TERMS_AND_CONDITIONS,
+        PENDING_ACTIVE,
+        PENDING_VERIFICATION,
+        DELETED,
+        ACTIVE,
+        DEACTIVATED,
+        ERROR,
+        DECLINED
+    }
+    
+    enum AcceptTermsError: Error {
+        case NoTerms(String)
+    }
+
 }
 
 /**

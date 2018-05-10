@@ -1,6 +1,5 @@
 import Foundation
 import WebKit
-import ObjectMapper
 
 @objc public class WvConfig: NSObject, WKScriptMessageHandler {
     

@@ -125,7 +125,7 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     }
     
     func jsonDict() -> [String: Any] {
-        var dict = self.toJSON()
+        var dict = self.toJSON()!
         if let customs = self.customs {
             dict += customs
         }
