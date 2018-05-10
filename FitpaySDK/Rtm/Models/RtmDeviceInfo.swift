@@ -40,11 +40,7 @@ public class RtmDeviceInfo: DeviceInfo {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         created = try container.decode(.created)
-        if let stringNumber: String = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
         deviceIdentifier = try container.decode(.deviceIdentifier)
         deviceName = try container.decode(.deviceName)
         deviceType = try container.decode(.deviceType)

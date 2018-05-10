@@ -108,11 +108,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         created = try container.decode(.created)
-        if let stringNumber: String = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
         deviceIdentifier = try container.decode(.deviceIdentifier)
         deviceName = try container.decode(.deviceName)
         deviceType = try container.decode(.deviceType)
@@ -145,7 +141,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(created, forKey: .created)
-        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
         try container.encode(deviceName, forKey: .deviceName)
         try container.encode(deviceType, forKey: .deviceType)

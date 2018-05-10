@@ -150,22 +150,14 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         userId = try container.decode(.userId)
         isDefault = try container.decode(.isDefault)
         created = try container.decode(.created)
-        if let stringNumber: String = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
         state = try container.decode(.state)
         cardType = try container.decode(.cardType)
         cardMetaData = try container.decode(.cardMetaData)
         termsAssetId = try container.decode(.termsAssetId)
         termsAssetReferences =  try container.decode(.termsAssetReferences)
         eligibilityExpiration = try container.decode(.eligibilityExpiration)
-        if let stringNumber: String = try container.decode(.eligibilityExpirationEpoch) {
-            eligibilityExpirationEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.eligibilityExpirationEpoch) {
-            eligibilityExpirationEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        eligibilityExpirationEpoch = try container.decode(.eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
         deviceRelationships = try container.decode(.deviceRelationships)
         encryptedData = try container.decode(.encryptedData)
         targetDeviceId = try container.decode(.targetDeviceId)
@@ -188,14 +180,14 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         try container.encode(userId, forKey: .userId)
         try container.encode(isDefault, forKey: .isDefault)
         try container.encode(created, forKey: .created)
-        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(state, forKey: .state)
         try container.encode(cardType, forKey: .cardType)
         try container.encode(cardMetaData, forKey: .cardMetaData)
         try container.encode(termsAssetId, forKey: .termsAssetId)
         try container.encode(termsAssetReferences, forKey: .termsAssetReferences)
         try container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
-        try container.encode(NSTimeIntervalTypeTransform().transform(eligibilityExpirationEpoch), forKey: .eligibilityExpirationEpoch)
+        try container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(deviceRelationships, forKey: .deviceRelationships)
         try container.encode(encryptedData, forKey: .encryptedData)
         try container.encode(targetDeviceId, forKey: .targetDeviceId)
@@ -631,11 +623,7 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
         firmwareRevision =  try container.decode(.firmwareRevision)
         softwareRevision = try container.decode(.softwareRevision)
         created = try container.decode(.created)
-        if let stringNumber: String = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
         osName = try container.decode(.osName)
         systemId = try container.decode(.systemId)
     }
@@ -653,7 +641,7 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
         try container.encode(firmwareRevision, forKey: .firmwareRevision)
         try container.encode(softwareRevision, forKey: .softwareRevision)
         try container.encode(created, forKey: .created)
-        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(osName, forKey: .osName)
         try container.encode(systemId, forKey: .systemId)
     }

@@ -85,23 +85,12 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
         value = try container.decode(.value)
         verificationResult = try container.decode(.verificationResult)
         created = try container.decode(.created)
-        if let stringNumber: String = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
-        lastModified =  try container.decode(.lastModified)
-        if let stringNumber: String = try container.decode(.lastModifiedEpoch) {
-            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.lastModifiedEpoch) {
-            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        lastModified = try container.decode(.lastModified)
+        lastModifiedEpoch = try container.decode(.lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
         verified = try container.decode(.verified)
-        if let stringNumber: String = try container.decode(.verifiedEpoch) {
-            verifiedEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.verifiedEpoch) {
-            verifiedEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        verifiedEpoch = try container.decode(.verifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+
         appToAppContext = try container.decode(.appToAppContext)
     }
 
@@ -114,11 +103,11 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
         try container.encode(value, forKey: .value)
         try container.encode(verificationResult, forKey: .verificationResult)
         try container.encode(created, forKey: .created)
-        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(lastModified, forKey: .lastModified)
-        try container.encode(NSTimeIntervalTypeTransform().transform(lastModifiedEpoch), forKey: .createdEpoch)
+        try container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(verified, forKey: .verified)
-        try container.encode(NSTimeIntervalTypeTransform().transform(verifiedEpoch), forKey: .verifiedEpoch)
+        try container.encode(verifiedEpoch, forKey: .verifiedEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(appToAppContext, forKey: .appToAppContext)
     }
 

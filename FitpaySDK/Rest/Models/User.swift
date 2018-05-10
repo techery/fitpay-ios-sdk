@@ -56,17 +56,9 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         id = try container.decode(.id)
         created = try container.decode(.created)
-        if let stringNumber: String = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.createdEpoch) {
-            createdEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
         lastModified = try container.decode(.lastModified)
-        if let stringNumber: String = try container.decode(.lastModifiedEpoch) {
-            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(stringNumber)
-        } else if let intNumber: Int = try container.decode(.lastModifiedEpoch) {
-            lastModifiedEpoch = NSTimeIntervalTypeTransform().transform(intNumber)
-        }
+        lastModifiedEpoch = try container.decode(.lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
         encryptedData = try container.decode(.encryptedData)
     }
 
@@ -74,9 +66,9 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(created, forKey: .created)
-        try container.encode(NSTimeIntervalTypeTransform().transform(createdEpoch), forKey: .createdEpoch)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(lastModified, forKey: .lastModified)
-        try container.encode(NSTimeIntervalTypeTransform().transform(lastModifiedEpoch), forKey: .lastModifiedEpoch)
+        try container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(encryptedData, forKey: .encryptedData)
     }
     
