@@ -25,8 +25,8 @@
 		272C9341207E7F9500166820 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
 		272C9342207E7FA600166820 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		272C9343207E7FD800166820 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		272E04352093B3BA000EAA9D /* WvRTMDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04342093B3BA000EAA9D /* WvRTMDelegate.swift */; };
-		272E04362093B3BA000EAA9D /* WvRTMDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04342093B3BA000EAA9D /* WvRTMDelegate.swift */; };
+		272E04352093B3BA000EAA9D /* RTMDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04342093B3BA000EAA9D /* RTMDelegate.swift */; };
+		272E04362093B3BA000EAA9D /* RTMDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04342093B3BA000EAA9D /* RTMDelegate.swift */; };
 		272E04382093B40A000EAA9D /* WVConfigStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04372093B40A000EAA9D /* WVConfigStorage.swift */; };
 		272E04392093B40A000EAA9D /* WVConfigStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04372093B40A000EAA9D /* WVConfigStorage.swift */; };
 		2745F3DF20A345B900EF46A4 /* FitpayWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2745F3DE20A345B900EF46A4 /* FitpayWeb.swift */; };
@@ -300,7 +300,7 @@
 		1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitsStorageTests.swift; sourceTree = "<group>"; };
 		1FE1479D201613CB005DEA29 /* CommitMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitMetrics.swift; sourceTree = "<group>"; };
 		1FE147A220161F8B005DEA29 /* CommitStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommitStatistic.swift; sourceTree = "<group>"; };
-		272E04342093B3BA000EAA9D /* WvRTMDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WvRTMDelegate.swift; sourceTree = "<group>"; };
+		272E04342093B3BA000EAA9D /* RTMDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMDelegate.swift; sourceTree = "<group>"; };
 		272E04372093B40A000EAA9D /* WVConfigStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WVConfigStorage.swift; sourceTree = "<group>"; };
 		2745F3DE20A345B900EF46A4 /* FitpayWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitpayWeb.swift; sourceTree = "<group>"; };
 		276CD25E209A5D1700076648 /* FitpayConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitpayConfig.swift; sourceTree = "<group>"; };
@@ -794,12 +794,12 @@
 		CD038444AAB4BDB6FF14D2D7 /* Rtm */ = {
 			isa = PBXGroup;
 			children = (
-				272E04342093B3BA000EAA9D /* WvRTMDelegate.swift */,
-				37D0CFED1EDC652F0049B5AA /* RtmMessageHandlers */,
-				CD0385FBA6E03879966B500B /* Models */,
-				0AF2B4111CDA6F410090CFCF /* WvConfig.swift */,
 				3786F97E1F1E03BA00693B6A /* RtmMessaging.swift */,
+				0AF2B4111CDA6F410090CFCF /* WvConfig.swift */,
 				272E04372093B40A000EAA9D /* WVConfigStorage.swift */,
+				272E04342093B3BA000EAA9D /* RTMDelegate.swift */,
+				CD0385FBA6E03879966B500B /* Models */,
+				37D0CFED1EDC652F0049B5AA /* RtmMessageHandlers */,
 			);
 			path = Rtm;
 			sourceTree = "<group>";
@@ -1197,7 +1197,7 @@
 				CD038A4098738EC358AD2751 /* Address.swift in Sources */,
 				CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */,
 				847264A21CA53D0800DE801D /* BLEPackets.swift in Sources */,
-				272E04352093B3BA000EAA9D /* WvRTMDelegate.swift in Sources */,
+				272E04352093B3BA000EAA9D /* RTMDelegate.swift in Sources */,
 				272E04382093B40A000EAA9D /* WVConfigStorage.swift in Sources */,
 				37D0CFEF1EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
 				27EA81DD208F96F700FFBB56 /* UserEventStream.swift in Sources */,
@@ -1386,7 +1386,7 @@
 				374D0C981F56F8080060A4FC /* RtmMessageHandlerV5.swift in Sources */,
 				27C0243020A3940900681023 /* MockPaymentDeviceConnector.swift in Sources */,
 				3A93A0AA1DB8CA2C00A9FEB4 /* NSData+CRC32.swift in Sources */,
-				272E04362093B3BA000EAA9D /* WvRTMDelegate.swift in Sources */,
+				272E04362093B3BA000EAA9D /* RTMDelegate.swift in Sources */,
 				37139BE31F177B21001EEE73 /* SyncRequest.swift in Sources */,
 				3701AE4D1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift in Sources */,
 				1FE147A420161F8C005DEA29 /* CommitStatistic.swift in Sources */,

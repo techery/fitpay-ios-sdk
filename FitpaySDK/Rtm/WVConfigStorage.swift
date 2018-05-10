@@ -1,10 +1,10 @@
 import Foundation
 
-class WvConfigStorage {
+struct WvConfigStorage {
     var paymentDevice: PaymentDevice?
     var user: User?
     var device: DeviceInfo?
-    var a2aReturnLocation: String? = nil
+    var a2aReturnLocation: String?
     
     var rtmConfig: RtmConfigProtocol?
 }

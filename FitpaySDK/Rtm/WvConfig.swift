@@ -55,17 +55,16 @@ import WebKit
     //MARK: - Internal and Private Variables
     
     var configStorage = WvConfigStorage()
-    
-    private var bindings: [FitpayEventBinding] = []
-    private var rtmVersionSent = false
-    
+
     var url = FitpayConfig.webURL
-    let notificationCenter = NotificationCenter.default
     
     var webview: WKWebView?
     var connectionBinding: FitpayEventBinding?
     var sessionDataCallBack: RtmMessage?
     var syncCallBacks = [RtmMessage]()
+    
+    private var bindings: [FitpayEventBinding] = []
+    private var rtmVersionSent = false
     
     //MARK: - Lifecycle
     
@@ -84,12 +83,12 @@ import WebKit
         
         self.rtmMessaging.outputDelagate = self
         
-        self.notificationCenter.addObserver(self, selector: #selector(logout), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logout), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         self.bindEvents()
     }
 
     deinit {
-        self.notificationCenter.removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         self.webview?.configuration.userContentController.removeScriptMessageHandler(forName: "rtmBridge")
         self.unbindEvents()
     }
