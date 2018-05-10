@@ -6,25 +6,14 @@
 //
 
 import UIKit
-import ObjectMapper
 
-open class A2AContext: NSObject, Mappable {
+open class A2AContext: NSObject, Serializable {
     open var applicationId: String?
     open var action: String?
     open var payload: String?
-    
-    public required init?(map: Map) {
-        super.init()
-    }
-    
+
     internal override init() {
         super.init()
-    }
-    
-    open func mapping(map: Map) {
-        applicationId <- map["applicationId"]
-        action <- map["action"]
-        payload <- map["payload"]
     }
 }
 

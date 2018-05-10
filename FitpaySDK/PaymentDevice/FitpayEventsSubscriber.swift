@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 open class FitpayEventsSubscriber {
     public static var sharedInstance = FitpayEventsSubscriber()

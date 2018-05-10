@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
@@ -51,7 +50,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     func handle(message: [String: Any]) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
-        guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
+        guard let rtmMessage = try? RtmMessage(String(data: jsonData!, encoding: .utf8)) else {
             log.error("WV_DATA: Can't create RtmMessage.")
             return
         }
@@ -100,7 +99,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             return
         }
 
-        guard let webViewSessionData = Mapper<SessionData>().map(JSONObject: data) else {
+        guard let webViewSessionData = try? SessionData(data) else {
             log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(data)")
             return
         }

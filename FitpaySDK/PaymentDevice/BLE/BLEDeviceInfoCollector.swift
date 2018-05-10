@@ -1,5 +1,4 @@
 import CoreBluetooth
-import ObjectMapper
 
 internal class BLEDeviceInfoCollector {
     static let characteristicBindings: [CBUUID: String] = [
@@ -33,6 +32,6 @@ internal class BLEDeviceInfoCollector {
             deviceInfoMap["secureElement"] = ["secureElementId": secureElementId]
         }
         
-        return Mapper<DeviceInfo>().map(JSON: deviceInfoMap)
+        return try? DeviceInfo(deviceInfoMap)
     }
 }

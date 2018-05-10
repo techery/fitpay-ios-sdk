@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import ObjectMapper
 
 open class RtmMessageResponse: RtmMessage {
 
@@ -21,14 +20,19 @@ open class RtmMessageResponse: RtmMessage {
         self.type = type
         self.success = success
     }
-    
-    public required init?(map: Map) {
-        fatalError("init(map:) has not been implemented")
+
+    private enum CodingKeys: String, CodingKey {
+        case success
     }
-    
-    override open func mapping(map: Map) {
-        super.mapping(map: map)
-        
-        success <- map["isSuccess"]
+
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        success = try container.decode(.success)
+    }
+
+    public override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(success, forKey: .success)
     }
 }

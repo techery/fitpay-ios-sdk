@@ -1,6 +1,5 @@
 import Foundation
 import Alamofire
-import AlamofireObjectMapper
 
 extension RestClient {
     
@@ -33,15 +32,16 @@ extension RestClient {
             
             let parameters = ["creditCardId": "\(creditCardId)", "deviceId": "\(deviceId)"]
             let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Relationship>) in
+            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         
                         completion(nil, error)
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        completion(resultValue, response.result.error as NSError?)
+                        let relationship = try? Relationship(resultValue)
+                        relationship?.client = self
+                        completion(relationship, response.result.error as NSError?)
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
                     }
@@ -58,15 +58,16 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Relationship>) in
+            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         
                         completion(nil, error)
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        completion(resultValue, response.result.error as NSError?)
+                        let relationship = try? Relationship(resultValue)
+                        relationship?.client = self
+                        completion(relationship, response.result.error as NSError?)
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
                     }

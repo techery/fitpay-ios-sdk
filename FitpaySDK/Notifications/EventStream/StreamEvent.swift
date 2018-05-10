@@ -2,7 +2,7 @@ import Foundation
 
 public struct StreamEvent: Decodable {
     public var type: StreamEventType
-    public var payload: [String: Any]
+    public var payload: [String: Any]?
 
     public init(from decoder: Decoder) throws {
         let container =  try decoder.container(keyedBy: CodingKeys.self)
@@ -15,9 +15,8 @@ public struct StreamEvent: Decodable {
         case type
         case payload
     }
-
+    
 }
-
 
 public enum StreamEventType: String, Decodable {
     case connected = "STREAM_CONNECTED"

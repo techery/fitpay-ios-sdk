@@ -1,4 +1,3 @@
-import ObjectMapper
 
 enum RtmConfigDafaultMappingKey: String {
     case clientId = "clientId"
@@ -57,28 +56,24 @@ class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         self.deviceInfo = deviceInfo
         self.hasAccount = hasAccount
     }
-    
-    public required init?(map: Map) {
-        
+
+    private enum CodingKeys: String, CodingKey {
+        case clientId
+        case redirectUri
+        case userEmail
+        case deviceInfo = "paymentDevice"
+        case hasAccount = "account"
+        case version
+        case demoMode
+        case customCSSUrl = "themeOverrideCssUrl"
+        case demoCardGroup
+        case accessToken
+        case language
+        case baseLanguageUrl = "baseLangUrl"
+        case useWebCardScanner 
     }
-    
-    func mapping(map: Map) {
-        clientId        <- map[RtmConfigDafaultMappingKey.clientId.rawValue]
-        redirectUri     <- map[RtmConfigDafaultMappingKey.redirectUri.rawValue]
-        userEmail       <- map[RtmConfigDafaultMappingKey.userEmail.rawValue]
-        deviceInfo      <- map[RtmConfigDafaultMappingKey.deviceInfo.rawValue]
-        hasAccount      <- map[RtmConfigDafaultMappingKey.hasAccount.rawValue]
-        version         <- map[RtmConfigDafaultMappingKey.version.rawValue]
-        demoMode        <- map[RtmConfigDafaultMappingKey.demoMode.rawValue]
-        customCSSUrl    <- map[RtmConfigDafaultMappingKey.customCSSUrl.rawValue]
-        demoCardGroup   <- map[RtmConfigDafaultMappingKey.demoCardGroup.rawValue]
-        accessToken     <- map[RtmConfigDafaultMappingKey.accessToken.rawValue]
-        language        <- map[RtmConfigDafaultMappingKey.language.rawValue]
-        baseLanguageUrl <- map[RtmConfigDafaultMappingKey.baseLanguageUrl.rawValue]
-        useWebCardScanner <- map[RtmConfigDafaultMappingKey.useWebCardScanner.rawValue]
-    }
-    
-    func update(value: Any, forKey key: String) {
+
+    public func update(value: Any, forKey key: String) {
         if let mappingKey = RtmConfigDafaultMappingKey(rawValue: key) {
             switch mappingKey {
             case .accessToken:

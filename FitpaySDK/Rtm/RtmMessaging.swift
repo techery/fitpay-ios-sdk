@@ -1,5 +1,4 @@
 import Foundation
-import ObjectMapper
 
 protocol RtmOutputDelegate: class {
     func send(rtmMessage: RtmMessageResponse, retries: Int)
@@ -42,7 +41,7 @@ class RtmMessaging {
     func received(message: [String: Any], completion: RtmRawMessageCompletion? = nil) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
-        guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
+        guard let rtmMessage = try? RtmMessage(String(data: jsonData!, encoding: .utf8)) else {
             log.error("WV_DATA: Can't create RtmMessage.")
             completion?(false)
             return
