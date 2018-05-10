@@ -1,19 +1,6 @@
-//
-//  ImageAssetOptions.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 07.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
-public protocol AssetOption {
-    var urlKey: String { get }
-    var urlValue: String { get }
-}
-
-public enum ImageAssetOption: AssetOption {
+public enum ImageAssetOption {
     case width(Int)
     case height(Int)
     case embossedText(String)

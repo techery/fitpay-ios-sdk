@@ -524,6 +524,3 @@ public protocol AssetRetrivable {
     func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler)
 }
 
-public protocol AssetWithOptionsRerivable {
-    func retrieveAssetWith(options: [AssetOption], completion: @escaping RestClient.AssetsHandler)
-}

@@ -1,7 +1,6 @@
 
-open class Transaction : NSObject, ClientModel, Serializable
-{
-    internal var links:[ResourceLink]?
+open class Transaction: NSObject, ClientModel, Serializable {
+    
     open var transactionId:String?
     open var transactionType:String?
     open var amount:NSDecimalNumber?
@@ -13,8 +12,11 @@ open class Transaction : NSObject, ClientModel, Serializable
     open var merchantCode:String?
     open var merchantType:String?
     
+    public weak var client: RestClient?
+    
+    var links:[ResourceLink]?
+    
     private static let selfResource = "self"
-    public weak var client:RestClient?
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"

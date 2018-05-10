@@ -1,11 +1,13 @@
 
-open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, SecretApplyable
-{
+open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, SecretApplyable {
+    
     open var limit: Int?
     open var offset: Int?
     open var totalResults: Int?
     open var results: [T]?
+    
     internal var links: [ResourceLink]?
+    
     private let lastResourse = "last"
     private let nextResourse = "next"
     private let previousResource = "previous"
@@ -30,7 +32,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
             
             if let results = self.results {
                 for result in results {
-                    if var result = result as? ClientModel {
+                    if let result = result as? ClientModel {
                         return result.client
                     }
                 }

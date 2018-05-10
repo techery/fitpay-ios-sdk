@@ -1,7 +1,5 @@
 
-@objcMembers
-open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
-    internal var links: [ResourceLink]?
+@objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
     
     open var deviceIdentifier: String?
     open var deviceName: String?
@@ -25,13 +23,6 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
     open var secureElementId: String?
     open var casd: String?
     
-    private static let userResourceKey = "user"
-    private static let commitsResourceKey = "commits"
-    private static let selfResourceKey = "self"
-    private static let lastAckCommitResourceKey = "lastAckCommit"
-
-    private weak var _client: RestClient?
-
     // Extra metadata specific for a particural type of device
     open var metadata: [String: Any]?
 
@@ -58,7 +49,17 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         }
     }
     
+    internal var links: [ResourceLink]?
+    
+    private static let userResourceKey = "user"
+    private static let commitsResourceKey = "commits"
+    private static let selfResourceKey = "self"
+    private static let lastAckCommitResourceKey = "lastAckCommit"
+    
+    private weak var _client: RestClient?
+    
     override public init() {
+        super.init()
     }
 
     init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElementId: String?, casd: String?) {
@@ -257,7 +258,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             // if notification token not exists on platform then we need to create this field
             if notifcationToken != nil && self.notificationToken == nil {
-                addNotificationToken(notifcationToken!, completion: { (deviceInfo, error) in
+                addNotificationToken(notifcationToken!) { (deviceInfo, error) in
                     // notificationToken added, check do we need to update other fields
                     if firmwareRevision == nil && softwareRevision == nil {
                         completion(deviceInfo, error)
@@ -265,7 +266,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
                     }
                     
                     client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
-                })
+                }
             } else {
                 client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
             }
@@ -328,6 +329,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
     }
 
     internal typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: NSError?) -> Void
+    
     internal func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         if newNotificationToken != "" {
@@ -355,15 +357,17 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
 }
 
 open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyable {
-    internal var links: [ResourceLink]?
     open var creditCardId: String?
     open var pan: String?
     open var expMonth: Int?
     open var expYear: Int?
-
-    internal var encryptedData: String?
-    private static let selfResource = "self"
+    
     public weak var client: RestClient?
+    
+    var links: [ResourceLink]?
+    var encryptedData: String?
+    
+    private static let selfResource = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
@@ -394,7 +398,7 @@ open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyabl
         try container.encode(expYear, forKey: .expYear)
     }
 
-    internal func applySecret(_ secret: Data, expectedKeyId: String?) {
+    func applySecret(_ secret: Data, expectedKeyId: String?) {
         if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
             self.pan = decryptedObj.pan
             self.expMonth = decryptedObj.expMonth

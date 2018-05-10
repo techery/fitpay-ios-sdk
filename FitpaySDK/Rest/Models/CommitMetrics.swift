@@ -1,14 +1,13 @@
 
-public enum SyncInitiator : String, Serializable {
-    case Platform = "PLATFORM"
-    case Notification = "NOTIFICATION"
-    case WebHook = "WEB_HOOK"
-    case EventStream = "EVENT_STREAM"
-    case NotDefined = "NOT DEFINED"
+public enum SyncInitiator: String, Serializable {
+    case platform = "PLATFORM"
+    case notification = "NOTIFICATION"
+    case webHook = "WEB_HOOK"
+    case eventStream = "EVENT_STREAM"
+    case notDefined = "NOT DEFINED"
 }
 
-open class CommitMetrics : Serializable
-{
+open class CommitMetrics: Serializable {
     public var syncId: String?
     public var deviceId: String?
     public var userId: String?

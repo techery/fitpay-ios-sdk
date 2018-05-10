@@ -90,7 +90,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
         log.verbose("WV_DATA: Adding sync to rtm callback queue.")
         syncCallBacks.append(message)
         log.verbose("WV_DATA: initiating sync.")
-        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: user, deviceInfo: deviceInfo, paymentDevice: paymentDevice, initiator: .Platform), completion: nil)
+        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: user, deviceInfo: deviceInfo, paymentDevice: paymentDevice, initiator: .platform), completion: nil)
     }
     
     func handleSessionData(_ message: RtmMessage) {

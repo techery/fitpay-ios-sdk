@@ -1,10 +1,3 @@
-//
-//  A2AVerificationError.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 3/5/18.
-//
-
 import UIKit
 
 public class A2AVerificationRequest : NSObject, Serializable {

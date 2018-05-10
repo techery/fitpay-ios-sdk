@@ -16,7 +16,7 @@ open class SyncRequestQueue {
         request.completion = completion
         if let payload = payload {
             if let notificationDetail = try? NotificationDetail(payload) {
-                request.syncInitiator = .WebHook
+                request.syncInitiator = .webHook
                 request.notificationAsc = notificationDetail
             } else {
                 log.error("Payload data is wrong. Payload: \(payload)")

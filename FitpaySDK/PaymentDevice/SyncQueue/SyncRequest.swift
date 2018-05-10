@@ -32,7 +32,7 @@ open class SyncRequest {
     ///   - initiator: syncInitiator Enum object. Defaults to .NotDefined.
     ///   - notificationAsc: NotificationDetail object.
     public init(requestTime: Date = Date(), user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice,
-                initiator: SyncInitiator = .NotDefined, notificationAsc: NotificationDetail? = nil) {
+                initiator: SyncInitiator = .notDefined, notificationAsc: NotificationDetail? = nil) {
         
         self.requestTime = requestTime
         self.user = user
@@ -66,10 +66,10 @@ open class SyncRequest {
     private var restClient: RestClient?
     
     internal convenience init() {
-        self.init(notificationAsc: nil, initiator: .NotDefined)
+        self.init(notificationAsc: nil, initiator: .notDefined)
     }
     
-    internal init(notificationAsc: NotificationDetail? = nil, initiator: SyncInitiator = .NotDefined) {
+    internal init(notificationAsc: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
         self.requestTime = Date()
         self.user = nil
         self.deviceInfo = nil

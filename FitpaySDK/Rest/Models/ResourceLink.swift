@@ -1,8 +1,7 @@
 
 import Foundation
 
-internal class ResourceLink: CustomStringConvertible
-{
+internal class ResourceLink: CustomStringConvertible {
     var target: String?
     var href: String?
 

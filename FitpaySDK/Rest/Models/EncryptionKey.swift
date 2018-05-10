@@ -1,8 +1,6 @@
 
-@objcMembers
-open class EncryptionKey: NSObject, Serializable
-{
-    internal var links: [ResourceLink]?
+@objcMembers open class EncryptionKey: NSObject, Serializable {
+
     open var keyId: String?
     open var created: String?
     open var createdEpoch: TimeInterval?
@@ -11,6 +9,8 @@ open class EncryptionKey: NSObject, Serializable
     open var serverPublicKey: String?
     open var clientPublicKey: String?
     open var active: Bool?
+    
+    internal var links: [ResourceLink]?
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
