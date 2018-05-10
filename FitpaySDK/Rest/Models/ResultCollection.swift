@@ -24,7 +24,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         return self.links?.url(self.previousResource) != nil
     }
 
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             if _client != nil {
                 return _client

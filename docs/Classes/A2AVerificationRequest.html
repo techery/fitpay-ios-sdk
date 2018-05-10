@@ -14,7 +14,7 @@
     <a title="A2AVerificationRequest Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">FitpaySDK Docs</a> (19% documented)</p>
+        <p><a href="../index.html">FitpaySDK Docs</a> (20% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -387,11 +387,11 @@
             <h1>A2AVerificationRequest</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">A2AVerificationRequest</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">Serializable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">A2AVerificationRequest</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">Serializable</span></code></pre>
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>Main Object sent back from <code>verificationFinished</code></p>
 
           </section>
           <section class="section task-group-section">
@@ -400,9 +400,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK22A2AVerificationRequestC8cardTypeSSSgvp"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)A2AVerificationRequest(py)cardType"></a>
                     <a name="//apple_ref/swift/Property/cardType" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK22A2AVerificationRequestC8cardTypeSSSgvp">cardType</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)A2AVerificationRequest(py)cardType">cardType</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -417,7 +417,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">cardType</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">cardType</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -427,9 +427,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK22A2AVerificationRequestC14returnLocationSSSgvp"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)A2AVerificationRequest(py)returnLocation"></a>
                     <a name="//apple_ref/swift/Property/returnLocation" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK22A2AVerificationRequestC14returnLocationSSSgvp">returnLocation</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)A2AVerificationRequest(py)returnLocation">returnLocation</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -437,14 +437,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>String to build the correct url when returning back from issuer app
+This should be saved locally through the process</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">returnLocation</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">returnLocation</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -454,9 +455,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK22A2AVerificationRequestC7contextAA0C8AContextCSgvp"></a>
+                    <a name="/c:@M@FitpaySDK@objc(cs)A2AVerificationRequest(py)context"></a>
                     <a name="//apple_ref/swift/Property/context" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK22A2AVerificationRequestC7contextAA0C8AContextCSgvp">context</a>
+                    <a class="token" href="#/c:@M@FitpaySDK@objc(cs)A2AVerificationRequest(py)context">context</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -464,14 +465,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Object containing information needed to pass into the issuer app</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">context</span><span class="p">:</span> <span class="kt"><a href="../Classes/A2AContext.html">A2AContext</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">context</span><span class="p">:</span> <span class="kt"><a href="../Classes/A2AContext.html">A2AContext</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>

@@ -4,9 +4,10 @@ open class Image: NSObject, ClientModel, Serializable, AssetRetrivable {
     open var mimeType: String?
     open var height: Int?
     open var width: Int?
-    public var client: RestClient?
     
-    internal var links: [ResourceLink]?
+    var client: RestClient?
+    
+    var links: [ResourceLink]?
     
     private static let selfResourceKey = "self"
 

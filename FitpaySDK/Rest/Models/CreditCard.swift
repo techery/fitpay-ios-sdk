@@ -40,7 +40,7 @@ import Foundation
 
     private weak var _client: RestClient?
 
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             return self._client
         }
@@ -382,7 +382,7 @@ import Foundation
 
 open class CardMetadata: NSObject, ClientModel, Serializable {
     
-    open var foregroundColor: String?
+    open var foregroundColor: String? // TODO: update to UIColor
     open var issuerName: String?
     open var shortDescription: String?
     open var longDescription: String?
@@ -398,9 +398,10 @@ open class CardMetadata: NSObject, ClientModel, Serializable {
     open var coBrandLogo: [Image]?
     open var icon: [Image]?
     open var issuerLogo: [Image]?
+    
     private var _client: RestClient?
     
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             return self._client
         }
@@ -513,16 +514,16 @@ open class CardMetadata: NSObject, ClientModel, Serializable {
 }
 
 open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetrivable {
-    internal var links: [ResourceLink]?
     open var mimeType: String?
-    public var client: RestClient?
-    private static let selfResource = "self"
+    
+    var client: RestClient?
+    var links: [ResourceLink]?
 
+    private static let selfResource = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
         case mimeType
-
     }
 
     public required init(from decoder: Decoder) throws {
@@ -564,9 +565,8 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
     open var osName: String?
     open var systemId: String?
 
-    public var client: RestClient?
-    
-    internal var links: [ResourceLink]?
+    var client: RestClient?
+    var links: [ResourceLink]?
 
     private static let selfResourceKey = "self"
 

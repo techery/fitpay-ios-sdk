@@ -14,7 +14,7 @@
     <a title="FitpayA2AVerificationDelegate Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">FitpaySDK Docs</a> (19% documented)</p>
+        <p><a href="../index.html">FitpaySDK Docs</a> (20% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -392,8 +392,8 @@
                 </div>
               </div>
             <p>Get app-to-app verification response
-      On completion of the issuer intent the OEM app must then open the web-view using the returnLocation.
-      <baseUrl>/<returnLocation>?config=<base64 encoded config with a2a></p>
+On completion of the issuer intent the OEM app must then open the web-view using the returnLocation.
+<baseUrl>/<returnLocation>?config=<base64 encoded config>&amp;a2a=<a2aissuerRequest encoded></p>
 
           </section>
           <section class="section task-group-section">
@@ -412,7 +412,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Called when the user taps the app-to-app verification method
+Should be used to open the issueing app programatically</p>
 
                       </div>
                       <div class="declaration">
@@ -422,6 +423,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">verificationFinished</span><span class="p">(</span><span class="nv">verificationInfo</span><span class="p">:</span> <span class="kt"><a href="../Classes/A2AVerificationRequest.html">A2AVerificationRequest</a></span><span class="p">?)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>verificationInfo</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The Verification Information</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>

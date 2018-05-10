@@ -34,7 +34,7 @@
         return self.links?.url(DeviceInfo.commitsResourceKey) != nil
     }
 
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             return self._client
         }
