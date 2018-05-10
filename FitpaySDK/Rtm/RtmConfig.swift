@@ -26,7 +26,7 @@ protocol RtmConfigProtocol {
     func jsonDict() -> [String: Any]
 }
 
-class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
+class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     var redirectUri: String?
     var deviceInfo: DeviceInfo?
     var hasAccount: Bool = false

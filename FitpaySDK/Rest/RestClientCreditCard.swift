@@ -461,7 +461,7 @@ extension RestClient {
     
     //MARK: - Private Functions
     
-    private func handleVerifyResponse(_ response: DataResponse<VerificationMethod>, completion: @escaping VerifyHandler) {
+    private func handleVerifyResponse(_ response: DataResponse<Any>, completion: @escaping VerifyHandler) {
         guard let statusCode = response.response?.statusCode else {
             completion(false, nil, NSError.unhandledError(RestClient.self))
             return
@@ -475,7 +475,7 @@ extension RestClient {
         }
     }
     
-    private func handleTransitionResponse(_ response: DataResponse<CreditCard>, completion: @escaping CreditCardTransitionHandler) {
+    private func handleTransitionResponse(_ response: DataResponse<Any>, completion: @escaping CreditCardTransitionHandler) {
         guard let statusCode = response.response?.statusCode else {
             completion(false, nil, NSError.unhandledError(RestClient.self))
             return

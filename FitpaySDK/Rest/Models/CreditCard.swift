@@ -692,6 +692,6 @@ open class CardInfo: Serializable {
  - ISSUER:     issuer
  */
 public enum CreditCardInitiator: String {
-    case CARDHOLDER
-    case ISSUER
+    case cardholder = "CARDHOLDER"
+    case issuer = "ISSUER"
 }
