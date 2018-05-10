@@ -5,7 +5,7 @@ class MockRtmMessageHandler: RtmMessageHandler {
     
     var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
     
-    weak var wvConfigStorage: WvConfigStorage!
+    var wvConfigStorage: WvConfigStorage!
     
     weak var outputDelegate: RtmOutputDelegate?
     weak var wvRtmDelegate: RTMDelegate?

@@ -17,10 +17,10 @@ extension Serializable {
     }
 
     init(_ any: Any?) throws {
-        var data =  Data()
+        var data = Data()
         
         if let stringJson = any as? String, let stringData = stringJson.data(using: .utf8) {
-            let jsonArray = try JSONSerialization.jsonObject(with: stringData, options : .allowFragments) as! [String: Any]
+            let jsonArray = try JSONSerialization.jsonObject(with: stringData, options: .allowFragments) as! [String: Any]
             data = try JSONSerialization.data(withJSONObject: jsonArray, options: .prettyPrinted)
         } else if let jSONObject = any {
             let jSONObjectData = try JSONSerialization.data(withJSONObject: jSONObject, options: .prettyPrinted)

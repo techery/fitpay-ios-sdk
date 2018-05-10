@@ -5,6 +5,5 @@ struct WvConfigStorage {
     var user: User?
     var device: DeviceInfo?
     var a2aReturnLocation: String?
-    
     var rtmConfig: RtmConfigProtocol?
 }

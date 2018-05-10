@@ -10,8 +10,20 @@ import WebKit
     /// Set the rtmDelegate to receive authorization and other messages from the webview
     /// Needed for capturing a back button press
     weak open var rtmDelegate: RTMDelegate? {
-        didSet {
-            self.wvConfig.rtmDelegate = rtmDelegate
+        set {
+            wvConfig.rtmDelegate = rtmDelegate
+        }
+        get {
+            return wvConfig.rtmDelegate
+        }
+    }
+    
+    weak open var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
+        set {
+            wvConfig.a2aVerificationDelegate = a2aVerificationDelegate
+        }
+        get {
+            return wvConfig.a2aVerificationDelegate
         }
     }
     

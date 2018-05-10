@@ -127,7 +127,7 @@ import WebKit
      Sets webview which will be used by fitpay platform.
      Make sure that webViewPageLoaded() will be called, otherwise RTM will not work.
      */
-    func setWebView(_ webview:WKWebView!) {
+    func setWebView(_ webview: WKWebView!) {
         guard self.webview != webview else { return }
         
         self.rtmVersionSent = false
