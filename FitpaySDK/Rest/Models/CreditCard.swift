@@ -1,8 +1,7 @@
 
 import Foundation
-import ObjectMapper
 
-public enum TokenizationState: String {
+public enum TokenizationState: String, Codable {
     case NEW,
     NOT_ELIGIBLE,
     ELIGIBLE,
@@ -21,7 +20,7 @@ enum AcceptTermsError: Error {
 }
 
 @objcMembers
-open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
+open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
     internal var links: [ResourceLink]?
     internal var encryptedData: String?
 
@@ -115,40 +114,95 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
         return self.links?.url(CreditCard.transactionsResource) != nil
     }
 
-    public required init?(map: Map){
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case creditCardId
+        case userId
+        case isDefault = "default"
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case state
+        case cardType
+        case cardMetaData
+        case termsAssetId
+        case termsAssetReferences
+        case eligibilityExpiration
+        case eligibilityExpirationEpoch
+        case deviceRelationships
+        case encryptedData
+        case targetDeviceId
+        case targetDeviceType
+        case verificationMethods
+        case externalTokenReference
+        case pan
+        case expMonth
+        case expYear
+        case cvv
+        case name
+        case address
+        case topOfWalletAPDUCommands = "offlineSeActions.topOfWallet.apduCommands"
     }
 
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.creditCardId <- map["creditCardId"]
-        self.userId <- map["userId"]
-        self.isDefault <- map["default"]
-        self.created <- map["createdTs"]
-        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        self.state <- map["state"]
-        self.cardType <- map["cardType"]
-        self.cardMetaData = Mapper<CardMetadata>().map(JSONObject: map.JSON["cardMetaData"])
-        self.termsAssetId <- map["termsAssetId"]
-        self.termsAssetReferences <- (map["termsAssetReferences"], TermsAssetReferencesTransformType())
-        self.eligibilityExpiration <- map["eligibilityExpiration"]
-        self.eligibilityExpirationEpoch <- (map["eligibilityExpirationEpoch"], NSTimeIntervalTransform())
-        self.deviceRelationships <- (map["deviceRelationships"], DeviceRelationshipsTransformType())
-        self.encryptedData <- map["encryptedData"]
-        self.targetDeviceId <- map["targetDeviceId"]
-        self.targetDeviceType <- map["targetDeviceType"]
-        self.verificationMethods <- (map["verificationMethods"], VerificationMethodTransformType())
-        self.externalTokenReference <- map["externalTokenReference"]
-        self.pan <- map["pan"]
-        self.creditCardId <- map["creditCardId"]
-        self.expMonth <- map["expMonth"]
-        self.expYear <- map["expYear"]
-        self.cvv <- map["cvv"]
-        self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
-        self.name <- map["name"]
-        self.topOfWalletAPDUCommands <- map["offlineSeActions.topOfWallet.apduCommands"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        creditCardId = try container.decode(.creditCardId)
+        userId = try container.decode(.userId)
+        isDefault = try container.decode(.isDefault)
+        created = try container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        state = try container.decode(.state)
+        cardType = try container.decode(.cardType)
+        cardMetaData = try container.decode(.cardMetaData)
+        termsAssetId = try container.decode(.termsAssetId)
+        termsAssetReferences =  try container.decode(.termsAssetReferences)
+        eligibilityExpiration = try container.decode(.eligibilityExpiration)
+        eligibilityExpirationEpoch = try container.decode(.eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
+        deviceRelationships = try container.decode(.deviceRelationships)
+        encryptedData = try container.decode(.encryptedData)
+        targetDeviceId = try container.decode(.targetDeviceId)
+        targetDeviceType = try container.decode(.targetDeviceType)
+        verificationMethods = try container.decode(.verificationMethods)
+        externalTokenReference = try container.decode(.externalTokenReference)
+        pan = try container.decode(.pan)
+        expMonth = try container.decode(.expMonth)
+        expYear = try container.decode(.expYear)
+        cvv = try container.decode(.cvv)
+        name = try container.decode(.name)
+        address = try container.decode(.address)
+        topOfWalletAPDUCommands = try container.decode(.topOfWalletAPDUCommands)
     }
 
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(creditCardId, forKey: .creditCardId)
+        try container.encode(userId, forKey: .userId)
+        try container.encode(isDefault, forKey: .isDefault)
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try container.encode(state, forKey: .state)
+        try container.encode(cardType, forKey: .cardType)
+        try container.encode(cardMetaData, forKey: .cardMetaData)
+        try container.encode(termsAssetId, forKey: .termsAssetId)
+        try container.encode(termsAssetReferences, forKey: .termsAssetReferences)
+        try container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
+        try container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
+        try container.encode(deviceRelationships, forKey: .deviceRelationships)
+        try container.encode(encryptedData, forKey: .encryptedData)
+        try container.encode(targetDeviceId, forKey: .targetDeviceId)
+        try container.encode(targetDeviceType, forKey: .targetDeviceType)
+        try container.encode(verificationMethods, forKey: .verificationMethods)
+        try container.encode(externalTokenReference, forKey: .externalTokenReference)
+        try container.encode(pan, forKey: .pan)
+        try container.encode(expMonth, forKey: .expMonth)
+        try container.encode(expYear, forKey: .expYear)
+        try container.encode(cvv, forKey: .cvv)
+        try container.encode(name, forKey: .name)
+        try container.encode(address, forKey: .address)
+        try container.encode(topOfWalletAPDUCommands, forKey: .topOfWalletAPDUCommands)
+    }
+    
     func applySecret(_ secret: Foundation.Data, expectedKeyId: String?) {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
@@ -346,7 +400,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable {
     }
 }
 
-open class CardMetadata: NSObject, ClientModel, Mappable {
+open class CardMetadata: NSObject, ClientModel, Serializable {
     
     @available(*, deprecated, message: "Use foregroundColor instead")
     open var labelColor: String?
@@ -421,41 +475,89 @@ open class CardMetadata: NSObject, ClientModel, Mappable {
         }
     }
 
-    public required init?(map: Map) {
+    private enum CodingKeys: String, CodingKey {
+        case foregroundColor
+        case issuerName
+        case shortDescription
+        case longDescription
+        case contactUrl
+        case contactPhone
+        case contactEmail
+        case termsAndConditionsUrl
+        case privacyPolicyUrl
+        case brandLogo
+        case cardBackground
+        case cardBackgroundCombined
+        case cardBackgroundCombinedEmbossed
+        case coBrandLogo
+        case icon
+        case issuerLogo
     }
 
-    open func mapping(map: Map) {
-        self.foregroundColor <- map["foregroundColor"]
-        self.issuerName <- map["issuerName"]
-        self.shortDescription <- map["shortDescription"]
-        self.longDescription <- map["longDescription"]
-        self.contactUrl <- map["contactUrl"]
-        self.contactPhone <- map["contactPhone"]
-        self.contactEmail <- map["contactEmail"]
-        self.termsAndConditionsUrl <- map["termsAndConditionsUrl"]
-        self.privacyPolicyUrl <- map["privacyPolicyUrl"]
-        self.brandLogo <- (map["brandLogo"], ImageTransformType())
-        self.cardBackground <- (map["cardBackground"], ImageTransformType())
-        self.cardBackgroundCombined <- (map["cardBackgroundCombined"], ImageTransformType())
-        self.cardBackgroundCombinedEmbossed <- (map["cardBackgroundCombinedEmbossed"], ImageTransformType())
-        self.coBrandLogo <- (map["coBrandLogo"], ImageTransformType())
-        self.icon <- (map["icon"], ImageTransformType())
-        self.issuerLogo <- (map["issuerLogo"], ImageTransformType())
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        foregroundColor = try container.decode(.foregroundColor)
+        issuerName = try container.decode(.issuerName)
+        shortDescription = try container.decode(.shortDescription)
+        longDescription = try container.decode(.longDescription)
+        contactUrl = try container.decode(.contactUrl)
+        contactPhone = try container.decode(.contactPhone)
+        contactEmail = try container.decode(.contactEmail)
+        termsAndConditionsUrl = try container.decode(.termsAndConditionsUrl)
+        privacyPolicyUrl = try container.decode(.privacyPolicyUrl)
+        brandLogo = try container.decode(.brandLogo)
+        cardBackground = try container.decode(.cardBackground)
+        cardBackgroundCombined = try container.decode(.cardBackgroundCombined)
+        cardBackgroundCombinedEmbossed = try container.decode(.cardBackgroundCombinedEmbossed)
+        coBrandLogo = try container.decode(.coBrandLogo)
+        icon = try container.decode(.icon)
+        issuerLogo = try container.decode(.issuerLogo)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(foregroundColor, forKey: .foregroundColor)
+        try container.encode(issuerName, forKey: .issuerName)
+        try container.encode(shortDescription, forKey: .shortDescription)
+        try container.encode(longDescription, forKey: .longDescription)
+        try container.encode(contactUrl, forKey: .contactUrl)
+        try container.encode(contactPhone, forKey: .contactPhone)
+        try container.encode(contactEmail, forKey: .contactEmail)
+        try container.encode(termsAndConditionsUrl, forKey: .termsAndConditionsUrl)
+        try container.encode(privacyPolicyUrl, forKey: .privacyPolicyUrl)
+        try container.encode(brandLogo, forKey: .brandLogo)
+        try container.encode(cardBackground, forKey: .cardBackground)
+        try container.encode(cardBackgroundCombined, forKey: .cardBackgroundCombined)
+        try container.encode(cardBackgroundCombinedEmbossed, forKey: .cardBackgroundCombinedEmbossed)
+        try container.encode(coBrandLogo, forKey: .coBrandLogo)
+        try container.encode(icon, forKey: .icon)
+        try container.encode(issuerLogo, forKey: .issuerLogo)
     }
 }
 
-open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivable {
+open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetrivable {
     internal var links: [ResourceLink]?
     open var mimeType: String?
     public var client: RestClient?
     private static let selfResource = "self"
 
-    public required init?(map: Map) {
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case mimeType
+
     }
 
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.mimeType <- map["mimeType"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        mimeType = try container.decode(.mimeType)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(mimeType, forKey: .mimeType)
     }
 
     @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
@@ -470,33 +572,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivabl
     }
 }
 
-internal class TermsAssetReferencesTransformType: TransformType {
-    typealias Object = [TermsAssetReferences]
-    typealias JSON = [[String: Any]]
-
-    func transformFromJSON(_ value: Any?) -> [TermsAssetReferences]? {
-        if let items = value as? [[String: Any]] {
-            var list = [TermsAssetReferences]()
-
-            for raw in items  {
-                if let item = Mapper<TermsAssetReferences>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [TermsAssetReferences]?) -> [[String: Any]]? {
-        return nil
-    }
-}
-
-open class DeviceRelationships: NSObject, ClientModel, Mappable {
-    
+open class DeviceRelationships: NSObject, ClientModel, Serializable {
     open var deviceType: String?
     open var deviceIdentifier: String?
     open var manufacturerName: String?
@@ -517,24 +593,57 @@ open class DeviceRelationships: NSObject, ClientModel, Mappable {
 
     private static let selfResourceKey = "self"
 
-    public required init?(map: Map) {
+    private enum CodingKeys: String, CodingKey {
+        case deviceType
+        case links = "_links"
+        case deviceIdentifier
+        case manufacturerName
+        case deviceName
+        case serialNumber
+        case modelNumber
+        case hardwareRevision
+        case firmwareRevision
+        case softwareRevision
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case osName
+        case systemId
     }
 
-    open func mapping(map: Map) {
-        self.deviceType <- map["deviceType"]
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.deviceIdentifier <- map["deviceIdentifier"]
-        self.manufacturerName <- map["manufacturerName"]
-        self.deviceName <- map["deviceName"]
-        self.serialNumber <- map["serialNumber"]
-        self.modelNumber <- map["modelNumber"]
-        self.hardwareRevision <- map["hardwareRevision"]
-        self.firmwareRevision <- map["firmwareRevision"]
-        self.softwareRevision <- map["softwareRevision"]
-        self.created <- map["createdTs"]
-        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        self.osName <- map["osName"]
-        self.systemId <- map["systemId"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        deviceType = try container.decode(.deviceType)
+        deviceIdentifier = try container.decode(.deviceIdentifier)
+        manufacturerName = try container.decode(.manufacturerName)
+        deviceName = try container.decode(.deviceName)
+        serialNumber = try container.decode(.serialNumber)
+        modelNumber = try container.decode(.modelNumber)
+        hardwareRevision = try container.decode(.hardwareRevision)
+        firmwareRevision =  try container.decode(.firmwareRevision)
+        softwareRevision = try container.decode(.softwareRevision)
+        created = try container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        osName = try container.decode(.osName)
+        systemId = try container.decode(.systemId)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(deviceType, forKey: .deviceType)
+        try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
+        try container.encode(manufacturerName, forKey: .manufacturerName)
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(serialNumber, forKey: .serialNumber)
+        try container.encode(modelNumber, forKey: .modelNumber)
+        try container.encode(hardwareRevision, forKey: .hardwareRevision)
+        try container.encode(firmwareRevision, forKey: .firmwareRevision)
+        try container.encode(softwareRevision, forKey: .softwareRevision)
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try container.encode(osName, forKey: .osName)
+        try container.encode(systemId, forKey: .systemId)
     }
 
     @objc func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
@@ -548,33 +657,7 @@ open class DeviceRelationships: NSObject, ClientModel, Mappable {
     }
 }
 
-internal class DeviceRelationshipsTransformType: TransformType {
-    typealias Object = [DeviceRelationships]
-    typealias JSON = [[String: Any]]
-
-    func transformFromJSON(_ value: Any?) -> [DeviceRelationships]? {
-        if let items = value as? [[String: Any]] {
-            var list = [DeviceRelationships]()
-
-            for raw in items {
-                if let item = Mapper<DeviceRelationships>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [DeviceRelationships]?) -> [[String: Any]]? {
-        return nil
-    }
-}
-
-
-open class CardInfo: Mappable {
+open class CardInfo: Serializable {
     open var pan: String?
     open var expMonth: Int?
     open var expYear: Int?
@@ -583,18 +666,26 @@ open class CardInfo: Mappable {
     open var name: String?
     open var address: Address?
 
-    public required init?(map: Map) {
+    private enum CodingKeys: String, CodingKey {
+        case pan
+        case creditCardId
+        case expMonth
+        case expYear
+        case cvv
+        case name
+        case address
     }
 
-    open func mapping(map: Map) {
-        self.pan <- map["pan"]
-        self.creditCardId <- map["creditCardId"]
-        self.expMonth <- map["expMonth"]
-        self.expYear <- map["expYear"]
-        self.cvv <- map["cvv"]
-        self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
-        self.name <- map["name"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        pan = try container.decode(.pan)
+        creditCardId = try container.decode(.creditCardId)
+        expMonth = try container.decode(.expMonth)
+        expYear = try container.decode(.expYear)
+        cvv = try container.decode(.cvv)
+        name = try container.decode(.name)
+        address = try container.decode(.address)
+        name = try container.decode(.name)
     }
 }
 

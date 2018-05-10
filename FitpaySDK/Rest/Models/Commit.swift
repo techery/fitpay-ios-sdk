@@ -1,7 +1,7 @@
-import ObjectMapper
 
-open class Commit: NSObject, ClientModel, Mappable, SecretApplyable {
-
+open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
+{
+    var links:[ResourceLink]?
     open var commitType:CommitType? {
         return CommitType(rawValue: commitTypeString ?? "") ?? .UNKNOWN
     }
@@ -11,6 +11,9 @@ open class Commit: NSObject, ClientModel, Mappable, SecretApplyable {
     open var previousCommit: String?
     open var commit: String?
     open var executedDuration: Int?
+
+    fileprivate static let apduResponseResource = "apduResponse"
+    fileprivate static let confirmResource = "confirm"
     
     public weak var client: RestClient? {
         didSet {
@@ -18,25 +21,37 @@ open class Commit: NSObject, ClientModel, Mappable, SecretApplyable {
         }
     }
     
-    var links: [ResourceLink]?
-    
-    private static let apduResponseResourceKey = "apduResponse"
-    private static let confirmResourceKey = "confirm"
-    
-    internal var encryptedData: String?
-    
-    public required init?(map: Map) {
-        
+    internal var encryptedData:String?
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case commitTypeString = "commitType"
+        case created = "createdTs"
+        case previousCommit
+        case commit = "commitId"
+        case encryptedData
     }
-    
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        commitTypeString <- map["commitType"]
-        created <- map["createdTs"]
-        previousCommit <- map["previousCommit"]
-        commit <- map["commitId"]
-        encryptedData <- map["encryptedData"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        commitTypeString = try container.decode(.commitTypeString)
+        created = try container.decode(.created)
+        previousCommit = try container.decode(.previousCommit)
+        commit = try container.decode(.commit)
+        encryptedData = try container.decode(.encryptedData)
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(commitTypeString, forKey: .commitTypeString)
+        try container.encode(created, forKey: .created)
+        try container.encode(previousCommit, forKey: .previousCommit)
+        try container.encode(commit, forKey: .commit)
+        try container.encode(encryptedData, forKey: .encryptedData)
+    }
+
     
     internal func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
@@ -52,8 +67,8 @@ open class Commit: NSObject, ClientModel, Mappable, SecretApplyable {
             return
         }
         
-        let resource = Commit.confirmResourceKey
-        guard let url = self.links?.url(resource) else {
+        let resource = Commit.confirmResource
+       guard let url = self.links?.url(resource) else {
             completion(nil)
             return
         }
@@ -73,7 +88,7 @@ open class Commit: NSObject, ClientModel, Mappable, SecretApplyable {
             return
         }
         
-        let resource = Commit.apduResponseResourceKey
+        let resource = Commit.apduResponseResource
         guard let url = self.links?.url(resource) else {
             completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
             return
@@ -108,26 +123,31 @@ public enum CommitType: String {
     case UNKNOWN                     = "UNKNOWN"
 }
 
-open class Payload: NSObject, Mappable {
+open class Payload : NSObject, Serializable
+{
+    open var creditCard:CreditCard?
+    internal var payloadDictionary:[String : Any]?
+    internal var apduPackage:ApduPackage?
     
-    open var creditCard: CreditCard?
-    
-    internal var payloadDictionary: [String: Any]?
-    internal var apduPackage: ApduPackage?
-    
-    public required init?(map: Map) {
-        
+    private enum CodingKeys: String, CodingKey {
+        case creditCardId
+        case packageId
     }
-    
-    open func mapping(map: Map) {
-        let info = map.JSON
-        
-        if let _ = info["creditCardId"] {
-            self.creditCard = Mapper<CreditCard>().map(JSON: info)
-        } else if let _ = info["packageId"] {
-            self.apduPackage = Mapper<ApduPackage>().map(JSON: info)
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if let _ : String = try container.decode(.packageId) {
+            apduPackage = try? ApduPackage(from: decoder)
+        } else if let _ : String = try container.decode(.creditCardId) {
+            creditCard = try? CreditCard(from: decoder)
         }
-        
-        self.payloadDictionary = info as [String :Any]?
+
+        self.payloadDictionary = try container.decode([String : Any].self)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(creditCard, forKey: .creditCardId)
+        try container.encode(apduPackage, forKey: .packageId)
     }
 }

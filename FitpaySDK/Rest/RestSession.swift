@@ -1,7 +1,5 @@
 import Foundation
-import AlamofireObjectMapper
 import Alamofire
-import ObjectMapper
 import JWTDecode
 
 public enum AuthScope: String {
@@ -11,22 +9,20 @@ public enum AuthScope: String {
     case tokenWrite = "token.write"
 }
 
-internal class AuthorizationDetails: Mappable {
+internal class AuthorizationDetails: Serializable
+{
     var tokenType: String?
     var accessToken: String?
     var expiresIn: String?
     var scope: String?
     var jti: String?
 
-    required init?(map: Map){
-    }
-
-    func mapping(map: Map) {
-        tokenType <- map["token_type"]
-        accessToken <- map["access_token"]
-        expiresIn <- map["expires_in"]
-        scope <- map["scope"]
-        jti <- map["jti"]
+    private enum CodingKeys: String, CodingKey {
+        case tokenType = "token_type"
+        case accessToken = "access_token"
+        case expiresIn = "expires_in"
+        case scope
+        case jti 
     }
 }
 
@@ -120,14 +116,15 @@ open class RestSession: NSObject {
         ]
 
         let request = _manager.request(self.authorizeURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate().responseObject(queue: DispatchQueue.global()) {
-            (response: DataResponse<AuthorizationDetails>) in
+        request.validate().responseJSON(queue: DispatchQueue.global()) {
+            (response) in
 
             DispatchQueue.main.async {
                 if let resultError = response.result.error {
                     completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
                 } else if let resultValue = response.result.value {
-                    completion(resultValue, nil)
+                    let authorizationDetails = try? AuthorizationDetails(resultValue)
+                    completion(authorizationDetails, nil)
                 } else {
                     completion(nil, NSError.unhandledError(RestClient.self))
                 }
