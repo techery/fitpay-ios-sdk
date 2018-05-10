@@ -1,16 +1,9 @@
-//
-//  A2AIssuerResponse.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 3/6/18.
-//
-
 import Foundation
 
 public enum A2AStepupResult: String, Serializable {
-    case Approved  = "approved"
-    case Declined  = "declined"
-    case Failure   = "failure"
+    case approved
+    case declined
+    case failure
 }
 
 public class A2AIssuerRequest: NSObject, Codable {
