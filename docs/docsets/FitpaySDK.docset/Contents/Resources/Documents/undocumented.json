@@ -2781,42 +2781,7 @@
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Public/FitpayWeb.swift",
-      "line": null,
-      "symbol": "FitpayWeb",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Public/FitpayWeb.swift",
-      "line": 4,
-      "symbol": "FitpayWeb",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Public/FitpayWeb.swift",
-      "line": 6,
-      "symbol": "FitpayWeb.shared",
-      "symbol_kind": "source.lang.swift.decl.var.static",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Public/FitpayWeb.swift",
-      "line": 8,
-      "symbol": "FitpayWeb.rtmDelegate",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Public/FitpayWeb.swift",
-      "line": 63,
-      "symbol": "FitpayWeb.showCustomStatusMessage(_:type:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Public/FitpayWeb.swift",
-      "line": 72,
+      "line": 71,
       "symbol": "FitpayWeb.webView(_:didFinish:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -6112,13 +6077,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/RtmMessageHandlers/RtmMessageHandler.swift",
-      "line": 3,
-      "symbol": "MessageTypeHandler",
-      "symbol_kind": "source.lang.swift.decl.typealias",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
       "line": null,
       "symbol": "WvConfig",
@@ -6134,114 +6092,107 @@
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 361,
+      "line": 360,
       "symbol": "WvConfig.WVMessageType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 362,
+      "line": 361,
       "symbol": "WvConfig.WVMessageType.error",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 363,
+      "line": 362,
       "symbol": "WvConfig.WVMessageType.success",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 364,
+      "line": 363,
       "symbol": "WvConfig.WVMessageType.progress",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 365,
+      "line": 364,
       "symbol": "WvConfig.WVMessageType.pending",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 368,
+      "line": 367,
       "symbol": "WvConfig.WVDeviceStatuses",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 369,
+      "line": 368,
       "symbol": "WvConfig.WVDeviceStatuses.disconnected",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 370,
+      "line": 369,
       "symbol": "WvConfig.WVDeviceStatuses.pairing",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 371,
+      "line": 370,
       "symbol": "WvConfig.WVDeviceStatuses.syncGettingUpdates",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 372,
+      "line": 371,
       "symbol": "WvConfig.WVDeviceStatuses.syncNoUpdates",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 373,
+      "line": 372,
       "symbol": "WvConfig.WVDeviceStatuses.syncUpdatingConnectingToDevice",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 374,
+      "line": 373,
       "symbol": "WvConfig.WVDeviceStatuses.syncUpdatingConnectionFailed",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 375,
+      "line": 374,
       "symbol": "WvConfig.WVDeviceStatuses.syncUpdating",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 376,
+      "line": 375,
       "symbol": "WvConfig.WVDeviceStatuses.syncComplete",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvConfig.swift",
-      "line": 377,
+      "line": 376,
       "symbol": "WvConfig.WVDeviceStatuses.syncError",
       "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/Rtm/WvRTMDelegate.swift",
-      "line": 3,
-      "symbol": "WvRTMDelegate",
-      "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     }
   ],
