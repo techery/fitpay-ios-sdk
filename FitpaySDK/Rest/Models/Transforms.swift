@@ -10,18 +10,18 @@ import Foundation
 
 internal class NSTimeIntervalTypeTransform: CodingContainerTransformer {
     typealias Output = TimeInterval
-    typealias Input = Int
+    typealias Input = Int64
 
     func transform(_ decoded: Input?) -> Output? {
         if let timeInt = decoded {
-            return TimeInterval(timeInt/1000)
+            return TimeInterval(timeInt / 1000)
         }
         return nil
     }
 
     func transform(_ encoded: Output?) -> Input? {
         if let epoch = encoded {
-            let timeInt = Int(epoch*1000)
+            let timeInt = Int64(epoch * 1000)
             return timeInt as NSTimeIntervalTypeTransform.Input
         }
         return nil

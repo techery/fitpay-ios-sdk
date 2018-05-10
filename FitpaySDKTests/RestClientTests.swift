@@ -1329,20 +1329,17 @@ class RestClientTests: XCTestCase {
     /**
      tests all cases for NSTimeIntervalTransform
      */
-    func testCompareCreatedEpochToCreatedTS()
-    {
+    func testCompareCreatedEpochToCreatedTS() {
         let expectation = super.expectation(description: "'createdEpoch' converted correctly to seconds from ms")
         
-        self.testHelper.createAndLoginUser(expectation)
-        {
-            [unowned self](user) in
+        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             
             let dateFormatter = DateFormatter()
             dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            let nsdate = dateFormatter.date(from: (user?.created)!)
+            let nsdate = dateFormatter.date(from: user!.created!)
             
-            let epochDiff = abs((nsdate?.timeIntervalSince1970)! - (user?.createdEpoch)!)
+            let epochDiff = abs(nsdate!.timeIntervalSince1970 - user!.createdEpoch!)
             
             XCTAssertLessThan(epochDiff, 1, "validate epoch converted correctly")
             
@@ -1352,25 +1349,4 @@ class RestClientTests: XCTestCase {
         super.waitForExpectations(timeout: 10, handler: nil)
     }
     
-    func testNSTimeIntervalToInt()
-    {
-        let expectation = super.expectation(description: "NSTimeInterval converted to int correctly")
-        
-        let currentTime = Date().timeIntervalSince1970
-        let timeTransform = NSTimeIntervalTypeTransform()
-        guard let timeAsInt = timeTransform.transform(currentTime) else {
-            XCTAssert(false, "Can't get int value for time.")
-            return
-        }
-        
-        let intMirror = Mirror(reflecting: timeAsInt)
-        debugPrint(String(describing: intMirror.subjectType))
-        XCTAssertTrue(String(describing: intMirror.subjectType) == "Int64")
-        
-        expectation.fulfill()
-        
-        super.waitForExpectations(timeout: 10, handler: nil)
-    }
-    
-
 }
