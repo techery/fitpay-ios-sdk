@@ -93,7 +93,8 @@ class CommitsStorageTests: XCTestCase {
     func testCheckSavingCommitIdToDevice() {
         let expectation = super.expectation(description: "check commitId what must be saved on device")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let connector = MockPaymentDeviceConnectorWithStorage(paymentDevice: self.paymentDevice)
         connector.connectDelayTime = 0.2
@@ -112,7 +113,8 @@ class CommitsStorageTests: XCTestCase {
     func testCheckSavingCommitIdToPhone() {
         let expectation = super.expectation(description: "check commitId what must be saved on phone")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let connector = MockPaymentDeviceConnectorWithWrongStorage1(paymentDevice: self.paymentDevice)
         connector.connectDelayTime = 0.2
