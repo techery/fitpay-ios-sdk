@@ -18,6 +18,7 @@ import WebKit
         }
     }
     
+    /// Set the a2aVerificationDelegate to handle step up methods using the issuer app
     weak open var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
         set {
             wvConfig.a2aVerificationDelegate = a2aVerificationDelegate
@@ -29,6 +30,8 @@ import WebKit
     
     private var wkWebView: WKWebView!
     private var wvConfig: WvConfig!
+    
+    // MARK: - Functions
     
     /// Setup a Fitpay WKWebview for use
     /// You must use WKWebview returned by this function

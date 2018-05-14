@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>ErrorCode Enumeration Reference</title>
+    <title>A2AStepupResult Enumeration Reference</title>
     <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Enum/ErrorCode" class="dashAnchor"></a>
-    <a title="ErrorCode Enumeration Reference"></a>
+    <a name="//apple_ref/swift/Enum/A2AStepupResult" class="dashAnchor"></a>
+    <a title="A2AStepupResult Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../../index.html">FitpaySDK Docs</a> (21% documented)</p>
@@ -21,7 +21,7 @@
       <p id="breadcrumbs">
         <a href="../../index.html">FitpaySDK Reference</a>
         <img id="carat" src="../../img/carat.png" />
-        ErrorCode Enumeration Reference
+        A2AStepupResult Enumeration Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -384,14 +384,15 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>ErrorCode</h1>
+            <h1>A2AStepupResult</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ErrorCode</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">RawIntValue</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">A2AStepupResult</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kt">Serializable</span></code></pre>
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>Result that comes back from issuer
+Create from response <code>A2AIssuerRequest.A2AStepupResult(rawValue: stepupResponse)</code></p>
 
           </section>
           <section class="section task-group-section">
@@ -400,9 +401,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO07unknownE0A2EmF"></a>
-                    <a name="//apple_ref/swift/Element/unknownError" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO07unknownE0A2EmF">unknownError</a>
+                    <a name="/s:9FitpaySDK16A2AIssuerRequestC0C13AStepupResultO8approvedA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/approved" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK16A2AIssuerRequestC0C13AStepupResultO8approvedA2EmF">approved</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -417,7 +418,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">unknownError</span>                   <span class="o">=</span> <span class="mi">0</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">approved</span></code></pre>
 
                         </div>
                       </div>
@@ -431,9 +432,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO19cantConnectToDeviceA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/cantConnectToDevice" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO19cantConnectToDeviceA2EmF">cantConnectToDevice</a>
+                    <a name="/s:9FitpaySDK16A2AIssuerRequestC0C13AStepupResultO8declinedA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/declined" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK16A2AIssuerRequestC0C13AStepupResultO8declinedA2EmF">declined</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -448,7 +449,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">cantConnectToDevice</span>            <span class="o">=</span> <span class="mi">10001</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">declined</span></code></pre>
 
                         </div>
                       </div>
@@ -462,9 +463,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO20cantApplyAPDUCommandA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/cantApplyAPDUCommand" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO20cantApplyAPDUCommandA2EmF">cantApplyAPDUCommand</a>
+                    <a name="/s:9FitpaySDK16A2AIssuerRequestC0C13AStepupResultO7failureA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/failure" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK16A2AIssuerRequestC0C13AStepupResultO7failureA2EmF">failure</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -479,254 +480,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">cantApplyAPDUCommand</span>           <span class="o">=</span> <span class="mi">10002</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO16cantFetchCommitsA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/cantFetchCommits" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO16cantFetchCommitsA2EmF">cantFetchCommits</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">cantFetchCommits</span>               <span class="o">=</span> <span class="mi">10003</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO30cantFindDeviceWithSerialNumberA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/cantFindDeviceWithSerialNumber" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO30cantFindDeviceWithSerialNumberA2EmF">cantFindDeviceWithSerialNumber</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">cantFindDeviceWithSerialNumber</span> <span class="o">=</span> <span class="mi">10004</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO18syncAlreadyStartedA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/syncAlreadyStarted" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO18syncAlreadyStartedA2EmF">syncAlreadyStarted</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">syncAlreadyStarted</span>             <span class="o">=</span> <span class="mi">10005</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO20commitsApplyerIsBusyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/commitsApplyerIsBusy" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO20commitsApplyerIsBusyA2EmF">commitsApplyerIsBusy</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">commitsApplyerIsBusy</span>           <span class="o">=</span> <span class="mi">10006</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO27connectionWithDeviceWasLostA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/connectionWithDeviceWasLost" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO27connectionWithDeviceWasLostA2EmF">connectionWithDeviceWasLost</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">connectionWithDeviceWasLost</span>    <span class="o">=</span> <span class="mi">10007</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO10userIsNillA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/userIsNill" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO10userIsNillA2EmF">userIsNill</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">userIsNill</span>                     <span class="o">=</span> <span class="mi">10008</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK11SyncManagerC9ErrorCodeO13notEnoughDataA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/notEnoughData" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK11SyncManagerC9ErrorCodeO13notEnoughDataA2EmF">notEnoughData</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">notEnoughData</span>                  <span class="o">=</span> <span class="mi">10009</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:s23CustomStringConvertibleP11descriptionSSvp"></a>
-                    <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
-                    <a class="token" href="#/s:s23CustomStringConvertibleP11descriptionSSvp">description</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">failure</span></code></pre>
 
                         </div>
                       </div>
