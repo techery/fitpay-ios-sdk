@@ -1,4 +1,3 @@
-import ObjectMapper
 
 public enum RtmConfigDafaultMappingKey: String {
     case clientId = "clientId"
@@ -28,7 +27,7 @@ public enum RtmConfigDafaultMappingKey: String {
     func jsonDict() -> [String: Any]
 }
 
-open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
+open class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     open var clientId: String?
     open var redirectUri: String?
     open var userEmail: String?
@@ -56,27 +55,23 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
         self.deviceInfo = deviceInfo
         self.hasAccount = hasAccount
     }
-    
-    public required init?(map: Map) {
-        
+
+    private enum CodingKeys: String, CodingKey {
+        case clientId
+        case redirectUri
+        case userEmail
+        case deviceInfo = "paymentDevice"
+        case hasAccount = "account"
+        case version
+        case demoMode
+        case customCSSUrl = "themeOverrideCssUrl"
+        case demoCardGroup
+        case accessToken
+        case language
+        case baseLanguageUrl = "baseLangUrl"
+        case useWebCardScanner 
     }
-    
-    open func mapping(map: Map) {
-        clientId        <- map[RtmConfigDafaultMappingKey.clientId.rawValue]
-        redirectUri     <- map[RtmConfigDafaultMappingKey.redirectUri.rawValue]
-        userEmail       <- map[RtmConfigDafaultMappingKey.userEmail.rawValue]
-        deviceInfo      <- map[RtmConfigDafaultMappingKey.deviceInfo.rawValue]
-        hasAccount      <- map[RtmConfigDafaultMappingKey.hasAccount.rawValue]
-        version         <- map[RtmConfigDafaultMappingKey.version.rawValue]
-        demoMode        <- map[RtmConfigDafaultMappingKey.demoMode.rawValue]
-        customCSSUrl    <- map[RtmConfigDafaultMappingKey.customCSSUrl.rawValue]
-        demoCardGroup   <- map[RtmConfigDafaultMappingKey.demoCardGroup.rawValue]
-        accessToken     <- map[RtmConfigDafaultMappingKey.accessToken.rawValue]
-        language        <- map[RtmConfigDafaultMappingKey.language.rawValue]
-        baseLanguageUrl <- map[RtmConfigDafaultMappingKey.baseLanguageUrl.rawValue]
-        useWebCardScanner <- map[RtmConfigDafaultMappingKey.useWebCardScanner.rawValue]
-    }
-    
+
     public func update(value: Any, forKey key: String) {
         if let mappingKey = RtmConfigDafaultMappingKey(rawValue: key) {
             switch mappingKey {
@@ -129,7 +124,7 @@ open class RtmConfig: NSObject, Mappable, RtmConfigProtocol {
     }
     
     public func jsonDict() -> [String: Any] {
-        var dict = self.toJSON()
+        var dict = self.toJSON()!
         if let customs = self.customs {
             dict += customs
         }

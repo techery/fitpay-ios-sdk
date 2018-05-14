@@ -1,6 +1,5 @@
-import ObjectMapper
 
-public enum SyncInitiator: String {
+public enum SyncInitiator : String, Serializable {
     case Platform = "PLATFORM"
     case Notification = "NOTIFICATION"
     case WebHook = "WEB_HOOK"
@@ -8,7 +7,8 @@ public enum SyncInitiator: String {
     case NotDefined = "NOT DEFINED"
 }
 
-open class CommitMetrics: Mappable {
+open class CommitMetrics : Serializable
+{
     public var syncId: String?
     public var deviceId: String?
     public var userId: String?
@@ -23,26 +23,22 @@ open class CommitMetrics: Mappable {
         }
     }
     
-    public required init?(map: Map) {
-        
+    private enum CodingKeys: String, CodingKey {
+        case syncId
+        case deviceId
+        case userId
+        case sdkVersion
+        case osVersion
+        case initiator
+        case totalProcessingTimeMs
+        case commitStatistics = "commits"
     }
     
     public init() {
         self.sdkVersion = FitpaySDKConfiguration.sdkVersion
         self.osVersion = UIDevice.current.systemName + " " + UIDevice.current.systemVersion
     }
-    
-    open func mapping(map: Map) {
-        syncId <- map["syncId"]
-        deviceId <- map["deviceId"]
-        userId <- map["userId"]
-        sdkVersion <- map["sdkVersion"]
-        osVersion <- map["osVersion"]
-        initiator <- map["initiator"]
-        totalProcessingTimeMs <- map["totalProcessingTimeMs"]
-        commitStatistics <- map["commits"]
-    }
-    
+
     open func sendCompleteSync() {
         guard let completeSync = self.notificationAsc?.completeSync else {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send completeSync without URL.")

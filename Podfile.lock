@@ -1,30 +1,29 @@
 PODS:
   - Alamofire (4.7.2)
-  - AlamofireObjectMapper (5.0.0):
-    - Alamofire (~> 4.1)
-    - ObjectMapper (~> 3.0)
   - JWTDecode (2.1.1)
-  - ObjectMapper (3.1.0)
   - RxBlocking (4.1.2):
     - RxSwift (~> 4.0)
   - RxSwift (4.1.2)
 
 DEPENDENCIES:
   - Alamofire (~> 4.1)
-  - AlamofireObjectMapper (~> 5.0)
   - JWTDecode (~> 2.1)
-  - ObjectMapper (~> 3.1)
   - RxBlocking
   - RxSwift (~> 4.1)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Alamofire
+    - JWTDecode
+    - RxBlocking
+    - RxSwift
+
 SPEC CHECKSUMS:
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
-  AlamofireObjectMapper: 5fafc816351cbbc0d486611aaeba7461c0cbad49
   JWTDecode: 83e8b381aafe27158d9f692cbdca2b12d61d460c
-  ObjectMapper: 20505058f54e5c3ca69e1d6de9897d152a5369a6
   RxBlocking: f6054985901412fc8c02daa84e92d4ba68c61389
   RxSwift: e49536837d9901277638493ea537394d4b55f570
 
-PODFILE CHECKSUM: 730f9167dc8a3b611fa718c04e81259796498493
+PODFILE CHECKSUM: 26cdfa85f3619ccb1dd7083c46074a5dcc4d3c9f
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

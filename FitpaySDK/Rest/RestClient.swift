@@ -1,7 +1,6 @@
 
 import Foundation
 import Alamofire
-import AlamofireObjectMapper
 
 class CustomJSONArrayEncoding: ParameterEncoding {
     public static var `default`: CustomJSONArrayEncoding { return CustomJSONArrayEncoding() }
@@ -84,16 +83,18 @@ open class RestClient: NSObject {
             }
             
             let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<ResultCollection<T>>) in
+
+            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(nil, error)
                         
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        resultValue.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        completion(resultValue, response.result.error)
+                        let result = try? ResultCollection<T>(resultValue)
+                        result?.client = self
+                        result?.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                        completion(result, response.result.error)
                         
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
@@ -207,15 +208,16 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<ResultCollection<Transaction>>) in
+            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
                 DispatchQueue.main.async {
                     if response.result.error != nil {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(nil, error)
                         
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        completion(resultValue, response.result.error as NSError?)
+                        let transaction = try? ResultCollection<Transaction>(resultValue)
+                        transaction?.client = self
+                        completion(transaction, response.result.error as NSError?)
                         
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
@@ -248,15 +250,15 @@ extension RestClient {
         let parameters = ["clientPublicKey": clientPublicKey]
         
         let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-        request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<EncryptionKey>) in
+        request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
             DispatchQueue.main.async {
                 if response.result.error != nil {
                     let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                     completion(nil, error)
-                    
+
                 } else if let resultValue = response.result.value {
-                    completion(resultValue, response.result.error as NSError?)
-                    
+                    completion(try? EncryptionKey(resultValue), response.result.error as NSError?)
+
                 } else {
                     completion(nil, NSError.unhandledError(RestClient.self))
                 }
@@ -281,21 +283,20 @@ extension RestClient {
     internal func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<EncryptionKey>) in
+         request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
             DispatchQueue.main.async {
                 if response.result.error != nil {
                     let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                     completion(nil, error)
                     
                 } else if let resultValue = response.result.value {
-                    completion(resultValue, nil)
+                    completion(try? EncryptionKey(resultValue), nil)
                     
                 } else {
                     completion(nil, NSError.unhandledError(RestClient.self))
                 }
             }
-        }
-        
+        }        
     }
     
     /**
@@ -412,15 +413,16 @@ extension RestClient {
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,
                                                       headers: headers)
-            request.validate().responseObject(queue: DispatchQueue.global()) { (response: DataResponse<Issuers>) in
+            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
                 DispatchQueue.main.async {
                     if let _ = response.result.error {
                         let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
                         completion(nil, error)
                         
                     } else if let resultValue = response.result.value {
-                        resultValue.client = self
-                        completion(resultValue, response.result.error as NSError?)
+                        let issuers = try? Issuers(resultValue)
+                        issuers?.client = self
+                        completion(issuers, response.result.error as NSError?)
                         
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))

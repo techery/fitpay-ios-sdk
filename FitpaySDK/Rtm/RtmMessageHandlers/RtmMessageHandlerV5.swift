@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ObjectMapper
 
 class RtmMessageHandlerV5: RtmMessageHandlerV4 {
     enum RtmMessageTypeVer5: RtmMessageType, RtmMessageTypeWithHandler {
@@ -99,7 +98,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
         
         if (wvConfigStorage.supportsAppVerification) {
             guard let data = message.data as? [String: Any] else { return }
-            guard let appToAppVerification = Mapper<A2AVerificationRequest>().map(JSONObject: data) else {
+            guard let appToAppVerification = try? A2AVerificationRequest(data) else {
                 appToAppVerificationFailed(reason: A2AVerificationError.CantProcess)
                 return
             }

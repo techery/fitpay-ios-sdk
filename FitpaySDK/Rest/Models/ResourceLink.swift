@@ -11,16 +11,12 @@ internal class ResourceLink: CustomStringConvertible
     }
 }
 
-import ObjectMapper
+internal class ResourceLinkTypeTransform: CodingContainerTransformer {
+    typealias Output = [ResourceLink]
+    typealias Input = [String: [String: String]]
 
-internal class ResourceLinkTransformType: TransformType
-{
-
-    typealias Object = [ResourceLink]
-    typealias JSON = [String: [String: String]]
-
-    func transformFromJSON(_ value: Any?) -> Array<ResourceLink>? {
-        if let links = value as? [String: [String: String]] {
+    func transform(_ decoded: Input?) -> Output? {
+        if let links = decoded {
             var list = [ResourceLink]()
 
             for (target, map) in links {
@@ -36,8 +32,8 @@ internal class ResourceLinkTransformType: TransformType
         return nil
     }
 
-    func transformToJSON(_ value: [ResourceLink]?) -> [String: [String: String]]? {
-        if let links = value {
+    func transform(_ encoded: Output?) -> Input? {
+        if let links = encoded {
             var map = [String: [String: String]]()
 
             for link in links {
@@ -52,3 +48,4 @@ internal class ResourceLinkTransformType: TransformType
         return nil
     }
 }
+

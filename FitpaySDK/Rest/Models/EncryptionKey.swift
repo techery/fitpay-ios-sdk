@@ -1,8 +1,6 @@
 
-import ObjectMapper
-
 @objcMembers
-open class EncryptionKey: NSObject, Mappable
+open class EncryptionKey: NSObject, Serializable
 {
     internal var links: [ResourceLink]?
     open var keyId: String?
@@ -14,22 +12,42 @@ open class EncryptionKey: NSObject, Mappable
     open var clientPublicKey: String?
     open var active: Bool?
 
-    public required init?(map: Map)
-    {
-
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case keyId
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case expiration = "expirationTs"
+        case expirationEpoch = "expirationTsEpoch"
+        case serverPublicKey
+        case clientPublicKey
+        case active
     }
 
-    open func mapping(map: Map)
-    {
-        links <- (map["_links"], ResourceLinkTransformType())
-        keyId <- map["keyId"]
-        created <- map["createdTs"]
-        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        expiration <- map["expirationTs"]
-        expirationEpoch <- (map["expirationTsEpoch"], NSTimeIntervalTransform())
-        serverPublicKey <- map["serverPublicKey"]
-        clientPublicKey <- map["clientPublicKey"]
-        active <- map["active"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        keyId = try container.decode(.keyId)
+        created = try container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        expiration = try container.decode(.expiration)
+        expirationEpoch = try container.decode(.expirationEpoch)
+        serverPublicKey = try container.decode(.serverPublicKey)
+        clientPublicKey = try container.decode(.clientPublicKey)
+        active = try container.decode(.active)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(keyId, forKey: .keyId)
+        try container.encode(created, forKey: .created)
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try container.encode(expiration, forKey: .expiration)
+        try container.encode(expirationEpoch, forKey: .expirationEpoch)
+        try container.encode(serverPublicKey, forKey: .serverPublicKey)
+        try container.encode(clientPublicKey, forKey: .clientPublicKey)
+        try container.encode(active, forKey: .active)
     }
 
     /**

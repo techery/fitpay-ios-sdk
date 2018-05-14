@@ -21,8 +21,8 @@ class SyncManagerTests: XCTestCase {
 
     func testMake1SuccessfullSync() {
         let expectation = super.expectation(description: "making 1 successfull sync")
-        
-        fetcher.commits = [fetcher.getAPDUCommit(), fetcher.getCreateCardCommit()]
+        guard let commit1 = fetcher.getAPDUCommit(), let commit2 = fetcher.getCreateCardCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit1, commit2]
         
         self.syncQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
@@ -50,8 +50,9 @@ class SyncManagerTests: XCTestCase {
             }
             isFirstSync = false
         }
-        
-        fetcher.commits = [fetcher.getAPDUCommit()]
+
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         self.syncQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
@@ -79,8 +80,9 @@ class SyncManagerTests: XCTestCase {
             }
             isFirstSync = false
         }
-        
-        fetcher.commits = [fetcher.getAPDUCommit()]
+
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         self.syncQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
@@ -94,7 +96,8 @@ class SyncManagerTests: XCTestCase {
     func testMakeFirstSyncWithEmptySyncRequest() {
         let expectation = super.expectation(description: "making first sync with empty sync request")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         self.syncQueue.add(request: SyncRequest()) { (status, error) in
             XCTAssertEqual(status, .failed)
@@ -109,7 +112,8 @@ class SyncManagerTests: XCTestCase {
     func testCheckDissconnectHandlerDuringAPDUExecution() {
         let expectation = super.expectation(description: "")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         let device = PaymentDevice()
         let connector = MockPaymentDeviceConnectorWithAPDUDisconnects(paymentDevice: device)
         connector.connectDelayTime = 0.2
@@ -129,8 +133,9 @@ class SyncManagerTests: XCTestCase {
     
     func testCheckDissconnectHandlerDuringNonAPDUExecution() {
         let expectation = super.expectation(description: "")
-        
-        fetcher.commits = [fetcher.getCreateCardCommit()]
+
+        guard let commit = fetcher.getCreateCardCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = MockPaymentDeviceConnectorWithNonAPDUDisconnects(paymentDevice: device)
@@ -150,8 +155,9 @@ class SyncManagerTests: XCTestCase {
     
     func testAPDUSyncTwoTimesWhenFirstWasFailedBecauseDeviceDisconnected() {
         let expectation = super.expectation(description: "")
-        
-        fetcher.commits = [fetcher.getAPDUCommit()]
+
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = MockPaymentDeviceConnectorWithAPDUDisconnects(paymentDevice: device)
@@ -185,7 +191,8 @@ class SyncManagerTests: XCTestCase {
     func testSyncAPDUTimeoutTest() {
         let expectation = super.expectation(description: "")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = TimeoutedMockPaymentDeviceConnector(paymentDevice: device)
@@ -208,8 +215,9 @@ class SyncManagerTests: XCTestCase {
     
     func testSyncNonAPDUTimeoutTest() {
         let expectation = super.expectation(description: "")
-        
-        fetcher.commits = [fetcher.getCreateCardCommit()]
+
+        guard let commit = fetcher.getCreateCardCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = TimeoutedMockPaymentDeviceConnector(paymentDevice: device)
@@ -248,7 +256,7 @@ extension SyncManagerTests {
             device = passedDevice!
         }
         
-        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: deviceInfo, paymentDevice: device)
+        let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: deviceInfo, paymentDevice: device)
         SyncRequest.syncManager = self.syncManager
         return request
     }

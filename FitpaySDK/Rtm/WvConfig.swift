@@ -1,7 +1,6 @@
 
 import Foundation
 import WebKit
-import ObjectMapper
 
 @objc public enum WVMessageType: Int {
     case error = 0
@@ -405,7 +404,7 @@ class WvConfigStorage {
     }
     
     @objc open func sendRtmMessage(rtmMessage: RtmMessageResponse, retries: Int = 3) {
-        guard let jsonRepresentation = rtmMessage.toJSONString(prettyPrint: false) else {
+        guard let jsonRepresentation = rtmMessage.toJSONString() else {
             log.error("WV_DATA: Can't create json representation for rtm message.")
             return
         }

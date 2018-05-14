@@ -9,8 +9,6 @@ Pod::Spec.new do |s|
   s.source = { :git => 'https://github.com/fitpay/fitpay-ios-sdk.git', :tag => 'v0.5.1' }
 
   s.dependency 'Alamofire', '~> 4.1'
-  s.dependency 'ObjectMapper', '~> 3.1'
-  s.dependency 'AlamofireObjectMapper', '~> 5.0'
   s.dependency 'JWTDecode', '~> 2.1'
   s.dependency 'RxSwift', '~> 4.1'
 
