@@ -159,18 +159,16 @@ class RestClientTests: XCTestCase {
             self.testHelper.createDevice(expectation, user: user)
             {
                 [unowned self] (user, device) in
-                let resetUrlString = device?.deviceResetUrl
-                XCTAssertNotNil(resetUrlString)
-                let resetUrl = URL(string: resetUrlString!)
-                XCTAssertNotNil(resetUrl)
+                guard let resetUrlString = device?.deviceResetUrl else { XCTAssert(false, "No url."); return }
+                guard let resetUrl = URL(string: resetUrlString) else { XCTAssert(false, "Bad url."); return }
 
-                self.client.resetDeviceTasks(resetUrl! , completion: { (resetDeviceResult, error) in
+                self.client.resetDeviceTasks(resetUrl , completion: { (resetDeviceResult, error) in
                     XCTAssertNil(error)
-                    
-                    let resetId = resetDeviceResult?.resetId
-                    XCTAssertNotNil(resetId)
 
-                    self.client.resetDeviceStatus(resetId!) { (resetDeviceResult, error) in
+                    guard let resetUrlString = resetDeviceResult?.deviceResetUrl else { XCTAssert(false, "No url."); return }
+                    guard let resetUrl = URL(string: resetUrlString) else { XCTAssert(false, "Bad url."); return }
+
+                    self.client.resetDeviceStatus(resetUrl) { (resetDeviceResult, error) in
                         XCTAssertNil(error)
 
                         self.testHelper.deleteUser(user, expectation: expectation)

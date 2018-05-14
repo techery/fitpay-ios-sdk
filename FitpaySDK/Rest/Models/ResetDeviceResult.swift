@@ -6,9 +6,8 @@
 //  Copyright © 2018 Fitpay. All rights reserved.
 //
 
-import ObjectMapper
 
-public enum DeviceResetStatus: String {
+public enum DeviceResetStatus: String, Serializable {
     case InProgress  = "IN_PROGRESS"
     case ResetComplete  = "RESET_COMPLETE"
     case Deleted   = "DELETED"
@@ -17,21 +16,38 @@ public enum DeviceResetStatus: String {
 }
 
 @objcMembers
-open class ResetDeviceResult: NSObject, Mappable {
+open class ResetDeviceResult: Serializable {
     internal var links: [ResourceLink]?
     open var resetId: String?
     open var status: DeviceResetStatus?
     open var seStatus: DeviceResetStatus?
 
-
-    public required init?(map: Map) {
-
+    open var deviceResetUrl: String? {
+        return self.links?.first?.href // TODO this part requers key "resetDeviceTasks" in ResourceLink// self.links?.url(ResetDeviceResult.deviceResetTasksKey)
     }
 
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        resetId <- map["resetId"]
-        status <- map["status"]
-        seStatus <- map["seStatus"]
+    private static let deviceResetTasksKey = "resetDeviceTasks"
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case resetId
+        case status
+        case seStatus
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        resetId = try container.decode(.resetId)
+        status = try container.decode(.status)
+        seStatus = try container.decode(.seStatus)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try container.encode(resetId, forKey: .resetId)
+        try container.encode(status, forKey: .status)
+        try container.encode(seStatus, forKey: .seStatus)
     }
 }
