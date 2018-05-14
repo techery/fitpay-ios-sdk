@@ -228,6 +228,8 @@
 		916CE9C320A18CA300C2F621 /* KeyedEncodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916CE9C120A18CA100C2F621 /* KeyedEncodingContainerExtension.swift */; };
 		916FC0BB209C44D20071B66D /* SerializableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916FC0BA209C44D20071B66D /* SerializableExtension.swift */; };
 		916FC0C220A0366A0071B66D /* SerializableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916FC0BA209C44D20071B66D /* SerializableExtension.swift */; };
+		9186499A20A97BF40073FBFC /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9186499920A97BF30073FBFC /* ErrorResponse.swift */; };
+		9186499B20A97BF40073FBFC /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9186499920A97BF30073FBFC /* ErrorResponse.swift */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A58466C1C96B65B00E4ABDC /* ClientModel.swift */; };
 		9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A62E6B51C8DCA20004ED6C0 /* Asset.swift */; };
@@ -392,6 +394,7 @@
 		91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationRequest.swift; sourceTree = "<group>"; };
 		916CE9C120A18CA100C2F621 /* KeyedEncodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedEncodingContainerExtension.swift; sourceTree = "<group>"; };
 		916FC0BA209C44D20071B66D /* SerializableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableExtension.swift; sourceTree = "<group>"; };
+		9186499920A97BF30073FBFC /* ErrorResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		9A58466C1C96B65B00E4ABDC /* ClientModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientModel.swift; sourceTree = "<group>"; };
 		9A62E6B51C8DCA20004ED6C0 /* Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
@@ -885,6 +888,7 @@
 		CD0385FBA6E03879966B500B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9186499920A97BF30073FBFC /* ErrorResponse.swift */,
 				37F781F51F18F64B00742E15 /* RtmDeviceInfo.swift */,
 				37F781F61F18F64B00742E15 /* RtmSecureDeviceInfo.swift */,
 				0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */,
@@ -1263,6 +1267,7 @@
 				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
 				8456437C1CAD7F7200351C8E /* CommitsApplyer.swift in Sources */,
 				371CB3031F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,
+				9186499A20A97BF40073FBFC /* ErrorResponse.swift in Sources */,
 				37139BDB1F164695001EEE73 /* APDUConfirmOperation.swift in Sources */,
 				CD03864C52B317B02135FF7D /* NSDataExtensions.swift in Sources */,
 				9B65A33B1CDD1534007A7D7D /* MockPaymentDeviceConnector.swift in Sources */,
@@ -1436,6 +1441,7 @@
 				371CB3041F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,
 				3A93A0BC1DB8CA2C00A9FEB4 /* RestAPIConstants.swift in Sources */,
 				272C9341207E7F9500166820 /* UserEventStreamManager.swift in Sources */,
+				9186499B20A97BF40073FBFC /* ErrorResponse.swift in Sources */,
 				37139BE61F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */,
 				37F781DE1F18B57E00742E15 /* ObjCCompatibilityExtensions.swift in Sources */,
 			);

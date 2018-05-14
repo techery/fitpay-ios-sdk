@@ -42,7 +42,7 @@ open class Relationship: NSObject, ClientModel, Serializable {
         if  let url = url, let client = self.client {
             client.deleteRelationship(url, completion: completion)
         } else {
-            completion(NSError.clientUrlError(domain:Relationship.self, code:0, client: client, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Relationship.self, client: client, url: url, resource: resource))
         }
     }
 }

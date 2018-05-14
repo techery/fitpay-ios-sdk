@@ -152,16 +152,16 @@ extension RestSession {
         }
     }
     
-    public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, NSError?) -> Void
+    public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, ErrorResponse?) -> Void
 
     class func GetUserAndDeviceWith(sessionData: SessionData,
                                     sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
                                     completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
         guard let userId = sessionData.userId, let deviceId = sessionData.deviceId else {
-            completion(nil, nil, NSError.error(code: RestSession.ErrorCode.userOrDeviceEmpty, domain: RestSession.self))
+            completion(nil, nil, ErrorResponse(domain: RestSession.self, errorCode: RestSession.ErrorCode.userOrDeviceEmpty.rawValue, errorMessage: ""))
             return nil
         }
-        
+
         let session = RestSession(configuration: sdkConfiguration, sessionData: sessionData)
         let client = RestClient(session: session)
         
@@ -188,7 +188,7 @@ extension RestSession {
                 
                 devicesColletion?.collectAllAvailable({ (devices, error) in
                     guard error == nil, let devices = devices else {
-                        completion(nil, nil, error as NSError?)
+                        completion(nil, nil, error)
                         return
                     }
                     
@@ -199,7 +199,7 @@ extension RestSession {
                         }
                     }
                     
-                    completion(nil, nil, NSError.error(code: RestSession.ErrorCode.deviceNotFound, domain: RestSession.self))
+                    completion(nil, nil, ErrorResponse(domain: RestSession.self, errorCode: RestSession.ErrorCode.deviceNotFound.rawValue, errorMessage: ""))
                 })
             })
         }
