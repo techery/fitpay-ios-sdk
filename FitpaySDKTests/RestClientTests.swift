@@ -156,13 +156,12 @@ class RestClientTests: XCTestCase {
         {
             [unowned self](user) in
 
-            self.testHelper.createDevice(expectation, user: user)
-            {
+            self.testHelper.createDevice(expectation, user: user) {
                 [unowned self] (user, device) in
                 guard let resetUrlString = device?.deviceResetUrl else { XCTAssert(false, "No url."); return }
                 guard let resetUrl = URL(string: resetUrlString) else { XCTAssert(false, "Bad url."); return }
 
-                self.client.resetDeviceTasks(resetUrl , completion: { (resetDeviceResult, error) in
+                self.client.resetDeviceTasks(resetUrl) { (resetDeviceResult, error) in
                     XCTAssertNil(error)
 
                     guard let resetUrlString = resetDeviceResult?.deviceResetUrl else { XCTAssert(false, "No url."); return }
@@ -173,7 +172,7 @@ class RestClientTests: XCTestCase {
 
                         self.testHelper.deleteUser(user, expectation: expectation)
                     }
-                })
+                }
             }
         }
 

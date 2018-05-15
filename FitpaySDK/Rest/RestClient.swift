@@ -533,25 +533,24 @@ extension RestClient {
      */
     internal func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
-            if let headers = headers {
-                let request = self._manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseJSON { (response) in
-                    DispatchQueue.main.async {
-                        if response.result.error != nil {
-                            let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                            completion(nil, error)
-                        } else if let resultValue = response.result.value {
-                            completion(try? ResetDeviceResult(resultValue), nil)
-                        } else {
-                            completion(nil, NSError.unhandledError(RestClient.self))
-                        }
-                    }
-                }
-
-            } else {
+            guard let headers = headers else {
                 DispatchQueue.main.async(execute: {
                     completion(nil, error)
                 })
+                return
+            }
+            let request = self._manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            request.validate().responseJSON { (response) in
+                DispatchQueue.main.async {
+                    if response.result.error != nil {
+                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                        completion(nil, error)
+                    } else if let resultValue = response.result.value {
+                        completion(try? ResetDeviceResult(resultValue), nil)
+                    } else {
+                        completion(nil, NSError.unhandledError(RestClient.self))
+                    }
+                }
             }
         }
     }

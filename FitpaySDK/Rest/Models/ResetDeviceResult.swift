@@ -23,7 +23,7 @@ open class ResetDeviceResult: Serializable {
     open var seStatus: DeviceResetStatus?
 
     open var deviceResetUrl: String? {
-        return self.links?.first?.href // TODO this part requers key "resetDeviceTasks" in ResourceLink// self.links?.url(ResetDeviceResult.deviceResetTasksKey)
+        return self.links?.first?.href 
     }
 
     private static let deviceResetTasksKey = "resetDeviceTasks"
