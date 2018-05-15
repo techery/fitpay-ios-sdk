@@ -1,11 +1,3 @@
-//
-//  ICardScanner.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 29.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 @objc public protocol FitpayCardScannerPresenterDelegate: NSObjectProtocol {

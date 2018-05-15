@@ -12,7 +12,7 @@ extension Serializable {
 
     func toJSON() -> [String: Any]? {
         guard let jsonData = try? JSONEncoder().encode(self) else { return nil }
-        let jsonDictionary = try? JSONSerialization.jsonObject(with: jsonData, options : .allowFragments) as! [String: Any]
+        let jsonDictionary = try? JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as! [String: Any]
         return jsonDictionary
     }
 

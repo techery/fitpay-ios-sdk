@@ -22,13 +22,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/A2AVerification/A2AVerificationRequest.swift",
-      "line": 6,
-      "symbol": "A2AVerificationRequest.cardType",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/jeremiah/workspace/fitpay-ios-sdk/FitpaySDK/CardScanner/IFitpayCardScanner.swift",
       "line": 11,
       "symbol": "FitpayCardScannerPresenterDelegate",

@@ -10,21 +10,29 @@ import WebKit
     /// Set the rtmDelegate to receive authorization and other messages from the webview
     /// Needed for capturing a back button press
     weak open var rtmDelegate: RTMDelegate? {
-        set {
+        didSet {
             wvConfig.rtmDelegate = rtmDelegate
-        }
-        get {
-            return wvConfig.rtmDelegate
         }
     }
     
     /// Set the a2aVerificationDelegate to handle step up methods using the issuer app
     weak open var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
-        set {
+        didSet {
             wvConfig.a2aVerificationDelegate = a2aVerificationDelegate
         }
-        get {
-            return wvConfig.a2aVerificationDelegate
+    }
+    
+    /// Set the cardScannerDataSource to handle step up methods using the issuer app
+    weak open var cardScannerDataSource: FitpayCardScannerDataSource? {
+        didSet {
+            wvConfig.cardScannerDataSource = cardScannerDataSource
+        }
+    }
+    
+    /// Set the cardScannerPresenterDelegate to handle step up methods using the issuer app
+    weak open var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? {
+        didSet {
+            wvConfig.cardScannerPresenterDelegate = cardScannerPresenterDelegate
         }
     }
     
@@ -47,13 +55,13 @@ import WebKit
     @objc open func setupWebView(userEmail: String? = nil, userHasFitpayAccount: Bool = false, paymentDevice: PaymentDevice, paymentDeviceConnector: PaymentDeviceConnectable, frame: CGRect, script: WKUserScript? = nil) -> WKWebView {
 
         _ = paymentDevice.changeDeviceInterface(paymentDeviceConnector)
-        
+
         let rtmConfig = RtmConfig(userEmail: userEmail, deviceInfo: paymentDeviceConnector.deviceInfo())
         rtmConfig.hasAccount = userHasFitpayAccount
         
         wvConfig = WvConfig(paymentDevice: paymentDevice, rtmConfig: rtmConfig)
 
-        let config = wvConfig!.wvConfig()
+        let config = wvConfig!.getConfig()
         if let script = script {
             config.userContentController.addUserScript(script)
         }
@@ -68,7 +76,7 @@ import WebKit
     
     /// Loads the main page on Fitpay based on user variables
     @objc open func load() {
-        wkWebView.load(wvConfig!.wvRequest())
+        wkWebView.load(wvConfig!.getRequest())
     }
     
     /// Should be called once the webview is loaded

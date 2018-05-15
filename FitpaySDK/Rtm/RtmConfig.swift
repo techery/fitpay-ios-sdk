@@ -35,12 +35,12 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     private var clientId: String?
     private var userEmail: String?
     private var version: String?
-    private var demoMode: Bool?
+    private var demoMode: Bool = false
     private var customCSSUrl: String?
     private var demoCardGroup: String?
     private var language: String?
     private var baseLanguageUrl: String?
-    private var useWebCardScanner: Bool?
+    private var useWebCardScanner: Bool = true
     
     private var customs: [String: Any]?
     
@@ -98,7 +98,7 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
                 version = value as? String
                 break
             case .demoMode:
-                demoMode = value as? Bool
+                demoMode = value as? Bool ?? false
                 break
             case .customCSSUrl:
                 customCSSUrl = value as? String
@@ -113,7 +113,7 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
                 baseLanguageUrl = value as? String
                 break
             case .useWebCardScanner:
-                useWebCardScanner = value as? Bool
+                useWebCardScanner = value as? Bool ?? true
             }
         } else {
             if customs == nil {

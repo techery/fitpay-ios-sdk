@@ -96,21 +96,49 @@ import WebKit
     //MARK: - Public Functions
     
     /**
-      In order to open a web-view the SDK must have a connection to the payment device in order to gather data about 
-      that device. This will attempt to connect, and call the completion with either an error or nil if the connection 
-      attempt is successful.
+     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from 
+     the web app. The callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge 
+     that will be called with the result of the action once completed. It expects a message with the following format:
+
+        {
+            "callBackId": 1,
+            "data": {
+                "action": "action",
+                "data": {
+                    "userId": "userId",
+                    "deviceId": "userId",
+                    "token": "token"
+                }
+            }
+        }
+     */
+    @objc public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard let sentData = message.body as? [String: Any] else {
+            log.error("WV_DATA: Received message from \(message.name), but can't convert it to dictionary type.")
+            return
+        }
+
+        self.rtmMessaging.received(message: sentData)
+    }
+    
+    // MARK: - Internal
+    
+    /**
+     In order to open a web-view the SDK must have a connection to the payment device in order to gather data about
+     that device. This will attempt to connect, and call the completion with either an error or nil if the connection
+     attempt is successful.
      */
     func openDeviceConnection(_ completion: @escaping (_ error: NSError?) -> Void) {
         self.connectionBinding = self.configStorage.paymentDevice!.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) { [weak self] (event) in
             guard let strongSelf = self else { return }
             
             strongSelf.configStorage.paymentDevice!.removeBinding(binding: strongSelf.connectionBinding!)
-
+            
             if let error = (event.eventData as? [String: Any])?["error"] as? NSError {
                 completion(error)
                 return
             }
-
+            
             if let deviceInfo = (event.eventData as? [String: Any])?["deviceInfo"] as? DeviceInfo {
                 strongSelf.configStorage.rtmConfig?.deviceInfo = deviceInfo
                 completion(nil)
@@ -148,7 +176,7 @@ import WebKit
      This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that
      the value "rtmBridge" is an agreeded upon value between this and the web-view.
      */
-    func wvConfig() -> WKWebViewConfiguration {
+    func getConfig() -> WKWebViewConfiguration {
         
         class LeakAvoider: NSObject, WKScriptMessageHandler {
             weak var delegate: WKScriptMessageHandler?
@@ -162,7 +190,7 @@ import WebKit
                 self.delegate?.userContentController(userContentController, didReceive: message)
             }
         }
-
+        
         let config = WKWebViewConfiguration()
         config.userContentController.add(LeakAvoider(delegate: self), name: "rtmBridge")
         
@@ -172,7 +200,7 @@ import WebKit
     /**
      This returns the request object clients will require in order to open a WKWebView
      */
-    func wvRequest() -> URLRequest {
+    func getRequest() -> URLRequest {
         if let accessToken = self.configStorage.user?.client?._session.accessToken {
             self.configStorage.rtmConfig!.accessToken = accessToken
         }
@@ -191,32 +219,6 @@ import WebKit
         let requestUrl = URL(string: configuredUrl)
         let request = URLRequest(url: requestUrl!)
         return request
-    }
-    
-    /**
-     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from 
-     the web app. The callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge 
-     that will be called with the result of the action once completed. It expects a message with the following format:
-
-        {
-            "callBackId": 1,
-            "data": {
-                "action": "action",
-                "data": {
-                    "userId": "userId",
-                    "deviceId": "userId",
-                    "token": "token"
-                }
-            }
-        }
-     */
-    @objc public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard let sentData = message.body as? [String: Any] else {
-            log.error("WV_DATA: Received message from \(message.name), but can't convert it to dictionary type.")
-            return
-        }
-
-        self.rtmMessaging.received(message: sentData)
     }
     
     func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
@@ -353,14 +355,8 @@ extension WvConfig: RtmOutputDelegate {
 }
 
 //MARK: - Enums
+
 extension WvConfig {
-    
-    @objc public enum WVMessageType: Int {
-        case error = 0
-        case success
-        case progress
-        case pending
-    }
     
     @objc public enum WVDeviceStatuses: Int {
         case disconnected
@@ -415,6 +411,13 @@ extension WvConfig {
         }
     }
     
+   enum WVMessageType: Int {
+        case error = 0
+        case success
+        case progress
+        case pending
+    }
+
     enum RtmProtocolVersion: Int {
         case ver1 = 1
         case ver2
@@ -431,7 +434,7 @@ extension WvConfig {
         case unknownError       = 0
         case deviceDataNotValid = 10002
         
-        public var description: String {
+        var description: String {
             switch self {
             case .unknownError:
                 return "Unknown error"

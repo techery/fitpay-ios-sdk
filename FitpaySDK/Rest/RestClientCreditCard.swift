@@ -101,7 +101,7 @@ extension RestClient {
     }
     
     func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler) {
-        let parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offest": offset]
+        let parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
         self.creditCards(url, parameters: parameters, completion: completion)
     }
     
