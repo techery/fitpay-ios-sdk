@@ -1,20 +1,32 @@
-//
-//  ErrorResponse.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 5/8/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
+import Foundation
 
-open class ErrorResponse: NSError, Serializable {
-    open let status: Int?
-    open let created: Int?
-    open let requestId: String?
-    open let path: String?
-    open let summary: String?
-    open let messageDescription: String?
-    private(set) open var message: String?
-    private(set) open var details: String?
+/// Error model for Session, Client and Web errors
+@objc public class ErrorResponse: NSError, Serializable {
+    
+    /// HTTP Status Code
+    public let status: Int?
+    
+    /// Created Timestamp when run
+    public let created: TimeInterval?
+    
+    @objc public let requestId: String?
+    
+    /// URL relative path
+    @objc public let path: String?
+    
+    /// Short summary of error. ie: \"Not Found\"
+    @objc public let summary: String?
+    
+    /// Longer summary of error
+    @objc public let messageDescription: String?
+    
+    /// Specific issue
+    // Parsed from different locations in the object
+    @objc public let message: String?
+    
+    /// Specific issue
+    // Parsed from different locations in the object
+    @objc public let details: String?
 
     enum CodingKeys: String, CodingKey {
         case status
@@ -29,23 +41,35 @@ open class ErrorResponse: NSError, Serializable {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         status = try container.decode(.status)
-        created = try container.decode(.created)
+        created = try container.decode(.created, transformer: NSTimeIntervalTypeTransform())
         requestId = try container.decode(.requestId)
         path = try container.decode(.path)
         summary = try container.decode(.summary)
         messageDescription = try container.decode(.messageDescription)
 
-        if let detailsJson: String = try container.decode(.details), let data = detailsJson.data(using: .utf8) {
-            let dict: [String: Any]? = (try? JSONSerialization.jsonObject(with: data, options: []) as! [[String : Any]])?.first
-            details = dict?["message"] as? String
+        if let detailsString: String = try container.decode(.details), let data = detailsString.data(using: .utf8) {
+            if let dict: [String: Any] = (try? JSONSerialization.jsonObject(with: data, options: []) as! [[String: Any]])?.first {
+                details = dict["message"] as? String
+            } else {
+                details = detailsString
+            }
+        } else {
+            details = nil
         }
 
-        if let messageJson: String = try container.decode(.message), let data = messageJson.data(using: .utf8) {
-            let dict: [String: Any]? = (try? JSONSerialization.jsonObject(with: data, options: []) as! [[String : Any]])?.first
-            message = dict?["message"] as? String
+        if let messageString: String = try container.decode(.message), let data = messageString.data(using: .utf8) {
+            if let dict: [String: Any] = (try? JSONSerialization.jsonObject(with: data, options: []) as! [[String: Any]])?.first {
+                message = dict["message"] as? String
+            } else {
+                message = messageString
+            }
+        } else {
+            message = nil
         }
-        super.init(domain: "", code: status ?? 0, userInfo: [NSLocalizedDescriptionKey : messageDescription ?? ""])
+        
+        super.init(domain: "", code: status ?? 0, userInfo: [NSLocalizedDescriptionKey: messageDescription ?? ""])
     }
 
     init(domain: AnyClass, errorCode: Int?, errorMessage: String?) {
@@ -55,7 +79,9 @@ open class ErrorResponse: NSError, Serializable {
         path = nil
         summary = nil
         messageDescription = errorMessage
-        super.init(domain: "\(domain)", code: errorCode ?? 0, userInfo: [NSLocalizedDescriptionKey : errorMessage ?? ""])
+        details = nil
+        message = nil
+        super.init(domain: "\(domain)", code: status ?? 0, userInfo: [NSLocalizedDescriptionKey: errorMessage ?? ""])
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -67,15 +93,14 @@ open class ErrorResponse: NSError, Serializable {
     }
 
     class func clientUrlError(domain: AnyClass, client: RestClient?, url: String?, resource: String) -> ErrorResponse? {
-        if client != nil {
-            if url != nil {
-                return nil
-            } else {
-                return ErrorResponse(domain: domain, errorCode: 0, errorMessage: "Failed to retrieve url for resource '\(resource)'")
-            }
-        } else {
+        if client == nil {
             return ErrorResponse(domain: domain, errorCode: 0, errorMessage: "\(RestClient.self) is not set.")
         }
+        if url == nil {
+            return ErrorResponse(domain: domain, errorCode: 0, errorMessage: "Failed to retrieve url for resource '\(resource)'")
+        }
+        
+        return nil
     }
 
 }
