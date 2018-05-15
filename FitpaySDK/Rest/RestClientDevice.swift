@@ -52,18 +52,17 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-                
-                if let resultValue = resultValue {
-                    let deviceInfo = try? ResultCollection<DeviceInfo>(resultValue)
-                    deviceInfo?.client = self
-                    deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(deviceInfo, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let deviceInfo = try? ResultCollection<DeviceInfo>(resultValue)
+                deviceInfo?.client = self
+                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(deviceInfo, error)
+            }
         }
     }
     
@@ -98,18 +97,17 @@ extension RestClient {
             
             
             let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-                
-                if let resultValue = resultValue {
-                    let deviceInfo = try? DeviceInfo(resultValue)
-                    deviceInfo?.client = self
-                    deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(deviceInfo, error)                        
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let deviceInfo = try? DeviceInfo(resultValue)
+                deviceInfo?.client = self
+                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(deviceInfo, error)
+            }
         }
     }
     
@@ -121,9 +119,9 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
-            })
+            }
         }
     }
     
@@ -153,18 +151,17 @@ extension RestClient {
             
             let params = ["params": paramsArray]
             let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-                
-                if let resultValue = resultValue {
-                    let deviceInfo = try? DeviceInfo(resultValue)
-                    deviceInfo?.client = self
-                    deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])                        
-                    completion(deviceInfo, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let deviceInfo = try? DeviceInfo(resultValue)
+                deviceInfo?.client = self
+                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])                        
+                completion(deviceInfo, error)
+            }
         }
     }
     
@@ -179,18 +176,17 @@ extension RestClient {
             
             let params = ["params": paramsArray]
             let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-                
-                if let resultValue = resultValue {
-                    let deviceInfo = try? DeviceInfo(resultValue)
-                    deviceInfo?.client = self
-                    deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(deviceInfo, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let deviceInfo = try? DeviceInfo(resultValue)
+                deviceInfo?.client = self
+                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(deviceInfo, error)
+            }
         }
     }
     
@@ -208,18 +204,17 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let commit = try? ResultCollection<Commit>(resultValue)
-                    commit?.client = self
-                    commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(commit, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let commit = try? ResultCollection<Commit>(resultValue)
+                commit?.client = self
+                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(commit, error)
+            }
         }
     }
     
@@ -231,18 +226,17 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let commit = try? ResultCollection<Commit>(resultValue)
-                    commit?.client = self
-                    commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(commit, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let commit = try? ResultCollection<Commit>(resultValue)
+                commit?.client = self
+                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(commit, error)
+            }
         }
     }
     
@@ -254,19 +248,18 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let commit = try? Commit(resultValue)
-                    commit?.client = self
-                    commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(commit, error)
-
-                } else {
+                
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let commit = try? Commit(resultValue)
+                commit?.client = self
+                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(commit, error)
+            }
         }
     }
 }

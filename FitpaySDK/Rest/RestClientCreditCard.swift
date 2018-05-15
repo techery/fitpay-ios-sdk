@@ -78,18 +78,17 @@ extension RestClient {
             }
             
             let request = strongSelf._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    card?.client = self
-                    completion(card, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                card?.client = self
+                completion(card, error)
+            }
         }
     }
     
@@ -107,19 +106,17 @@ extension RestClient {
             }
             
             let request = strongSelf._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let creditCard = try? ResultCollection<CreditCard>(resultValue)
-                    creditCard?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    creditCard?.client = self
-                    completion(creditCard, error)
-
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let creditCard = try? ResultCollection<CreditCard>(resultValue)
+                creditCard?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                creditCard?.client = self
+                completion(creditCard, error)
+            }
         }
     }
     
@@ -132,9 +129,9 @@ extension RestClient {
             }
             
             let request = strongSelf._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
-            })
+            }
         }
     }
     
@@ -186,18 +183,17 @@ extension RestClient {
             }
             
             let request = strongSelf._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    card?.client = self
-                    completion(card, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                card?.client = self
+                completion(card, error)
+            }
         }
     }
     
@@ -209,17 +205,15 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-                
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.client = self
-                    completion(false, card, nil)
-
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.client = self
+                completion(false, card, nil)
+            }
         }
     }
     
@@ -231,17 +225,15 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.client = self
-                    completion(false, card, error)
-
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.client = self
+                completion(false, card, error)
+            }
         }
     }
     
@@ -253,16 +245,15 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                    let verificationMethod = try? VerificationMethod(resultValue)
-                    verificationMethod?.client = self
-                    completion(false, verificationMethod, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
+                    return
                 }
-            })
+                let verificationMethod = try? VerificationMethod(resultValue)
+                verificationMethod?.client = self
+                completion(false, verificationMethod, error)
+            }
         }
     }
     
@@ -275,16 +266,15 @@ extension RestClient {
             
             let params = ["verificationCode": verificationCode]
             let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                    let verificationMethod = try? VerificationMethod(resultValue)
-                    verificationMethod?.client = self
-                    completion(false, verificationMethod, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
+                    return
                 }
-            })
+                let verificationMethod = try? VerificationMethod(resultValue)
+                verificationMethod?.client = self
+                completion(false, verificationMethod, error)
+            }
         }
     }
     
@@ -297,16 +287,15 @@ extension RestClient {
             
             let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
             let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.client = self
-                    completion(false, card, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.client = self
+                completion(false, card, error)
+            }
         }
     }
     
@@ -319,16 +308,15 @@ extension RestClient {
             
             let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
             let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.client = self
-                    completion(false, card, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.client = self
+                completion(false, card, error)
+            }
         }
     }
     
@@ -340,18 +328,17 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
+            self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.client = self
-                    card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(card, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.client = self
+                card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(card, error)
+            }
         }
     }
     
@@ -363,16 +350,15 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                    let card = try? CreditCard(resultValue)
-                    card?.client = self
-                    completion(false, card, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
+                    return
                 }
-            })
+                let card = try? CreditCard(resultValue)
+                card?.client = self
+                completion(false, card, error)
+            }
         }
     }
     

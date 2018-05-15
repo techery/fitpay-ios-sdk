@@ -14,7 +14,7 @@ extension RestClient {
     public typealias RelationshipHandler = (_ relationship: Relationship?, _ error: ErrorResponse?) -> Void
     
     //MARK - Functions
-   
+    
     /**
      Creates a relationship between a device and a creditCard
      
@@ -32,16 +32,15 @@ extension RestClient {
             
             let parameters = ["creditCardId": "\(creditCardId)", "deviceId": "\(deviceId)"]
             let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
-            self.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                        let relationship = try? Relationship(resultValue)
-                        relationship?.client = self
-                        completion(relationship, error)
-                    } else {
-                        completion(nil, error)
-                    }
-                })
+            self.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let relationship = try? Relationship(resultValue)
+                relationship?.client = self
+                completion(relationship, error)
+            }
         }
     }
     
@@ -53,16 +52,15 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request, completion: { (resultValue, error) in
-
-                if let resultValue = resultValue {
-                        let relationship = try? Relationship(resultValue)
-                        relationship?.client = self
-                        completion(relationship, error)
-                    } else {
-                        completion(nil, error)
-                    }
-                })
+            self.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let relationship = try? Relationship(resultValue)
+                relationship?.client = self
+                completion(relationship, error)
+            }
         }
     }
     
@@ -74,9 +72,9 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request, completion: { (resultValue, error) in
+            self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
-            })
+            }
         }
     }
     

@@ -107,17 +107,16 @@ extension RestClient {
             
             let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-                
-                if let resultValue = resultValue {
-                    let user = try? User(resultValue)
-                    user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    user?.client = self
-                    completion(user, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
+            }
         }
     }
     
@@ -140,17 +139,16 @@ extension RestClient {
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,
                                                       headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-                
-                if let resultValue = resultValue {
-                    let user = try? User(resultValue)
-                    user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    user?.client = self
-                    completion(user, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
+            }
         }
     }
     
@@ -217,18 +215,17 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request, completion: { [weak self] (resultValue, error) in
+            self.makeRequest(request: request) { [weak self] (resultValue, error) in
                 guard let strongSelf = self else { return }
-
-                if let resultValue = resultValue {
-                    let user = try? User(resultValue)
-                    user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    user?.client = self
-                    completion(user, error)
-                } else {
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
+            }
         }
         
     }
@@ -247,9 +244,9 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request, completion: { (resultValue, error) in
+            self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
-            })
+            }
         }
     }
     
@@ -261,18 +258,17 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { [weak self] (resultValue, error) in
-                guard let strongSelf = self else { return }
-                
-                if let resultValue = resultValue {
-                    let user = try? User(resultValue)
-                    user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    user?.client = self
-                    completion(user, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let strongSelf = self else { return }                
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
+            }
         }
     }    
 }

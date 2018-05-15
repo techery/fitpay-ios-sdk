@@ -83,17 +83,17 @@ open class RestClient: NSObject {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request, completion: { [weak self] (resultValue, error) in
-                if resultValue != nil {
-                    guard let strongSelf = self else { return }
-                    let result = try? ResultCollection<T>(resultValue)
-                    result?.client = self
-                    result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                    completion(result, nil)                        
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                guard let strongSelf = self else { return }
+                let result = try? ResultCollection<T>(resultValue)
+                result?.client = self
+                result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(result, nil)
+            }
         }
         
         return nil
@@ -126,9 +126,9 @@ extension RestClient {
             
             let params = ["result": executionResult.description]
             let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request, completion: { (resultValue, error) in
+            self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
-            })
+            }
         }
     }
     
@@ -158,9 +158,9 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request, completion: { (resultValue, error) in
+            self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
-            })
+            }
         }
     }
 }
@@ -197,16 +197,15 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request, completion: { (resultValue, error) in
-                
-                if let resultValue = resultValue {
-                    let transaction = try? ResultCollection<Transaction>(resultValue)
-                    transaction?.client = self
-                    completion(transaction, error)
-                } else {
+            self.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let transaction = try? ResultCollection<Transaction>(resultValue)
+                transaction?.client = self
+                completion(transaction, error)
+            }
         }
     }
     
@@ -233,14 +232,13 @@ extension RestClient {
         let parameters = ["clientPublicKey": clientPublicKey]
         
         let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-        self.makeRequest(request: request, completion: { (resultValue, error) in
-            
-            if let resultValue = resultValue {
-                completion(try? EncryptionKey(resultValue), error)
-            } else {
+        self.makeRequest(request: request) { (resultValue, error) in
+            guard let resultValue = resultValue else {
                 completion(nil, error)
+                return
             }
-        })
+            completion(try? EncryptionKey(resultValue), error)
+        }
     }
     
     /**
@@ -260,14 +258,13 @@ extension RestClient {
     internal func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        self.makeRequest(request: request, completion: { (resultValue, error) in
-            
-            if let resultValue = resultValue {
-                completion(try? EncryptionKey(resultValue), error)
-            } else {
+        self.makeRequest(request: request) { (resultValue, error) in
+            guard let resultValue = resultValue else {
                 completion(nil, error)
+                return
             }
-        })
+            completion(try? EncryptionKey(resultValue), error)
+        }
     }
     
     /**
@@ -384,16 +381,15 @@ extension RestClient {
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,
                                                       headers: headers)
-            self?.makeRequest(request: request, completion: { (resultValue, error) in
-                
-                if let resultValue = resultValue {
-                    let issuers = try? Issuers(resultValue)
-                    issuers?.client = self
-                    completion(issuers, error)
-                } else {
+            self?.makeRequest(request: request) { (resultValue, error) in                
+                guard let resultValue = resultValue else {
                     completion(nil, error)
+                    return
                 }
-            })
+                let issuers = try? Issuers(resultValue)
+                issuers?.client = self
+                completion(issuers, error)
+            }
         }
     }
 }
@@ -416,7 +412,7 @@ extension RestClient {
             request.responseData { (response: DataResponse<Data>) in
                 if response.result.error != nil {
                     let error = try? ErrorResponse(response.data)
-
+                    
                     DispatchQueue.main.async {
                         completion(nil, error)
                     }
@@ -441,7 +437,7 @@ extension RestClient {
             }
         }
     }
-
+    
 }
 
 // MARK: Sync Statistics

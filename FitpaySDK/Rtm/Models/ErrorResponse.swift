@@ -55,7 +55,7 @@ open class ErrorResponse: NSError, Serializable {
         path = nil
         summary = nil
         messageDescription = errorMessage
-        super.init(domain: "", code: errorCode ?? 0, userInfo: [NSLocalizedDescriptionKey : errorMessage ?? ""])
+        super.init(domain: "\(domain)", code: errorCode ?? 0, userInfo: [NSLocalizedDescriptionKey : errorMessage ?? ""])
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -67,19 +67,13 @@ open class ErrorResponse: NSError, Serializable {
     }
 
     class func clientUrlError(domain: AnyClass, client: RestClient?, url: String?, resource: String) -> ErrorResponse? {
-        if let _ = client
-        {
-            if let _ = url
-            {
+        if client != nil {
+            if url != nil {
                 return nil
-            }
-            else
-            {
+            } else {
                 return ErrorResponse(domain: domain, errorCode: 0, errorMessage: "Failed to retrieve url for resource '\(resource)'")
             }
-        }
-        else
-        {
+        } else {
             return ErrorResponse(domain: domain, errorCode: 0, errorMessage: "\(RestClient.self) is not set.")
         }
     }
