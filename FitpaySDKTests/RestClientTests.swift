@@ -152,14 +152,12 @@ class RestClientTests: XCTestCase {
 
     func testResetDeviceTasks() {
         let expectation = super.expectation(description: "'resetDeviceTasks' creates key")
-        self.testHelper.createAndLoginUser(expectation)
-        {
-            [unowned self](user) in
-
-            self.testHelper.createDevice(expectation, user: user) {
-                [unowned self] (user, device) in
+        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
+            self.testHelper.createDevice(expectation, user: user) { [unowned self] (user, device) in
                 guard let resetUrlString = device?.deviceResetUrl else { XCTAssert(false, "No url."); return }
                 guard let resetUrl = URL(string: resetUrlString) else { XCTAssert(false, "Bad url."); return }
+                
+                sleep(5)  // resetDeviceTasks fails if called to quickly after createDevice
 
                 self.client.resetDeviceTasks(resetUrl) { (resetDeviceResult, error) in
                     XCTAssertNil(error)
