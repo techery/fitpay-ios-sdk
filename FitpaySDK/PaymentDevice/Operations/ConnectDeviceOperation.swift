@@ -63,7 +63,7 @@ open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
         self.deviceDisconnectedBinding = nil
     }
     
-    internal static let paymentDeviceConnectionTimeoutInSecs: Int = 60
+    static let paymentDeviceConnectionTimeoutInSecs: Int = 60
 
     // private
     private var paymentDevice: PaymentDevice

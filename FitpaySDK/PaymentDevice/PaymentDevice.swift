@@ -5,7 +5,7 @@
     private var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
     private weak var deviceDisconnectedBinding: FitpayEventBinding?
     
-    internal var deviceInterface: PaymentDeviceConnectable!
+    var deviceInterface: PaymentDeviceConnectable!
 
     // MARK: - Lifecycle
     
@@ -160,9 +160,9 @@
 
     // MARK: - Private / Internal
 
-    internal typealias APDUExecutionHandler = (_ apduCommand: APDUCommand?, _ state: APDUPackageResponseState?, _ error: Error?) -> Void
+    typealias APDUExecutionHandler = (_ apduCommand: APDUCommand?, _ state: APDUPackageResponseState?, _ error: Error?) -> Void
     
-    internal func apduPackageProcessingStarted(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
+    func apduPackageProcessingStarted(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
         if let onPreApduPackageExecute = self.deviceInterface.onPreApduPackageExecute {
             onPreApduPackageExecute(package, completion)
         } else {
@@ -170,7 +170,7 @@
         }
     }
     
-    internal func apduPackageProcessingFinished(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
+    func apduPackageProcessingFinished(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
         if let onPostApduPackageExecute = self.deviceInterface.onPostApduPackageExecute {
             onPostApduPackageExecute(package, completion)
         } else {
@@ -178,14 +178,14 @@
         }
     }
     
-    internal func removeDisconnectedBinding() {
+    func removeDisconnectedBinding() {
         if let binding = self.deviceDisconnectedBinding {
             self.removeBinding(binding: binding)
             self.deviceDisconnectedBinding = nil
         }
     }
     
-    internal func executeAPDUPackage(_ apduPackage: ApduPackage, completion: @escaping  (_ error: Error?) -> Void) {
+    func executeAPDUPackage(_ apduPackage: ApduPackage, completion: @escaping  (_ error: Error?) -> Void) {
         if let executeAPDUPackage = self.deviceInterface.executeAPDUPackage {
             executeAPDUPackage(apduPackage, completion)
         } else {
@@ -193,11 +193,11 @@
         }
     }
     
-    internal func executeAPDUPackageAllowed() -> Bool {
+    func executeAPDUPackageAllowed() -> Bool {
         return self.deviceInterface.executeAPDUPackage != nil
     }
     
-    internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
+    func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
         do {
             var isCompleteExecute = false
             
@@ -229,7 +229,7 @@
         }
     }
     
-    internal func processNonAPDUCommit(commit: Commit, completion: @escaping (_ state: NonAPDUCommitState?, _ error: NSError?) -> Void) {
+    func processNonAPDUCommit(commit: Commit, completion: @escaping (_ state: NonAPDUCommitState?, _ error: NSError?) -> Void) {
         if let processNonAPDUCommit = self.deviceInterface.processNonAPDUCommit {
             self.deviceDisconnectedBinding = self.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: { (event) in
                 log.error("APDU_DATA: Device is disconnected during process non-APDU commit.")

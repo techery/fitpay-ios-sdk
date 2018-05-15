@@ -8,7 +8,7 @@
 
 import Foundation
 
-internal class BindedToDeviceSyncRequestQueue {
+class BindedToDeviceSyncRequestQueue {
     init(deviceInfo: DeviceInfo?, syncManager: SyncManagerProtocol) {
         self.deviceInfo = deviceInfo
         self.syncManager = syncManager
@@ -60,7 +60,7 @@ internal class BindedToDeviceSyncRequestQueue {
 
     }
     
-    internal func dequeue() -> SyncRequest? {
+    func dequeue() -> SyncRequest? {
         return self.requestsQueue.dequeue()
     }
     

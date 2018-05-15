@@ -15,7 +15,7 @@ enum PaymentDeviceAPDUExecuterError: Error {
     case responseDataIsEmpty
 }
 
-internal class PaymentDeviceApduExecuter {
+class PaymentDeviceApduExecuter {
     weak var paymentDevice: PaymentDevice?
     var isExecuting: Bool = false
     var completion: PaymentDevice.APDUExecutionHandler!
@@ -119,7 +119,7 @@ internal class PaymentDeviceApduExecuter {
         completion(apduCommand, nil, nil)
     }
     
-    internal func removeDisconnectedBinding() {
+    func removeDisconnectedBinding() {
         if let binding = self.deviceDisconnectedBinding {
             self.paymentDevice?.removeBinding(binding: binding)
             self.deviceDisconnectedBinding = nil

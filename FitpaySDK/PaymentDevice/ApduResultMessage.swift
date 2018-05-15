@@ -17,7 +17,7 @@ open class ApduResultMessage : NSObject, APDUResponseProtocol {
         super.init()
     }
     
-    internal var concatenationAPDUPayload: Data? {
+    var concatenationAPDUPayload: Data? {
         guard self.responseType == .concatenation, let responseCodeDataType = responseCode else {
             return nil
         }
@@ -27,7 +27,7 @@ open class ApduResultMessage : NSObject, APDUResponseProtocol {
     }
 }
 
-internal class BLEApduResultMessage: ApduResultMessage {
+class BLEApduResultMessage: ApduResultMessage {
     var msg: Data
     var resultCode: UInt8
     var sequenceId: UInt16

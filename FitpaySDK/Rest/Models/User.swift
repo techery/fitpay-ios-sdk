@@ -7,9 +7,9 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     open var lastModified: String?
     open var lastModifiedEpoch: TimeInterval?
     
-    internal var links: [ResourceLink]?
-    internal var encryptedData: String?
-    internal var info: UserInfo?
+    var links: [ResourceLink]?
+    var encryptedData: String?
+    var info: UserInfo?
     
     private static let creditCardsResourceKey = "creditCards"
     private static let devicesResourceKey = "devices"
@@ -187,13 +187,13 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     }
     
     //MARK: - Private Helpers
-    internal func applySecret(_ secret: Data, expectedKeyId: String?) {
+    func applySecret(_ secret: Data, expectedKeyId: String?) {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
     
 }
 
-internal class UserInfo: Serializable {
+class UserInfo: Serializable {
     var firstName: String?
     var lastName: String?
     var birthDate: String?

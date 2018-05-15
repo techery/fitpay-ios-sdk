@@ -44,26 +44,26 @@ open class RestClient: NSObject {
         case serverError3  = 504
     }
     
-    internal static let fpKeyIdKey: String = "fp-key-id"
+    static let fpKeyIdKey: String = "fp-key-id"
     
     private let defaultHeaders = [
         "Accept": "application/json",
         "X-FitPay-SDK": "iOS-\(FitpayConfig.sdkVersion)"
     ]
     
-    internal var _session: RestSession
-    internal var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
+    var _session: RestSession
+    var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
     
-    lazy internal var _manager: SessionManager = {
+    lazy var _manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         return SessionManager(configuration: configuration)
     }()
     
-    internal var key: EncryptionKey?
+    var key: EncryptionKey?
     
-    internal var secret: Data {
+    var secret: Data {
         let secret = self.keyPair.generateSecretForPublicKey(key?.serverPublicKey ?? "")
         if secret == nil || secret?.count == 0 {
             log.warning("Encription secret is empty.")
@@ -75,7 +75,7 @@ open class RestClient: NSObject {
         _session = session;
     }
 
-    internal func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: Error?) -> Void) -> T? {
+    func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: Error?) -> Void) -> T? {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -195,12 +195,12 @@ extension RestClient {
     public typealias TransactionHandler = (_ transaction: Transaction?, _ error: NSError?) -> Void
     
     
-    internal func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
+    func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         self.transactions(url, parameters: parameters, completion: completion)
     }
     
-    internal func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler) {
+    func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -237,7 +237,7 @@ extension RestClient {
      - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias CreateEncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: NSError?) -> Void
+    typealias CreateEncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: NSError?) -> Void
     
     /**
      Creates a new encryption key pair
@@ -245,7 +245,7 @@ extension RestClient {
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    internal func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
+    func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let parameters = ["clientPublicKey": clientPublicKey]
         
@@ -272,7 +272,7 @@ extension RestClient {
      - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias EncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: NSError?) -> Void
+    typealias EncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: NSError?) -> Void
     
     /**
      Retrieve and individual key pair
@@ -280,7 +280,7 @@ extension RestClient {
      - parameter keyId:      key id
      - parameter completion: EncryptionKeyHandler closure
      */
-    internal func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
+    func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
          request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
@@ -304,7 +304,7 @@ extension RestClient {
      
      - parameter error?: Provides error object, or nil if no error occurs
      */
-    internal typealias DeleteEncryptionKeyHandler = (_ error: Error?) -> Void
+    typealias DeleteEncryptionKeyHandler = (_ error: Error?) -> Void
     
     /**
      Deletes encryption key
@@ -312,7 +312,7 @@ extension RestClient {
      - parameter keyId:      key id
      - parameter completion: DeleteEncryptionKeyHandler
      */
-    internal func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler) {
+    func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
         request.validate().responseString { (response: DataResponse<String>) in
@@ -324,7 +324,7 @@ extension RestClient {
     
     typealias CreateKeyIfNeededHandler = CreateEncryptionKeyHandler
     
-    internal func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler) {
+    func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler) {
         if let key = self.key, !key.isExpired() {
             completion(key, nil)
         } else {
@@ -345,7 +345,7 @@ extension RestClient {
     
     typealias CreateAuthHeaders = (_ headers: [String: String]?, _ error: NSError?) -> Void
     
-    internal func createAuthHeaders(_ completion: CreateAuthHeaders) {
+    func createAuthHeaders(_ completion: CreateAuthHeaders) {
         if self._session.isAuthorized {
             completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
         } else {
@@ -353,14 +353,14 @@ extension RestClient {
         }
     }
     
-    internal func skipAuthHeaders(_ completion: CreateAuthHeaders) {
+    func skipAuthHeaders(_ completion: CreateAuthHeaders) {
         // do nothing
         completion(self.defaultHeaders, nil)
     }
     
     typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: NSError?) -> Void
     
-    internal func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders) {
+    func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.createAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
@@ -378,7 +378,7 @@ extension RestClient {
     
     typealias PrepareKeyHeader = (_ headers: [String: String]?, _ error: NSError?) -> Void
     
-    internal func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders) {
+    func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.skipAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
@@ -444,7 +444,7 @@ extension RestClient {
      */
     public typealias AssetsHandler = (_ asset: Asset?, _ error: NSError?) -> Void
     
-    internal func assets(_ url: String, completion: @escaping AssetsHandler) {
+    func assets(_ url: String, completion: @escaping AssetsHandler) {
         let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
         
         DispatchQueue.global().async {
@@ -488,7 +488,7 @@ extension RestClient {
      */
     public typealias SyncHandler = (_ error: NSError?) -> Void
     
-    internal func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }

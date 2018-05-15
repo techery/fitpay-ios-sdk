@@ -9,7 +9,7 @@ public enum AuthScope: String {
     case tokenWrite = "token.write"
 }
 
-internal class AuthorizationDetails: Serializable
+class AuthorizationDetails: Serializable
 {
     var tokenType: String?
     var accessToken: String?
@@ -92,9 +92,9 @@ open class RestSession: NSObject {
         }
     }
     
-    internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
+    typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
     
-    internal func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
+    func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
         let parameters: [String: String] = [
             "response_type": "token",

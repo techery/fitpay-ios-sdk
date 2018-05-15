@@ -28,7 +28,7 @@ public enum VerificationResult: String, Serializable {
 @objcMembers
 open class VerificationMethod: NSObject, ClientModel, Serializable
 {
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
     open var verificationId: String?
     open var state: VerificationState?
     open var methodType: VerificationMethodType?

@@ -1,6 +1,6 @@
 import Foundation
 
-internal class NSTimeIntervalTypeTransform: CodingContainerTransformer {
+class NSTimeIntervalTypeTransform: CodingContainerTransformer {
     typealias Output = TimeInterval
     typealias Input = Int64
 
@@ -20,7 +20,7 @@ internal class NSTimeIntervalTypeTransform: CodingContainerTransformer {
     }
 }
 
-internal class DecimalNumberTypeTransform: CodingContainerTransformer {
+class DecimalNumberTypeTransform: CodingContainerTransformer {
     typealias Output = NSDecimalNumber
     typealias Input = Any
 
@@ -42,7 +42,7 @@ internal class DecimalNumberTypeTransform: CodingContainerTransformer {
     }
 }
 
-internal class CustomDateFormatTransform: CodingContainerTransformer {
+class CustomDateFormatTransform: CodingContainerTransformer {
     typealias Output = Date
     typealias Input = String
 

@@ -1,7 +1,7 @@
 import RxSwift
 
 @objcMembers
-internal class CommitsApplyer {
+class CommitsApplyer {
 
     init(paymentDevice: PaymentDevice,
          deviceInfo: DeviceInfo,
@@ -16,7 +16,7 @@ internal class CommitsApplyer {
         self.nonApduConfirmOperation = syncFactory.nonApduConfirmOperation()
     }
     
-    internal var isRunning: Bool {
+    var isRunning: Bool {
         guard let thread = self.thread else {
             return false
         }
@@ -24,9 +24,9 @@ internal class CommitsApplyer {
         return thread.isExecuting
     }
 
-    internal typealias ApplyerCompletionHandler = (_ error: Error?) -> Void
+    typealias ApplyerCompletionHandler = (_ error: Error?) -> Void
 
-    internal func apply(_ commits: [Commit], completion: @escaping ApplyerCompletionHandler) -> Bool {
+    func apply(_ commits: [Commit], completion: @escaping ApplyerCompletionHandler) -> Bool {
         if isRunning {
             log.warning("SYNC_DATA: Cannot apply commints, applying already in progress.")
             return false
@@ -52,8 +52,8 @@ internal class CommitsApplyer {
         return true
     }
     
-    internal var apduConfirmOperation: APDUConfirmOperationProtocol
-    internal var nonApduConfirmOperation: NonAPDUConfirmOperationProtocol
+    var apduConfirmOperation: APDUConfirmOperationProtocol
+    var nonApduConfirmOperation: NonAPDUConfirmOperationProtocol
     
     // private
     private var commits: [Commit]!
@@ -67,7 +67,7 @@ internal class CommitsApplyer {
     private let paymentDevice: PaymentDevice
     private var syncStorage: SyncStorage
     private var deviceInfo: DeviceInfo
-    internal var commitStatistics = [CommitStatistic]()
+    var commitStatistics = [CommitStatistic]()
     
     // rx
     private let eventsPublisher: PublishSubject<SyncEvent>

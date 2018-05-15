@@ -16,7 +16,7 @@ open class RtmMessage: NSObject, Serializable {
     
 
     
-    internal override init() {
+    override init() {
         super.init()
     }
 

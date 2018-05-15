@@ -42,7 +42,7 @@ open class SyncRequestQueue {
         queue.add(request: request)
     }
     
-    internal init(syncManager: SyncManagerProtocol) {
+    init(syncManager: SyncManagerProtocol) {
         self.syncManager = syncManager
         self.bind()
     }
@@ -125,7 +125,7 @@ open class SyncRequestQueue {
         }
     }
     
-    internal var lastFullSyncRequest: SyncRequest?
+    var lastFullSyncRequest: SyncRequest?
 }
 
 extension SyncRequestQueue {

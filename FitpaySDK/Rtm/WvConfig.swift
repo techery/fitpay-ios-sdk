@@ -52,7 +52,7 @@ import WebKit
         }
     }
     
-    //MARK: - Internal and Private Variables
+    //MARK: - and Private Variables
     
     var configStorage = WvConfigStorage()
 

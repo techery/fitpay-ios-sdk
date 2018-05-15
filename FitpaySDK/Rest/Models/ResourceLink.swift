@@ -1,7 +1,7 @@
 
 import Foundation
 
-internal class ResourceLink: CustomStringConvertible {
+class ResourceLink: CustomStringConvertible {
     var target: String?
     var href: String?
 
@@ -10,7 +10,7 @@ internal class ResourceLink: CustomStringConvertible {
     }
 }
 
-internal class ResourceLinkTypeTransform: CodingContainerTransformer {
+class ResourceLinkTypeTransform: CodingContainerTransformer {
     typealias Output = [ResourceLink]
     typealias Input = [String: [String: String]]
 

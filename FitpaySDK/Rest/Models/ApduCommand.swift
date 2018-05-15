@@ -1,6 +1,6 @@
 open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
     
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
     open var commandId: String?
     open var groupId: Int = 0
     open var sequence: Int = 0

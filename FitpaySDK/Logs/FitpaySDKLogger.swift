@@ -1,6 +1,6 @@
 import Foundation
 
-internal let log = FitpaySDKLogger.sharedInstance
+let log = FitpaySDKLogger.sharedInstance
 
 @objc open class FitpaySDKLogger: NSObject {
     @objc public static let sharedInstance = FitpaySDKLogger()

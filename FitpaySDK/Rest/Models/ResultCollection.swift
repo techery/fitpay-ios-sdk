@@ -6,7 +6,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
     open var totalResults: Int?
     open var results: [T]?
     
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
     
     private let lastResourse = "last"
     private let nextResourse = "next"
@@ -82,7 +82,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         try container.encode(totalResults, forKey: .totalResults)
     }
 
-    internal func applySecret(_ secret: Data, expectedKeyId: String?) {
+    func applySecret(_ secret: Data, expectedKeyId: String?) {
         if let results = self.results {
             for modelObject in results {
                 if let objectWithEncryptedData = modelObject as? SecretApplyable {

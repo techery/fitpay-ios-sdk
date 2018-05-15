@@ -39,12 +39,12 @@ extension RestClient {
     
     //MARK: - Functions
     
-    internal func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) {
+    func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         self.devices(url, parameters: parameters, completion: completion)
     }
     
-    internal func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler) {
+    func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
@@ -74,7 +74,7 @@ extension RestClient {
         }
     }
     
-    internal func createNewDevice(_ url: String, deviceType: String, manufacturerName: String, deviceName: String,
+    func createNewDevice(_ url: String, deviceType: String, manufacturerName: String, deviceName: String,
                                   serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?,
                                   softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?,
                                   secureElementId: String?, casd: String?, completion: @escaping DeviceHandler) {
@@ -127,7 +127,7 @@ extension RestClient {
         }
     }
     
-    internal func deleteDevice(_ url: String, completion: @escaping DeleteHandler) {
+    func deleteDevice(_ url: String, completion: @escaping DeleteHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(error) }
@@ -143,7 +143,7 @@ extension RestClient {
         }
     }
     
-    internal func updateDevice(_ url: String,
+    func updateDevice(_ url: String,
                                firmwareRevision: String?,
                                softwareRevision: String?,
                                notificationToken: String?,
@@ -190,7 +190,7 @@ extension RestClient {
         }
     }
     
-    internal func addDeviceProperty(_ url: String, propertyPath: String, propertyValue: String, completion: @escaping DeviceHandler) {
+    func addDeviceProperty(_ url: String, propertyPath: String, propertyValue: String, completion: @escaping DeviceHandler) {
         var paramsArray = [Any]()
         paramsArray.append(["op": "add", "path": propertyPath, "value": propertyValue])
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -259,7 +259,7 @@ extension RestClient {
         }
     }
     
-    internal func commits(_ url: String, parameters: [String: Any]?,  completion: @escaping CommitsHandler) {
+    func commits(_ url: String, parameters: [String: Any]?,  completion: @escaping CommitsHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
@@ -289,7 +289,7 @@ extension RestClient {
         }
     }
     
-    internal func commit(_ url: String, completion: @escaping CommitHandler) {
+    func commit(_ url: String, completion: @escaping CommitHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }

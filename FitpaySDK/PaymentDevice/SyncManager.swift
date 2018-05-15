@@ -113,9 +113,9 @@ protocol SyncManagerProtocol {
     var syncFactory: SyncFactory
     var syncStorage: SyncStorage
 
-    internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
+    let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
-    internal func syncWith(request: SyncRequest) throws {
+    func syncWith(request: SyncRequest) throws {
         if synchronousModeOn {
             if syncOperations.count > 0 {
                 throw ErrorCode.syncAlreadyStarted
@@ -179,19 +179,19 @@ protocol SyncManagerProtocol {
     private let eventsDispatcher = FitpayEventDispatcher()
     private var user: User?
     
-    internal init(syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
+    init(syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance) {
         self.syncFactory = syncFactory
         self.syncStorage = syncStorage
         super.init()
     }
     
-    internal func callCompletionForSyncEvent(_ event: SyncEventType, params: [String:Any] = [:]) {
+    func callCompletionForSyncEvent(_ event: SyncEventType, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
 
-    internal typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
+    typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
     
-    internal func getAllCardsWithToWAPDUCommands(user: User?,_ completion:@escaping ToWAPDUCommandsHandler) {
+    func getAllCardsWithToWAPDUCommands(user: User?,_ completion:@escaping ToWAPDUCommandsHandler) {
         if user == nil {
             completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
             return

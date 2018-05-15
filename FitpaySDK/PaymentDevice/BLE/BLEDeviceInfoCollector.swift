@@ -1,6 +1,6 @@
 import CoreBluetooth
 
-internal class BLEDeviceInfoCollector {
+class BLEDeviceInfoCollector {
     static let characteristicBindings: [CBUUID: String] = [
         PAYMENT_CHARACTERISTIC_UUID_MANUFACTURER_NAME : "manufacturerName",
         PAYMENT_CHARACTERISTIC_UUID_MODEL_NUMBER      : "modelNumber",

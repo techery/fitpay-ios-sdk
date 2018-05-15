@@ -201,7 +201,7 @@ public extension User
     }
 }
 
-internal func CreateCompatibleResultColletion<T>(resultCollection:ResultCollection<T>?) -> ResultCollectionObjC?
+func CreateCompatibleResultColletion<T>(resultCollection:ResultCollection<T>?) -> ResultCollectionObjC?
 {
     if let resultCollection = resultCollection
     {

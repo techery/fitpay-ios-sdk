@@ -64,7 +64,7 @@ extension Data {
         return Int(crc)
     }
     
-    internal func crc32(_ crc: UInt32, data: Data?) -> UInt32 {
+    func crc32(_ crc: UInt32, data: Data?) -> UInt32 {
         guard let data = data else {
             return crc32(0, buffer: nil, length: 0)
         }
@@ -84,7 +84,7 @@ extension Data {
      }
      if (crc != original_crc) error()
      */
-    internal func crc32(_ crc: UInt32, buffer: UnsafePointer<UInt8>?, length: Int) -> UInt32 {
+    func crc32(_ crc: UInt32, buffer: UnsafePointer<UInt8>?, length: Int) -> UInt32 {
         if buffer == nil {
             return 0
         }

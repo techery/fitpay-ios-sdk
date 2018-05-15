@@ -25,7 +25,7 @@ public enum APDUPackageResponseState: String {
     open var validUntilEpoch: Date?
     open var apduPackageUrl: String?
     
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
     
     @objc open static var APDUPackageResponseStateProcessed: String {
         return APDUPackageResponseState.processed.rawValue

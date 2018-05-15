@@ -177,7 +177,7 @@ extension RestClient {
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    internal func updateUser(_ url: String,
+    func updateUser(_ url: String,
                              firstName: String?,
                              lastName: String?,
                              birthDate: String?,
@@ -258,7 +258,7 @@ extension RestClient {
      - parameter id:         user id
      - parameter completion: DeleteHandler closure
      */
-    internal func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
+    func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(error)

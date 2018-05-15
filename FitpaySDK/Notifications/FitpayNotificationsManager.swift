@@ -125,7 +125,7 @@ open class FitpayNotificationsManager: NSObject {
     }
 
     // MARK: internal
-    internal var notificationsToken: String = ""
+    var notificationsToken: String = ""
     
     // MARK: private
     private let eventsDispatcher = FitpayEventDispatcher()

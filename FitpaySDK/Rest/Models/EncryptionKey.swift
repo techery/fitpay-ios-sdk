@@ -10,7 +10,7 @@
     open var clientPublicKey: String?
     open var active: Bool?
     
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"

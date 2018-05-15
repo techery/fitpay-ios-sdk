@@ -6,7 +6,7 @@ open class SessionData : NSObject, Serializable
     open var deviceId:String?
     open var token:String?
     
-    internal var encryptedData:String?
+    var encryptedData:String?
     
     public init(token: String, userId: String, deviceId: String) {
         self.userId = userId
@@ -14,7 +14,7 @@ open class SessionData : NSObject, Serializable
         self.token = token
     }
 
-    internal func applySecret(_ secret:Data, expectedKeyId:String?)
+    func applySecret(_ secret:Data, expectedKeyId:String?)
     {
         if let tmpSession : SessionData = JWEObject.decrypt(encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
             self.userId = tmpSession.userId

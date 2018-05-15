@@ -49,7 +49,7 @@
         }
     }
     
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
     
     private static let userResourceKey = "user"
     private static let commitsResourceKey = "commits"
@@ -318,7 +318,7 @@
         }
     }
 
-    internal func addNotificationToken(_ token: String, completion: @escaping RestClient.DeviceHandler) {
+    func addNotificationToken(_ token: String, completion: @escaping RestClient.DeviceHandler) {
         let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -328,9 +328,9 @@
         }
     }
 
-    internal typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: NSError?) -> Void
+    typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: NSError?) -> Void
     
-    internal func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
+    func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         if newNotificationToken != "" {
             if newNotificationToken != self.notificationToken {

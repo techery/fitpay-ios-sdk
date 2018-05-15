@@ -1,6 +1,6 @@
 import CoreBluetooth
 
-internal class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
+class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
     weak var paymentDevice: PaymentDevice!
     
     var centralManager: CBCentralManager?

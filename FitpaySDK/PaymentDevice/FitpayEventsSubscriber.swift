@@ -122,7 +122,7 @@ open class FitpayEventsSubscriber {
         removeSubscriberIfBindingsEmpty(subscriberWithBindings)
     }
     
-    internal func executeCallbacksForEvent(event: EventType, status: EventStatus = .success, reason: Error? = nil, eventData: Any = "") {
+    func executeCallbacksForEvent(event: EventType, status: EventStatus = .success, reason: Error? = nil, eventData: Any = "") {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: eventData, status: status, reason: reason))
     }
     

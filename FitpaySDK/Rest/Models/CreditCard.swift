@@ -1,8 +1,8 @@
 import Foundation
 
 @objcMembers open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
-    internal var links: [ResourceLink]?
-    internal var encryptedData: String?
+    var links: [ResourceLink]?
+    var encryptedData: String?
 
     open var creditCardId: String?
     open var userId: String?

@@ -49,27 +49,27 @@ open class SyncRequest {
         }
     }
     
-    // MARK: - Internal / Private
+    // MARK: - / Private
     
-    internal var isEmptyRequest: Bool {
+    var isEmptyRequest: Bool {
         return user == nil || deviceInfo == nil || paymentDevice == nil
     }
     
-    internal var user: User?
-    internal var deviceInfo: DeviceInfo?
-    internal var paymentDevice: PaymentDevice?
-    internal var completion: SyncRequestCompletion?
+    var user: User?
+    var deviceInfo: DeviceInfo?
+    var paymentDevice: PaymentDevice?
+    var completion: SyncRequestCompletion?
     
     private var state = SyncRequestState.pending
     
     // we should capture restClient to prevent deallocation
     private var restClient: RestClient?
     
-    internal convenience init() {
+    convenience init() {
         self.init(notificationAsc: nil, initiator: .notDefined)
     }
     
-    internal init(notificationAsc: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
+    init(notificationAsc: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
         self.requestTime = Date()
         self.user = nil
         self.deviceInfo = nil
@@ -91,9 +91,9 @@ open class SyncRequest {
         }
     }
     
-    internal static var syncManager: SyncManagerProtocol = SyncManager.sharedInstance
+    static var syncManager: SyncManagerProtocol = SyncManager.sharedInstance
     
-    internal func update(state: SyncRequestState) {
+    func update(state: SyncRequestState) {
         if state == .inProgress {
             self.syncStartTime = Date()
         }
@@ -101,13 +101,13 @@ open class SyncRequest {
         self.state = state
     }
     
-    internal func syncCompleteWith(status: EventStatus, error: Error?) {
+    func syncCompleteWith(status: EventStatus, error: Error?) {
         if let completion = self.completion {
             completion(status, error)
         }
     }
     
-    internal func isSameUserAndDevice(otherRequest: SyncRequest) -> Bool {
+    func isSameUserAndDevice(otherRequest: SyncRequest) -> Bool {
         return user?.id == otherRequest.user?.id && deviceInfo?.deviceIdentifier == otherRequest.deviceInfo?.deviceIdentifier
     }
     

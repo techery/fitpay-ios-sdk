@@ -21,20 +21,20 @@ open class EventSource: NSObject {
     private var eventListeners = Dictionary<String, (_ id: String?, _ event: String?, _ data: String?) -> Void>()
     private var headers: Dictionary<String, String>
     
-    internal var urlSession: Foundation.URLSession?
-    internal var task: URLSessionDataTask?
+    var urlSession: Foundation.URLSession?
+    var task: URLSessionDataTask?
     
     private var operationQueue: OperationQueue
     private var errorBeforeSetErrorCallBack: NSError?
     
-    internal let receivedDataBuffer: NSMutableData
+    let receivedDataBuffer: NSMutableData
     
     private let uniqueIdentifier: String
     private let validNewlineCharacters = ["\r\n", "\n", "\r"]
     
     var event = Dictionary<String, String>()
     
-    internal var lastEventID: String? {
+    var lastEventID: String? {
         set {
             if let lastEventID = newValue {
                 let defaults = UserDefaults.standard
@@ -96,7 +96,7 @@ open class EventSource: NSObject {
         task?.resume()
     }
     
-    internal func newSession(_ configuration: URLSessionConfiguration) -> URLSession {
+    func newSession(_ configuration: URLSessionConfiguration) -> URLSession {
         return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
     

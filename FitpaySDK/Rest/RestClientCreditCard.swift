@@ -41,7 +41,7 @@ extension RestClient {
     
     //MARK - Functions
     
-    internal func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
+    func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
                                    street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
                                    completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -100,12 +100,12 @@ extension RestClient {
         }
     }
     
-    internal func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler) {
+    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler) {
         let parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offest": offset]
         self.creditCards(url, parameters: parameters, completion: completion)
     }
     
-    internal func creditCards(_ url: String, parameters: [String: Any]?, completion: @escaping CreditCardsHandler) {
+    func creditCards(_ url: String, parameters: [String: Any]?, completion: @escaping CreditCardsHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers  else {
@@ -136,7 +136,7 @@ extension RestClient {
         }
     }
     
-    internal func deleteCreditCard(_ url: String, completion: @escaping DeleteHandler) {
+    func deleteCreditCard(_ url: String, completion: @escaping DeleteHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
@@ -162,7 +162,7 @@ extension RestClient {
         }
     }
     
-    internal func updateCreditCard(_ url: String, name: String?, street1: String?, street2: String?, city: String?, state: String?, postalCode: String?, countryCode: String?, completion: @escaping CreditCardHandler) {
+    func updateCreditCard(_ url: String, name: String?, street1: String?, street2: String?, city: String?, state: String?, postalCode: String?, countryCode: String?, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers  else {
@@ -231,7 +231,7 @@ extension RestClient {
         }
     }
     
-    internal func acceptTerms(_ url: String, completion: @escaping CreditCardTransitionHandler) {
+    func acceptTerms(_ url: String, completion: @escaping CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
@@ -261,7 +261,7 @@ extension RestClient {
         }
     }
     
-    internal func declineTerms(_ url: String, completion: @escaping CreditCardTransitionHandler) {
+    func declineTerms(_ url: String, completion: @escaping CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
@@ -291,7 +291,7 @@ extension RestClient {
         }
     }
     
-    internal func selectVerificationType(_ url: String, completion: @escaping VerifyHandler) {
+    func selectVerificationType(_ url: String, completion: @escaping VerifyHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(false, nil, error) }
@@ -318,7 +318,7 @@ extension RestClient {
         }
     }
     
-    internal func verify(_ url: String, verificationCode: String, completion: @escaping VerifyHandler) {
+    func verify(_ url: String, verificationCode: String, completion: @escaping VerifyHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
@@ -346,7 +346,7 @@ extension RestClient {
         }
     }
     
-    internal func deactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler) {
+    func deactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
@@ -374,7 +374,7 @@ extension RestClient {
         }
     }
     
-    internal func reactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler) {
+    func reactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(false, nil, error) }
@@ -402,7 +402,7 @@ extension RestClient {
         }
     }
     
-    internal func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler) {
+    func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -432,7 +432,7 @@ extension RestClient {
         }
     }
     
-    internal func makeDefault(_ url: String, completion: @escaping CreditCardTransitionHandler) {
+    func makeDefault(_ url: String, completion: @escaping CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }

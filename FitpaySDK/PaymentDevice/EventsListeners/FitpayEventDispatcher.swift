@@ -8,7 +8,7 @@
 
 
 open class FitpayEventDispatcher {
-    internal var bindingsDictionary : [Int:[FitpayEventBinding]] = [:]
+    var bindingsDictionary : [Int:[FitpayEventBinding]] = [:]
     
     public init() {
     }
