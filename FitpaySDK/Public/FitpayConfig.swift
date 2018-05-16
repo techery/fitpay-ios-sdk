@@ -89,20 +89,3 @@ extension FitpayConfig {
     }
     
 }
-
-// MARK: - PaymentDeviceConfig
-
-extension FitpayConfig {
-    
-    /// Configuration options related to the Payment Device specifically
-    public class PaymentDevice: NSObject {
-        
-        /// Commit timeout in seconds
-        public static var commitProcessingTimeout: Double = 30
-
-        //apdu transport mode
-        
-
-    }
-    
-}

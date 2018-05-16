@@ -1,26 +1,57 @@
+import Foundation
 
 @objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
     
     open var deviceIdentifier: String?
+   
+    /// The name of the device model
     open var deviceName: String?
+    
     open var deviceType: String?
+    
+    /// The manufacturer name of the device
     open var manufacturerName: String?
+    
     open var state: String?
+    
+    /// The serial number for a particular instance of the device
     open var serialNumber: String?
+    
+    /// The model number that is assigned by the device vendor
     open var modelNumber: String?
+    
+    /// The hardware revision for the hardware within the device
     open var hardwareRevision: String?
+    
+    /// The firmware revision for the firmware within the device. Value may be normalized to meet payment network specifications.
     open var firmwareRevision: String?
+    
     open var softwareRevision: String?
+    
     open var notificationToken: String?
+    
     open var createdEpoch: TimeInterval?
+    
     open var created: String?
+    
+    /// The code name of the firmware operating system on the device
     open var osName: String?
+    
+    /// A structure containing an Organizationally Unique Identifier (OUI) followed
+    /// by a manufacturer-defined identifier and is unique for each individual instance of the product
     open var systemId: String?
+    
     open var cardRelationships: [CardRelationship]?
+    
     open var licenseKey: String?
+    
     open var bdAddress: String?
+    
     open var pairing: String?
+    
+    /// The ID of a secure element in a payment capable device
     open var secureElementId: String?
+    
     open var casd: String?
     
     // Extra metadata specific for a particural type of device
@@ -100,7 +131,7 @@
         case pairing
         case secureElement
         case secureElementId
-        case casd = "casdCert"
+        case casd
         case cardRelationships
         case metadata
     }
@@ -140,7 +171,6 @@
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try container.encode(created, forKey: .created)
         try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
@@ -318,6 +348,8 @@
         }
     }
 
+    // MARK: - Internal
+    
     func addNotificationToken(_ token: String, completion: @escaping RestClient.DeviceHandler) {
         let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
@@ -356,69 +388,3 @@
     
 }
 
-open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyable {
-    open var creditCardId: String?
-    open var pan: String?
-    open var expMonth: Int?
-    open var expYear: Int?
-    
-    public weak var client: RestClient?
-    
-    var links: [ResourceLink]?
-    var encryptedData: String?
-    
-    private static let selfResource = "self"
-
-    private enum CodingKeys: String, CodingKey {
-        case links = "_links"
-        case creditCardId
-        case encryptedData
-        case pan
-        case expMonth
-        case expYear
-    }
-
-    public required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        creditCardId = try container.decode(.creditCardId)
-        encryptedData = try container.decode(.encryptedData)
-        pan = try container.decode(.pan)
-        expMonth = try container.decode(.expMonth)
-        expYear = try container.decode(.expYear)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(creditCardId, forKey: .creditCardId)
-        try container.encode(encryptedData, forKey: .encryptedData)
-        try container.encode(pan, forKey: .pan)
-        try container.encode(expMonth, forKey: .expMonth)
-        try container.encode(expYear, forKey: .expYear)
-    }
-
-    func applySecret(_ secret: Data, expectedKeyId: String?) {
-        if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
-            self.pan = decryptedObj.pan
-            self.expMonth = decryptedObj.expMonth
-            self.expYear = decryptedObj.expYear
-        }
-    }
-
-    /**
-     Get a single relationship
-     
-     - parameter completion:   RelationshipHandler closure
-     */
-    @objc open func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
-        let resource = CardRelationship.selfResource
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.relationship(url, completion: completion)
-        } else {
-            completion(nil, NSError.clientUrlError(domain: CardRelationship.self, code: 0, client: client, url: url, resource: resource))
-        }
-    }
-
-}
