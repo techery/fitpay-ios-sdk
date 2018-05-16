@@ -2,15 +2,7 @@ import Foundation
 import Alamofire
 import JWTDecode
 
-public enum AuthScope: String {
-    case userRead   = "user.read"
-    case userWrite  = "user.write"
-    case tokenRead  = "token.read"
-    case tokenWrite = "token.write"
-}
-
-class AuthorizationDetails: Serializable
-{
+class AuthorizationDetails: Serializable {
     var tokenType: String?
     var accessToken: String?
     var expiresIn: String?
@@ -26,8 +18,7 @@ class AuthorizationDetails: Serializable
     }
 }
 
-@objcMembers
-open class RestSession: NSObject {
+@objcMembers open class RestSession: NSObject {
     public enum ErrorEnum: Int, Error, RawIntValue {
         case decodeFailure = 1000
         case parsingFailure
@@ -68,24 +59,24 @@ open class RestSession: NSObject {
                 if let error = error {
                     completion(error)
                 } else {
-                    if let accessToken = details?.accessToken {
-                        guard let jwt = try? decode(jwt: accessToken) else {
-                            completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
-                            return
-                        }
-                        
-                        if let userId = jwt.body["user_id"] as? String {
-                            DispatchQueue.main.async { [weak self] in
-                                log.verbose("successful login for user: \(userId)")
-                                self?.userId = userId
-                                self?.accessToken = accessToken
-                                completion(nil)
-                            }
-                        } else {
-                            completion(NSError.error(code: ErrorEnum.parsingFailure, domain: RestSession.self, message: "Failed to parse user id"))
-                        }
-                    } else {
+                    guard let accessToken = details?.accessToken else {
                         completion(NSError.error(code: ErrorEnum.accessTokenFailure, domain: RestSession.self, message: "Failed to retrieve access token"))
+                        return
+                    }
+                    guard let jwt = try? decode(jwt: accessToken) else {
+                        completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
+                        return
+                    }
+                    guard let userId = jwt.body["user_id"] as? String else {
+                        completion(NSError.error(code: ErrorEnum.parsingFailure, domain: RestSession.self, message: "Failed to parse user id"))
+                        return
+                    }
+                    
+                    DispatchQueue.main.async { [weak self] in
+                        log.verbose("successful login for user: \(userId)")
+                        self?.userId = userId
+                        self?.accessToken = accessToken
+                        completion(nil)
                     }
                 }
             }
