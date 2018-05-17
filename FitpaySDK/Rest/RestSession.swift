@@ -173,20 +173,20 @@ extension RestSession {
                 return
             }
             
-            user?.listDevices(limit: 20, offset: 0, completion: { (devicesColletion, error) in
+            user?.listDevices(limit: 20, offset: 0) { (devicesCollection, error) in
                 guard user != nil && error == nil else {
                     completion(nil, nil, error)
                     return
                 }
                 
-                for device in devicesColletion!.results! {
+                for device in devicesCollection!.results! {
                     if device.deviceIdentifier == deviceId {
                         completion(user!, device, nil)
                         return
                     }
                 }
                 
-                devicesColletion?.collectAllAvailable({ (devices, error) in
+                devicesCollection?.collectAllAvailable { (devices, error) in
                     guard error == nil, let devices = devices else {
                         completion(nil, nil, error as NSError?)
                         return
@@ -200,8 +200,8 @@ extension RestSession {
                     }
                     
                     completion(nil, nil, NSError.error(code: RestSession.ErrorCode.deviceNotFound, domain: RestSession.self))
-                })
-            })
+                }
+            }
         }
         
         return client

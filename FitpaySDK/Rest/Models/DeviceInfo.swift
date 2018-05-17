@@ -57,7 +57,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
             }
         }
     }
-    
+     
     override public init() {
     }
 
@@ -99,7 +99,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         case pairing
         case secureElement
         case secureElementId
-        case casd = "casdCert"
+        case casd
         case cardRelationships
         case metadata
     }
