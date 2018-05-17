@@ -43,7 +43,7 @@ open class RtmMessage: NSObject, Serializable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        if let callbackId = callBackId {
+        if let callBackId = callBackId {
             try? container.encode(callBackId, forKey: .callBackId)
         }
         if let data = data {
