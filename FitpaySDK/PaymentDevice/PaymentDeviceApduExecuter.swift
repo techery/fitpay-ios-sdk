@@ -1,11 +1,3 @@
-//
-//  PaymentDeviceApduExecuter.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 15.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 enum PaymentDeviceAPDUExecuterError: Error {
@@ -24,7 +16,7 @@ class PaymentDeviceApduExecuter {
     
     // bindings
     private weak var deviceDisconnectedBinding : FitpayEventBinding?
-
+    
     typealias OnResponseReadyToHandle = (_ apduResultMessage: ApduResultMessage?, _ state: String?, _ error: Error?) -> Void
     typealias ExecutionBlock = (_ command: APDUCommand, _ completion: @escaping OnResponseReadyToHandle) -> Void
     
@@ -57,7 +49,7 @@ class PaymentDeviceApduExecuter {
             self?.isExecuting = false
             self?.completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceWasDisconnected, domain: PaymentDevice.self))
         })
-
+        
         
         self.executionBlock(command, self.handleApduResponse)
     }

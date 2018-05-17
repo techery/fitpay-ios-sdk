@@ -112,7 +112,7 @@ protocol SyncManagerProtocol {
     
     var syncFactory: SyncFactory
     var syncStorage: SyncStorage
-
+    
     let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
     func syncWith(request: SyncRequest) throws {
@@ -188,7 +188,7 @@ protocol SyncManagerProtocol {
     func callCompletionForSyncEvent(_ event: SyncEventType, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
-
+    
     typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void
     
     func getAllCardsWithToWAPDUCommands(user: User?,_ completion:@escaping ToWAPDUCommandsHandler) {
@@ -196,13 +196,13 @@ protocol SyncManagerProtocol {
             completion(nil, NSError.error(code: SyncManager.ErrorCode.unknownError, domain: SyncManager.self))
             return
         }
-    
+        
         user?.listCreditCards(excludeState: [""], limit: 20, offset: 0, completion: { (result, error) in
             if let error = error {
                 completion(nil, error)
                 return
             }
-    
+            
             if result!.nextAvailable {
                 result?.collectAllAvailable({ (results, error) in
                     completion(results, error)
@@ -218,7 +218,7 @@ protocol SyncManagerProtocol {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
         
         var eventParams: [String: Any] = ["request": request]
-
+        
         if let error = error {
             log.debug("SYNC_DATA: Sync finished with error: \(error)")
             // TODO: it's a hack, because currently we can move to wallet screen only if we received SyncEventType.syncCompleted
@@ -238,7 +238,7 @@ protocol SyncManagerProtocol {
                 log.error("SYNC_DATA: Can't get offline APDU commands. Error: \(error)")
                 return
             }
-
+            
             if let cards = cards {
                 self.callCompletionForSyncEvent(SyncEventType.receivedCardsWithTowApduCommands, params: ["cards":cards])
             }

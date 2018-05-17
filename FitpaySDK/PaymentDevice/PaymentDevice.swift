@@ -1,12 +1,12 @@
 @objcMembers open class PaymentDevice: NSObject {
-
+    
+    var deviceInterface: PaymentDeviceConnectable!
+    
     private let eventsDispatcher = FitpayEventDispatcher()
     
     private var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
     private weak var deviceDisconnectedBinding: FitpayEventBinding?
     
-    var deviceInterface: PaymentDeviceConnectable!
-
     // MARK: - Lifecycle
     
     override public init() {
@@ -14,7 +14,7 @@
         self.paymentDeviceApduExecuter = PaymentDeviceApduExecuter(paymentDevice: self)
         self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
-
+    
     // MARK: - Public
     
     /**
@@ -75,7 +75,7 @@
         }
         
         self.connectionState = ConnectionState.connecting
-
+        
         if let secsTimeout = secsTimeout {
             let delayTime = DispatchTime.now() + Double(Int64(UInt64(secsTimeout) * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: delayTime) { [weak self] in
@@ -153,13 +153,13 @@
             completion(onlyLocationResponse)
         }
     }
-
+    
     @objc open func callCompletionForEvent(_ eventType: PaymentDeviceEventTypes, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }
-
+    
     // MARK: - Private / Internal
-
+    
     typealias APDUExecutionHandler = (_ apduCommand: APDUCommand?, _ state: APDUPackageResponseState?, _ error: Error?) -> Void
     
     func apduPackageProcessingStarted(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
