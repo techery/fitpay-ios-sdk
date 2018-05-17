@@ -94,13 +94,8 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     }
     
     func handleSessionData(_ message: RtmMessage) {
-        guard let data = message.data as? [String: Any] else {
-            log.error("WV_DATA: Can't get data from rtmBridge message.")
-            return
-        }
-
-        guard let webViewSessionData = try? SessionData(data) else {
-            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(data)")
+        guard let webViewSessionData = try? SessionData(message.data) else {
+            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(message.data)")
             return
         }
 
@@ -148,7 +143,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     }
 
     func versionResponseMessage(version: WvConfig.RtmProtocolVersion) -> RtmMessageResponse? {
-        return RtmMessageResponse(data: ["version":version.rawValue], type: RtmMessageTypeVer2.rtmVersion.rawValue)
+        return RtmMessageResponse(data: ["version": version.rawValue], type: RtmMessageTypeVer2.rtmVersion.rawValue)
     }
     
     func statusResponseMessage(message: String, type: WvConfig.WVMessageType) -> RtmMessageResponse? {

@@ -78,37 +78,38 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        verificationId = try container.decode(.verificationId)
-        state = try container.decode(.state)
-        methodType = try container.decode(.methodType)
-        value = try container.decode(.value)
-        verificationResult = try container.decode(.verificationResult)
-        created = try container.decode(.created)
+        verificationId = try? container.decode(.verificationId)
+        state = try? container.decode(.state)
+        methodType = try? container.decode(.methodType)
+        value = try? container.decode(.value)
+        verificationResult = try? container.decode(.verificationResult)
+        created = try? container.decode(.created)
         createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        lastModified = try container.decode(.lastModified)
+        lastModified = try? container.decode(.lastModified)
         lastModifiedEpoch = try container.decode(.lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
-        verified = try container.decode(.verified)
+        verified = try? container.decode(.verified)
         verifiedEpoch = try container.decode(.verifiedEpoch, transformer: NSTimeIntervalTypeTransform())
 
-        appToAppContext = try container.decode(.appToAppContext)
+        appToAppContext = try? container.decode(.appToAppContext)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(verificationId, forKey: .verificationId)
-        try container.encode(state, forKey: .state)
-        try container.encode(methodType, forKey: .methodType)
-        try container.encode(value, forKey: .value)
-        try container.encode(verificationResult, forKey: .verificationResult)
-        try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(lastModified, forKey: .lastModified)
-        try container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(verified, forKey: .verified)
-        try container.encode(verifiedEpoch, forKey: .verifiedEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(appToAppContext, forKey: .appToAppContext)
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(verificationId, forKey: .verificationId)
+        try? container.encode(state, forKey: .state)
+        try? container.encode(methodType, forKey: .methodType)
+        try? container.encode(value, forKey: .value)
+        try? container.encode(verificationResult, forKey: .verificationResult)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(lastModified, forKey: .lastModified)
+        try? container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(verified, forKey: .verified)
+        try? container.encode(verifiedEpoch, forKey: .verifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(appToAppContext, forKey: .appToAppContext)
     }
 
     /**
@@ -127,7 +128,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
     }
 
     /**
-     If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
+     If a verification method is selected that requires an entry? of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
      
      - parameter completion:    VerifyHandler closure
      */
