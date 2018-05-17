@@ -29,10 +29,10 @@ open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
         
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         commandId = try? container.decode(.commandId)
-        groupId = try container.decode(.groupId) ?? 0
-        sequence = try container.decode(.sequence) ?? 0
+        groupId = try container.decodeIfPresent(Int.self, forKey: .groupId) ?? 0
+        sequence = try container.decodeIfPresent(Int.self, forKey: .sequence) ?? 0
         command = try? container.decode(.command)
-        continueOnFailure = try container.decode(.continueOnFailure) ?? false
+        continueOnFailure = try container.decodeIfPresent(Bool.self, forKey: .continueOnFailure) ?? false
     }
 
     public func encode(to encoder: Encoder) throws {

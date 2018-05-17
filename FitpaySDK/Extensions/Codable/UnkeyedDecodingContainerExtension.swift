@@ -33,23 +33,23 @@ extension UnkeyedDecodingContainer {
                 continue
             } else if let value = try? decode(Bool.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let value = try? decode(Double.self) as? T, let nonNullValue = value  {
+            } else if let value = try? decode(Double.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let value = try? decode(String.self) as? T, let nonNullValue = value  {
+            } else if let value = try? decode(String.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let value = try? decode(DeviceInfo.self) as? T, let nonNullValue = value  {
+            } else if let value = try? decode(DeviceInfo.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let value = try? decode(CreditCard.self) as? T, let nonNullValue = value  {
+            } else if let value = try? decode(CreditCard.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let value = try? decode(Transaction.self) as? T, let nonNullValue = value  {
+            } else if let value = try? decode(Transaction.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let value = try? decode(Commit.self) as? T, let nonNullValue = value  {
+            } else if let value = try? decode(Commit.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let value = try? decode(User.self) as? T, let nonNullValue = value  {
+            } else if let value = try? decode(User.self) as? T, let nonNullValue = value {
                 array.append(nonNullValue)
-            } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) as? T, let nonNullValue = nestedDictionary  {
+            } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) as? T, let nonNullValue = nestedDictionary {
                 array.append(nonNullValue)
-            } else if let nestedArray = try? decode(Array<Any>.self, array: true) as? T, let nonNullValue = nestedArray  {
+            } else if let nestedArray = try? decode(Array<Any>.self, array: true) as? T, let nonNullValue = nestedArray {
                 array.append(nonNullValue)
             }
         }
