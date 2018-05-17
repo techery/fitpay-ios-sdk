@@ -24,7 +24,7 @@ extension KeyedEncodingContainer {
                 try self.encode([dictionaryKey: doubleValue], forKey: key)
                 
             } else if let nestedDictionary = value[dictionaryKey] as? [String: Any]  {
-                try self.encode([dictionaryKey: nestedDictionary], forKey: key)
+                try self.encode(nestedDictionary, forKey: key)
             }
         }
     }
