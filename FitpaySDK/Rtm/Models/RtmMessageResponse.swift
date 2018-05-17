@@ -21,7 +21,7 @@ open class RtmMessageResponse: RtmMessage {
         try super.init(from: decoder)
         
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        success = try container.decode(.success)
+        success = try? container.decode(.success)
     }
 
     public override func encode(to encoder: Encoder) throws {

@@ -64,19 +64,21 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         limit = try? container.decode(.limit)
         offset = try? container.decode(.offset)
         totalResults = try? container.decode(.totalResults)
-        results = try? container.decode([T].self, forArrayKey: .results)
+        results = try? container.decode([T].self, forKey: .results)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(limit, forKey: .limit)
-        try container.encode(offset, forKey: .offset)
-        try container.encode(totalResults, forKey: .totalResults)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(limit, forKey: .limit)
+        try? container.encode(offset, forKey: .offset)
+        try? container.encode(totalResults, forKey: .totalResults)
     }
 
     internal func applySecret(_ secret: Data, expectedKeyId: String?) {

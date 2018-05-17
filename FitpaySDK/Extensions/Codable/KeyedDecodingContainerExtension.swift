@@ -20,7 +20,7 @@ extension KeyedDecodingContainer {
                 dictionary[key.stringValue] = doubleValue
             } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self, forKey: key) {
                 dictionary[key.stringValue] = nestedDictionary
-            } else if let nestedArray = try? decode(Array<Any>.self, forArrayKey: key) {
+            } else if let nestedArray = try? decode(Array<Any>.self, forKey: key) {
                 dictionary[key.stringValue] = nestedArray
             }
         }
@@ -42,13 +42,13 @@ extension KeyedDecodingContainer {
         return object
     }
     
-    func decode(_ type: Array<Any>.Type, forArrayKey key: K) throws -> Array<Any> {
+    func decode(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
         var container = try self.nestedUnkeyedContainer(forKey: key)
         let object = try container.decode(type, array: true)
         return object
     }
     
-    func decode<T>(_ type: Array<T>.Type, forArrayKey key: K) throws -> Array<T> {
+    func decode<T>(_ type: Array<T>.Type, forKey key: K) throws -> Array<T> {
         var container = try self.nestedUnkeyedContainer(forKey: key)
         let object = try container.decode(type, array: true)
         return object!

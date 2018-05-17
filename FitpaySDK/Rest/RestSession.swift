@@ -179,10 +179,12 @@ extension RestSession {
                     return
                 }
                 
-                for device in devicesCollection!.results! {
-                    if device.deviceIdentifier == deviceId {
-                        completion(user!, device, nil)
-                        return
+                if let devices = devicesCollection?.results {
+                    for device in devices {
+                        if device.deviceIdentifier == deviceId {
+                            completion(user!, device, nil)
+                            return
+                        }
                     }
                 }
                 

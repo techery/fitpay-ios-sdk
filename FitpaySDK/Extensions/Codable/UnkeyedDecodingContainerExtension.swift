@@ -23,22 +23,26 @@ extension UnkeyedDecodingContainer {
         return array
     }
     
+    // TODO: better way to do this?
     mutating func decode<T>(_ type: Array<T>.Type, array: Bool) throws -> Array<T>? {
         var array: [T] = []
         while isAtEnd == false {
+            
             // See if the current value in the JSON array is `null` first and prevent infite recursion with nested arrays.
             if try decodeNil() {
                 continue
-            } else if let value = try decode(Bool.self) as? T {
-                array.append(value)
-            } else if let value = try decode(Double.self) as? T  {
-                array.append(value)
-            } else if let value = try decode(String.self) as? T  {
-                array.append(value)
-            } else if let nestedDictionary = try decode(Dictionary<String, Any>.self) as? T  {
-                array.append(nestedDictionary)
-            } else if let nestedArray = try decode(Array<Any>.self, array: true) as? T  {
-                array.append(nestedArray)
+            } else if let value = try? decode(Bool.self) as? T, let nonNullValue = value {
+                array.append(nonNullValue)
+            } else if let value = try? decode(Double.self) as? T, let nonNullValue = value  {
+                array.append(nonNullValue)
+            } else if let value = try? decode(String.self) as? T, let nonNullValue = value  {
+                array.append(nonNullValue)
+            } else if let value = try? decode(DeviceInfo.self) as? T, let nonNullValue = value  {
+                array.append(nonNullValue)
+            } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) as? T, let nonNullValue = nestedDictionary  {
+                array.append(nonNullValue)
+            } else if let nestedArray = try? decode(Array<Any>.self, array: true) as? T, let nonNullValue = nestedArray  {
+                array.append(nonNullValue)
             }
         }
         return array
