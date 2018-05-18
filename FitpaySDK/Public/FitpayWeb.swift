@@ -5,32 +5,32 @@ import WebKit
 @objc open class FitpayWeb: NSObject {
     
     /// Use this singleton
-    public static let shared = FitpayWeb()
+    @objc public static let shared = FitpayWeb()
 
     /// Set the rtmDelegate to receive authorization and other messages from the webview
     /// Needed for capturing a back button press
-    weak open var rtmDelegate: RTMDelegate? {
+    @objc weak open var rtmDelegate: RTMDelegate? {
         didSet {
             wvConfig.rtmDelegate = rtmDelegate
         }
     }
     
     /// Set the a2aVerificationDelegate to handle step up methods using the issuer app
-    weak open var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
+    @objc weak open var a2aVerificationDelegate: FitpayA2AVerificationDelegate? {
         didSet {
             wvConfig.a2aVerificationDelegate = a2aVerificationDelegate
         }
     }
     
     /// Set the cardScannerDataSource to handle step up methods using the issuer app
-    weak open var cardScannerDataSource: FitpayCardScannerDataSource? {
+    @objc weak open var cardScannerDataSource: FitpayCardScannerDataSource? {
         didSet {
             wvConfig.cardScannerDataSource = cardScannerDataSource
         }
     }
     
     /// Set the cardScannerPresenterDelegate to handle step up methods using the issuer app
-    weak open var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? {
+    @objc weak open var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? {
         didSet {
             wvConfig.cardScannerPresenterDelegate = cardScannerPresenterDelegate
         }

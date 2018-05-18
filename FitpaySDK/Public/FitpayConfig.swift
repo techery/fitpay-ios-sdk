@@ -1,47 +1,77 @@
 import Foundation
 
 /// Main Configuration Object
-/// Set variables before instantiating other primary Fitpay objects
-public class FitpayConfig: NSObject {
+/// Set variables before instantiating other Fitpay objects
+@objc public class FitpayConfig: NSObject {
     
     /// Implicit allows you to get a single user token
-    public static var clientId: String!
+    @objc public static var clientId: String!
     
     /// Used for web calls
-    public static var webURL = "https://webapp.fit-pay.com"
+    @objc public static var webURL = "https://webapp.fit-pay.com"
     
     /// Used for redirects
-    public static var redirectURL = "https://webapp.fit-pay.com"
+    @objc public static var redirectURL = "https://webapp.fit-pay.com"
     
     /// Used for API calls
-    public static var apiURL = "https://api.fit-pay.com"
+    @objc public static var apiURL = "https://api.fit-pay.com"
     
     /// Used during login
-    public static var authURL = "https://auth.fit-pay.com"
+    @objc public static var authURL = "https://auth.fit-pay.com"
     
     /// Turn on when you are ready to implement App 2 App stepup methods
     /// Only recommended for iOS 10+
-    public static var supportApp2App = false
+    @objc public static var supportApp2App = false
     
     /// Logs will be sent for every level equal or above what is set
-    public static var minLogLevel: LogLevel = LogLevel.info
+    @objc public static var minLogLevel: LogLevel = LogLevel.info
     
     /// SDK Version using semantic versioning MAJOR.MINOR.PATCH
-    public static let sdkVersion = Bundle(for: FitpayConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    @objc public static let sdkVersion = Bundle(for: FitpayConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     
     //MARK: - Functions
     
-    /// Setup FitpaySDK
+    /// Setup FitpaySDK quick method
+    /// Uses all of the default variables and sets clientId
     ///
-    /// Call this method in the AppDelegate `didFinishLaunchingWithOptions:`
+    /// Call configure in the AppDelegate `didFinishLaunchingWithOptions:`
     /// before doing anything else with the FItpaySDK
     ///
     /// - Parameter clientId: clientId from Fitpay
-    public static func config(clientId: String) {
+    @objc public static func configure(clientId: String) {
         self.clientId = clientId
         
         loadEnvironmentVariables()
         log.addOutput(output: ConsoleOutput())
+        
+        log.debug("Fitpay configured successfully")
+    }
+    
+    /// Setup FitpaySDK advanced method
+    /// All variables are customizable via json file
+    /// Call configure in the AppDelegate `didFinishLaunchingWithOptions:`
+    /// before doing anything else with the FItpaySDK
+    ///
+    /// - Parameter fileName: name without extension or leading path defaults to `fitpayconfig`
+    @objc public static func configure(fileName: String = "fitpayconfig") {
+        guard let path = Bundle.main.path(forResource: fileName, ofType: "json") else { return }
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe) else { return }
+        guard let jsonResult = try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves) else { return }
+        guard let fitpayConfigModel = try? FitpayConfigModel(jsonResult) else { return }
+        
+        FitpayConfig.clientId = fitpayConfigModel.clientId
+        FitpayConfig.webURL = fitpayConfigModel.webURL
+        FitpayConfig.redirectURL = fitpayConfigModel.redirectURL
+        FitpayConfig.apiURL = fitpayConfigModel.apiURL
+        FitpayConfig.authURL = fitpayConfigModel.authURL
+        FitpayConfig.supportApp2App = fitpayConfigModel.supportApp2App
+        FitpayConfig.minLogLevel = LogLevel(rawValue: fitpayConfigModel.minLogLevel) ?? LogLevel.info
+        FitpayConfig.Web.demoMode = fitpayConfigModel.web.demoMode
+        FitpayConfig.Web.demoCardGroup = fitpayConfigModel.web.demoCardGroup
+        FitpayConfig.Web.cssURL = fitpayConfigModel.web.cssURL
+        FitpayConfig.Web.supportCardScanner = fitpayConfigModel.web.supportCardScanner
+        
+        log.debug("Fitpay configured from file successfully")
     }
     
     // MARK: - Private
@@ -67,25 +97,49 @@ public class FitpayConfig: NSObject {
 
 // MARK: - WebConfig
 
-extension FitpayConfig {
+@objc extension FitpayConfig {
     
     /// Configuration options related to the Web specifically
-    public class Web: NSObject {
-
+    @objc public class Web: NSObject {
+        
         /// Shows autofill options on the add card page when enabled
         /// Turning on in production does nothing
-        public static var demoMode = false
+        @objc public static var demoMode = false
         
         /// Changes autofill options to include a default and auto-verify version of one card type
         /// demoMode must be true and not in production for this to work
-        public static var demoCardGroup: String?
-
-        /// Overrides the default CSS
-        public static var cssURL: String?
-
-        /// Turn on when you are ready to implement card scanning methods
-        public static var supportCardScanner = false
+        @objc public static var demoCardGroup: String?
         
+        /// Overrides the default CSS
+        @objc public static var cssURL: String?
+        
+        /// Turn on when you are ready to implement card scanning methods
+        @objc public static var supportCardScanner = false
+        
+    }
+    
+}
+
+// MARK: - Structs for json
+
+@objc extension FitpayConfig {
+    
+    private struct FitpayConfigModel: Serializable {
+        var clientId: String
+        var webURL: String
+        var redirectURL: String
+        var apiURL: String
+        var authURL: String
+        var supportApp2App: Bool
+        var minLogLevel: Int
+        var web: FitpayConfigWebModel
+    }
+    
+    private struct FitpayConfigWebModel: Serializable  {
+        var demoMode: Bool
+        var demoCardGroup: String
+        var cssURL: String
+        var supportCardScanner: Bool
     }
     
 }

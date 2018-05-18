@@ -1,6 +1,9 @@
 open class FitpayEventDispatcher {
     var bindingsDictionary: [Int: [FitpayEventBinding]] = [:]
     
+    public init() {
+    }
+    
     open func addListenerToEvent(_ listener: FitpayEventListener, eventId: FitpayEventTypeProtocol) -> FitpayEventBinding? {
         var bindingsArray = self.bindingsDictionary[eventId.eventId()]
         if bindingsArray == nil {
