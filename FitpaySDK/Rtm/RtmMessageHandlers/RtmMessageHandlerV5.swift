@@ -2,20 +2,20 @@ import Foundation
 
 class RtmMessageHandlerV5: RtmMessageHandlerV4 {
     enum RtmMessageTypeVer5: String, RtmMessageTypeWithHandler {
-        case rtmVersion            = "version"
-        case sync                  = "sync"
-        case deviceStatus          = "deviceStatus"
-        case userData              = "userData"
-        case logout                = "logout"
-        case resolve               = "resolve"
-        case scanRequest           = "scanRequest"
-        case cardScanned           = "cardScanned"
-        case sdkVersionRequest     = "sdkVersionRequest"
-        case sdkVersion            = "sdkVersion"
-        case idVerificationRequest = "idVerificationRequest"
-        case idVerification        = "idVerification"
-        case supportsIssuerAppVerification = "supportsIssuerAppVerification"
-        case appToAppVerification = "appToAppVerification"
+        case rtmVersion = "version"
+        case sync
+        case deviceStatus
+        case userData
+        case logout
+        case resolve
+        case scanRequest
+        case cardScanned
+        case sdkVersionRequest
+        case sdkVersion
+        case idVerificationRequest
+        case idVerification
+        case supportsIssuerAppVerification
+        case appToAppVerification
         
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
             guard let handlerObject = handlerObject as? RtmMessageHandlerV5 else {

@@ -11,12 +11,12 @@ import Foundation
 class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
     enum RtmMessageTypeVer2: String, RtmMessageTypeWithHandler {
-        case rtmVersion   = "version"
-        case sync         = "sync"
-        case deviceStatus = "deviceStatus"
-        case userData     = "userData"
-        case logout       = "logout"
-        case resolve      = "resolve"
+        case rtmVersion = "version"
+        case sync
+        case deviceStatus
+        case userData
+        case logout
+        case resolve
         
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
             switch self {

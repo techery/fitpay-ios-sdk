@@ -1,19 +1,19 @@
 import Foundation
 
-class RtmMessageHandlerV4: RtmMessageHandlerV3 {
+class RtmMessageHandlerV4: RtmMessageHandlerV2 {
     var cardScanner: IFitpayCardScanner?
     
     enum RtmMessageTypeVer4: String, RtmMessageTypeWithHandler {
-        case rtmVersion        = "version"
-        case sync              = "sync"
-        case deviceStatus      = "deviceStatus"
-        case userData          = "userData"
-        case logout            = "logout"
-        case resolve           = "resolve"
-        case scanRequest       = "scanRequest"
-        case cardScanned       = "cardScanned"
-        case sdkVersionRequest = "sdkVersionRequest"
-        case sdkVersion        = "sdkVersion"
+        case rtmVersion = "version"
+        case sync
+        case deviceStatus
+        case userData
+        case logout
+        case resolve
+        case scanRequest
+        case cardScanned
+        case sdkVersionRequest
+        case sdkVersion
         
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
             guard let handlerObject = handlerObject as? RtmMessageHandlerV4 else {
