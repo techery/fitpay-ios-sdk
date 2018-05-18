@@ -29,6 +29,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
     private static let commitsResourceKey = "commits"
     private static let selfResourceKey = "self"
     private static let lastAckCommitResourceKey = "lastAckCommit"
+    private static let deviceResetTasksKey = "deviceResetTasks"
 
     private weak var _client: RestClient?
 
@@ -41,6 +42,10 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
 
     open var listCommitsAvailable: Bool {
         return self.links?.url(DeviceInfo.commitsResourceKey) != nil
+    }
+
+    open var deviceResetUrl: String? {
+        return self.links?.url(DeviceInfo.deviceResetTasksKey)
     }
 
     public var client: RestClient? {
