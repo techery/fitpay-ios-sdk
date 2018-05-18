@@ -4,7 +4,7 @@ import UIKit
 @objc public class A2AContext: NSObject, Serializable {
     
     /// iTunes App Id
-    /// 9 digit number as a string
+    /// 10 digit number as a string
     /// Can be used to construct an iTunes URL as a fallback if the user doesn't have the issuer app installed
     @objc public var applicationId: String?
     

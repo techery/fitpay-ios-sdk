@@ -23,7 +23,7 @@ class RestClientTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        FitpayConfig.config(clientId: clientId)
+        FitpayConfig.configure(clientId: clientId)
         self.session = RestSession()
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelper(session: self.session, client: self.client)
@@ -669,11 +669,10 @@ class RestClientTests: XCTestCase {
     func testAssetsRetrievesAsset() {
         let expectation = super.expectation(description: "'assets' retrievs asset")
         
-        self.testHelper.createAndLoginUser(expectation) { [unowned self](user) in
+        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     creditCard?.cardMetaData?.brandLogo?.first?.retrieveAsset() { (asset, error) in
-                        
                         XCTAssertNil(error)
                         XCTAssertNotNil(asset?.image)
                         
@@ -691,11 +690,9 @@ class RestClientTests: XCTestCase {
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.client.issuers() { (issuers, error) in
-                
                 XCTAssertNotNil(issuers)
                 XCTAssertNil(error)
                 XCTAssertNotNil(issuers?.countries)
-                
                 XCTAssertNotNil(issuers?.countries?["US"])
                 
                 for country in issuers!.countries! {

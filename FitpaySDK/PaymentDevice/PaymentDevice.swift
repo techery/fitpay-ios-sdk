@@ -7,6 +7,8 @@
     private var paymentDeviceApduExecuter: PaymentDeviceApduExecuter!
     private weak var deviceDisconnectedBinding: FitpayEventBinding?
     
+    var commitProcessingTimeout: Double = 30
+    
     // MARK: - Lifecycle
     
     override public init() {
@@ -202,19 +204,20 @@
             var isCompleteExecute = false
             
             let apduExecutionBlock: PaymentDeviceApduExecuter.ExecutionBlock = { [weak self] (apduCommand, completion) in
-                self?.apduResponseHandler = completion
+                guard let strongSelf = self else { return }
+                strongSelf.apduResponseHandler = completion
                 log.verbose("APDU_DATA: Calling device interface to execute APDU's.")
                 
-                DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
+                DispatchQueue.global().asyncAfter(deadline: .now() + strongSelf.commitProcessingTimeout) {
                     if !isCompleteExecute {
-                        self?.apduResponseHandler = nil
-                        self?.removeDisconnectedBinding()
+                        strongSelf.apduResponseHandler = nil
+                        strongSelf.removeDisconnectedBinding()
                         log.error("APDU_DATA: Received timeout during execute APDU's.")
                         completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduSendingTimeout, domain: PaymentDevice.self))
                     }
                 }
                 
-                self?.deviceInterface.executeAPDUCommand(apduCommand)
+                strongSelf.deviceInterface.executeAPDUCommand(apduCommand)
             }
             
             try self.paymentDeviceApduExecuter.execute(command: apduCommand, executionBlock: apduExecutionBlock) { [weak self] (apduCommand, state, error) in
@@ -238,7 +241,7 @@
             })
             
             var isCompleteProcessing = false
-            DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + self.commitProcessingTimeout) {
                 if !isCompleteProcessing {
                     log.error("APDU_DATA: Received timeout during process non-APDU commit.")
                     self.removeDisconnectedBinding()
