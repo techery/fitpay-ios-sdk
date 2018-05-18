@@ -145,62 +145,64 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        creditCardId = try container.decode(.creditCardId)
-        userId = try container.decode(.userId)
-        isDefault = try container.decode(.isDefault)
-        created = try container.decode(.created)
+        creditCardId = try? container.decode(.creditCardId)
+        userId = try? container.decode(.userId)
+        isDefault = try? container.decode(.isDefault)
+        created = try? container.decode(.created)
         createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        state = try container.decode(.state)
-        cardType = try container.decode(.cardType)
-        cardMetaData = try container.decode(.cardMetaData)
-        termsAssetId = try container.decode(.termsAssetId)
-        termsAssetReferences =  try container.decode(.termsAssetReferences)
-        eligibilityExpiration = try container.decode(.eligibilityExpiration)
+        state = try? container.decode(.state)
+        cardType = try? container.decode(.cardType)
+        cardMetaData = try? container.decode(.cardMetaData)
+        termsAssetId = try? container.decode(.termsAssetId)
+        termsAssetReferences =  try? container.decode(.termsAssetReferences)
+        eligibilityExpiration = try? container.decode(.eligibilityExpiration)
         eligibilityExpirationEpoch = try container.decode(.eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
-        deviceRelationships = try container.decode(.deviceRelationships)
-        encryptedData = try container.decode(.encryptedData)
-        targetDeviceId = try container.decode(.targetDeviceId)
-        targetDeviceType = try container.decode(.targetDeviceType)
-        verificationMethods = try container.decode(.verificationMethods)
-        externalTokenReference = try container.decode(.externalTokenReference)
-        pan = try container.decode(.pan)
-        expMonth = try container.decode(.expMonth)
-        expYear = try container.decode(.expYear)
-        cvv = try container.decode(.cvv)
-        name = try container.decode(.name)
-        address = try container.decode(.address)
-        topOfWalletAPDUCommands = try container.decode(.topOfWalletAPDUCommands)
+        deviceRelationships = try? container.decode(.deviceRelationships)
+        encryptedData = try? container.decode(.encryptedData)
+        targetDeviceId = try? container.decode(.targetDeviceId)
+        targetDeviceType = try? container.decode(.targetDeviceType)
+        verificationMethods = try? container.decode(.verificationMethods)
+        externalTokenReference = try? container.decode(.externalTokenReference)
+        pan = try? container.decode(.pan)
+        expMonth = try? container.decode(.expMonth)
+        expYear = try? container.decode(.expYear)
+        cvv = try? container.decode(.cvv)
+        name = try? container.decode(.name)
+        address = try? container.decode(.address)
+        topOfWalletAPDUCommands = try? container.decode(.topOfWalletAPDUCommands)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(creditCardId, forKey: .creditCardId)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(isDefault, forKey: .isDefault)
-        try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(state, forKey: .state)
-        try container.encode(cardType, forKey: .cardType)
-        try container.encode(cardMetaData, forKey: .cardMetaData)
-        try container.encode(termsAssetId, forKey: .termsAssetId)
-        try container.encode(termsAssetReferences, forKey: .termsAssetReferences)
-        try container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
-        try container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(deviceRelationships, forKey: .deviceRelationships)
-        try container.encode(encryptedData, forKey: .encryptedData)
-        try container.encode(targetDeviceId, forKey: .targetDeviceId)
-        try container.encode(targetDeviceType, forKey: .targetDeviceType)
-        try container.encode(verificationMethods, forKey: .verificationMethods)
-        try container.encode(externalTokenReference, forKey: .externalTokenReference)
-        try container.encode(pan, forKey: .pan)
-        try container.encode(expMonth, forKey: .expMonth)
-        try container.encode(expYear, forKey: .expYear)
-        try container.encode(cvv, forKey: .cvv)
-        try container.encode(name, forKey: .name)
-        try container.encode(address, forKey: .address)
-        try container.encode(topOfWalletAPDUCommands, forKey: .topOfWalletAPDUCommands)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(creditCardId, forKey: .creditCardId)
+        try? container.encode(userId, forKey: .userId)
+        try? container.encode(isDefault, forKey: .isDefault)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(state, forKey: .state)
+        try? container.encode(cardType, forKey: .cardType)
+        try? container.encode(cardMetaData, forKey: .cardMetaData)
+        try? container.encode(termsAssetId, forKey: .termsAssetId)
+        try? container.encode(termsAssetReferences, forKey: .termsAssetReferences)
+        try? container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
+        try? container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(deviceRelationships, forKey: .deviceRelationships)
+        try? container.encode(encryptedData, forKey: .encryptedData)
+        try? container.encode(targetDeviceId, forKey: .targetDeviceId)
+        try? container.encode(targetDeviceType, forKey: .targetDeviceType)
+        try? container.encode(verificationMethods, forKey: .verificationMethods)
+        try? container.encode(externalTokenReference, forKey: .externalTokenReference)
+        try? container.encode(pan, forKey: .pan)
+        try? container.encode(expMonth, forKey: .expMonth)
+        try? container.encode(expYear, forKey: .expYear)
+        try? container.encode(cvv, forKey: .cvv)
+        try? container.encode(name, forKey: .name)
+        try? container.encode(address, forKey: .address)
+        try? container.encode(topOfWalletAPDUCommands, forKey: .topOfWalletAPDUCommands)
     }
     
     func applySecret(_ secret: Foundation.Data, expectedKeyId: String?) {
@@ -275,7 +277,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter city:         city
      - parameter state:        state
      - parameter postalCode:   postal code
-     - parameter countryCode:  country code
+     - parameter countryCode:  country? code
      - parameter completion:   UpdateCreditCardHandler closure
      */
     @objc open func update(name: String?,
@@ -496,42 +498,44 @@ open class CardMetadata: NSObject, ClientModel, Serializable {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        foregroundColor = try container.decode(.foregroundColor)
-        issuerName = try container.decode(.issuerName)
-        shortDescription = try container.decode(.shortDescription)
-        longDescription = try container.decode(.longDescription)
-        contactUrl = try container.decode(.contactUrl)
-        contactPhone = try container.decode(.contactPhone)
-        contactEmail = try container.decode(.contactEmail)
-        termsAndConditionsUrl = try container.decode(.termsAndConditionsUrl)
-        privacyPolicyUrl = try container.decode(.privacyPolicyUrl)
-        brandLogo = try container.decode(.brandLogo)
-        cardBackground = try container.decode(.cardBackground)
-        cardBackgroundCombined = try container.decode(.cardBackgroundCombined)
-        cardBackgroundCombinedEmbossed = try container.decode(.cardBackgroundCombinedEmbossed)
-        coBrandLogo = try container.decode(.coBrandLogo)
-        icon = try container.decode(.icon)
-        issuerLogo = try container.decode(.issuerLogo)
+        
+        foregroundColor = try? container.decode(.foregroundColor)
+        issuerName = try? container.decode(.issuerName)
+        shortDescription = try? container.decode(.shortDescription)
+        longDescription = try? container.decode(.longDescription)
+        contactUrl = try? container.decode(.contactUrl)
+        contactPhone = try? container.decode(.contactPhone)
+        contactEmail = try? container.decode(.contactEmail)
+        termsAndConditionsUrl = try? container.decode(.termsAndConditionsUrl)
+        privacyPolicyUrl = try? container.decode(.privacyPolicyUrl)
+        brandLogo = try? container.decode(.brandLogo)
+        cardBackground = try? container.decode(.cardBackground)
+        cardBackgroundCombined = try? container.decode(.cardBackgroundCombined)
+        cardBackgroundCombinedEmbossed = try? container.decode(.cardBackgroundCombinedEmbossed)
+        coBrandLogo = try? container.decode(.coBrandLogo)
+        icon = try? container.decode(.icon)
+        issuerLogo = try? container.decode(.issuerLogo)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(foregroundColor, forKey: .foregroundColor)
-        try container.encode(issuerName, forKey: .issuerName)
-        try container.encode(shortDescription, forKey: .shortDescription)
-        try container.encode(longDescription, forKey: .longDescription)
-        try container.encode(contactUrl, forKey: .contactUrl)
-        try container.encode(contactPhone, forKey: .contactPhone)
-        try container.encode(contactEmail, forKey: .contactEmail)
-        try container.encode(termsAndConditionsUrl, forKey: .termsAndConditionsUrl)
-        try container.encode(privacyPolicyUrl, forKey: .privacyPolicyUrl)
-        try container.encode(brandLogo, forKey: .brandLogo)
-        try container.encode(cardBackground, forKey: .cardBackground)
-        try container.encode(cardBackgroundCombined, forKey: .cardBackgroundCombined)
-        try container.encode(cardBackgroundCombinedEmbossed, forKey: .cardBackgroundCombinedEmbossed)
-        try container.encode(coBrandLogo, forKey: .coBrandLogo)
-        try container.encode(icon, forKey: .icon)
-        try container.encode(issuerLogo, forKey: .issuerLogo)
+        
+        try? container.encode(foregroundColor, forKey: .foregroundColor)
+        try? container.encode(issuerName, forKey: .issuerName)
+        try? container.encode(shortDescription, forKey: .shortDescription)
+        try? container.encode(longDescription, forKey: .longDescription)
+        try? container.encode(contactUrl, forKey: .contactUrl)
+        try? container.encode(contactPhone, forKey: .contactPhone)
+        try? container.encode(contactEmail, forKey: .contactEmail)
+        try? container.encode(termsAndConditionsUrl, forKey: .termsAndConditionsUrl)
+        try? container.encode(privacyPolicyUrl, forKey: .privacyPolicyUrl)
+        try? container.encode(brandLogo, forKey: .brandLogo)
+        try? container.encode(cardBackground, forKey: .cardBackground)
+        try? container.encode(cardBackgroundCombined, forKey: .cardBackgroundCombined)
+        try? container.encode(cardBackgroundCombinedEmbossed, forKey: .cardBackgroundCombinedEmbossed)
+        try? container.encode(coBrandLogo, forKey: .coBrandLogo)
+        try? container.encode(icon, forKey: .icon)
+        try? container.encode(issuerLogo, forKey: .issuerLogo)
     }
 }
 
@@ -545,19 +549,20 @@ open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetri
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
         case mimeType
-
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        mimeType = try container.decode(.mimeType)
+        mimeType = try? container.decode(.mimeType)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(mimeType, forKey: .mimeType)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(mimeType, forKey: .mimeType)
     }
 
     @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
@@ -612,38 +617,40 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        deviceType = try container.decode(.deviceType)
-        deviceIdentifier = try container.decode(.deviceIdentifier)
-        manufacturerName = try container.decode(.manufacturerName)
-        deviceName = try container.decode(.deviceName)
-        serialNumber = try container.decode(.serialNumber)
-        modelNumber = try container.decode(.modelNumber)
-        hardwareRevision = try container.decode(.hardwareRevision)
-        firmwareRevision =  try container.decode(.firmwareRevision)
-        softwareRevision = try container.decode(.softwareRevision)
-        created = try container.decode(.created)
+        deviceType = try? container.decode(.deviceType)
+        deviceIdentifier = try? container.decode(.deviceIdentifier)
+        manufacturerName = try? container.decode(.manufacturerName)
+        deviceName = try? container.decode(.deviceName)
+        serialNumber = try? container.decode(.serialNumber)
+        modelNumber = try? container.decode(.modelNumber)
+        hardwareRevision = try? container.decode(.hardwareRevision)
+        firmwareRevision =  try? container.decode(.firmwareRevision)
+        softwareRevision = try? container.decode(.softwareRevision)
+        created = try? container.decode(.created)
         createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        osName = try container.decode(.osName)
-        systemId = try container.decode(.systemId)
+        osName = try? container.decode(.osName)
+        systemId = try? container.decode(.systemId)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(deviceType, forKey: .deviceType)
-        try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
-        try container.encode(manufacturerName, forKey: .manufacturerName)
-        try container.encode(deviceName, forKey: .deviceName)
-        try container.encode(serialNumber, forKey: .serialNumber)
-        try container.encode(modelNumber, forKey: .modelNumber)
-        try container.encode(hardwareRevision, forKey: .hardwareRevision)
-        try container.encode(firmwareRevision, forKey: .firmwareRevision)
-        try container.encode(softwareRevision, forKey: .softwareRevision)
-        try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(osName, forKey: .osName)
-        try container.encode(systemId, forKey: .systemId)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(deviceType, forKey: .deviceType)
+        try? container.encode(deviceIdentifier, forKey: .deviceIdentifier)
+        try? container.encode(manufacturerName, forKey: .manufacturerName)
+        try? container.encode(deviceName, forKey: .deviceName)
+        try? container.encode(serialNumber, forKey: .serialNumber)
+        try? container.encode(modelNumber, forKey: .modelNumber)
+        try? container.encode(hardwareRevision, forKey: .hardwareRevision)
+        try? container.encode(firmwareRevision, forKey: .firmwareRevision)
+        try? container.encode(softwareRevision, forKey: .softwareRevision)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(osName, forKey: .osName)
+        try? container.encode(systemId, forKey: .systemId)
     }
 
     @objc func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
@@ -678,14 +685,15 @@ open class CardInfo: Serializable {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        pan = try container.decode(.pan)
-        creditCardId = try container.decode(.creditCardId)
-        expMonth = try container.decode(.expMonth)
-        expYear = try container.decode(.expYear)
-        cvv = try container.decode(.cvv)
-        name = try container.decode(.name)
-        address = try container.decode(.address)
-        name = try container.decode(.name)
+        
+        pan = try? container.decode(.pan)
+        creditCardId = try? container.decode(.creditCardId)
+        expMonth = try? container.decode(.expMonth)
+        expYear = try? container.decode(.expYear)
+        cvv = try? container.decode(.cvv)
+        name = try? container.decode(.name)
+        address = try? container.decode(.address)
+        name = try? container.decode(.name)
     }
 }
 

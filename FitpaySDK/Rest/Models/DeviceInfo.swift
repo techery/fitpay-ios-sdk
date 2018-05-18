@@ -57,7 +57,7 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
             }
         }
     }
-    
+     
     override public init() {
     }
 
@@ -99,66 +99,68 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         case pairing
         case secureElement
         case secureElementId
-        case casd = "casdCert"
+        case casd
         case cardRelationships
         case metadata
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        created = try container.decode(.created)
+        created = try? container.decode(.created)
         createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        deviceIdentifier = try container.decode(.deviceIdentifier)
-        deviceName = try container.decode(.deviceName)
-        deviceType = try container.decode(.deviceType)
-        manufacturerName = try container.decode(.manufacturerName)
-        state = try container.decode(.state)
-        serialNumber = try container.decode(.serialNumber)
-        modelNumber = try container.decode(.modelNumber)
-        hardwareRevision = try container.decode(.hardwareRevision)
-        firmwareRevision =  try container.decode(.firmwareRevision)
-        softwareRevision = try container.decode(.softwareRevision)
-        notificationToken = try container.decode(.notificationToken)
-        osName = try container.decode(.osName)
-        systemId = try container.decode(.systemId)
-        licenseKey = try container.decode(.licenseKey)
-        bdAddress = try container.decode(.bdAddress)
-        pairing = try container.decode(.pairing)
-        if let secureElement: [String: String] = try container.decode(.secureElement)  {
+        deviceIdentifier = try? container.decode(.deviceIdentifier)
+        deviceName = try? container.decode(.deviceName)
+        deviceType = try? container.decode(.deviceType)
+        manufacturerName = try? container.decode(.manufacturerName)
+        state = try? container.decode(.state)
+        serialNumber = try? container.decode(.serialNumber)
+        modelNumber = try? container.decode(.modelNumber)
+        hardwareRevision = try? container.decode(.hardwareRevision)
+        firmwareRevision =  try? container.decode(.firmwareRevision)
+        softwareRevision = try? container.decode(.softwareRevision)
+        notificationToken = try? container.decode(.notificationToken)
+        osName = try? container.decode(.osName)
+        systemId = try? container.decode(.systemId)
+        licenseKey = try? container.decode(.licenseKey)
+        bdAddress = try? container.decode(.bdAddress)
+        pairing = try? container.decode(.pairing)
+        if let secureElement: [String: String] = try? container.decode(.secureElement)  {
             secureElementId = secureElement["secureElementId"]
             casd = secureElement["casdCert"]
         } else {
-            secureElementId = try container.decode(.secureElementId)
-            casd = try container.decode(.casd)
+            secureElementId = try? container.decode(.secureElementId)
+            casd = try? container.decode(.casd)
         }
 
-        self.cardRelationships = try container.decode(.cardRelationships)
-        metadata = try container.decode([String : Any].self)
+        self.cardRelationships = try? container.decode(.cardRelationships)
+        metadata = try? container.decode([String : Any].self)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
-        try container.encode(deviceName, forKey: .deviceName)
-        try container.encode(deviceType, forKey: .deviceType)
-        try container.encode(serialNumber, forKey: .serialNumber)
-        try container.encode(modelNumber, forKey: .modelNumber)
-        try container.encode(hardwareRevision, forKey: .hardwareRevision)
-        try container.encode(firmwareRevision, forKey: .firmwareRevision)
-        try container.encode(softwareRevision, forKey: .softwareRevision)
-        try container.encode(notificationToken, forKey: .notificationToken)
-        try container.encode(osName, forKey: .osName)
-        try container.encode(systemId, forKey: .systemId)
-        try container.encode(licenseKey, forKey: .licenseKey)
-        try container.encode(bdAddress, forKey: .bdAddress)
-        try container.encode(pairing, forKey: .pairing)
-        try container.encode(secureElementId, forKey: .secureElementId)
-        try container.encode(casd, forKey: .casd)
-        try container.encode(cardRelationships, forKey: .cardRelationships)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(deviceIdentifier, forKey: .deviceIdentifier)
+        try? container.encode(deviceName, forKey: .deviceName)
+        try? container.encode(deviceType, forKey: .deviceType)
+        try? container.encode(serialNumber, forKey: .serialNumber)
+        try? container.encode(modelNumber, forKey: .modelNumber)
+        try? container.encode(hardwareRevision, forKey: .hardwareRevision)
+        try? container.encode(firmwareRevision, forKey: .firmwareRevision)
+        try? container.encode(softwareRevision, forKey: .softwareRevision)
+        try? container.encode(notificationToken, forKey: .notificationToken)
+        try? container.encode(osName, forKey: .osName)
+        try? container.encode(systemId, forKey: .systemId)
+        try? container.encode(licenseKey, forKey: .licenseKey)
+        try? container.encode(bdAddress, forKey: .bdAddress)
+        try? container.encode(pairing, forKey: .pairing)
+        try? container.encode(secureElementId, forKey: .secureElementId)
+        try? container.encode(casd, forKey: .casd)
+        try? container.encode(cardRelationships, forKey: .cardRelationships)
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {
@@ -376,22 +378,24 @@ open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyabl
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        creditCardId = try container.decode(.creditCardId)
-        encryptedData = try container.decode(.encryptedData)
-        pan = try container.decode(.pan)
-        expMonth = try container.decode(.expMonth)
-        expYear = try container.decode(.expYear)
+        creditCardId = try? container.decode(.creditCardId)
+        encryptedData = try? container.decode(.encryptedData)
+        pan = try? container.decode(.pan)
+        expMonth = try? container.decode(.expMonth)
+        expYear = try? container.decode(.expYear)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(creditCardId, forKey: .creditCardId)
-        try container.encode(encryptedData, forKey: .encryptedData)
-        try container.encode(pan, forKey: .pan)
-        try container.encode(expMonth, forKey: .expMonth)
-        try container.encode(expYear, forKey: .expYear)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(creditCardId, forKey: .creditCardId)
+        try? container.encode(encryptedData, forKey: .encryptedData)
+        try? container.encode(pan, forKey: .pan)
+        try? container.encode(expMonth, forKey: .expMonth)
+        try? container.encode(expYear, forKey: .expYear)
     }
 
     internal func applySecret(_ secret: Data, expectedKeyId: String?) {

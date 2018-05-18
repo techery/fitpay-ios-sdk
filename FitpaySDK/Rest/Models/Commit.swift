@@ -35,21 +35,21 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        commitTypeString = try container.decode(.commitTypeString)
-        created = try container.decode(.created)
-        previousCommit = try container.decode(.previousCommit)
-        commit = try container.decode(.commit)
-        encryptedData = try container.decode(.encryptedData)
+        commitTypeString = try? container.decode(.commitTypeString)
+        created = try? container.decode(.created)
+        previousCommit = try? container.decode(.previousCommit)
+        commit = try? container.decode(.commit)
+        encryptedData = try? container.decode(.encryptedData)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(commitTypeString, forKey: .commitTypeString)
-        try container.encode(created, forKey: .created)
-        try container.encode(previousCommit, forKey: .previousCommit)
-        try container.encode(commit, forKey: .commit)
-        try container.encode(encryptedData, forKey: .encryptedData)
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(commitTypeString, forKey: .commitTypeString)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(previousCommit, forKey: .previousCommit)
+        try? container.encode(commit, forKey: .commit)
+        try? container.encode(encryptedData, forKey: .encryptedData)
     }
 
     
@@ -136,18 +136,19 @@ open class Payload : NSObject, Serializable
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        if let _ : String = try container.decode(.packageId) {
+        if let _ : String = try? container.decode(.packageId) {
             apduPackage = try? ApduPackage(from: decoder)
-        } else if let _ : String = try container.decode(.creditCardId) {
+        } else if let _ : String = try? container.decode(.creditCardId) {
             creditCard = try? CreditCard(from: decoder)
         }
 
-        self.payloadDictionary = try container.decode([String : Any].self)
+        self.payloadDictionary = try? container.decode([String : Any].self)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(creditCard, forKey: .creditCardId)
-        try container.encode(apduPackage, forKey: .packageId)
+        
+        try? container.encode(creditCard, forKey: .creditCardId)
+        try? container.encode(apduPackage, forKey: .packageId)
     }
 }
