@@ -42,6 +42,7 @@
 		2786DB02207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		2786DB03207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
+		27A5B65920AF2A030012BFB4 /* CardRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0302720ACBEE6009120AD /* CardRelationship.swift */; };
 		27B8884D20A4C9DC0027969D /* ImageWithOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8884C20A4C9DC0027969D /* ImageWithOptions.swift */; };
 		27B8885120A4FBA40027969D /* A2AContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8884F20A4FA560027969D /* A2AContextTests.swift */; };
 		27B8885220A4FBA40027969D /* A2AContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8884F20A4FA560027969D /* A2AContextTests.swift */; };
@@ -1192,7 +1193,6 @@
 				37139BE21F177B21001EEE73 /* SyncRequest.swift in Sources */,
 				CD038E19C412D95ED6F9F036 /* Relationship.swift in Sources */,
 				37DB88761F0F87A600B070DA /* Image.swift in Sources */,
-				37AB3F8D1E9FEBDC001B2981 /* IntExtensions.swift in Sources */,
 				27E0303020ADE58A009120AD /* JSONCodingKeys.swift in Sources */,
 				37D0CFF21EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift in Sources */,
 				91185B7920615E0C00E5E1CE /* A2AVerificationError.swift in Sources */,
@@ -1416,6 +1416,7 @@
 				3A93A0A71DB8CA2C00A9FEB4 /* FitpayNotificationsManager.swift in Sources */,
 				3A93A0A91DB8CA2C00A9FEB4 /* RestSession.swift in Sources */,
 				91185B7F2061694400E5E1CE /* A2AVerificationRequest.swift in Sources */,
+				27A5B65920AF2A030012BFB4 /* CardRelationship.swift in Sources */,
 				374B626B1EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift in Sources */,
 				3A640B4B1DDF1127008AD936 /* FitpaySDKLogger.swift in Sources */,
 				37F781B11F17C8FA00742E15 /* SyncRequestsQueue.swift in Sources */,

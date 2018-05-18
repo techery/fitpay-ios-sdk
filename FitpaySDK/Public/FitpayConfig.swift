@@ -60,10 +60,20 @@ import Foundation
         guard let fitpayConfigModel = try? FitpayConfigModel(jsonResult) else { return }
         
         FitpayConfig.clientId = fitpayConfigModel.clientId
-        FitpayConfig.webURL = fitpayConfigModel.webURL
-        FitpayConfig.redirectURL = fitpayConfigModel.redirectURL
-        FitpayConfig.apiURL = fitpayConfigModel.apiURL
-        FitpayConfig.authURL = fitpayConfigModel.authURL
+        
+        if let webURL = fitpayConfigModel.webURL {
+            FitpayConfig.webURL = webURL
+        }
+        if let redirectURL = fitpayConfigModel.redirectURL {
+            FitpayConfig.redirectURL = redirectURL
+        }
+        if let apiURL = fitpayConfigModel.apiURL {
+            FitpayConfig.apiURL = apiURL
+        }
+        if let authURL = fitpayConfigModel.authURL {
+            FitpayConfig.authURL = authURL
+        }
+        
         FitpayConfig.supportApp2App = fitpayConfigModel.supportApp2App
         FitpayConfig.minLogLevel = LogLevel(rawValue: fitpayConfigModel.minLogLevel) ?? LogLevel.info
         FitpayConfig.Web.demoMode = fitpayConfigModel.web.demoMode
@@ -126,10 +136,10 @@ import Foundation
     
     private struct FitpayConfigModel: Serializable {
         var clientId: String
-        var webURL: String
-        var redirectURL: String
-        var apiURL: String
-        var authURL: String
+        var webURL: String?
+        var redirectURL: String?
+        var apiURL: String?
+        var authURL: String?
         var supportApp2App: Bool
         var minLogLevel: Int
         var web: FitpayConfigWebModel
@@ -137,8 +147,8 @@ import Foundation
     
     private struct FitpayConfigWebModel: Serializable  {
         var demoMode: Bool
-        var demoCardGroup: String
-        var cssURL: String
+        var demoCardGroup: String?
+        var cssURL: String?
         var supportCardScanner: Bool
     }
     
