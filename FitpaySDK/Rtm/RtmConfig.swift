@@ -32,13 +32,15 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     var hasAccount: Bool = false
     var accessToken: String?
     
+    // TODO: shouldn't be private? / add to FitpayWeb
+    private var language: String?
+    
     private var clientId: String?
     private var userEmail: String?
     private var version: String?
     private var demoMode: Bool = false
     private var customCSSUrl: String?
     private var demoCardGroup: String?
-    private var language: String?
     private var baseLanguageUrl: String?
     private var useWebCardScanner: Bool = true
     
@@ -51,6 +53,7 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
         self.demoCardGroup = FitpayConfig.Web.demoCardGroup
         self.customCSSUrl = FitpayConfig.Web.cssURL
         self.useWebCardScanner = !FitpayConfig.Web.supportCardScanner
+        self.baseLanguageUrl = FitpayConfig.Web.baseLanguageURL
         
         self.userEmail = userEmail
         self.deviceInfo = deviceInfo

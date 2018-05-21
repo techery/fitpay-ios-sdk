@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>FitpayEvent Class Reference</title>
+    <title>DeviceResetStatus Enumeration Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Class/FitpayEvent" class="dashAnchor"></a>
-    <a title="FitpayEvent Class Reference"></a>
+    <a name="//apple_ref/swift/Enum/DeviceResetStatus" class="dashAnchor"></a>
+    <a title="DeviceResetStatus Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">FitpaySDK Docs</a> (23% documented)</p>
@@ -21,7 +21,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">FitpaySDK Reference</a>
         <img id="carat" src="../img/carat.png" />
-        FitpayEvent Class Reference
+        DeviceResetStatus Enumeration Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -375,10 +375,10 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>FitpayEvent</h1>
+            <h1>DeviceResetStatus</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">FitpayEvent</span><span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">DeviceResetStatus</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kt">Serializable</span></code></pre>
 
                 </div>
               </div>
@@ -391,9 +391,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A5EventC7eventIdAA0aC12TypeProtocol_pvp"></a>
-                    <a name="//apple_ref/swift/Property/eventId" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A5EventC7eventIdAA0aC12TypeProtocol_pvp">eventId</a>
+                    <a name="/s:9FitpaySDK17DeviceResetStatusO10InProgressA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/InProgress" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK17DeviceResetStatusO10InProgressA2CmF">InProgress</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -408,142 +408,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">eventId</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/FitpayEventTypeProtocol.html">FitpayEventTypeProtocol</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK0A5EventC6statusAA0C6StatusOvp"></a>
-                    <a name="//apple_ref/swift/Property/status" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A5EventC6statusAA0C6StatusOvp">status</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventStatus.html">EventStatus</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK0A5EventC6reasons5Error_pSgvp"></a>
-                    <a name="//apple_ref/swift/Property/reason" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A5EventC6reasons5Error_pSgvp">reason</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">reason</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK0A5EventC4date10Foundation4DateVvp"></a>
-                    <a name="//apple_ref/swift/Property/date" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A5EventC4date10Foundation4DateVvp">date</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">date</span><span class="p">:</span> <span class="kt">Date</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK0A5EventC9eventDataypvp"></a>
-                    <a name="//apple_ref/swift/Property/eventData" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A5EventC9eventDataypvp">eventData</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">eventData</span> <span class="p">:</span> <span class="kt">Any</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9FitpaySDK0A5EventCAcA0aC12TypeProtocol_p7eventId_yp0F4DataAA0C6StatusO6statuss5Error_pSg6reasontcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(eventId:eventData:status:reason:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A5EventCAcA0aC12TypeProtocol_p7eventId_yp0F4DataAA0C6StatusO6statuss5Error_pSg6reasontcfc">init(eventId:eventData:status:reason:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">eventId</span><span class="p">:</span> <span class="kt"><a href="../Protocols/FitpayEventTypeProtocol.html">FitpayEventTypeProtocol</a></span><span class="p">,</span> <span class="nv">eventData</span><span class="p">:</span> <span class="kt">Any</span><span class="p">,</span> <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventStatus.html">EventStatus</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="nv">reason</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="kt">InProgress</span>  <span class="o">=</span> <span class="s">"IN_PROGRESS"</span></code></pre>
 
                         </div>
                       </div>
@@ -557,9 +422,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9FitpaySDK0A5EventC11eventIdObjCSo8NSNumberCSgvp"></a>
-                    <a name="//apple_ref/swift/Property/eventIdObjC" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9FitpaySDK0A5EventC11eventIdObjCSo8NSNumberCSgvp">eventIdObjC</a>
+                    <a name="/s:9FitpaySDK17DeviceResetStatusO0D8CompleteA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/ResetComplete" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK17DeviceResetStatusO0D8CompleteA2CmF">ResetComplete</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -574,7 +439,100 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">eventIdObjC</span> <span class="p">:</span> <span class="kt">NSNumber</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="kt">ResetComplete</span>  <span class="o">=</span> <span class="s">"RESET_COMPLETE"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9FitpaySDK17DeviceResetStatusO7DeletedA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/Deleted" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK17DeviceResetStatusO7DeletedA2CmF">Deleted</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="kt">Deleted</span>   <span class="o">=</span> <span class="s">"DELETED"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9FitpaySDK17DeviceResetStatusO12DeleteFailedA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/DeleteFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK17DeviceResetStatusO12DeleteFailedA2CmF">DeleteFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="kt">DeleteFailed</span>  <span class="o">=</span> <span class="s">"DELETE_FAILED"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9FitpaySDK17DeviceResetStatusO0D6FailedA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/ResetFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9FitpaySDK17DeviceResetStatusO0D6FailedA2CmF">ResetFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="kt">ResetFailed</span>   <span class="o">=</span> <span class="s">"RESET_FAILED"</span></code></pre>
 
                         </div>
                       </div>

@@ -1,6 +1,7 @@
 import Foundation
 
 /// Main Configuration Object
+///
 /// Set variables before instantiating other Fitpay objects
 @objc public class FitpayConfig: NSObject {
     
@@ -20,6 +21,7 @@ import Foundation
     @objc public static var authURL = "https://auth.fit-pay.com"
     
     /// Turn on when you are ready to implement App 2 App stepup methods
+    ///
     /// Only recommended for iOS 10+
     @objc public static var supportApp2App = false
     
@@ -31,13 +33,15 @@ import Foundation
     
     //MARK: - Functions
     
-    /// Setup FitpaySDK quick method
-    /// Uses all of the default variables and sets clientId
-    ///
-    /// Call configure in the AppDelegate `didFinishLaunchingWithOptions:`
-    /// before doing anything else with the FItpaySDK
-    ///
-    /// - Parameter clientId: clientId from Fitpay
+    /**
+     Setup FitpaySDK quick method
+     
+     Uses all of the default variables and sets clientId
+     
+     Call configure in the AppDelegate `didFinishLaunchingWithOptions:` before doing anything else with the FItpaySDK
+     
+     - Parameter clientId: clientId from Fitpay
+     */
     @objc public static func configure(clientId: String) {
         self.clientId = clientId
         
@@ -47,12 +51,15 @@ import Foundation
         log.debug("Fitpay configured successfully")
     }
     
-    /// Setup FitpaySDK advanced method
-    /// All variables are customizable via json file
-    /// Call configure in the AppDelegate `didFinishLaunchingWithOptions:`
-    /// before doing anything else with the FItpaySDK
-    ///
-    /// - Parameter fileName: name without extension or leading path defaults to `fitpayconfig`
+    /**
+     Setup FitpaySDK advanced method
+     
+     All variables are customizable via json file
+     
+     Call configure in the AppDelegate `didFinishLaunchingWithOptions:`  before doing anything else with the FItpaySDK
+     
+     - Parameter fileName: name without extension or leading path defaults to `fitpayconfig`
+     */
     @objc public static func configure(fileName: String = "fitpayconfig") {
         guard let path = Bundle.main.path(forResource: fileName, ofType: "json") else { return }
         guard let data = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe) else { return }
@@ -79,6 +86,7 @@ import Foundation
         FitpayConfig.Web.demoMode = fitpayConfigModel.web.demoMode
         FitpayConfig.Web.demoCardGroup = fitpayConfigModel.web.demoCardGroup
         FitpayConfig.Web.cssURL = fitpayConfigModel.web.cssURL
+        FitpayConfig.Web.baseLanguageURL = fitpayConfigModel.web.baseLanguageURL
         FitpayConfig.Web.supportCardScanner = fitpayConfigModel.web.supportCardScanner
         
         log.debug("Fitpay configured from file successfully")
@@ -113,15 +121,26 @@ import Foundation
     @objc public class Web: NSObject {
         
         /// Shows autofill options on the add card page when enabled
+        ///
         /// Turning on in production does nothing
         @objc public static var demoMode = false
         
         /// Changes autofill options to include a default and auto-verify version of one card type
-        /// demoMode must be true and not in production for this to work
+        ///
+        /// `demoMode` must be true and you must not be in production for this to work
         @objc public static var demoCardGroup: String?
         
         /// Overrides the default CSS
         @objc public static var cssURL: String?
+        
+        /**
+         [Getting Started with Translations]: https://support.fit-pay.com/hc/en-us/articles/115003060672-Getting-Started-with-Translations
+         
+         Base URL to language files used in conjuction with language parameter in RTM
+         
+         More info at [Getting Started with Translations]
+         */
+        @objc public static var baseLanguageURL: String?
         
         /// Turn on when you are ready to implement card scanning methods
         @objc public static var supportCardScanner = false
@@ -132,7 +151,7 @@ import Foundation
 
 // MARK: - Structs for json
 
-@objc extension FitpayConfig {
+extension FitpayConfig {
     
     private struct FitpayConfigModel: Serializable {
         var clientId: String
@@ -149,6 +168,7 @@ import Foundation
         var demoMode: Bool
         var demoCardGroup: String?
         var cssURL: String?
+        var baseLanguageURL: String?
         var supportCardScanner: Bool
     }
     
