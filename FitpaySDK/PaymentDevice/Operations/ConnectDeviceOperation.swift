@@ -1,11 +1,3 @@
-//
-//  ConnectDeviceOperation.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 10.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 import RxSwift
 

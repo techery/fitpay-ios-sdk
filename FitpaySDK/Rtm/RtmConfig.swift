@@ -1,18 +1,18 @@
 
 enum RtmConfigDafaultMappingKey: String {
-    case clientId = "clientId"
-    case redirectUri = "redirectUri"
-    case userEmail = "userEmail"
+    case clientId
+    case redirectUri
+    case userEmail
     case deviceInfo = "paymentDevice"
     case hasAccount = "account"
-    case version = "version"
-    case demoMode = "demoMode"
+    case version
+    case demoMode
     case customCSSUrl = "themeOverrideCssUrl"
-    case demoCardGroup = "demoCardGroup"
-    case accessToken = "accessToken"
-    case language = "language"
+    case demoCardGroup
+    case accessToken
+    case language
     case baseLanguageUrl = "baseLangUrl"
-    case useWebCardScanner = "useWebCardScanner"
+    case useWebCardScanner
 }
 
 protocol RtmConfigProtocol {

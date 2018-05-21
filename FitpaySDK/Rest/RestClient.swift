@@ -115,7 +115,8 @@ open class RestClient: NSObject {
     
 }
 
-// MARK: Confirm package
+// MARK: - Confirm package
+
 extension RestClient {
     /**
      Completion handler
@@ -124,7 +125,7 @@ extension RestClient {
      */
     public typealias ConfirmCommitHandler = (_ error: NSError?) -> Void
     
-    open func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
+    public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(error) }
@@ -154,7 +155,7 @@ extension RestClient {
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    open func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
+    public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
         guard package.packageId != nil else {
             completion(NSError.error(code: ErrorCode.badRequest, domain: RestClient.self, message: "packageId should not be nil"))
             return
@@ -176,7 +177,8 @@ extension RestClient {
     }
 }
 
-// MARK: Transactions
+// MARK: - Transactions
+
 extension RestClient {
     /**
      Completion handler
@@ -229,7 +231,8 @@ extension RestClient {
 
 }
 
-// MARK: Encryption
+// MARK: - Encryption
+
 extension RestClient {
     /**
      Completion handler
@@ -338,6 +341,7 @@ extension RestClient {
             }
         }
     }
+
 }
 
 // MARK: Request Signature Helpers
@@ -531,7 +535,7 @@ extension RestClient {
      - parameter userId: user id
      - parameter completion:      ResetHandler closure
      */
-    internal func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
+    func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async(execute: {
@@ -561,7 +565,7 @@ extension RestClient {
      - parameter resetId:  reset device task id
      - parameter completion:   ResetHandler closure
      */
-    internal func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
+    func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             if let headers = headers {
                 let request = self._manager.request(resetUrl, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
@@ -593,6 +597,8 @@ extension RestClient {
  - parameter completion:  AssetsHandler closure
  */
 public protocol AssetRetrivable {
+    
     func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler)
+    
 }
 

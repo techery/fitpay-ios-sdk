@@ -1,11 +1,3 @@
-//
-//  ResetDeviceTask.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 4/4/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
-
 
 public enum DeviceResetStatus: String, Serializable {
     case InProgress  = "IN_PROGRESS"
@@ -15,9 +7,8 @@ public enum DeviceResetStatus: String, Serializable {
     case ResetFailed   = "RESET_FAILED"
 }
 
-@objcMembers
-open class ResetDeviceResult: Serializable {
-    internal var links: [ResourceLink]?
+@objcMembers open class ResetDeviceResult: Serializable {
+    
     open var resetId: String?
     open var status: DeviceResetStatus?
     open var seStatus: DeviceResetStatus?
@@ -25,6 +16,9 @@ open class ResetDeviceResult: Serializable {
     open var deviceResetUrl: String? {
         return self.links?.first?.href 
     }
+    
+    var links: [ResourceLink]?
+
 
     private static let deviceResetTasksKey = "resetDeviceTasks"
 

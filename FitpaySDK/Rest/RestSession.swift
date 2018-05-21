@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 import JWTDecode
 
-class AuthorizationDetails: Serializable {
+struct AuthorizationDetails: Serializable {
     var tokenType: String?
     var accessToken: String?
     var expiresIn: String?
@@ -95,8 +95,7 @@ class AuthorizationDetails: Serializable {
         ]
 
         let request = _manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate().responseJSON(queue: DispatchQueue.global()) {
-            (response) in
+        request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
 
             DispatchQueue.main.async {
                 if let resultError = response.result.error {

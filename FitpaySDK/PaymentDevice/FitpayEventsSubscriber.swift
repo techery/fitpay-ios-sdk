@@ -1,11 +1,3 @@
-//
-//  FitpayEventsSubscriber.swift
-//  FitpaySDK
-//
-//  Created by Anton on 25.11.16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 open class FitpayEventsSubscriber {

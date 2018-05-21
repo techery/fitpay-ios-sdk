@@ -21,19 +21,7 @@ extension RestClient {
      */
     public typealias UserHandler = (_ user: User?, _ error: NSError?) -> Void
     
-    //MARK: - Functions
-    
-    /**
-     Returns a list of all users that belong to your organization. The customers are returned sorted by creation date, with the most recently created customers appearing first
-     
-     - parameter limit:      Max number of profiles per page
-     - parameter offset:     Start index position for list of entities returned
-     - parameter completion: ListUsersHandler closure
-     */
-    open func listUsers(limit: Int, offset: Int, completion: ListUsersHandler) {
-        //TODO: Implement or remove this
-        assertionFailure("unimplemented functionality")
-    }
+    //MARK: - Public Functions
     
     /**
      Creates a new user within your organization
@@ -44,9 +32,9 @@ extension RestClient {
      - parameter email:      email of the user
      - parameter completion: CreateUserHandler closure
      */
-    open func createUser(_ email: String, password: String, firstName: String?, lastName: String?,
-                         birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?,
-                         originAccountCreated: String?, completion: @escaping UserHandler) {
+    @objc public func createUser(_ email: String, password: String, firstName: String?, lastName: String?,
+                                 birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?,
+                                 originAccountCreated: String?, completion: @escaping UserHandler) {
         log.verbose("request create user: \(email)")
         
         self.preparKeyHeader { [weak self] (headers, error) in
@@ -177,14 +165,9 @@ extension RestClient {
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    func updateUser(_ url: String,
-                             firstName: String?,
-                             lastName: String?,
-                             birthDate: String?,
-                             originAccountCreated: String?,
-                             termsAccepted: String?,
-                             termsVersion: String?,
-                             completion: @escaping UserHandler) {
+    @objc public func updateUser(_ url: String,  firstName: String?, lastName: String?,
+                                 birthDate: String?, originAccountCreated: String?, termsAccepted: String?,
+                                 termsVersion: String?, completion: @escaping UserHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(nil, error)
@@ -258,7 +241,7 @@ extension RestClient {
      - parameter id:         user id
      - parameter completion: DeleteHandler closure
      */
-    func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
+    @objc public func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(error)
@@ -274,7 +257,9 @@ extension RestClient {
         }
     }
     
-    open func user(_ url: String, completion: @escaping UserHandler) {
+    // MARK: - Internal Functions
+    
+    @objc public func user(_ url: String, completion: @escaping UserHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -294,7 +279,7 @@ extension RestClient {
                         let user = try? User(resultValue)
                         user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                         user?.client = self
-                        completion(user, response.result.error as NSError?)                        
+                        completion(user, response.result.error as NSError?)
                     } else {
                         completion(nil, NSError.unhandledError(RestClient.self))
                     }

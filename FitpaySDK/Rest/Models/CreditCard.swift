@@ -1,8 +1,6 @@
 import Foundation
 
 @objcMembers open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
-    var links: [ResourceLink]?
-    var encryptedData: String?
 
     open var creditCardId: String?
     open var userId: String?
@@ -29,6 +27,9 @@ import Foundation
     open var name: String?
     open var address: Address?
     open var topOfWalletAPDUCommands: [APDUCommand]?
+    
+    var links: [ResourceLink]?
+    var encryptedData: String?
 
     private static let selfResource         = "self"
     private static let acceptTermsResource  = "acceptTerms"

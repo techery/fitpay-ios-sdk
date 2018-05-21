@@ -39,7 +39,7 @@ extension RestClient {
      */
     public typealias VerifyHandler = (_ pending: Bool, _ verificationMethod: VerificationMethod?, _ error: NSError?) -> Void
     
-    //MARK - Functions
+    //MARK - Internal Functions
     
     func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
                                    street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,

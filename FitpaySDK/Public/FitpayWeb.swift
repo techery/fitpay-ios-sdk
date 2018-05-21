@@ -8,6 +8,7 @@ import WebKit
     @objc public static let shared = FitpayWeb()
 
     /// Set the rtmDelegate to receive authorization and other messages from the webview
+    ///
     /// Needed for capturing a back button press
     @objc weak open var rtmDelegate: RTMDelegate? {
         didSet {
