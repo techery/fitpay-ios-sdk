@@ -39,6 +39,7 @@ open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
         groupId = try container.decode(.groupId) ?? 0
         sequence = try container.decode(.sequence) ?? 0
         command = try container.decode(.command)
+        type = try container.decode(.type)
         continueOnFailure = try container.decode(.continueOnFailure) ?? false
     }
 
@@ -49,6 +50,7 @@ open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
         try container.encode(groupId, forKey: .groupId)
         try container.encode(sequence, forKey: .sequence)
         try container.encode(command, forKey: .command)
+        try container.encode(type, forKey: .type)
         try container.encode(continueOnFailure, forKey: .continueOnFailure)
     }
 

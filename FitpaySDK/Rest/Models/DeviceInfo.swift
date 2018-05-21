@@ -145,6 +145,8 @@ open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
         try container.encode(deviceIdentifier, forKey: .deviceIdentifier)
         try container.encode(deviceName, forKey: .deviceName)
         try container.encode(deviceType, forKey: .deviceType)
+        try container.encode(manufacturerName, forKey: .manufacturerName)
+        try container.encode(state, forKey: .state)
         try container.encode(serialNumber, forKey: .serialNumber)
         try container.encode(modelNumber, forKey: .modelNumber)
         try container.encode(hardwareRevision, forKey: .hardwareRevision)

@@ -51,7 +51,7 @@ open class RtmMessage: NSObject, Serializable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(callBackId, forKey: .callBackId)      
+        try container.encode(callBackId, forKey: .callBackId)
         try container.encode(type, forKey: .type)
     }
 }
