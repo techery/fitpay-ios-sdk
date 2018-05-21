@@ -65,6 +65,10 @@ import Foundation
         return self.links?.url(DeviceInfo.commitsResourceKey) != nil
     }
 
+    open var deviceResetUrl: String? {
+        return self.links?.url(DeviceInfo.deviceResetTasksKey)
+    }
+
     var client: RestClient? {
         get {
             return self._client
@@ -86,7 +90,8 @@ import Foundation
     private static let commitsResourceKey = "commits"
     private static let selfResourceKey = "self"
     private static let lastAckCommitResourceKey = "lastAckCommit"
-    
+    private static let deviceResetTasksKey = "deviceResetTasks"
+
     private weak var _client: RestClient?
     
     override public init() {
