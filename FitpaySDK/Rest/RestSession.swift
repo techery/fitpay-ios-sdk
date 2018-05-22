@@ -173,20 +173,22 @@ extension RestSession {
                 return
             }
             
-            user?.listDevices(limit: 20, offset: 0, completion: { (devicesColletion, error) in
+            user?.listDevices(limit: 20, offset: 0) { (devicesCollection, error) in
                 guard user != nil && error == nil else {
                     completion(nil, nil, error)
                     return
                 }
                 
-                for device in devicesColletion!.results! {
-                    if device.deviceIdentifier == deviceId {
-                        completion(user!, device, nil)
-                        return
+                if let devices = devicesCollection?.results {
+                    for device in devices {
+                        if device.deviceIdentifier == deviceId {
+                            completion(user!, device, nil)
+                            return
+                        }
                     }
                 }
                 
-                devicesColletion?.collectAllAvailable({ (devices, error) in
+                devicesCollection?.collectAllAvailable { (devices, error) in
                     guard error == nil, let devices = devices else {
                         completion(nil, nil, error)
                         return

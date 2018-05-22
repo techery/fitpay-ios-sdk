@@ -26,28 +26,30 @@ open class EncryptionKey: NSObject, Serializable
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        keyId = try container.decode(.keyId)
-        created = try container.decode(.created)
+        keyId = try? container.decode(.keyId)
+        created = try? container.decode(.created)
         createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        expiration = try container.decode(.expiration)
-        expirationEpoch = try container.decode(.expirationEpoch)
-        serverPublicKey = try container.decode(.serverPublicKey)
-        clientPublicKey = try container.decode(.clientPublicKey)
-        active = try container.decode(.active)
+        expiration = try? container.decode(.expiration)
+        expirationEpoch = try? container.decode(.expirationEpoch)
+        serverPublicKey = try? container.decode(.serverPublicKey)
+        clientPublicKey = try? container.decode(.clientPublicKey)
+        active = try? container.decode(.active)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(keyId, forKey: .keyId)
-        try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(expiration, forKey: .expiration)
-        try container.encode(expirationEpoch, forKey: .expirationEpoch)
-        try container.encode(serverPublicKey, forKey: .serverPublicKey)
-        try container.encode(clientPublicKey, forKey: .clientPublicKey)
-        try container.encode(active, forKey: .active)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(keyId, forKey: .keyId)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(expiration, forKey: .expiration)
+        try? container.encode(expirationEpoch, forKey: .expirationEpoch)
+        try? container.encode(serverPublicKey, forKey: .serverPublicKey)
+        try? container.encode(clientPublicKey, forKey: .clientPublicKey)
+        try? container.encode(active, forKey: .active)
     }
 
     /**

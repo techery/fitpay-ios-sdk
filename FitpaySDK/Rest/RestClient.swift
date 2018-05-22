@@ -478,6 +478,81 @@ extension RestClient {
             }
         }
     }
+
+}
+
+// MARK: Reset Device Tasks
+extension RestClient {
+
+    /**
+     Completion handler
+
+     - parameter error: Provides error object, or nil if no error occurs
+     */
+    public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
+    
+    /**
+     Creates a request for resetting a device
+
+     - parameter deviceId:  device id
+     - parameter userId: user id
+     - parameter completion:      ResetHandler closure
+     */
+    internal func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
+        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async(execute: {
+                    completion(nil, error)
+                })
+                return
+            }
+            let request = self._manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            request.validate().responseJSON { (response) in
+                DispatchQueue.main.async {
+                    if response.result.error != nil {
+                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                        completion(nil, error)
+                    } else if let resultValue = response.result.value {
+                        completion(try? ResetDeviceResult(resultValue), nil)
+                    } else {
+                        completion(nil, NSError.unhandledError(RestClient.self))
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     Creates a request for getting reset status
+
+     - parameter resetId:  reset device task id
+     - parameter completion:   ResetHandler closure
+     */
+    internal func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
+        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
+            if let headers = headers {
+                let request = self._manager.request(resetUrl, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request.validate().responseJSON { (response) in
+                    DispatchQueue.main.async {
+                        if response.result.error != nil {
+                            let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                            completion(nil, error)
+                        } else if let resultValue = response.result.value {
+                             completion(try? ResetDeviceResult(resultValue), nil)
+                        } else {
+                            completion(nil, NSError.unhandledError(RestClient.self))
+                        }
+                    }
+                }
+            } else {
+                DispatchQueue.main.async(execute: {
+                    completion(nil, error)
+                })
+            }
+        }
+    }
+
+}
     
 }
 

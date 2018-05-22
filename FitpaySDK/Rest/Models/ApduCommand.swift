@@ -34,22 +34,24 @@ open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        commandId = try container.decode(.commandId)
-        groupId = try container.decode(.groupId) ?? 0
-        sequence = try container.decode(.sequence) ?? 0
-        command = try container.decode(.command)
-        continueOnFailure = try container.decode(.continueOnFailure) ?? false
+        commandId = try? container.decode(.commandId)
+        groupId = try container.decodeIfPresent(Int.self, forKey: .groupId) ?? 0
+        sequence = try container.decodeIfPresent(Int.self, forKey: .sequence) ?? 0
+        command = try? container.decode(.command)
+        continueOnFailure = try container.decodeIfPresent(Bool.self, forKey: .continueOnFailure) ?? false
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(commandId, forKey: .commandId)
-        try container.encode(groupId, forKey: .groupId)
-        try container.encode(sequence, forKey: .sequence)
-        try container.encode(command, forKey: .command)
-        try container.encode(continueOnFailure, forKey: .continueOnFailure)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(commandId, forKey: .commandId)
+        try? container.encode(groupId, forKey: .groupId)
+        try? container.encode(sequence, forKey: .sequence)
+        try? container.encode(command, forKey: .command)
+        try? container.encode(continueOnFailure, forKey: .continueOnFailure)
     }
 
     open var responseDictionary : [String:Any] {
