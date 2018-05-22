@@ -238,6 +238,8 @@
 		918E26BD20B41F6900D9D750 /* MockModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26B720B41F4400D9D750 /* MockModels.swift */; };
 		918E26BE20B41F6A00D9D750 /* ModelsParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26B620B41F4300D9D750 /* ModelsParsingTests.swift */; };
 		918E26BF20B41F6A00D9D750 /* MockModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26B720B41F4400D9D750 /* MockModels.swift */; };
+		918E26C320B4340400D9D750 /* RtmDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F781F51F18F64B00742E15 /* RtmDeviceInfo.swift */; };
+		918E26C420B4340D00D9D750 /* RtmSecureDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F781F61F18F64B00742E15 /* RtmSecureDeviceInfo.swift */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A58466C1C96B65B00E4ABDC /* ClientModel.swift */; };
 		9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A62E6B51C8DCA20004ED6C0 /* Asset.swift */; };
@@ -1374,6 +1376,7 @@
 				3A93A0891DB8CA2C00A9FEB4 /* Base64Utils.swift in Sources */,
 				374D0C9B1F56FD620060A4FC /* IdVerificationResponse.swift in Sources */,
 				37DB88781F0F8B7500B070DA /* Image.swift in Sources */,
+				918E26C420B4340D00D9D750 /* RtmSecureDeviceInfo.swift in Sources */,
 				37AB3F8E1E9FEBDC001B2981 /* IntExtensions.swift in Sources */,
 				37D0CFF31EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift in Sources */,
 				3A46E1431DEEE499002D0270 /* FitpayEventsSubscriber.swift in Sources */,
@@ -1412,6 +1415,7 @@
 				37D0CFF01EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
 				3A93A09D1DB8CA2C00A9FEB4 /* Address.swift in Sources */,
 				1FE1479F201613CB005DEA29 /* CommitMetrics.swift in Sources */,
+				918E26C320B4340400D9D750 /* RtmDeviceInfo.swift in Sources */,
 				3A93A09E1DB8CA2C00A9FEB4 /* ResultCollection.swift in Sources */,
 				27FCBE6B20AE1761008EE9DA /* JSONCodingKeys.swift in Sources */,
 				3A93A09F1DB8CA2C00A9FEB4 /* BLEPackets.swift in Sources */,
