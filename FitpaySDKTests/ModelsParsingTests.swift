@@ -140,7 +140,7 @@ class ModelsParsingTests: XCTestCase {
             XCTAssertNotNil(json?["bdAddress"])
             XCTAssertNotNil(json?["pairing"])
             XCTAssertNotNil(json?["secureElementId"])
-            XCTAssertNotNil(json?["casdCert"])
+            XCTAssertNotNil(json?["casd"])
         }
 
         let rtmDeviceInfo = mockModels.getRtmDeviceInfo()
@@ -488,7 +488,7 @@ class ModelsParsingTests: XCTestCase {
         let json = rtmMessage?.toJSON()
         XCTAssertNotNil(json?["callBackId"])
         XCTAssertNotNil(json?["type"])
-        XCTAssertNotNil(json?["success"])
+        XCTAssertNotNil(json?["isSuccess"])
     }
 
     func testRelationship() {

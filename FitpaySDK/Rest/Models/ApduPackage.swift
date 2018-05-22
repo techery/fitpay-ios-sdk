@@ -69,30 +69,32 @@ open class ApduPackage : NSObject, Serializable
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
-        seIdType = try container.decode(.seIdType)
-        targetDeviceType = try container.decode(.targetDeviceType)
-        targetDeviceId = try container.decode(.targetDeviceId)
-        packageId = try container.decode(.packageId)
-        seId = try container.decode(.seId)
-        apduCommands = try container.decode(.apduCommands)
-        validUntil = try container.decode(.validUntil)
+        seIdType = try? container.decode(.seIdType)
+        targetDeviceType = try? container.decode(.targetDeviceType)
+        targetDeviceId = try? container.decode(.targetDeviceId)
+        packageId = try? container.decode(.packageId)
+        seId = try? container.decode(.seId)
+        apduCommands = try? container.decode(.apduCommands)
+        validUntil = try? container.decode(.validUntil)
         validUntilEpoch = try container.decode(.validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
-        apduPackageUrl = try container.decode(.apduPackageUrl)
+        apduPackageUrl = try? container.decode(.apduPackageUrl)
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(seIdType, forKey: .seIdType)
-        try container.encode(targetDeviceType, forKey: .targetDeviceType)
-        try container.encode(targetDeviceId, forKey: .targetDeviceId)
-        try container.encode(packageId, forKey: .packageId)
-        try container.encode(seId, forKey: .seId)
-        try container.encode(apduCommands, forKey: .apduCommands)
-        try container.encode(validUntil, forKey: .validUntil)
-        try container.encode(validUntilEpoch, forKey: .validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
-        try container.encode(apduPackageUrl, forKey: .apduPackageUrl)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(seIdType, forKey: .seIdType)
+        try? container.encode(targetDeviceType, forKey: .targetDeviceType)
+        try? container.encode(targetDeviceId, forKey: .targetDeviceId)
+        try? container.encode(packageId, forKey: .packageId)
+        try? container.encode(seId, forKey: .seId)
+        try? container.encode(apduCommands, forKey: .apduCommands)
+        try? container.encode(validUntil, forKey: .validUntil)
+        try? container.encode(validUntilEpoch, forKey: .validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        try? container.encode(apduPackageUrl, forKey: .apduPackageUrl)
     }
 
     open var isExpired: Bool {
