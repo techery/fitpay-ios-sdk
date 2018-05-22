@@ -163,7 +163,7 @@ class MockModels {
 
     func getRtmDeviceInfo() -> RtmDeviceInfo? {
         let cardRelationship = getCardRelationship()?.toJSONString() ?? ""
-        let deviceInfo = try? RtmDeviceInfo ("{ \"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"deviceIdentifier\":\"123456789\", \"deviceName\":\"noName\", \"deviceType\":\"myType\", \"manufacturerName\":\"12345fsd\", \"state\":\"12345fsd\", \"serialNumber\":\"987654321\", \"modelNumber\":\"1258PO\", \"hardwareRevision\":\"12345fsd\",  \"firmwareRevision\":\"12345fsd\", \"softwareRevision\":\"12345fsd\", \"notificationToken\":\"12345fsd\", \"createdTsEpoch\":1446587257146, \"createdTs\":\"2015-11-03T21:47:37.324Z\", \"osName\":\"Bill\", \"systemId\":\"258\", \"cardRelationships\": [\(cardRelationship)],\"licenseKey\":\"147PLO\", \"bdAddress\":\"someAddress\", \"pairing\":\"pairing\", \"secureElementId\":\"456987lo\", \"casdCert\":\"casd\"}")
+        let deviceInfo = try? RtmDeviceInfo("{ \"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"deviceIdentifier\":\"123456789\", \"deviceName\":\"noName\", \"deviceType\":\"myType\", \"manufacturerName\":\"12345fsd\", \"state\":\"12345fsd\", \"serialNumber\":\"987654321\", \"modelNumber\":\"1258PO\", \"hardwareRevision\":\"12345fsd\",  \"firmwareRevision\":\"12345fsd\", \"softwareRevision\":\"12345fsd\", \"notificationToken\":\"12345fsd\", \"createdTsEpoch\":1446587257146, \"createdTs\":\"2015-11-03T21:47:37.324Z\", \"osName\":\"Bill\", \"systemId\":\"258\", \"cardRelationships\": [\(cardRelationship)],\"licenseKey\":\"147PLO\", \"bdAddress\":\"someAddress\", \"pairing\":\"pairing\", \"secureElementId\":\"456987lo\", \"casdCert\":\"casd\"}")
         XCTAssertNotNil(deviceInfo)
         return deviceInfo
     }
@@ -178,15 +178,22 @@ class MockModels {
     func getRelationship() -> Relationship? {
         let deviceInfo = getDeviceInfo()?.toJSONString() ?? ""
         let cardInfo = getCreditCard()?.info?.toJSONString() ?? ""
-        let relationship = try? Relationship ("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"card\":\(cardInfo), \"device\":\(deviceInfo)}")
+        let relationship = try? Relationship("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"card\":\(cardInfo), \"device\":\(deviceInfo)}")
         XCTAssertNotNil(relationship)
         return relationship
     }
 
     func getIssuers() -> Issuers? {
-        let issuers = try? Issuers ("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"countries\": {\"cardNetworks\":{\"issuers\":[\"someNetwork\"]}}}")
+        let issuers = try? Issuers("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"countries\": {\"cardNetworks\":{\"issuers\":[\"someNetwork\"]}}}")
     XCTAssertNotNil(issuers)
     return issuers
+    }
+
+    func getResultCollection() -> ResultCollection<DeviceInfo>? {
+    let info = getDeviceInfo()?.toJSONString() ?? ""
+    let resultCollection = try? ResultCollection<DeviceInfo>("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"limit\":1, \"offset\":1, \"totalResults\":1, \"results\":[\(info)]}")
+    XCTAssertNotNil(resultCollection)
+    return resultCollection
     }
 
 }

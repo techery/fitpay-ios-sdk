@@ -131,7 +131,6 @@ class CommitsStorageTests: XCTestCase {
         
         super.waitForExpectations(timeout: 20, handler: nil)
     }
-
 }
 
 extension CommitsStorageTests { // Mocks

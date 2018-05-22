@@ -100,6 +100,7 @@ class ModelsParsingTests: XCTestCase {
             XCTAssertNotNil(deviceInfo?.pairing)
             XCTAssertNotNil(deviceInfo?.secureElementId)
             XCTAssertNotNil(deviceInfo?.casd)
+            XCTAssertNotNil(deviceInfo?.shortRTMRepersentation)
 
             let json = deviceInfo?.toJSON()
             XCTAssertNotNil(json?["_links"])
@@ -415,7 +416,7 @@ class ModelsParsingTests: XCTestCase {
 
     func testRtmConfig() {
         let rtmConfig = mockModels.getRtmConfig()
-
+        
         XCTAssertNotNil(rtmConfig?.clientId)
         XCTAssertNotNil(rtmConfig?.redirectUri)
         XCTAssertNotNil(rtmConfig?.userEmail)
@@ -482,7 +483,7 @@ class ModelsParsingTests: XCTestCase {
         XCTAssertNotNil(rtmMessage?.callBackId)
         XCTAssertNotNil(rtmMessage?.data)
         XCTAssertNotNil(rtmMessage?.type)
-         XCTAssertNotNil(rtmMessage?.success)
+        XCTAssertNotNil(rtmMessage?.success)
 
         let json = rtmMessage?.toJSON()
         XCTAssertNotNil(json?["callBackId"])
@@ -512,5 +513,26 @@ class ModelsParsingTests: XCTestCase {
         let json = issuers?.toJSON()
         XCTAssertNotNil(json?["_links"])
         XCTAssertNotNil(json?["countries"])
-    }    
+    }
+
+    func testA2AIssuerRequestEncodingString() {
+        let a2AIssuerRequest = A2AIssuerRequest(response: A2AStepupResult.Approved, authCode: "someCode")
+        XCTAssertNotNil(a2AIssuerRequest.getEncodedString())
+    }
+
+    func testResultCollection() {
+        let resultCollection = mockModels.getResultCollection()
+        
+        XCTAssertNotNil(resultCollection?.links)
+        XCTAssertNotNil(resultCollection?.limit)
+        XCTAssertNotNil(resultCollection?.offset)
+        XCTAssertNotNil(resultCollection?.totalResults)
+        XCTAssertNotNil(resultCollection?.results)
+
+        let json = resultCollection?.toJSON()
+        XCTAssertNotNil(json?["_links"])
+        XCTAssertNotNil(json?["limit"])
+        XCTAssertNotNil(json?["offset"])
+        XCTAssertNotNil(json?["totalResults"])
+    }
 }
