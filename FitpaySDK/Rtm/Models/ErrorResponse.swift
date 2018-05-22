@@ -70,6 +70,7 @@ import Foundation
         }
         
         super.init(domain: "", code: status ?? 0, userInfo: [NSLocalizedDescriptionKey: messageDescription ?? ""])
+        self.logError()
     }
 
     init(domain: AnyClass, errorCode: Int?, errorMessage: String?) {
@@ -82,6 +83,7 @@ import Foundation
         details = nil
         message = nil
         super.init(domain: "\(domain)", code: status ?? 0, userInfo: [NSLocalizedDescriptionKey: errorMessage ?? ""])
+        self.logError()
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -101,6 +103,12 @@ import Foundation
         }
         
         return nil
+    }
+
+    private func logError() {
+        let status = "\(self.status ?? 0)"
+        let messageDescription = "\(self.messageDescription ?? "")"
+        log.error("Error. Status: \(status) Message: \(messageDescription).")
     }
 
 }

@@ -553,8 +553,6 @@ extension RestClient {
     }
 
 }
-    
-}
 
 extension RestClient {
     /**

@@ -202,8 +202,8 @@ extension RestSession {
                     }
                     
                     completion(nil, nil, ErrorResponse(domain: RestSession.self, errorCode: RestSession.ErrorCode.deviceNotFound.rawValue, errorMessage: ""))
-                })
-            })
+                }
+            }
         }
         
         return client
