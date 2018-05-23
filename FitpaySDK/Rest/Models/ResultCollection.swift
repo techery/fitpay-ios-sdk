@@ -93,7 +93,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         }
     }
 
-    public typealias CollectAllAvailableCompletion = (_ results: [T]?, _ error: Error?) -> Void
+    public typealias CollectAllAvailableCompletion = (_ results: [T]?, _ error: ErrorResponse?) -> Void
 
     open func collectAllAvailable(_ completion: @escaping CollectAllAvailableCompletion) {
         if let nextUrl = self.links?.url(self.nextResourse), let _ = self.results {
@@ -120,7 +120,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
                 }
 
                 guard let resultCollection = resultCollection else {
-                    completion(nil, NSError.unhandledError(ResultCollection.self))
+                    completion(nil, ErrorResponse.unhandledError(domain: ResultCollection.self))
                     return
                 }
                 
@@ -135,7 +135,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
                 }
             }
         } else {
-            completion(nil, NSError.unhandledError(ResultCollection.self))
+            completion(nil, ErrorResponse.unhandledError(domain: ResultCollection.self))
         }
     }
 
@@ -145,7 +145,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         if let url = url, let client = self.client {
             client.creditCards(url, parameters: nil, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -156,7 +156,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         if let url = url, let client = self.client {
             client.creditCards(url, parameters: nil, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -167,7 +167,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         if let url = url, let client = self.client {
             client.devices(url, parameters: nil, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -178,7 +178,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         if let url = url, let client = self.client {
             client.devices(url, parameters: nil, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -189,7 +189,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         if let url = url, let client = self.client {
             client.transactions(url, parameters: nil, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -201,7 +201,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         if let url = url, let client = self.client {
             client.transactions(url, parameters: nil, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -213,7 +213,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         if let url = url, let client = self.client {
             client.commits(url, parameters: nil, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: ResultCollection.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }

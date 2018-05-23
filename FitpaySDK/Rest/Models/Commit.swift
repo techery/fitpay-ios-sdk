@@ -63,7 +63,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
         
         guard self.commitType != CommitType.APDU_PACKAGE else {
             log.error("Trying send confirm for APDU commit but should be non APDU.")
-            completion(NSError.unhandledError(Commit.self))
+            completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
         
@@ -74,7 +74,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
         }
         
         guard let client = self.client else {
-            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Commit.self, client: nil, url: url, resource: resource))
             return
         }
         
@@ -84,23 +84,23 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
     func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
         log.verbose("in the confirmAPDU method")
         guard self.commitType == CommitType.APDU_PACKAGE else {
-            completion(NSError.unhandledError(Commit.self))
+            completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
         
         let resource = Commit.apduResponseResourceKey
         guard let url = self.links?.url(resource) else {
-            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Commit.self, client: client, url: nil, resource: resource))
             return
         }
         
         guard let client = self.client else {
-            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Commit.self, client: nil, url: url, resource: resource))
             return
         }
         
         guard let apduPackage = self.payload?.apduPackage else {
-            completion(NSError.unhandledError(Commit.self))
+            completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
         

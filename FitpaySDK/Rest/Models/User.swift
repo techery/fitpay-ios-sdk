@@ -99,7 +99,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         if  let url = url, let client = self.client {
             client.createCreditCard(url, pan: pan, expMonth: expMonth, expYear: expYear, cvv: cvv, name: name, street1: street1, street2: street2, street3: street3, city: city, state: state, postalCode: postalCode, country: country, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
         
     }
@@ -118,7 +118,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         if  let url = url, let client = self.client {
             client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -135,7 +135,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         if  let url = url, let client = self.client {
             client.devices(url, limit: limit, offset: offset, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -154,7 +154,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
                                    notificationToken: device.notificationToken, systemId: device.systemId, osName: device.osName,
                                    secureElementId: device.secureElementId, casd: device.casd, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -164,7 +164,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         if  let url = url, let client = self.client {
             client.createRelationship(url, creditCardId: creditCardId, deviceId: deviceId, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: User.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -174,7 +174,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         if  let url = url, let client = self.client {
             client.deleteUser(url, completion: completion)
         } else {
-            completion(NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -184,7 +184,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         if  let url = url, let client = self.client {
             client.updateUser(url, firstName: firstName, lastName: lastName, birthDate: birthDate, originAccountCreated: originAccountCreated, termsAccepted: termsAccepted, termsVersion: termsVersion, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
     

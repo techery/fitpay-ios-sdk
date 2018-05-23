@@ -19,7 +19,7 @@ extension RestClient {
      - parameter user: Provides User object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias UserHandler = (_ user: User?, _ error: NSError?) -> Void
+    public typealias UserHandler = (_ user: User?, _ error: ErrorResponse?) -> Void
     
     //MARK: - Public Functions
     
@@ -95,22 +95,15 @@ extension RestClient {
             
             let request = strongSelf._manager.request(FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             
-            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-                DispatchQueue.main.async {
-                    if response.result.error != nil {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                        
-                    } else if let resultValue = response.result.value {
-                        let user = try? User(resultValue)
-                        user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        user?.client = self
-                        completion(user, nil)
-                        
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
             }
         }
     }
@@ -134,21 +127,15 @@ extension RestClient {
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,
                                                       headers: headers)
-            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-                DispatchQueue.main.async {
-                    if let _ = response.result.error {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                        
-                    } else if let resultValue = response.result.value {
-                        let user = try? User(resultValue)
-                        user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        user?.client = self
-                        completion(user, response.result.error as NSError?)
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
             }
         }
     }
@@ -211,25 +198,16 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            request.validate().responseJSON(queue: DispatchQueue.global()) { [weak self] (response) in
-                
-                DispatchQueue.main.async {
-                    if let _ = response.result.error {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                        
-                    } else if let resultValue = response.result.value {
-                        let user = try? User(resultValue)
-                        if let secret = self?.secret {
-                            user?.applySecret(secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        }
-                        user?.client = self
-                        completion(user, nil)
-                        completion(user, response.result.error as NSError?)
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self.makeRequest(request: request) { [weak self] (resultValue, error) in
+                guard let strongSelf = self else { return }
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
             }
         }
         
@@ -249,10 +227,8 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseString { (response: DataResponse<String>) in
-                DispatchQueue.main.async {
-                    completion(response.result.error as NSError?)
-                }
+            self.makeRequest(request: request) { (resultValue, error) in
+                completion(error)
             }
         }
     }
@@ -267,26 +243,17 @@ extension RestClient {
             }
             
             let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            request?.validate().responseJSON(queue: DispatchQueue.global()) { [weak self] (response) in
-                guard let strongSelf = self else { return }
-                
-                DispatchQueue.main.async {
-                    if response.result.error != nil {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                        
-                    } else if let resultValue = response.result.value {
-                        let user = try? User(resultValue)
-                        user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        user?.client = self
-                        completion(user, response.result.error as NSError?)
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let strongSelf = self else { return }                
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let user = try? User(resultValue)
+                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                user?.client = self
+                completion(user, error)
             }
-            
         }
-    }
-    
+    }    
 }

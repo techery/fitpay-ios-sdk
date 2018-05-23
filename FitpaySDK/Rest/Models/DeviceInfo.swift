@@ -278,7 +278,7 @@ import Foundation
         if let url = url, let client = self.client {
             client.deleteDevice(url, completion: completion)
         } else {
-            completion(NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -309,7 +309,7 @@ import Foundation
                 client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
             }
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -327,7 +327,7 @@ import Foundation
         if let url = url, let client = self.client {
             client.commits(url, commitsAfter: commitsAfter, limit: limit, offset: offset, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -342,7 +342,7 @@ import Foundation
         if let url = url, let client = self.client {
             client.commit(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -352,7 +352,7 @@ import Foundation
         if let url = url, let client = self.client {
             client.user(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -364,12 +364,11 @@ import Foundation
         if let url = url, let client = self.client {
             client.addDeviceProperty(url, propertyPath: "/notificationToken", propertyValue: token, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
-    typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: NSError?) -> Void
-    
+    typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: ErrorResponse?) -> Void
     func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         if newNotificationToken != "" {

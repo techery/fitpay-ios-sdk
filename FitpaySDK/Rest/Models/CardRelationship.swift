@@ -61,7 +61,7 @@ open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyabl
         if let url = url, let client = self.client {
             client.relationship(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: CardRelationship.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: CardRelationship.self, client: client, url: url, resource: resource))
         }
     }
     
