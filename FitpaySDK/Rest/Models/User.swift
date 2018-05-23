@@ -39,7 +39,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         return self.links?.url(User.devicesResourceKey) != nil
     }
     
-    public weak var client: RestClient?
+    weak var client: RestClient?
     
     private enum CodingKeys: String, CodingKey {
         case links = "_links"

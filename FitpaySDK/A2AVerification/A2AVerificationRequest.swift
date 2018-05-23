@@ -12,7 +12,7 @@ import Foundation
     
     //MARK: - Internal
     
-    // Used to disable Mastercard since it is not supported
+    /// Used to disable Mastercard since it is not supported
     var cardType: String?
 
 }

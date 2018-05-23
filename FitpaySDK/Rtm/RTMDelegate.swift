@@ -16,7 +16,7 @@ import Foundation
     ///   - defaultMessage: Default message for new status
     ///   - error: If there was an error during status change than it will be here.
     /// - Returns: Message string which will be shown on status board.
-    @objc optional func willDisplayStatusMessage(_ status: WvConfig.WVDeviceStatuses, defaultMessage: String, error: NSError?) -> String
+    @objc optional func willDisplayStatusMessage(_ status: WVDeviceStatus, defaultMessage: String, error: NSError?) -> String
     
     /// Called when the message from wv was delivered to SDK.
     ///

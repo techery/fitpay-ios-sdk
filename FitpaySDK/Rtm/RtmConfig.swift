@@ -1,20 +1,3 @@
-
-enum RtmConfigDafaultMappingKey: String {
-    case clientId
-    case redirectUri
-    case userEmail
-    case deviceInfo = "paymentDevice"
-    case hasAccount = "account"
-    case version
-    case demoMode
-    case customCSSUrl = "themeOverrideCssUrl"
-    case demoCardGroup
-    case accessToken
-    case language
-    case baseLanguageUrl = "baseLangUrl"
-    case useWebCardScanner
-}
-
 protocol RtmConfigProtocol {
     var redirectUri: String? { get }
     var deviceInfo: DeviceInfo? { get set }
@@ -38,13 +21,13 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     private var clientId: String?
     private var userEmail: String?
     private var version: String?
-    private var demoMode: Bool = false
+    private var demoMode = false
     private var customCSSUrl: String?
     private var demoCardGroup: String?
     private var baseLanguageUrl: String?
-    private var useWebCardScanner: Bool = true
+    private var useWebCardScanner = true
     
-    private var customs: [String: Any]?
+    private var customs: [String: Any] = [:]
     
     init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
         self.clientId = FitpayConfig.clientId
@@ -77,7 +60,7 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     }
 
     public func update(value: Any, forKey key: String) {
-        if let mappingKey = RtmConfigDafaultMappingKey(rawValue: key) {
+        if let mappingKey = CodingKeys(rawValue: key) {
             switch mappingKey {
             case .accessToken:
                 accessToken = value as? String
@@ -119,19 +102,13 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
                 useWebCardScanner = value as? Bool ?? true
             }
         } else {
-            if customs == nil {
-                customs = [:]
-            }
-            
-            customs!.updateValue(value, forKey: key)
+            customs.updateValue(value, forKey: key)
         }
     }
     
     func jsonDict() -> [String: Any] {
         var dict = self.toJSON()!
-        if let customs = self.customs {
-            dict += customs
-        }
+        dict += customs
         return dict
     }
 

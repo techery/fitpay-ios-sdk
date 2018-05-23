@@ -121,13 +121,11 @@ import Foundation
     @objc public class Web: NSObject {
         
         /// Shows autofill options on the add card page when enabled
-        ///
-        /// Turning on in production does nothing
         @objc public static var demoMode = false
         
         /// Changes autofill options to include a default and auto-verify version of one card type
         ///
-        /// `demoMode` must be true and you must not be in production for this to work
+        /// `demoMode` must be true for this to work
         @objc public static var demoCardGroup: String?
         
         /// Overrides the default CSS

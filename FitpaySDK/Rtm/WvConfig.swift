@@ -1,7 +1,7 @@
 import Foundation
 import WebKit
 
-@objc public class WvConfig: NSObject, WKScriptMessageHandler {
+class WvConfig: NSObject, WKScriptMessageHandler {
     
     weak var rtmDelegate: RTMDelegate? {
         didSet {
@@ -112,7 +112,7 @@ import WebKit
             }
         }
      */
-    @objc public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let sentData = message.body as? [String: Any] else {
             log.error("WV_DATA: Received message from \(message.name), but can't convert it to dictionary type.")
             return
@@ -221,7 +221,7 @@ import WebKit
         return request
     }
     
-    func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
+    func showStatusMessage(_ status: WVDeviceStatus, message: String? = nil, error: Error? = nil) {
         var realMessage = message ?? status.defaultMessage()
         if let newMessage = rtmDelegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage, error: error as NSError?) {
             realMessage = newMessage
@@ -348,7 +348,7 @@ extension WvConfig: RtmOutputDelegate {
         self.sendRtmMessage(rtmMessage: rtmMessage, retries: retries)
     }
     
-    func show(status: WVDeviceStatuses, message: String?, error: Error?) {
+    func show(status: WVDeviceStatus, message: String?, error: Error?) {
         self.showStatusMessage(status, message: message, error: error)
     }
     
@@ -357,59 +357,6 @@ extension WvConfig: RtmOutputDelegate {
 //MARK: - Enums
 
 extension WvConfig {
-    
-    @objc public enum WVDeviceStatuses: Int {
-        case disconnected
-        case pairing
-        case syncGettingUpdates
-        case syncNoUpdates
-        case syncUpdatingConnectingToDevice
-        case syncUpdatingConnectionFailed
-        case syncUpdating
-        case syncComplete
-        case syncError
-        
-        func statusMessageType() -> WVMessageType {
-            switch self {
-            case .disconnected:
-                return .pending
-            case .syncGettingUpdates,
-                 .syncNoUpdates,
-                 .syncUpdatingConnectionFailed,
-                 .syncComplete:
-                return .success
-            case .pairing,
-                 .syncUpdating,
-                 .syncUpdatingConnectingToDevice:
-                return .progress
-            case .syncError:
-                return .error
-            }
-        }
-        
-        func defaultMessage() -> String {
-            switch self {
-            case .disconnected:
-                return "Device is disconnected."
-            case .syncGettingUpdates:
-                return "Checking for wallet updates ..."
-            case .syncNoUpdates:
-                return "No pending updates for device"
-            case .pairing:
-                return "Pairing with device..."
-            case .syncUpdatingConnectingToDevice:
-                return "Connecting to device..."
-            case .syncUpdatingConnectionFailed:
-                return "Updates available for wallet - unable to connect to device - check connection"
-            case .syncUpdating:
-                return "Syncing updates to device..."
-            case .syncComplete:
-                return "Sync complete - device up to date - no updates available"
-            case .syncError:
-                return "Sync error"
-            }
-        }
-    }
     
    enum WVMessageType: Int {
         case error = 0

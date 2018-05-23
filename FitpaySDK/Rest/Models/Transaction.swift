@@ -1,22 +1,23 @@
-
+// TODO: Document well
+/// don't store / must have agreement to display outside of fitpay webview
 open class Transaction: NSObject, ClientModel, Serializable {
     
-    open var transactionId:String?
-    open var transactionType:String?
-    open var amount:NSDecimalNumber?
-    open var currencyCode:String?
-    open var authorizationStatus:String?
-    open var transactionTime:String?
-    open var transactionTimeEpoch:TimeInterval?
-    open var merchantName:String?
-    open var merchantCode:String?
-    open var merchantType:String?
+    open var transactionId: String?
+    open var transactionType: String?
+    open var amount: NSDecimalNumber?
+    open var currencyCode: String?
+    open var authorizationStatus: String?
+    open var transactionTime: String?
+    open var transactionTimeEpoch: TimeInterval?
+    open var merchantName: String?
+    open var merchantCode: String?
+    open var merchantType: String?
     
-    public weak var client: RestClient?
+    weak var client: RestClient?
     
-    var links:[ResourceLink]?
+    var links: [ResourceLink]?
     
-    private static let selfResource = "self"
+    private static let selfResourceKey = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"

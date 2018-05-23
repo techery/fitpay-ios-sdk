@@ -6,7 +6,7 @@ open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyabl
     open var expMonth: Int?
     open var expYear: Int?
     
-    public weak var client: RestClient?
+    weak var client: RestClient?
     
     var links: [ResourceLink]?
     var encryptedData: String?

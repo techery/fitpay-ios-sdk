@@ -31,13 +31,13 @@ import Foundation
     var links: [ResourceLink]?
     var encryptedData: String?
 
-    private static let selfResource         = "self"
-    private static let acceptTermsResource  = "acceptTerms"
-    private static let declineTermsResource = "declineTerms"
-    private static let deactivateResource   = "deactivate"
-    private static let reactivateResource   = "reactivate"
-    private static let makeDefaultResource  = "makeDefault"
-    private static let transactionsResource = "transactions"
+    private static let selfResourceKey          = "self"
+    private static let acceptTermsResourceKey   = "acceptTerms"
+    private static let declineTermsResourceKey  = "declineTerms"
+    private static let deactivateResourceKey    = "deactivate"
+    private static let reactivateResourceKey    = "reactivate"
+    private static let makeDefaultResourceKey   = "makeDefault"
+    private static let transactionsResourceKey  = "transactions"
 
     private weak var _client: RestClient?
 
@@ -72,27 +72,27 @@ import Foundation
     }
 
     open var acceptTermsAvailable: Bool {
-        return self.links?.url(CreditCard.acceptTermsResource) != nil
+        return self.links?.url(CreditCard.acceptTermsResourceKey) != nil
     }
 
     open var declineTermsAvailable: Bool {
-        return self.links?.url(CreditCard.declineTermsResource) != nil
+        return self.links?.url(CreditCard.declineTermsResourceKey) != nil
     }
 
     open var deactivateAvailable: Bool {
-        return self.links?.url(CreditCard.deactivateResource) != nil
+        return self.links?.url(CreditCard.deactivateResourceKey) != nil
     }
 
     open var reactivateAvailable: Bool {
-        return self.links?.url(CreditCard.reactivateResource) != nil
+        return self.links?.url(CreditCard.reactivateResourceKey) != nil
     }
 
     open var makeDefaultAvailable: Bool {
-        return self.links?.url(CreditCard.makeDefaultResource) != nil
+        return self.links?.url(CreditCard.makeDefaultResourceKey) != nil
     }
 
     open var listTransactionsAvailable: Bool {
-        return self.links?.url(CreditCard.transactionsResource) != nil
+        return self.links?.url(CreditCard.transactionsResourceKey) != nil
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -196,7 +196,7 @@ import Foundation
      - parameter completion:   CreditCardHandler closure
      */
     @objc open func getCreditCard(_ completion: @escaping RestClient.CreditCardHandler) {
-        let resource = CreditCard.selfResource
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
 
         if let url = url, let client = self.client {
@@ -219,7 +219,7 @@ import Foundation
      - return acceptTerms url
      */
     @objc open func getAcceptTermsUrl() -> String? {
-     return self.links?.url(CreditCard.acceptTermsResource)
+     return self.links?.url(CreditCard.acceptTermsResourceKey)
     }
 
     /**
@@ -227,7 +227,7 @@ import Foundation
      - @param acceptTermsUrl url
      */
     @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
-        guard let link = self.links?.indexOf(CreditCard.acceptTermsResource) else {
+        guard let link = self.links?.indexOf(CreditCard.acceptTermsResourceKey) else {
             throw  AcceptTermsError.NoTerms("The card is not in a state to accept terms anymore")
         }
         
@@ -240,7 +240,7 @@ import Foundation
      - parameter completion:   DeleteCreditCardHandler closure
      */
     @objc open func deleteCreditCard(_ completion: @escaping RestClient.DeleteHandler) {
-        let resource = CreditCard.selfResource
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deleteCreditCard(url, completion: completion)
@@ -269,7 +269,7 @@ import Foundation
                            postalCode: String?,
                            countryCode: String?,
                            completion: @escaping RestClient.CreditCardHandler) {
-        let resource = CreditCard.selfResource
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.updateCreditCard(url,
@@ -292,7 +292,7 @@ import Foundation
      - parameter completion:   AcceptTermsHandler closure
      */
     @objc open func acceptTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.acceptTermsResource
+        let resource = CreditCard.acceptTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.acceptTerms(url, completion: completion)
@@ -307,7 +307,7 @@ import Foundation
      - parameter completion:   DeclineTermsHandler closure
      */
     @objc open func declineTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.declineTermsResource
+        let resource = CreditCard.declineTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.declineTerms(url, completion: completion)
@@ -324,7 +324,7 @@ import Foundation
      - parameter completion:   DeactivateHandler closure
      */
     open func deactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.deactivateResource
+        let resource = CreditCard.deactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
@@ -341,7 +341,7 @@ import Foundation
      - parameter completion:   ReactivateHandler closure
      */
     open func reactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.reactivateResource
+        let resource = CreditCard.reactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
@@ -356,7 +356,7 @@ import Foundation
      - parameter completion:   MakeDefaultHandler closure
      */
     @objc open func makeDefault(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.makeDefaultResource
+        let resource = CreditCard.makeDefaultResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.makeDefault(url, completion: completion)
@@ -373,7 +373,7 @@ import Foundation
      - parameter completion: TransactionsHandler closure
      */
     open func listTransactions(limit: Int, offset: Int, completion: @escaping RestClient.TransactionsHandler) {
-        let resource = CreditCard.transactionsResource
+        let resource = CreditCard.transactionsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.transactions(url, limit: limit, offset: offset, completion: completion)
@@ -524,7 +524,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetri
     var client: RestClient?
     var links: [ResourceLink]?
 
-    private static let selfResource = "self"
+    private static let selfResourceKey = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
@@ -546,7 +546,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetri
     }
 
     @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
-        let resource = TermsAssetReferences.selfResource
+        let resource = TermsAssetReferences.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.assets(url, completion: completion)
@@ -558,6 +558,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetri
 }
 
 open class DeviceRelationships: NSObject, ClientModel, Serializable {
+    
     open var deviceType: String?
     open var deviceIdentifier: String?
     open var manufacturerName: String?

@@ -4,7 +4,7 @@ open class Relationship: NSObject, ClientModel, Serializable {
     
     open var device: DeviceInfo?
     
-    public weak var client: RestClient?
+    weak var client: RestClient?
     
     var links: [ResourceLink]?
     var card: CardInfo?

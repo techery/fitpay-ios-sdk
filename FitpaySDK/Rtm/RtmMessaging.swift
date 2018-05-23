@@ -2,7 +2,7 @@ import Foundation
 
 protocol RtmOutputDelegate: class {
     func send(rtmMessage: RtmMessageResponse, retries: Int)
-    func show(status: WvConfig.WVDeviceStatuses, message: String?, error: Error?)
+    func show(status: WVDeviceStatus, message: String?, error: Error?)
 }
 
 class RtmMessaging {

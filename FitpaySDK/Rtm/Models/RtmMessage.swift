@@ -1,6 +1,5 @@
 import UIKit
 
-
 open class RtmMessage: NSObject, Serializable {
     
     open var callBackId: Int?

@@ -1,7 +1,7 @@
 
 open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
     
-    open var commitType:CommitType? {
+    open var commitType: CommitType? {
         return CommitType(rawValue: commitTypeString ?? "") ?? .UNKNOWN
     }
     open var commitTypeString: String?
@@ -11,7 +11,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
     open var commit: String?
     open var executedDuration: Int?
     
-    public weak var client: RestClient? {
+    weak var client: RestClient? {
         didSet {
             payload?.creditCard?.client = self.client
         }

@@ -5,6 +5,7 @@ protocol Serializable: Codable {
 }
 
 extension Serializable {
+    
     func toJSONString() -> String? {
         guard let jsonData = try? JSONEncoder().encode(self) else { return nil }
         return String(data: jsonData, encoding: .utf8)!
@@ -30,6 +31,7 @@ extension Serializable {
 
         self = try JSONDecoder().decode(Self.self, from: data)
     }
+    
 }
 
 protocol DecodingContainerTransformer {
