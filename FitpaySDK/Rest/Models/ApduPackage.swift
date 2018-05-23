@@ -93,7 +93,6 @@ open class ApduPackage : NSObject, Serializable
         try? container.encode(seId, forKey: .seId)
         try? container.encode(apduCommands, forKey: .apduCommands)
         try? container.encode(validUntil, forKey: .validUntil)
-        try? container.encode(validUntilEpoch, forKey: .validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
         try? container.encode(apduPackageUrl, forKey: .apduPackageUrl)
     }
 

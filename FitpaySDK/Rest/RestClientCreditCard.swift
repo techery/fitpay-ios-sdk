@@ -458,6 +458,36 @@ extension RestClient {
             }
         }
     }
+
+    internal func getVerificationMethods(_ url: String, completion: @escaping CreditCardHandler) {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers  else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+
+            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            request?.validate().responseJSON(queue: DispatchQueue.global()) { [weak self] (response) in
+                guard let strongSelf = self else { return }
+
+                DispatchQueue.main.async {
+                    if response.result.error != nil {
+                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                        completion(nil, error)
+
+                    } else if let resultValue = response.result.value {
+                        let card = try? CreditCard(resultValue)
+                        card?.client = self
+                        card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                        completion(card, nil)
+
+                    } else {
+                        completion(nil, NSError.unhandledError(RestClient.self))
+                    }
+                }
+            }
+        }
+    }
     
     //MARK: - Private Functions
     func handleVerifyResponse(_ response: DataResponse<Any>, completion: @escaping VerifyHandler) {
