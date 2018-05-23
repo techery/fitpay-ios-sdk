@@ -5,12 +5,13 @@
 [![Build Status](https://travis-ci.org/fitpay/fitpay-ios-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-ios-sdk)
 [![Latest pod release](https://img.shields.io/cocoapods/v/FitpaySDK.svg)](https://cocoapods.org/pods/FitpaySDK)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Documentation coverage](docs/badge.svg)](docs/badge.svg)
 
 ## Installing the SDK
 
 Fitpay distributes the SDK via cocoapods and carthage. Documentation on using **cocoapods** can be found [here](https://guides.cocoapods.org/using/getting-started.html) and for **carthage** [here](https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos). 
 ### Cocoapods
-Currently we are using cocoapods v1.4.0
+Currently we are using cocoapods v1.5.2
 
 Once you have set up your project to use cocoapods, add the following to your Podfile:
 ```

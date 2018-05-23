@@ -1,7 +1,7 @@
 import Foundation
 import RxSwift
 
-internal enum SyncOperationError: Error {
+enum SyncOperationError: Error {
     case deviceIdentifierIsNil
     case couldNotConnectToDevice
     case paymentDeviceDisconnected
@@ -10,9 +10,9 @@ internal enum SyncOperationError: Error {
     case unk
 }
 
-internal class SyncOperation {
+class SyncOperation {
     
-    init(paymentDevice: PaymentDevice, connector: IPaymentDeviceConnector,
+    init(paymentDevice: PaymentDevice, connector: PaymentDeviceConnectable,
          deviceInfo: DeviceInfo, user: User, syncFactory: SyncFactory,
          syncStorage: SyncStorage = SyncStorage.sharedInstance, request: SyncRequest? = nil) {
         
@@ -75,12 +75,12 @@ internal class SyncOperation {
     }
     
     // MARK: internal
-    internal var fetchCommitsOperation: FetchCommitsOperationProtocol // Dependency Injection
-    internal var commitsApplyer: CommitsApplyer
+    var fetchCommitsOperation: FetchCommitsOperationProtocol // Dependency Injection
+    var commitsApplyer: CommitsApplyer
     
     // MARK: private
     private var paymentDevice: PaymentDevice
-    private var connector: IPaymentDeviceConnector
+    private var connector: PaymentDeviceConnectable
     private var deviceInfo: DeviceInfo
     private var user: User
     private var connectOperation: ConnectDeviceOperationProtocol

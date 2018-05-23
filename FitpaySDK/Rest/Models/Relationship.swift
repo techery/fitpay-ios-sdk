@@ -2,14 +2,14 @@
 @objcMembers
 open class Relationship: NSObject, ClientModel, Serializable {
     
-    internal var links: [ResourceLink]?
-    internal var card: CardInfo?
-    
     open var device: DeviceInfo?
     
-    private static let selfResourceKey = "self"
+    weak var client: RestClient?
     
-    public weak var client: RestClient?
+    var links: [ResourceLink]?
+    var card: CardInfo?
+    
+    private static let selfResourceKey = "self"
     
     private enum CodingKeys: String, CodingKey {
         case links = "_links"

@@ -8,9 +8,9 @@ class TestHelper {
     var session: RestSession!
     var client: RestClient!
     
-    init(clientId: String, redirectUri: String, session: RestSession, client: RestClient) {
-        self.clientId = clientId
-        self.redirectUri = redirectUri
+    init(session: RestSession, client: RestClient) {
+        self.clientId = FitpayConfig.clientId
+        self.redirectUri = FitpayConfig.redirectURL
         self.session = session
         self.client = client
     }
@@ -28,13 +28,13 @@ class TestHelper {
         let currentTime = Date().timeIntervalSince1970 //double or NSTimeInterval
         
         self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
-            termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId!) { [unowned self] (user, error) in
+            termsAccepted: nil, origin: nil, originAccountCreated: nil) { [unowned self] (user, error) in
                 
                 XCTAssertNil(error)
                 XCTAssertNotNil(user)
                 
                 debugPrint("created user: \(String(describing: user?.info?.email))")
-                if (user != nil) { self.userValid(user!) }
+                self.userValid(user!)
                 
                 //additional sanity checks that we created a meaningful user
                 //PLAT-1388 has a bug on the number of links returned when creating a user. When that gets fixed, reenable this.
@@ -224,7 +224,7 @@ class TestHelper {
             let acceptTermsUrl = card?.getAcceptTermsUrl()
             XCTAssertEqual(acceptTermsUrl, randomText)
             
-        } catch AcceptTermsError.NoTerms(let errorMessage) {
+        } catch CreditCard.AcceptTermsError.NoTerms(let errorMessage) {
             XCTFail(errorMessage)
         } catch {
             XCTFail("some error")
@@ -250,9 +250,9 @@ class TestHelper {
             XCTAssertEqual(verificationMethod?.state, .VERIFIED)
             
             verificationMethod?.retrieveCreditCard { (creditCard, error) in
-                self.waitForActive(creditCard!, completion: { (activeCard) in
+                self.waitForActive(creditCard!) { (activeCard) in
                     completion(activeCard)
-                })
+                }
             }
         }
     }
@@ -269,12 +269,12 @@ class TestHelper {
     func waitForActive(_ pendingCard: CreditCard, retries: Int = 0, completion: @escaping (_ activeCard: CreditCard) -> Void) {
         debugPrint("pending card state is \(String(describing: pendingCard.state))")
         
-        if pendingCard.state == TokenizationState.ACTIVE {
+        if pendingCard.state == CreditCard.TokenizationState.ACTIVE {
             completion(pendingCard)
             return
         }
         
-        if pendingCard.state != TokenizationState.PENDING_ACTIVE {
+        if pendingCard.state != CreditCard.TokenizationState.PENDING_ACTIVE {
             XCTFail("Cards that aren't in pending active state will not transition to active")
             return
         }
@@ -319,9 +319,9 @@ class TestHelper {
     
     func deactivateCreditCard(_ expectation: XCTestExpectation, creditCard: CreditCard?, completion: @escaping (_ deactivatedCard: CreditCard?) -> Void) {
         debugPrint("deactivateCreditCard")
-        creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card") { (pending, creditCard, error) in
+        creditCard?.deactivate(causedBy: .cardholder, reason: "lost card") { (pending, creditCard, error) in
             XCTAssertNil(error)
-            XCTAssertEqual(creditCard?.state, TokenizationState.DEACTIVATED)
+            XCTAssertEqual(creditCard?.state, CreditCard.TokenizationState.DEACTIVATED)
             completion(creditCard)
         }
     }

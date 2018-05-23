@@ -1,14 +1,18 @@
-//
-//  A2AVerificationError.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 3/5/18.
-//
+import Foundation
 
-import UIKit
+/// Main Object sent back from `verificationFinished`
+@objc public class A2AVerificationRequest: NSObject, Serializable {
+    
+    /// String to build the correct url when returning back from issuer app
+    /// This should be saved locally through the process
+    @objc public var returnLocation: String?
+    
+    /// Object containing information needed to pass into the issuer app
+    @objc public var context: A2AContext?
+    
+    //MARK: - Internal
+    
+    /// Used to disable Mastercard since it is not supported
+    var cardType: String?
 
-public class A2AVerificationRequest : NSObject, Serializable {
-    open var cardType: String?
-    open var returnLocation: String?
-    open var context: A2AContext?
 }

@@ -125,7 +125,7 @@ open class FitpayNotificationsManager: NSObject {
     }
 
     // MARK: internal
-    internal var notificationsToken: String = ""
+    var notificationsToken: String = ""
     
     // MARK: private
     private let eventsDispatcher = FitpayEventDispatcher()
@@ -160,7 +160,7 @@ open class FitpayNotificationsManager: NSObject {
             switch notificationType {
             case .WithSync:
                 let notificationDetail = self.notificationDetailFromNotification(currentNotification)
-                SyncRequestQueue.sharedInstance.add(request: SyncRequest(notificationAsc: notificationDetail, initiator: SyncInitiator.Notification), completion: { (status, error) in
+                SyncRequestQueue.sharedInstance.add(request: SyncRequest(notificationAsc: notificationDetail, initiator: SyncInitiator.notification), completion: { (status, error) in
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 })

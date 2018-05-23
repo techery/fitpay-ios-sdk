@@ -16,7 +16,7 @@ open class SyncRequestQueue {
         request.completion = completion
         if let payload = payload {
             if let notificationDetail = try? NotificationDetail(payload) {
-                request.syncInitiator = .WebHook
+                request.syncInitiator = .webHook
                 request.notificationAsc = notificationDetail
             } else {
                 log.error("Payload data is wrong. Payload: \(payload)")
@@ -42,7 +42,7 @@ open class SyncRequestQueue {
         queue.add(request: request)
     }
     
-    internal init(syncManager: SyncManagerProtocol) {
+    init(syncManager: SyncManagerProtocol) {
         self.syncManager = syncManager
         self.bind()
     }
@@ -125,7 +125,7 @@ open class SyncRequestQueue {
         }
     }
     
-    internal var lastFullSyncRequest: SyncRequest?
+    var lastFullSyncRequest: SyncRequest?
 }
 
 extension SyncRequestQueue {

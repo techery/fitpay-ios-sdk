@@ -1,8 +1,7 @@
 import RxSwift
 
-@objcMembers
-internal class CommitsApplyer {
-
+@objcMembers class CommitsApplyer {
+    
     init(paymentDevice: PaymentDevice,
          deviceInfo: DeviceInfo,
          eventsPublisher: PublishSubject<SyncEvent>,
@@ -16,24 +15,24 @@ internal class CommitsApplyer {
         self.nonApduConfirmOperation = syncFactory.nonApduConfirmOperation()
     }
     
-    internal var isRunning: Bool {
+    var isRunning: Bool {
         guard let thread = self.thread else {
             return false
         }
-
+        
         return thread.isExecuting
     }
-
-    internal typealias ApplyerCompletionHandler = (_ error: Error?) -> Void
-
-    internal func apply(_ commits: [Commit], completion: @escaping ApplyerCompletionHandler) -> Bool {
+    
+    typealias ApplyerCompletionHandler = (_ error: Error?) -> Void
+    
+    func apply(_ commits: [Commit], completion: @escaping ApplyerCompletionHandler) -> Bool {
         if isRunning {
             log.warning("SYNC_DATA: Cannot apply commints, applying already in progress.")
             return false
         }
-
+        
         self.commits = commits
-
+        
         totalApduCommands = 0
         appliedApduCommands = 0
         for commit in commits {
@@ -43,17 +42,17 @@ internal class CommitsApplyer {
                 }
             }
         }
-
+        
         self.applyerCompletionHandler = completion
         self.thread = Thread(target: self, selector: #selector(CommitsApplyer.processCommits), object: nil)
         self.thread?.qualityOfService = .utility
         self.thread?.start()
-
+        
         return true
     }
     
-    internal var apduConfirmOperation: APDUConfirmOperationProtocol
-    internal var nonApduConfirmOperation: NonAPDUConfirmOperationProtocol
+    var apduConfirmOperation: APDUConfirmOperationProtocol
+    var nonApduConfirmOperation: NonAPDUConfirmOperationProtocol
     
     // private
     private var commits: [Commit]!
@@ -67,18 +66,18 @@ internal class CommitsApplyer {
     private let paymentDevice: PaymentDevice
     private var syncStorage: SyncStorage
     private var deviceInfo: DeviceInfo
-    internal var commitStatistics = [CommitStatistic]()
+    var commitStatistics = [CommitStatistic]()
     
     // rx
     private let eventsPublisher: PublishSubject<SyncEvent>
     private var disposeBag = DisposeBag()
-
+    
     @objc private func processCommits() {
         var commitsApplied = 0
         commitStatistics = []
         for commit in commits {
             var errorItr: Error? = nil
-
+            
             // retry if error occurred
             for _ in 0 ..< maxCommitsRetries + 1 {
                 DispatchQueue.global().async(execute: {
@@ -87,7 +86,7 @@ internal class CommitsApplyer {
                         self.semaphore.signal()
                     }
                 })
-
+                
                 let _ = self.semaphore.wait(timeout: DispatchTime.distantFuture)
                 self.saveCommitStatistic(commit:commit, error: errorItr)
                 
@@ -96,40 +95,40 @@ internal class CommitsApplyer {
                     break
                 }
             }
-
+            
             if let error = errorItr {
                 DispatchQueue.main.async(execute: {
                     self.applyerCompletionHandler(error)
                 })
                 return
             }
-
+            
             commitsApplied += 1
             
             eventsPublisher.onNext(SyncEvent(event: .syncProgress, data: ["applied": commitsApplied, "total": commits.count]))
         }
-
+        
         DispatchQueue.main.async(execute: {
             self.applyerCompletionHandler(nil)
         })
     }
-
+    
     private typealias CommitCompletion = (_ error: Error?) -> Void
-
+    
     private func processCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         guard let commitType = commit.commitType else {
             log.error("SYNC_DATA: trying to process commit without commitType.")
             completion(NSError.unhandledError(CommitsApplyer.self))
             return
         }
-
+        
         let commitCompletion = { (error: Error?) -> Void in
             if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commit {
                 self.saveLastCommitId(deviceIdentifier:  deviceId, commitId: commit)
             } else {
                 log.error("SYNC_DATA: Can't get deviceId or commitId.")
             }
-
+            
             completion(error)
         }
         
@@ -142,7 +141,7 @@ internal class CommitsApplyer {
             processNonAPDUCommit(commit, completion: commitCompletion)
         }
     }
-
+    
     private func saveLastCommitId(deviceIdentifier: String?, commitId: String?) {
         if let deviceId = deviceIdentifier, let storedCommitId = commitId {
             if let setDeviceLastCommitId = self.paymentDevice.deviceInterface.setDeviceLastCommitId, let _ = self.paymentDevice.deviceInterface.getDeviceLastCommitId {
@@ -162,10 +161,10 @@ internal class CommitsApplyer {
             completion(NSError.unhandledError(CommitsApplyer.self))
             return
         }
-
+        
         let applyingStartDate = Date().timeIntervalSince1970
-
-
+        
+        
         if apduPackage.isExpired {
             log.warning("SYNC_DATA: package ID(\(commit.commit ?? "nil")) expired. ")
             apduPackage.state = APDUPackageResponseState.expired
@@ -176,18 +175,18 @@ internal class CommitsApplyer {
             commit.confirmAPDU { (error) -> Void in
                 completion(error)
             }
-
+            
             return
         }
-
-
+        
+        
         self.paymentDevice.apduPackageProcessingStarted(apduPackage) { [weak self] (error) in
-
+            
             guard error == nil else {
                 completion(error)
                 return
             }
-
+            
             if self?.paymentDevice.executeAPDUPackageAllowed() == true {
                 self?.paymentDevice.executeAPDUPackage(apduPackage, completion: { (error) in
                     self?.packageProcessingFinished(commit: commit, apduPackage: apduPackage, state: nil, error: error, applyingStartDate: applyingStartDate, completion: { commitError in
@@ -203,13 +202,13 @@ internal class CommitsApplyer {
             }
         }
     }
-
+    
     private func packageProcessingFinished(commit: Commit, apduPackage: ApduPackage, state: APDUPackageResponseState?, error: Error?, applyingStartDate: TimeInterval, completion: @escaping CommitCompletion) {
         let currentTimestamp = Date().timeIntervalSince1970
-
+        
         apduPackage.executedDuration = Int((currentTimestamp - applyingStartDate)*1000)
         apduPackage.executedEpoch = TimeInterval(currentTimestamp)
-
+        
         if state == nil {
             if error != nil && error as NSError? != nil && (error! as NSError).code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
                 log.debug("SYNC_DATA: Got a failed APDU response.")
@@ -224,22 +223,22 @@ internal class CommitsApplyer {
         } else {
             apduPackage.state = state
         }
-
+        
         var realError: NSError? = nil
         if apduPackage.state == .notProcessed || apduPackage.state == .error {
             realError = error as NSError?
         }
-
+        
         self.eventsPublisher.onNext(SyncEvent(event: .apduPackageComplete, data: ["package": apduPackage, "error": realError ?? "nil"]))
-
+        
         self.paymentDevice.apduPackageProcessingFinished(apduPackage, completion: { (error) in
             guard error == nil else {
                 completion(error)
                 return
             }
-
+            
             log.debug("SYNC_DATA: Processed APDU commit (\(commit.commit ?? "nil")) with state: \(apduPackage.state?.rawValue ?? "nil") and error: \(String(describing: realError)).")
-
+            
             if apduPackage.state == .notProcessed {
                 completion(realError)
             } else {
@@ -259,7 +258,7 @@ internal class CommitsApplyer {
             }
         })
     }
-
+    
     private func processNonAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         guard let commitType = commit.commitType else {
             return
@@ -270,7 +269,7 @@ internal class CommitsApplyer {
         self.paymentDevice.processNonAPDUCommit(commit: commit) { [weak self] (state, error) in
             let currentTimestamp = Date().timeIntervalSince1970
             commit.executedDuration = Int((currentTimestamp - applyingStartDate)*1000)
-
+            
             self?.nonApduConfirmOperation.startWith(commit: commit, result: state ?? .failed).subscribe { (e) in
                 switch e {
                 case .completed:
@@ -325,7 +324,7 @@ internal class CommitsApplyer {
                     }
                     
                     completion(nil)
-
+                    
                     break
                 case .error(let error):
                     log.debug("SYNC_DATA: non APDU commit confirmed with error: \(error).")
@@ -335,29 +334,29 @@ internal class CommitsApplyer {
                     break
                 }
                 
-            }.disposed(by: self?.disposeBag ?? DisposeBag())
+                }.disposed(by: self?.disposeBag ?? DisposeBag())
         }
     }
-
+    
     private func applyAPDUPackage(_ apduPackage: ApduPackage,
-                                      apduCommandIndex: Int,
-                                      retryCount: Int,
-                                      completion: @escaping (_ state: APDUPackageResponseState?, _ error: Error?) -> Void) {
+                                  apduCommandIndex: Int,
+                                  retryCount: Int,
+                                  completion: @escaping (_ state: APDUPackageResponseState?, _ error: Error?) -> Void) {
         let isFinished = (apduPackage.apduCommands?.count)! <= apduCommandIndex
-
+        
         guard !isFinished else {
             completion(apduPackage.state, nil)
             return
         }
-
+        
         var mutableApduPackage = apduPackage.apduCommands![apduCommandIndex]
         self.paymentDevice.executeAPDUCommand(mutableApduPackage) { [weak self] (apduPack, state, error) in
             apduPackage.state = state
-
+            
             if let apduPack = apduPack {
                 mutableApduPackage = apduPack
             }
-
+            
             if let error = error {
                 if retryCount >= self?.maxAPDUCommandsRetries ?? 1 {
                     completion(state, error)
@@ -367,9 +366,9 @@ internal class CommitsApplyer {
             } else {
                 self?.appliedApduCommands += 1
                 log.info("SYNC_DATA: PROCESSED \(self?.appliedApduCommands ?? 0)/\(self?.totalApduCommands ?? 0) COMMANDS")
-
+                
                 self?.eventsPublisher.onNext(SyncEvent(event: .apduCommandsProgress, data: ["applied": self?.appliedApduCommands ?? 0, "total": self?.totalApduCommands ?? 0]))
-
+                
                 self?.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, retryCount: 0, completion: completion)
             }
         }
@@ -388,15 +387,15 @@ internal class CommitsApplyer {
             let commandsCount = commit.payload?.apduPackage?.apduCommands?.count ?? 1
             
             let statistic = CommitStatistic(commitId: commit.commit,
-                                              total: total,
-                                              average: total/commandsCount,
-                                              errorDesc: error?.localizedDescription)
+                                            total: total,
+                                            average: total/commandsCount,
+                                            errorDesc: error?.localizedDescription)
             self.commitStatistics.append(statistic)
         default:
             let statistic = CommitStatistic(commitId: commit.commit,
-                                              total: commit.executedDuration,
-                                              average: commit.executedDuration,
-                                              errorDesc: error?.localizedDescription)
+                                            total: commit.executedDuration,
+                                            average: commit.executedDuration,
+                                            errorDesc: error?.localizedDescription)
             self.commitStatistics.append(statistic)
         }
     }

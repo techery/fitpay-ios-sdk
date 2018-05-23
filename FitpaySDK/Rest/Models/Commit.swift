@@ -1,8 +1,7 @@
 
-open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
-{
-    var links:[ResourceLink]?
-    open var commitType:CommitType? {
+open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
+    
+    open var commitType: CommitType? {
         return CommitType(rawValue: commitTypeString ?? "") ?? .UNKNOWN
     }
     open var commitTypeString: String?
@@ -11,17 +10,18 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
     open var previousCommit: String?
     open var commit: String?
     open var executedDuration: Int?
-
-    fileprivate static let apduResponseResource = "apduResponse"
-    fileprivate static let confirmResource = "confirm"
     
-    public weak var client: RestClient? {
+    weak var client: RestClient? {
         didSet {
             payload?.creditCard?.client = self.client
         }
     }
-    
-    internal var encryptedData:String?
+
+    var links: [ResourceLink]?
+    var encryptedData: String?
+
+    private static let apduResponseResourceKey = "apduResponse"
+    private static let confirmResourceKey = "confirm"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
@@ -53,12 +53,12 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
     }
 
     
-    internal func applySecret(_ secret:Data, expectedKeyId:String?) {
+    func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
         self.payload?.creditCard?.client = self.client
     }
     
-    internal func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmCommitHandler) {
+    func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmCommitHandler) {
         log.verbose("Confirming commit - \(self.commit ?? "")")
         
         guard self.commitType != CommitType.APDU_PACKAGE else {
@@ -67,7 +67,7 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
             return
         }
         
-        let resource = Commit.confirmResource
+        let resource = Commit.confirmResourceKey
        guard let url = self.links?.url(resource) else {
             completion(nil)
             return
@@ -81,14 +81,14 @@ open class Commit : NSObject, ClientModel, Serializable, SecretApplyable
         client.confirm(url, executionResult: result, completion: completion)
     }
     
-    internal func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
+    func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
         log.verbose("in the confirmAPDU method")
         guard self.commitType == CommitType.APDU_PACKAGE else {
             completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
         
-        let resource = Commit.apduResponseResource
+        let resource = Commit.apduResponseResourceKey
         guard let url = self.links?.url(resource) else {
             completion(ErrorResponse.clientUrlError(domain: Commit.self, client: client, url: nil, resource: resource))
             return
@@ -123,11 +123,12 @@ public enum CommitType: String {
     case UNKNOWN                     = "UNKNOWN"
 }
 
-open class Payload : NSObject, Serializable
-{
-    open var creditCard:CreditCard?
-    internal var payloadDictionary:[String : Any]?
-    internal var apduPackage:ApduPackage?
+open class Payload: NSObject, Serializable {
+    
+    open var creditCard: CreditCard?
+    
+    var payloadDictionary: [String: Any]?
+    var apduPackage: ApduPackage?
     
     private enum CodingKeys: String, CodingKey {
         case creditCardId
@@ -136,11 +137,8 @@ open class Payload : NSObject, Serializable
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        if let _ : String = try? container.decode(.packageId) {
-            apduPackage = try? ApduPackage(from: decoder)
-        } else if let _ : String = try? container.decode(.creditCardId) {
-            creditCard = try? CreditCard(from: decoder)
-        }
+        apduPackage = try? ApduPackage(from: decoder)
+        creditCard = try? CreditCard(from: decoder)
 
         self.payloadDictionary = try? container.decode([String : Any].self)
     }

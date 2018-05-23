@@ -1,26 +1,27 @@
-public protocol Serializable: Codable {
+protocol Serializable: Codable {
       func toJSON() -> [String: Any]?
       func toJSONString() -> String?
       init(_ any: Any?) throws
 }
 
 extension Serializable {
-    public func toJSONString() -> String? {
+    
+    func toJSONString() -> String? {
         guard let jsonData = try? JSONEncoder().encode(self) else { return nil }
         return String(data: jsonData, encoding: .utf8)!
     }
 
-    public func toJSON() -> [String: Any]? {
+    func toJSON() -> [String: Any]? {
         guard let jsonData = try? JSONEncoder().encode(self) else { return nil }
-        let jsonDictionary = try? JSONSerialization.jsonObject(with: jsonData, options : .allowFragments) as! [String: Any]
+        let jsonDictionary = try? JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as! [String: Any]
         return jsonDictionary
     }
 
-    public init(_ any: Any?) throws {
+    init(_ any: Any?) throws {
         var data = Data()
         
         if let stringJson = any as? String, let stringData = stringJson.data(using: .utf8) {
-            let jsonArray = try JSONSerialization.jsonObject(with: stringData, options : .allowFragments) as! [String: Any]
+            let jsonArray = try JSONSerialization.jsonObject(with: stringData, options: .allowFragments) as! [String: Any]
             data = try JSONSerialization.data(withJSONObject: jsonArray, options: .prettyPrinted)
             
         } else if let jSONObject = any {
@@ -30,18 +31,19 @@ extension Serializable {
 
         self = try JSONDecoder().decode(Self.self, from: data)
     }
+    
 }
 
-public protocol DecodingContainerTransformer {
+protocol DecodingContainerTransformer {
     associatedtype Input
     associatedtype Output
     func transform(_ decoded: Input?) -> Output?
 }
 
-public protocol EncodingContainerTransformer {
+protocol EncodingContainerTransformer {
     associatedtype Input
     associatedtype Output
     func transform(_ encoded: Output?) -> Input?
 }
 
-public typealias CodingContainerTransformer = DecodingContainerTransformer & EncodingContainerTransformer
+typealias CodingContainerTransformer = DecodingContainerTransformer & EncodingContainerTransformer

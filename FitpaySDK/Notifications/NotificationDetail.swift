@@ -1,6 +1,6 @@
 
-open class NotificationDetail : Serializable
-{
+open class NotificationDetail: Serializable {
+    
     open var ackSync: String?
     open var completeSync: String?
     open var type: String?
@@ -8,6 +8,7 @@ open class NotificationDetail : Serializable
     open var deviceId: String?
     open var userId: String?
     open var clientId: String?
+    
     var restClient: RestClient?
 
     private enum CodingKeys: String, CodingKey {

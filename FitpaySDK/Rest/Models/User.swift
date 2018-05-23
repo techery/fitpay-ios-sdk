@@ -7,9 +7,9 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     open var lastModified: String?
     open var lastModifiedEpoch: TimeInterval?
     
-    internal var links: [ResourceLink]?
-    internal var encryptedData: String?
-    internal var info: UserInfo?
+    var links: [ResourceLink]?
+    var encryptedData: String?
+    var info: UserInfo?
     
     private static let creditCardsResourceKey = "creditCards"
     private static let devicesResourceKey = "devices"
@@ -39,8 +39,8 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         return self.links?.url(User.devicesResourceKey) != nil
     }
     
-    public weak var client: RestClient?
-
+    weak var client: RestClient?
+    
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
         case id
@@ -50,7 +50,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         case lastModifiedEpoch = "lastModifiedTsEpoch"
         case encryptedData
     }
-
+    
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -62,8 +62,8 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         lastModifiedEpoch = try container.decode(.lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
         encryptedData = try? container.decode(.encryptedData)
     }
-
-     public func encode(to encoder: Encoder) throws {
+    
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
@@ -91,9 +91,9 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter country:    country
      - parameter completion: CreateCreditCardHandler closure
      */
-    @objc open func createCreditCard(pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
-                                     street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
-                                     completion: @escaping RestClient.CreditCardHandler) {
+    @objc public func createCreditCard(pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
+                                       street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
+                                       completion: @escaping RestClient.CreditCardHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
@@ -112,7 +112,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CreditCardsHandler closure
      */
-    open func listCreditCards(excludeState: [String], limit: Int, offset: Int, completion: @escaping RestClient.CreditCardsHandler) {
+    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, completion: @escaping RestClient.CreditCardsHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
@@ -129,7 +129,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter offset:     start index position for list of entities returned
      - parameter completion: DevicesHandler closure
      */
-    open func listDevices(limit: Int, offset: Int, completion: @escaping RestClient.DevicesHandler) {
+    public func listDevices(limit: Int, offset: Int, completion: @escaping RestClient.DevicesHandler) {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
@@ -142,45 +142,9 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     /**
      For a single user, create a new device in their profile
      
-     - parameter deviceType:       device type
-     - parameter manufacturerName: manufacturer name
-     - parameter deviceName:       device name
-     - parameter serialNumber:     serial number
-     - parameter modelNumber:      model number
-     - parameter hardwareRevision: hardware revision
-     - parameter firmwareRevision: firmware revision
-     - parameter softwareRevision: software revision
-     - parameter systemId:         system id
-     - parameter osName:           os name
-     - parameter licenseKey:       license key
-     - parameter bdAddress:        bd address //TODO: provide better description
-     - parameter secureElementId:  secure element id
-     - parameter pairing:          pairing date [MM-DD-YYYY]
-     - parameter completion:       CreateNewDeviceHandler closure
-     */
-    @available(*, deprecated, message: "Use createDevice(_ device:)")
-    @objc open func createNewDevice(_ deviceType: String, manufacturerName: String, deviceName: String,
-                                    serialNumber: String, modelNumber: String, hardwareRevision: String, firmwareRevision: String,
-                                    softwareRevision: String, systemId: String, osName: String, licenseKey: String, bdAddress: String,
-                                    secureElementId: String, pairing: String, completion: @escaping RestClient.DeviceHandler) {
-        let resource = User.devicesResourceKey
-        let url = self.links?.url(resource)
-        if  let url = url, let client = self.client {
-            client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber,
-                                   modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision,
-                                   softwareRevision: softwareRevision, notificationToken: nil, systemId: systemId, osName: osName,
-                                   secureElementId: secureElementId, casd: nil, completion: completion)
-        } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
-        }
-    }
-    
-    /**
-     For a single user, create a new device in their profile
-     
      - parameter device: DeviceInfo
      */
-    @objc open func createDevice(_ device: DeviceInfo, completion: @escaping RestClient.DeviceHandler) {
+    @objc public func createDevice(_ device: DeviceInfo, completion: @escaping RestClient.DeviceHandler) {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -194,7 +158,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         }
     }
     
-    @objc open func createRelationship(creditCardId: String, deviceId: String, completion: @escaping RestClient.RelationshipHandler) {
+    @objc public func createRelationship(creditCardId: String, deviceId: String, completion: @escaping RestClient.RelationshipHandler) {
         let resource = User.selfResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
@@ -204,7 +168,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         }
     }
     
-    @objc open func deleteUser(_ completion: @escaping RestClient.DeleteHandler) {
+    @objc public func deleteUser(_ completion: @escaping RestClient.DeleteHandler) {
         let resource = User.selfResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
@@ -214,7 +178,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         }
     }
     
-    @objc open func updateUser(firstName: String?, lastName: String?, birthDate: String?, originAccountCreated: String?, termsAccepted: String?, termsVersion: String?, completion:@escaping RestClient.UserHandler) {
+    @objc public func updateUser(firstName: String?, lastName: String?, birthDate: String?, originAccountCreated: String?, termsAccepted: String?, termsVersion: String?, completion: @escaping RestClient.UserHandler) {
         let resource = User.selfResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
@@ -224,14 +188,15 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         }
     }
     
-    //MARK: - Private Helpers
-    internal func applySecret(_ secret: Data, expectedKeyId: String?) {
+    //MARK: - Internal Helpers
+    
+    func applySecret(_ secret: Data, expectedKeyId: String?) {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
     
 }
 
-internal class UserInfo: Serializable {
+struct UserInfo: Serializable {
     var firstName: String?
     var lastName: String?
     var birthDate: String?

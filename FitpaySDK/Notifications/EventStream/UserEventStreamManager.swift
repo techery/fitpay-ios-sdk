@@ -8,8 +8,8 @@ public class UserEventStreamManager {
     
     public typealias userEventStreamHandler = (_ event: StreamEvent) -> Void
     
-    public func subscribe(userId: String, sessionData: SessionData, config: FitpaySDKConfiguration, completion: @escaping userEventStreamHandler) {
-        let session = RestSession(configuration: config, sessionData: sessionData)
+    public func subscribe(userId: String, sessionData: SessionData, completion: @escaping userEventStreamHandler) {
+        let session = RestSession(sessionData: sessionData)
         client = RestClient(session: session)
 
         client!.user(id: userId) { (user, error) in
