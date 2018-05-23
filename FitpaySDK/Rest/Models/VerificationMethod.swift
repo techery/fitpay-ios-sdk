@@ -123,7 +123,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
         if let url = url, let client = self.client {
             client.selectVerificationType(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: VerificationMethod.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: VerificationMethod.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -139,7 +139,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
         if let url = url, let client = self.client {
             client.verify(url, verificationCode: verificationCode, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: VerificationMethod.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: VerificationMethod.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -152,7 +152,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
         if let url = url, let client = self.client {
             client.retrieveCreditCard(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: VerificationMethod.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: VerificationMethod.self, client: client, url: url, resource: resource))
         }
     }
 }

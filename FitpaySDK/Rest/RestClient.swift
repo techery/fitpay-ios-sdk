@@ -74,32 +74,25 @@ open class RestClient: NSObject {
     public init(session: RestSession) {
         _session = session;
     }
-
-    internal func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: Error?) -> Void) -> T? {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
+    
+    internal func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T? {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
             
-            let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-
-            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-                DispatchQueue.main.async {
-                    if response.result.error != nil {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                        
-                    } else if let resultValue = response.result.value {
-                        let result = try? ResultCollection<T>(resultValue)
-                        result?.client = self
-                        result?.applySecret(self.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                        completion(result, response.result.error)
-                        
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                guard let strongSelf = self else { return }
+                let result = try? ResultCollection<T>(resultValue)
+                result?.client = self
+                result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(result, nil)
             }
         }
         
@@ -111,7 +104,7 @@ open class RestClient: NSObject {
      
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteHandler = (_ error: NSError?) -> Void
+    public typealias DeleteHandler = (_ error: ErrorResponse?) -> Void
     
 }
 
@@ -122,7 +115,7 @@ extension RestClient {
      
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    public typealias ConfirmCommitHandler = (_ error: NSError?) -> Void
+    public typealias ConfirmCommitHandler = (_ error: ErrorResponse?) -> Void
     
     open func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
@@ -133,10 +126,8 @@ extension RestClient {
             
             let params = ["result": executionResult.description]
             let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            request.validate().responseString { (response: DataResponse<String>) in
-                DispatchQueue.main.async {
-                    completion(response.result.error as NSError?)
-                }
+            self.makeRequest(request: request) { (resultValue, error) in
+                completion(error)
             }
         }
     }
@@ -146,7 +137,7 @@ extension RestClient {
      
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    public typealias ConfirmAPDUPackageHandler = (_ error: NSError?) -> Void
+    public typealias ConfirmAPDUPackageHandler = (_ error: ErrorResponse?) -> Void
     
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -156,7 +147,7 @@ extension RestClient {
      */
     open func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
         guard package.packageId != nil else {
-            completion(NSError.error(code: ErrorCode.badRequest, domain: RestClient.self, message: "packageId should not be nil"))
+            completion(ErrorResponse(domain: RestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
             return
         }
         
@@ -167,10 +158,8 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
-            request.validate().responseString { (response: DataResponse<String>) in
-                DispatchQueue.main.async {
-                    completion(response.result.error as NSError?)
-                }
+            self.makeRequest(request: request) { (resultValue, error) in
+                completion(error)
             }
         }
     }
@@ -184,7 +173,7 @@ extension RestClient {
      - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias TransactionsHandler = (_ result: ResultCollection<Transaction>?, _ error: NSError?) -> Void
+    public typealias TransactionsHandler = (_ result: ResultCollection<Transaction>?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -192,7 +181,7 @@ extension RestClient {
      - parameter transaction: Provides Transaction object, or nil if error occurs
      - parameter error:       Provides error object, or nil if no error occurs
      */
-    public typealias TransactionHandler = (_ transaction: Transaction?, _ error: NSError?) -> Void
+    public typealias TransactionHandler = (_ transaction: Transaction?, _ error: ErrorResponse?) -> Void
     
     
     internal func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
@@ -208,25 +197,18 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-                DispatchQueue.main.async {
-                    if response.result.error != nil {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                        
-                    } else if let resultValue = response.result.value {
-                        let transaction = try? ResultCollection<Transaction>(resultValue)
-                        transaction?.client = self
-                        completion(transaction, response.result.error as NSError?)
-                        
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let transaction = try? ResultCollection<Transaction>(resultValue)
+                transaction?.client = self
+                completion(transaction, error)
             }
         }
     }
-
+    
 }
 
 // MARK: Encryption
@@ -237,7 +219,7 @@ extension RestClient {
      - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias CreateEncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: NSError?) -> Void
+    internal typealias CreateEncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
     
     /**
      Creates a new encryption key pair
@@ -250,19 +232,12 @@ extension RestClient {
         let parameters = ["clientPublicKey": clientPublicKey]
         
         let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-        request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-            DispatchQueue.main.async {
-                if response.result.error != nil {
-                    let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                    completion(nil, error)
-
-                } else if let resultValue = response.result.value {
-                    completion(try? EncryptionKey(resultValue), response.result.error as NSError?)
-
-                } else {
-                    completion(nil, NSError.unhandledError(RestClient.self))
-                }
+        self.makeRequest(request: request) { (resultValue, error) in
+            guard let resultValue = resultValue else {
+                completion(nil, error)
+                return
             }
+            completion(try? EncryptionKey(resultValue), error)
         }
     }
     
@@ -272,7 +247,7 @@ extension RestClient {
      - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias EncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: NSError?) -> Void
+    internal typealias EncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
     
     /**
      Retrieve and individual key pair
@@ -283,20 +258,13 @@ extension RestClient {
     internal func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-         request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-            DispatchQueue.main.async {
-                if response.result.error != nil {
-                    let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                    completion(nil, error)
-                    
-                } else if let resultValue = response.result.value {
-                    completion(try? EncryptionKey(resultValue), nil)
-                    
-                } else {
-                    completion(nil, NSError.unhandledError(RestClient.self))
-                }
+        self.makeRequest(request: request) { (resultValue, error) in
+            guard let resultValue = resultValue else {
+                completion(nil, error)
+                return
             }
-        }        
+            completion(try? EncryptionKey(resultValue), error)
+        }
     }
     
     /**
@@ -343,13 +311,13 @@ extension RestClient {
 // MARK: Request Signature Helpers
 extension RestClient {
     
-    typealias CreateAuthHeaders = (_ headers: [String: String]?, _ error: NSError?) -> Void
+    typealias CreateAuthHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
     
     internal func createAuthHeaders(_ completion: CreateAuthHeaders) {
         if self._session.isAuthorized {
             completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
         } else {
-            completion(nil, NSError.error(code: ErrorCode.unauthorized, domain: RestClient.self, message: "\(ErrorCode.unauthorized)"))
+            completion(nil, ErrorResponse(domain: RestClient.self, errorCode: ErrorCode.unauthorized.rawValue, errorMessage: "\(ErrorCode.unauthorized)"))
         }
     }
     
@@ -358,7 +326,7 @@ extension RestClient {
         completion(self.defaultHeaders, nil)
     }
     
-    typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: NSError?) -> Void
+    typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
     
     internal func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.createAuthHeaders { [weak self] (headers, error) in
@@ -376,7 +344,7 @@ extension RestClient {
         }
     }
     
-    typealias PrepareKeyHeader = (_ headers: [String: String]?, _ error: NSError?) -> Void
+    typealias PrepareKeyHeader = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
     
     internal func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.skipAuthHeaders { [weak self] (headers, error) in
@@ -393,12 +361,12 @@ extension RestClient {
             }
         }
     }
-
+    
 }
 
 // MARK: Issuers
 extension RestClient {
-    public typealias IssuersHandler = (_ issuers: Issuers?, _ error: NSError?) -> Void
+    public typealias IssuersHandler = (_ issuers: Issuers?, _ error: ErrorResponse?) -> Void
     
     public func issuers(completion: @escaping IssuersHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -413,21 +381,14 @@ extension RestClient {
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,
                                                       headers: headers)
-            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-                DispatchQueue.main.async {
-                    if let _ = response.result.error {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                        
-                    } else if let resultValue = response.result.value {
-                        let issuers = try? Issuers(resultValue)
-                        issuers?.client = self
-                        completion(issuers, response.result.error as NSError?)
-                        
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self?.makeRequest(request: request) { (resultValue, error) in                
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let issuers = try? Issuers(resultValue)
+                issuers?.client = self
+                completion(issuers, error)
             }
         }
     }
@@ -442,7 +403,7 @@ extension RestClient {
      - parameter asset: Provides Asset object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias AssetsHandler = (_ asset: Asset?, _ error: NSError?) -> Void
+    public typealias AssetsHandler = (_ asset: Asset?, _ error: ErrorResponse?) -> Void
     
     internal func assets(_ url: String, completion: @escaping AssetsHandler) {
         let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
@@ -450,7 +411,7 @@ extension RestClient {
         DispatchQueue.global().async {
             request.responseData { (response: DataResponse<Data>) in
                 if response.result.error != nil {
-                    let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
+                    let error = try? ErrorResponse(response.data)
                     
                     DispatchQueue.main.async {
                         completion(nil, error)
@@ -470,13 +431,13 @@ extension RestClient {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        completion(nil, NSError.unhandledError(RestClient.self))
+                        completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
                     }
                 }
             }
         }
     }
-
+    
 }
 
 // MARK: Sync Statistics
@@ -486,7 +447,7 @@ extension RestClient {
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias SyncHandler = (_ error: NSError?) -> Void
+    public typealias SyncHandler = (_ error: ErrorResponse?) -> Void
     
     internal func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -500,7 +461,13 @@ extension RestClient {
                 request?.response { (response: DefaultDataResponse) in
                     if response.error != nil {
                         DispatchQueue.main.async {
-                            completion(response.error as NSError?)
+                            if let _ = response.error {
+                                let error = try? ErrorResponse(response.data)
+                                completion(error)
+                            }
+                            else {
+                                completion(nil)
+                            }
                         }
                     } else {
                         DispatchQueue.main.async {
@@ -587,6 +554,37 @@ extension RestClient {
 
 }
 
+extension RestClient {
+    /**
+     Completion handler
+     
+     - parameter resultValue: Provides request object, or nil if error occurs
+     - parameter error: Provides error object, or nil if no error occurs
+     */
+    public typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
+    
+    func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
+        request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
+            
+            DispatchQueue.main.async {
+                if response.result.error != nil {
+                    let JSON = response.data!.UTF8String
+                    var error = try? ErrorResponse(JSON)
+                    if error == nil {
+                        error = ErrorResponse(domain: RestClient.self, errorCode: response.response?.statusCode ?? 0 , errorMessage: response.result.error?.localizedDescription)
+                    }
+                    completion(nil, error)
+                    
+                } else if let resultValue = response.result.value {
+                    completion(resultValue, nil)
+                } else {
+                    completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
+                }
+            }
+        }
+    }
+}
+
 /**
  Retrieve an individual asset (i.e. terms and conditions)
  
@@ -598,25 +596,4 @@ public protocol AssetRetrivable {
 
 public protocol AssetWithOptionsRerivable {
     func retrieveAssetWith(options: [AssetOption], completion: @escaping RestClient.AssetsHandler)
-}
-
-
-private func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-    switch (lhs, rhs) {
-    case let (l?, r?):
-        return l < r
-    case (nil, _?):
-        return true
-    default:
-        return false
-    }
-}
-
-private func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-    switch (lhs, rhs) {
-    case let (l?, r?):
-        return l > r
-    default:
-        return rhs < lhs
-    }
 }

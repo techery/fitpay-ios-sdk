@@ -234,6 +234,8 @@
 		916FC0C220A0366A0071B66D /* SerializableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916FC0BA209C44D20071B66D /* SerializableExtension.swift */; };
 		9186499D20A9D1760073FBFC /* ResetDeviceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9186499C20A9D1760073FBFC /* ResetDeviceResult.swift */; };
 		9186499E20A9D1760073FBFC /* ResetDeviceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9186499C20A9D1760073FBFC /* ResetDeviceResult.swift */; };
+		918E26C120B42AA200D9D750 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26C020B42AA100D9D750 /* ErrorResponse.swift */; };
+		918E26C220B42AA400D9D750 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26C020B42AA100D9D750 /* ErrorResponse.swift */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A58466C1C96B65B00E4ABDC /* ClientModel.swift */; };
 		9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A62E6B51C8DCA20004ED6C0 /* Asset.swift */; };
@@ -401,6 +403,7 @@
 		916CE9C120A18CA100C2F621 /* KeyedEncodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedEncodingContainerExtension.swift; sourceTree = "<group>"; };
 		916FC0BA209C44D20071B66D /* SerializableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableExtension.swift; sourceTree = "<group>"; };
 		9186499C20A9D1760073FBFC /* ResetDeviceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetDeviceResult.swift; sourceTree = "<group>"; };
+		918E26C020B42AA100D9D750 /* ErrorResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		9A58466C1C96B65B00E4ABDC /* ClientModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientModel.swift; sourceTree = "<group>"; };
 		9A62E6B51C8DCA20004ED6C0 /* Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
@@ -907,6 +910,7 @@
 		CD0385FBA6E03879966B500B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				918E26C020B42AA100D9D750 /* ErrorResponse.swift */,
 				37F781F51F18F64B00742E15 /* RtmDeviceInfo.swift */,
 				37F781F61F18F64B00742E15 /* RtmSecureDeviceInfo.swift */,
 				0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */,
@@ -1221,6 +1225,7 @@
 				847264981CA5263400DE801D /* IPaymentDeviceConnector.swift in Sources */,
 				9A7C78821CC77F210097BAB9 /* FitpayEventDispatcher.swift in Sources */,
 				847264A31CA53D0800DE801D /* BluetoothPaymentDeviceConnector.swift in Sources */,
+				918E26C120B42AA200D9D750 /* ErrorResponse.swift in Sources */,
 				CD038A69826DABAA4DE467C5 /* VerificationMethod.swift in Sources */,
 				9A7C78801CC77F210097BAB9 /* FitpayEvent.swift in Sources */,
 				CD038BD672C20128B6711869 /* CreditCard.swift in Sources */,
@@ -1399,6 +1404,7 @@
 				3A93A09C1DB8CA2C00A9FEB4 /* CreditCard.swift in Sources */,
 				37D0CFF01EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
 				3A93A09D1DB8CA2C00A9FEB4 /* Address.swift in Sources */,
+				918E26C220B42AA400D9D750 /* ErrorResponse.swift in Sources */,
 				1FE1479F201613CB005DEA29 /* CommitMetrics.swift in Sources */,
 				3A93A09E1DB8CA2C00A9FEB4 /* ResultCollection.swift in Sources */,
 				27FCBE6B20AE1761008EE9DA /* JSONCodingKeys.swift in Sources */,

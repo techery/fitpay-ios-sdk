@@ -221,7 +221,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.retrieveCreditCard(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -264,7 +264,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.deleteCreditCard(url, completion: completion)
         } else {
-            completion(NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -301,7 +301,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
                                     countryCode: countryCode,
                                     completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -316,7 +316,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.acceptTerms(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -331,7 +331,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.declineTerms(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -348,7 +348,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -365,7 +365,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -380,7 +380,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.makeDefault(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -397,7 +397,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
         if let url = url, let client = self.client {
             client.transactions(url, limit: limit, offset: offset, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 }
@@ -571,7 +571,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetri
         if let url = url, let client = self.client {
             client.assets(url, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: TermsAssetReferences.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: TermsAssetReferences.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -659,7 +659,7 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
         if let url = url, let client = self.client {
             client.relationship(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceRelationships.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceRelationships.self, client: client, url: url, resource: resource))
         }
     }
 }
