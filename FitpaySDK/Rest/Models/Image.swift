@@ -40,7 +40,7 @@ open class Image: NSObject, ClientModel, Serializable, AssetRetrivable
         if let url = url, let client = self.client {
             client.assets(url, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: Image.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: Image.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
@@ -54,7 +54,7 @@ open class ImageWithOptions: Image {
             print(urlString)
             client.assets(urlString, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: Image.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: Image.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }

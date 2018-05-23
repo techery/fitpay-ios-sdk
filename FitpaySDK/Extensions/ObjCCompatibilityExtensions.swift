@@ -15,7 +15,7 @@ public extension Transaction
 
 public class ResultCollectionObjC : NSObject
 {
-    public typealias ResultCollectionHandler = (_ result:ResultCollectionObjC?, _ error:NSError?) -> Void
+    public typealias ResultCollectionHandler = (_ result:ResultCollectionObjC?, _ error: ErrorResponse?) -> Void
     
     public var rawCollection:AnyObject?
     
@@ -92,24 +92,24 @@ public class ResultCollectionObjC : NSObject
         {
             creditCardsCollection.next
             {
-                (result:ResultCollection<CreditCard>?, error:Error?) in
-                completion(CreateCompatibleResultColletion(resultCollection: result), error as NSError?)
+                (result:ResultCollection<CreditCard>?, error: ErrorResponse?) in
+                completion(CreateCompatibleResultColletion(resultCollection: result), error)
             }
         }
         else if let devicesCollection = self.devicesCollection
         {
             devicesCollection.next
             {
-                (result:ResultCollection<DeviceInfo>?, error:Error?) in
-                completion(CreateCompatibleResultColletion(resultCollection: result), error as NSError?)
+                (result:ResultCollection<DeviceInfo>?, error: ErrorResponse?) in
+                completion(CreateCompatibleResultColletion(resultCollection: result), error)
             }
         }
         else if let transactionsCollection = self.transactionsCollection
         {
             transactionsCollection.next
             {
-                (result:ResultCollection<Transaction>?, error:Error?) in
-                completion(CreateCompatibleResultColletion(resultCollection: result), error as NSError?)
+                (result:ResultCollection<Transaction>?, error: ErrorResponse?) in
+                completion(CreateCompatibleResultColletion(resultCollection: result), error)
             }
         }
     }
@@ -120,24 +120,24 @@ public class ResultCollectionObjC : NSObject
         {
             creditCardsCollection.last
             {
-                (result:ResultCollection<CreditCard>?, error:Error?) in
-                completion(CreateCompatibleResultColletion(resultCollection: result), error as NSError?)
+                (result:ResultCollection<CreditCard>?, error: ErrorResponse?) in
+                completion(CreateCompatibleResultColletion(resultCollection: result), error)
             }
         }
         else if let devicesCollection = self.devicesCollection
         {
             devicesCollection.last
             {
-                (result:ResultCollection<DeviceInfo>?, error:Error?) in
-                completion(CreateCompatibleResultColletion(resultCollection: result), error as NSError?)
+                (result:ResultCollection<DeviceInfo>?, error: ErrorResponse?) in
+                completion(CreateCompatibleResultColletion(resultCollection: result), error)
             }
         }
         else if let transactionsCollection = self.transactionsCollection
         {
             transactionsCollection.last
             {
-                (result:ResultCollection<Transaction>?, error:Error?) in
-                completion(CreateCompatibleResultColletion(resultCollection: result), error as NSError?)
+                (result:ResultCollection<Transaction>?, error: ErrorResponse?) in
+                completion(CreateCompatibleResultColletion(resultCollection: result), error)
             }
         }
     }
@@ -148,8 +148,8 @@ public class ResultCollectionObjC : NSObject
         {
             commitsCollection.previous
             {
-                (result:ResultCollection<Commit>?, error:Error?) in
-                completion(CreateCompatibleResultColletion(resultCollection: result), error as NSError?)
+                (result:ResultCollection<Commit>?, error: ErrorResponse?) in
+                completion(CreateCompatibleResultColletion(resultCollection: result), error)
             }
         }
     }
@@ -163,7 +163,7 @@ public class ResultCollectionObjC : NSObject
             creditCardsCollection.collectAllAvailable
             {
                 (results, error) in
-                completion(results, error as NSError? )
+                completion(results, error)
             }
         }
     }
@@ -185,7 +185,7 @@ public extension User
     {
         self.listCreditCards(excludeState: excludeState, limit: limit, offset: offset)
         {
-            (result:ResultCollection<CreditCard>?, error:NSError?) in
+            (result:ResultCollection<CreditCard>?, error: ErrorResponse?) in
             
             completion(CreateCompatibleResultColletion(resultCollection: result), error)
         }
@@ -195,7 +195,7 @@ public extension User
     {
         self.listDevices(limit: limit, offset: offset)
         {
-            (result:ResultCollection<DeviceInfo>?, error:NSError?) in
+            (result:ResultCollection<DeviceInfo>?, error: ErrorResponse?) in
             completion(CreateCompatibleResultColletion(resultCollection: result), error)
         }
     }
@@ -343,7 +343,7 @@ public extension DeviceInfo
     {
         self.listCommits(commitsAfter: commitsAfter, limit: limit, offset: offset)
         {
-            (result:ResultCollection<Commit>?, error) in
+            (result:ResultCollection<Commit>?, error: ErrorResponse?) in
             completion(CreateCompatibleResultColletion(resultCollection: result), error)
         }
     }
@@ -564,7 +564,7 @@ public extension CreditCard
     {
         self.listTransactions(limit:limit, offset: offset)
         {
-            (result:ResultCollection<Transaction>?, error:NSError?) in
+            (result:ResultCollection<Transaction>?, error: ErrorResponse?) in
             completion(CreateCompatibleResultColletion(resultCollection: result), error)
         }
     }

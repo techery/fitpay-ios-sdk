@@ -11,7 +11,7 @@ extension RestClient {
      - parameter relationship: Provides Relationship object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias RelationshipHandler = (_ relationship: Relationship?, _ error: NSError?) -> Void
+    public typealias RelationshipHandler = (_ relationship: Relationship?, _ error: ErrorResponse?) -> Void
     
     //MARK - Functions
     
@@ -32,20 +32,14 @@ extension RestClient {
             
             let parameters = ["creditCardId": "\(creditCardId)", "deviceId": "\(deviceId)"]
             let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
-            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-                DispatchQueue.main.async {
-                    if response.result.error != nil {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        
-                        completion(nil, error)
-                    } else if let resultValue = response.result.value {
-                        let relationship = try? Relationship(resultValue)
-                        relationship?.client = self
-                        completion(relationship, response.result.error as NSError?)
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let relationship = try? Relationship(resultValue)
+                relationship?.client = self
+                completion(relationship, error)
             }
         }
     }
@@ -58,20 +52,14 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-                DispatchQueue.main.async {
-                    if response.result.error != nil {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        
-                        completion(nil, error)
-                    } else if let resultValue = response.result.value {
-                        let relationship = try? Relationship(resultValue)
-                        relationship?.client = self
-                        completion(relationship, response.result.error as NSError?)
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            self.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let relationship = try? Relationship(resultValue)
+                relationship?.client = self
+                completion(relationship, error)
             }
         }
     }
@@ -84,10 +72,8 @@ extension RestClient {
             }
             
             let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            request.validate().responseString { (response: DataResponse<String>) in
-                DispatchQueue.main.async {
-                    completion(response.result.error as NSError?)
-                }
+            self.makeRequest(request: request) { (resultValue, error) in
+                completion(error)
             }
         }
     }
