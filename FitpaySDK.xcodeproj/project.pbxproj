@@ -240,6 +240,8 @@
 		918E26CA20B5B76200D9D750 /* ModelsParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26C620B5B76100D9D750 /* ModelsParsingTests.swift */; };
 		918E26CC20B5B78E00D9D750 /* MockModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26CB20B5B78C00D9D750 /* MockModels.swift */; };
 		918E26CD20B5B78E00D9D750 /* MockModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26CB20B5B78C00D9D750 /* MockModels.swift */; };
+		918E26CE20B6A45700D9D750 /* RtmDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F781F51F18F64B00742E15 /* RtmDeviceInfo.swift */; };
+		918E26CF20B6A45E00D9D750 /* RtmSecureDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F781F61F18F64B00742E15 /* RtmSecureDeviceInfo.swift */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A58466C1C96B65B00E4ABDC /* ClientModel.swift */; };
 		9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A62E6B51C8DCA20004ED6C0 /* Asset.swift */; };
@@ -1412,6 +1414,7 @@
 				37B85D5B1EF2B5D900B7616F /* Issuers.swift in Sources */,
 				3A93A09A1DB8CA2C00A9FEB4 /* VerificationMethod.swift in Sources */,
 				3A93A09B1DB8CA2C00A9FEB4 /* FitpayEvent.swift in Sources */,
+				918E26CF20B6A45E00D9D750 /* RtmSecureDeviceInfo.swift in Sources */,
 				272C9343207E7FD800166820 /* (null) in Sources */,
 				3A93A09C1DB8CA2C00A9FEB4 /* CreditCard.swift in Sources */,
 				37D0CFF01EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
@@ -1458,6 +1461,7 @@
 				3A93A0AE1DB8CA2C00A9FEB4 /* NSJSONSerializationExtensions.swift in Sources */,
 				27EA81E0208F96F700FFBB56 /* StreamEvent.swift in Sources */,
 				37D0CFEC1EDC40860049B5AA /* ScannedCardInfo.swift in Sources */,
+				918E26CE20B6A45700D9D750 /* RtmDeviceInfo.swift in Sources */,
 				3701AE481F14C29900550890 /* ConnectDeviceOperation.swift in Sources */,
 				3A93A0AF1DB8CA2C00A9FEB4 /* DictionaryExtensions.swift in Sources */,
 				37D0CFF61EDDA27E0049B5AA /* RtmMessageHandlerV3.swift in Sources */,
