@@ -154,7 +154,7 @@ class ModelsParsingTests: XCTestCase {
         XCTAssertEqual(commit?.created, CLong(mockModels.timeEpoch))
         XCTAssertEqual(commit?.previousCommit, "2")
         XCTAssertEqual(commit?.commit, mockModels.someId)
-        XCTAssertEqual(commit?.encryptedData, "123")
+        XCTAssertEqual(commit?.encryptedData, mockModels.someEncryptionData)
 
         let json = commit?.toJSON()
         XCTAssertNotNil(json?["_links"])
@@ -162,7 +162,7 @@ class ModelsParsingTests: XCTestCase {
         XCTAssertEqual(json?["createdTs"] as? Int64, mockModels.timeEpoch)
         XCTAssertEqual(json?["previousCommit"] as? String, "2")
         XCTAssertEqual(json?["commitId"] as? String, mockModels.someId)
-        XCTAssertEqual(json?["encryptedData"] as? String, "123")
+        XCTAssertEqual(json?["encryptedData"] as? String, mockModels.someEncryptionData)
     }
 
     func testCommitMetrics() {
@@ -314,7 +314,7 @@ class ModelsParsingTests: XCTestCase {
         XCTAssertNotNil(creditCard?.termsAssetReferences)
         XCTAssertEqual(creditCard?.eligibilityExpiration, mockModels.someDate)
         XCTAssertNotNil(creditCard?.deviceRelationships)
-        XCTAssertEqual(creditCard?.encryptedData, "someData")
+        XCTAssertEqual(creditCard?.encryptedData, mockModels.someEncryptionData)
         XCTAssertEqual(creditCard?.targetDeviceId, mockModels.someId)
         XCTAssertEqual(creditCard?.targetDeviceType, mockModels.someType)
         XCTAssertNotNil(creditCard?.verificationMethods)
@@ -341,7 +341,7 @@ class ModelsParsingTests: XCTestCase {
         XCTAssertEqual(json?["eligibilityExpiration"] as? String, mockModels.someDate)
         XCTAssertEqual(json?["eligibilityExpirationEpoch"] as? Int64, mockModels.timeEpoch)
         XCTAssertNotNil(json?["deviceRelationships"])
-        XCTAssertEqual(json?["encryptedData"] as? String, "someData")
+        XCTAssertEqual(json?["encryptedData"] as? String, mockModels.someEncryptionData)
         XCTAssertEqual(json?["targetDeviceId"] as? String, mockModels.someId)
         XCTAssertEqual(json?["targetDeviceType"] as? String, mockModels.someType)
         XCTAssertNotNil(json?["verificationMethods"])

@@ -65,13 +65,13 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
-        try container.encode(id, forKey: .id)
-        try container.encode(created, forKey: .created)
-        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(lastModified, forKey: .lastModified)
-        try container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
-        try container.encode(encryptedData, forKey: .encryptedData)
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(id, forKey: .id)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(lastModified, forKey: .lastModified)
+        try? container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(encryptedData, forKey: .encryptedData)
     }
     
     /**

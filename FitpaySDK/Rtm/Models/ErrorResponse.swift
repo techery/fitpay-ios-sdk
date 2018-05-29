@@ -42,12 +42,12 @@ import Foundation
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        status = try container.decode(.status)
+        status = try? container.decode(.status)
         created = try container.decode(.created, transformer: NSTimeIntervalTypeTransform())
-        requestId = try container.decode(.requestId)
-        path = try container.decode(.path)
-        summary = try container.decode(.summary)
-        messageDescription = try container.decode(.messageDescription)
+        requestId = try? container.decode(.requestId)
+        path = try? container.decode(.path)
+        summary = try? container.decode(.summary)
+        messageDescription = try? container.decode(.messageDescription)
 
         if let detailsString: String = try container.decode(.details), let data = detailsString.data(using: .utf8) {
             if let dict: [String: Any] = (try? JSONSerialization.jsonObject(with: data, options: []) as! [[String: Any]])?.first {

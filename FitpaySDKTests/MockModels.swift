@@ -15,6 +15,7 @@ class MockModels {
     let timeEpoch: Int64 = 1446587257000
     let someDate = "2015-11-03T21:47:37.324Z"
     let someName = "someName"
+    let someEncryptionData = "some data"
 
     func getCommitStatistic() -> CommitStatistic? {
         let commitStatistic = try? CommitStatistic("{\"commitId\":\"\(someId)\",\"processingTimeMs\":\(timeEpoch),\"averageTimePerCommand\":3,\"errorReason\":\"bad access\"}")
@@ -29,7 +30,7 @@ class MockModels {
     }
 
     func getUser() -> User? {
-        let user = try? User("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"id\":\"\(someId)\",\"createdTs\":\"\(someDate)\",\"createdTsEpoch\":\(timeEpoch),\"lastModifiedTs\":\"\(someDate)\",\"lastModifiedTsEpoch\":\(timeEpoch),\"encryptedData\":\"some data\"}")
+        let user = try? User("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"id\":\"\(someId)\",\"createdTs\":\"\(someDate)\",\"createdTsEpoch\":\(timeEpoch),\"lastModifiedTs\":\"\(someDate)\",\"lastModifiedTsEpoch\":\(timeEpoch),\"encryptedData\":\"\(someEncryptionData)\"}")
         XCTAssertNotNil(user)
         return user
     }
@@ -42,13 +43,13 @@ class MockModels {
     }
 
     func getCardRelationship() -> CardRelationship? {
-        let cardRelationship = try? CardRelationship ("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someDate)\"}}, \"creditCardId\": \"\(someId)\", \"pan\":\"1234\", \"expMonth\": 2, \"expYear\": 2018}")
+        let cardRelationship = try? CardRelationship ("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"creditCardId\": \"\(someId)\", \"pan\":\"1234\", \"expMonth\": 2, \"expYear\": 2018}")
         XCTAssertNotNil(cardRelationship)
         return cardRelationship
     }
 
     func getCommit() -> Commit? {
-        let commit = try? Commit("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"commitType\":\"\(someType)\",\"createdTs\":\(timeEpoch),\"commitId\":\"\(someId)\",\"previousCommit\":\"2\",\"encryptedData\":\"123\"}")
+        let commit = try? Commit("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"commitType\":\"\(someType)\",\"createdTs\":\(timeEpoch),\"commitId\":\"\(someId)\",\"previousCommit\":\"2\",\"encryptedData\":\"\(someEncryptionData)\"}")
         XCTAssertNotNil(commit)
         return commit
     }
@@ -68,20 +69,20 @@ class MockModels {
     }
 
     func getApduCommand() -> APDUCommand? {
-        let apduCommand = try? APDUCommand("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someDate)\"}}, \"commandId\": \"\(someId)\", \"groupId\": 1, \"sequence\": 1, \"command\": \"command\", \"type\": \"\(someType)\", \"continueOnFailure\": true}")
+        let apduCommand = try? APDUCommand("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"commandId\": \"\(someId)\", \"groupId\": 1, \"sequence\": 1, \"command\": \"command\", \"type\": \"\(someType)\", \"continueOnFailure\": true}")
         XCTAssertNotNil(apduCommand)
         return apduCommand
     }
 
     func getEncryptionKey() -> EncryptionKey? {
-        let encryptionKey = try? EncryptionKey("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someDate)\"}}, \"keyId\": \"\(someId)\", \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"expirationTs\": \"\(someDate)\", \"expirationTsEpoch\": \(timeEpoch), \"serverPublicKey\": \"someKey\", \"clientPublicKey\": \"someKey\", \"active\": true}")
+        let encryptionKey = try? EncryptionKey("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"keyId\": \"\(someId)\", \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"expirationTs\": \"\(someDate)\", \"expirationTsEpoch\": \(timeEpoch), \"serverPublicKey\": \"someKey\", \"clientPublicKey\": \"someKey\", \"active\": true}")
         XCTAssertNotNil(encryptionKey)
         return encryptionKey
     }
 
     func getVerificationMethod() -> VerificationMethod? {
         let a2AContext = getA2AContext()?.toJSONString() ?? ""
-        let encryptionKey = try? VerificationMethod("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someDate)\"}}, \"verificationId\": \"\(someId)\", \"state\": \"AVAILABLE_FOR_SELECTION\", \"methodType\": \"TEXT_TO_CARDHOLDER_NUMBER\", \"value\": \"someValue\", \"verificationResult\": \"SUCCESS\", \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"lastModifiedTs\": \"\(someDate)\", \"lastModifiedTsEpoch\": \(timeEpoch), \"verifiedTs\": \"\(someDate)\", \"verifiedTsEpoch\": \(timeEpoch), \"appToAppContext\":\(a2AContext)}")
+        let encryptionKey = try? VerificationMethod("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"verificationId\": \"\(someId)\", \"state\": \"AVAILABLE_FOR_SELECTION\", \"methodType\": \"TEXT_TO_CARDHOLDER_NUMBER\", \"value\": \"someValue\", \"verificationResult\": \"SUCCESS\", \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"lastModifiedTs\": \"\(someDate)\", \"lastModifiedTsEpoch\": \(timeEpoch), \"verifiedTs\": \"\(someDate)\", \"verifiedTsEpoch\": \(timeEpoch), \"appToAppContext\":\(a2AContext)}")
         XCTAssertNotNil(encryptionKey)
         return encryptionKey
     }
@@ -107,7 +108,7 @@ class MockModels {
         let apduCommand = getApduCommand()?.toJSONString() ?? ""
         let creditCardInfo = getCreditCardInfo()
 
-        let creditCard = try? CreditCard("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someDate)\"}}, \"creditCardId\": \"\(someId)\",\"userId\": \"\(someId)\", \"default\": true,  \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"state\": \"NOT_ELIGIBLE\", \"cardType\": \"\(someType)\", \"cardMetaData\": \(cardMetadata), \"termsAssetId\": \"\(someId)\", \"termsAssetReferences\": [\(termsAssetReferences)], \"eligibilityExpiration\": \"\(someDate)\", \"eligibilityExpirationEpoch\": \(timeEpoch), \"deviceRelationships\": [\(deviceRelationship)], \"encryptedData\":\"someData\", \"targetDeviceId\": \"\(someId)\", \"targetDeviceType\": \"\(someType)\", \"verificationMethods\": [\(verificationMethod)], \"externalTokenReference\": \"someToken\", \"pan\": \"1234\", \"expMonth\": 12, \"expYear\": 2018, \"cvv\": \"123\", \"name\": \"\(someName)\", \"address\": \(address), \"offlineSeActions.topOfWallet.apduCommands\": [\(apduCommand)]}")
+        let creditCard = try? CreditCard("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"creditCardId\": \"\(someId)\",\"userId\": \"\(someId)\", \"default\": true,  \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"state\": \"NOT_ELIGIBLE\", \"cardType\": \"\(someType)\", \"cardMetaData\": \(cardMetadata), \"termsAssetId\": \"\(someId)\", \"termsAssetReferences\": [\(termsAssetReferences)], \"eligibilityExpiration\": \"\(someDate)\", \"eligibilityExpirationEpoch\": \(timeEpoch), \"deviceRelationships\": [\(deviceRelationship)], \"encryptedData\":\"\(someEncryptionData)\", \"targetDeviceId\": \"\(someId)\", \"targetDeviceType\": \"\(someType)\", \"verificationMethods\": [\(verificationMethod)], \"externalTokenReference\": \"someToken\", \"pan\": \"1234\", \"expMonth\": 12, \"expYear\": 2018, \"cvv\": \"123\", \"name\": \"\(someName)\", \"address\": \(address), \"offlineSeActions.topOfWallet.apduCommands\": [\(apduCommand)]}")
         creditCard?.info = creditCardInfo
         XCTAssertNotNil(creditCard)
         return creditCard
@@ -121,7 +122,7 @@ class MockModels {
     }
 
     func getTermsAssetReferences() -> TermsAssetReferences? {
-        let termsAssetReferences = try? TermsAssetReferences("{\"_links\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someDate)\"},\"mimeType\":\"text/html\"}")
+        let termsAssetReferences = try? TermsAssetReferences("{\"_links\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"},\"mimeType\":\"text/html\"}")
         XCTAssertNotNil(termsAssetReferences)
         return termsAssetReferences
     }
@@ -140,7 +141,7 @@ class MockModels {
     }
 
     func getImage() -> Image? {
-        let image = try? Image("{\"_links\":123,\"mimeType\":\"image/gif\",\"height\":20,\"width\":60}")
+        let image = try? Image("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}},\"mimeType\":\"image/gif\",\"height\":20,\"width\":60}")
         XCTAssertNotNil(image)
         return image
     }
