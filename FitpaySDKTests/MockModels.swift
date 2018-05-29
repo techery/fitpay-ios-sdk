@@ -140,7 +140,7 @@ class MockModels {
     }
 
     func getImage() -> Image? {
-        let image = try? Image("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someDate)\"}},\"mimeType\":\"image/gif\",\"height\":20,\"width\":60}")
+        let image = try? Image("{\"_links\":123,\"mimeType\":\"image/gif\",\"height\":20,\"width\":60}")
         XCTAssertNotNil(image)
         return image
     }
@@ -156,20 +156,6 @@ class MockModels {
         let rtmMessage = try? RtmMessageResponse("{\"callBackId\":1,\"data\":{\"data\":\"someData\"},\"type\":\"\(someType)\", \"isSuccess\":true}")
         XCTAssertNotNil(rtmMessage)
         return rtmMessage
-    }
-
-    func getRtmDeviceInfo() -> RtmDeviceInfo? {
-        let cardRelationship = getCardRelationship()?.toJSONString() ?? ""
-        let deviceInfo = try? RtmDeviceInfo("{ \"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"deviceIdentifier\":\"\(someId)\", \"deviceName\":\"\(someName)\", \"deviceType\":\"\(someType)\", \"manufacturerName\":\"\(someName)\", \"state\":\"12345fsd\", \"serialNumber\":\"987654321\", \"modelNumber\":\"1258PO\", \"hardwareRevision\":\"12345fsd\",  \"firmwareRevision\":\"12345fsd\", \"softwareRevision\":\"12345fsd\", \"notificationToken\":\"12345fsd\", \"createdTsEpoch\":\(timeEpoch), \"createdTs\":\"\(someDate)\", \"osName\":\"\(someName)\", \"systemId\":\"\(someId)\", \"cardRelationships\": [\(cardRelationship)],\"licenseKey\":\"147PLO\", \"bdAddress\":\"someAddress\", \"pairing\":\"pairing\", \"secureElementId\":\"\(someId)\", \"casd\":\"casd\"}")
-        XCTAssertNotNil(deviceInfo)
-        return deviceInfo
-    }
-
-    func getRtmSecureDeviceInfo() -> RtmSecureDeviceInfo? {
-        let deviceInfo = getDeviceInfo()?.toJSONString() ?? ""
-        let rtmSecureDeviceInfo = try? RtmSecureDeviceInfo (deviceInfo)
-        XCTAssertNotNil(rtmSecureDeviceInfo)
-        return rtmSecureDeviceInfo
     }
 
     func getRelationship() -> Relationship? {
