@@ -1,12 +1,11 @@
 
 /// This data can be used to set or verify a user device relationship, retrieve commit changes for the device, etc...
-open class SessionData : NSObject, Serializable
-{
-    open var userId:String?
-    open var deviceId:String?
-    open var token:String?
+open class SessionData: NSObject, Serializable {
+    open var userId: String?
+    open var deviceId: String?
+    open var token: String?
     
-    internal var encryptedData:String?
+    var encryptedData:String?
     
     public init(token: String, userId: String, deviceId: String) {
         self.userId = userId
@@ -14,9 +13,8 @@ open class SessionData : NSObject, Serializable
         self.token = token
     }
 
-    internal func applySecret(_ secret:Data, expectedKeyId:String?)
-    {
-        if let tmpSession : SessionData = JWEObject.decrypt(encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
+    func applySecret(_ secret: Data, expectedKeyId: String?) {
+        if let tmpSession: SessionData = JWEObject.decrypt(encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
             self.userId = tmpSession.userId
             self.deviceId = tmpSession.deviceId
             self.token = tmpSession.token

@@ -1,14 +1,6 @@
-//
-//  APDUCommand.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 15.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
-open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
+open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
     
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
     open var commandId: String?
     open var groupId: Int = 0
     open var sequence: Int = 0
@@ -56,9 +48,9 @@ open class APDUCommand : NSObject, Serializable, APDUResponseProtocol {
         try? container.encode(continueOnFailure, forKey: .continueOnFailure)
     }
 
-    open var responseDictionary : [String:Any] {
+    open var responseDictionary: [String: Any] {
         get {
-            var dic : [String:Any] = [:]
+            var dic: [String: Any] = [:]
             
             if let commandId = self.commandId {
                 dic["commandId"] = commandId

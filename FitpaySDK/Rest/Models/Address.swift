@@ -1,6 +1,4 @@
-
-open class Address: Serializable
-{
+open class Address: Serializable {
     open var street1: String?
     open var street2: String?
     open var street3: String?

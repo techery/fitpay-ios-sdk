@@ -1,28 +1,6 @@
-
 import Foundation
 
-public enum TokenizationState: String, Codable {
-    case NEW,
-    NOT_ELIGIBLE,
-    ELIGIBLE,
-    DECLINED_TERMS_AND_CONDITIONS,
-    PENDING_ACTIVE,
-    PENDING_VERIFICATION,
-    DELETED,
-    ACTIVE,
-    DEACTIVATED,
-    ERROR,
-    DECLINED
-}
-
-enum AcceptTermsError: Error {
-    case NoTerms(String)
-}
-
-@objcMembers
-open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
-    internal var links: [ResourceLink]?
-    internal var encryptedData: String?
+@objcMembers open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
 
     open var creditCardId: String?
     open var userId: String?
@@ -49,18 +27,21 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
     open var name: String?
     open var address: Address?
     open var topOfWalletAPDUCommands: [APDUCommand]?
+    
+    var links: [ResourceLink]?
+    var encryptedData: String?
 
-    private static let selfResource         = "self"
-    private static let acceptTermsResource  = "acceptTerms"
-    private static let declineTermsResource = "declineTerms"
-    private static let deactivateResource   = "deactivate"
-    private static let reactivateResource   = "reactivate"
-    private static let makeDefaultResource  = "makeDefault"
-    private static let transactionsResource = "transactions"
+    private static let selfResourceKey          = "self"
+    private static let acceptTermsResourceKey   = "acceptTerms"
+    private static let declineTermsResourceKey  = "declineTerms"
+    private static let deactivateResourceKey    = "deactivate"
+    private static let reactivateResourceKey    = "reactivate"
+    private static let makeDefaultResourceKey   = "makeDefault"
+    private static let transactionsResourceKey  = "transactions"
 
     private weak var _client: RestClient?
 
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             return self._client
         }
@@ -91,27 +72,27 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
     }
 
     open var acceptTermsAvailable: Bool {
-        return self.links?.url(CreditCard.acceptTermsResource) != nil
+        return self.links?.url(CreditCard.acceptTermsResourceKey) != nil
     }
 
     open var declineTermsAvailable: Bool {
-        return self.links?.url(CreditCard.declineTermsResource) != nil
+        return self.links?.url(CreditCard.declineTermsResourceKey) != nil
     }
 
     open var deactivateAvailable: Bool {
-        return self.links?.url(CreditCard.deactivateResource) != nil
+        return self.links?.url(CreditCard.deactivateResourceKey) != nil
     }
 
     open var reactivateAvailable: Bool {
-        return self.links?.url(CreditCard.reactivateResource) != nil
+        return self.links?.url(CreditCard.reactivateResourceKey) != nil
     }
 
     open var makeDefaultAvailable: Bool {
-        return self.links?.url(CreditCard.makeDefaultResource) != nil
+        return self.links?.url(CreditCard.makeDefaultResourceKey) != nil
     }
 
     open var listTransactionsAvailable: Bool {
-        return self.links?.url(CreditCard.transactionsResource) != nil
+        return self.links?.url(CreditCard.transactionsResourceKey) != nil
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -215,7 +196,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion:   CreditCardHandler closure
      */
     @objc open func getCreditCard(_ completion: @escaping RestClient.CreditCardHandler) {
-        let resource = CreditCard.selfResource
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
 
         if let url = url, let client = self.client {
@@ -238,7 +219,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - return acceptTerms url
      */
     @objc open func getAcceptTermsUrl() -> String? {
-     return self.links?.url(CreditCard.acceptTermsResource)
+     return self.links?.url(CreditCard.acceptTermsResourceKey)
     }
 
     /**
@@ -246,7 +227,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - @param acceptTermsUrl url
      */
     @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
-        guard let link = self.links?.indexOf(CreditCard.acceptTermsResource) else {
+        guard let link = self.links?.indexOf(CreditCard.acceptTermsResourceKey) else {
             throw  AcceptTermsError.NoTerms("The card is not in a state to accept terms anymore")
         }
         
@@ -259,7 +240,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion:   DeleteCreditCardHandler closure
      */
     @objc open func deleteCreditCard(_ completion: @escaping RestClient.DeleteHandler) {
-        let resource = CreditCard.selfResource
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deleteCreditCard(url, completion: completion)
@@ -288,7 +269,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
                            postalCode: String?,
                            countryCode: String?,
                            completion: @escaping RestClient.CreditCardHandler) {
-        let resource = CreditCard.selfResource
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.updateCreditCard(url,
@@ -311,7 +292,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion:   AcceptTermsHandler closure
      */
     @objc open func acceptTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.acceptTermsResource
+        let resource = CreditCard.acceptTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.acceptTerms(url, completion: completion)
@@ -326,7 +307,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion:   DeclineTermsHandler closure
      */
     @objc open func declineTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.declineTermsResource
+        let resource = CreditCard.declineTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.declineTerms(url, completion: completion)
@@ -343,7 +324,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion:   DeactivateHandler closure
      */
     open func deactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.deactivateResource
+        let resource = CreditCard.deactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
@@ -360,7 +341,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion:   ReactivateHandler closure
      */
     open func reactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.reactivateResource
+        let resource = CreditCard.reactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
@@ -375,7 +356,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion:   MakeDefaultHandler closure
      */
     @objc open func makeDefault(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
-        let resource = CreditCard.makeDefaultResource
+        let resource = CreditCard.makeDefaultResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.makeDefault(url, completion: completion)
@@ -392,7 +373,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter completion: TransactionsHandler closure
      */
     open func listTransactions(limit: Int, offset: Int, completion: @escaping RestClient.TransactionsHandler) {
-        let resource = CreditCard.transactionsResource
+        let resource = CreditCard.transactionsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.transactions(url, limit: limit, offset: offset, completion: completion)
@@ -404,10 +385,7 @@ open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
 
 open class CardMetadata: NSObject, ClientModel, Serializable {
     
-    @available(*, deprecated, message: "Use foregroundColor instead")
-    open var labelColor: String?
-    
-    open var foregroundColor: String?
+    open var foregroundColor: String? // TODO: update to UIColor
     open var issuerName: String?
     open var shortDescription: String?
     open var longDescription: String?
@@ -423,9 +401,10 @@ open class CardMetadata: NSObject, ClientModel, Serializable {
     open var coBrandLogo: [Image]?
     open var icon: [Image]?
     open var issuerLogo: [Image]?
+    
     private var _client: RestClient?
     
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             return self._client
         }
@@ -540,11 +519,12 @@ open class CardMetadata: NSObject, ClientModel, Serializable {
 }
 
 open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetrivable {
-    internal var links: [ResourceLink]?
     open var mimeType: String?
-    public var client: RestClient?
-    private static let selfResource = "self"
+    
+    var client: RestClient?
+    var links: [ResourceLink]?
 
+    private static let selfResourceKey = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
@@ -566,7 +546,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetri
     }
 
     @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
-        let resource = TermsAssetReferences.selfResource
+        let resource = TermsAssetReferences.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.assets(url, completion: completion)
@@ -578,6 +558,7 @@ open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetri
 }
 
 open class DeviceRelationships: NSObject, ClientModel, Serializable {
+    
     open var deviceType: String?
     open var deviceIdentifier: String?
     open var manufacturerName: String?
@@ -592,9 +573,8 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
     open var osName: String?
     open var systemId: String?
 
-    public var client: RestClient?
-    
-    internal var links: [ResourceLink]?
+    var client: RestClient?
+    var links: [ResourceLink]?
 
     private static let selfResourceKey = "self"
 
@@ -695,6 +675,31 @@ open class CardInfo: Serializable {
         address = try? container.decode(.address)
         name = try? container.decode(.name)
     }
+
+}
+
+// MARK: - Nested Objects
+
+extension CreditCard {
+    
+    public enum TokenizationState: String, Codable {
+        case NEW,
+        NOT_ELIGIBLE,
+        ELIGIBLE,
+        DECLINED_TERMS_AND_CONDITIONS,
+        PENDING_ACTIVE,
+        PENDING_VERIFICATION,
+        DELETED,
+        ACTIVE,
+        DEACTIVATED,
+        ERROR,
+        DECLINED
+    }
+    
+    enum AcceptTermsError: Error {
+        case NoTerms(String)
+    }
+
 }
 
 /**
@@ -704,6 +709,6 @@ open class CardInfo: Serializable {
  - ISSUER:     issuer
  */
 public enum CreditCardInitiator: String {
-    case CARDHOLDER
-    case ISSUER
+    case cardholder = "CARDHOLDER"
+    case issuer = "ISSUER"
 }

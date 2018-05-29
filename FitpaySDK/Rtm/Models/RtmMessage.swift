@@ -1,14 +1,12 @@
 import UIKit
 
-public typealias RtmMessageType = String
-
 open class RtmMessage: NSObject, Serializable {
     
     open var callBackId: Int?
     open var data: [String: Any]?
     open var type: String?
     
-    internal override init() {
+    override init() {
         super.init()
     }
 

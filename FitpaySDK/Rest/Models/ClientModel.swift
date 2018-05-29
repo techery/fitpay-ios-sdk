@@ -1,4 +1,4 @@
-internal protocol ClientModel {
+protocol ClientModel {
     var client: RestClient? {
         get set
     }

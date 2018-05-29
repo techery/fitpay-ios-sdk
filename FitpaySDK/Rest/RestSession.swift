@@ -2,15 +2,7 @@ import Foundation
 import Alamofire
 import JWTDecode
 
-public enum AuthScope: String {
-    case userRead   = "user.read"
-    case userWrite  = "user.write"
-    case tokenRead  = "token.read"
-    case tokenWrite = "token.write"
-}
-
-internal class AuthorizationDetails: Serializable
-{
+struct AuthorizationDetails: Serializable {
     var tokenType: String?
     var accessToken: String?
     var expiresIn: String?
@@ -26,98 +18,84 @@ internal class AuthorizationDetails: Serializable
     }
 }
 
-@objcMembers
-open class RestSession: NSObject {
+@objcMembers open class RestSession: NSObject {
     public enum ErrorEnum: Int, Error, RawIntValue {
         case decodeFailure = 1000
         case parsingFailure
         case accessTokenFailure
     }
-
-    private(set) var clientId: String
-    private(set) var redirectUri: String
-
+    
     open var userId: String?
     open var accessToken: String?
     open var isAuthorized: Bool {
         return self.accessToken != nil
     }
-
+    
     open func setWebViewAuthorization(_ webViewSessionData: SessionData) {
         self.accessToken = webViewSessionData.token
         self.userId = webViewSessionData.userId
     }
-
+    
     lazy private var _manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         return SessionManager(configuration: configuration)
     }()
-
-    private(set) internal var baseAPIURL: String
-    private(set) internal var authorizeURL: String
-
-    public init(configuration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration, sessionData: SessionData? = nil) {
-        self.clientId = configuration.clientId
-        self.redirectUri = configuration.redirectUri
-        self.authorizeURL = "\(configuration.baseAuthURL)/oauth/authorize"
-        self.baseAPIURL = configuration.baseAPIURL
-        
+    
+    public init(sessionData: SessionData? = nil) {
         if let sessionData = sessionData {
             self.accessToken = sessionData.token
             self.userId = sessionData.userId
         }
     }
-
+    
     public typealias LoginHandler = (_ error: NSError?) -> Void
     
     @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
-        self.acquireAccessToken(clientId: self.clientId, redirectUri: self.redirectUri, username: username, password: password, completion: {
-            (details: AuthorizationDetails?, error: NSError?) in
-
+        self.acquireAccessToken(username: username, password: password) { (details: AuthorizationDetails?, error: NSError?) in
+            
             DispatchQueue.global().async {
                 if let error = error {
                     completion(error)
                 } else {
-                    if let accessToken = details?.accessToken {
-                        guard let jwt = try? decode(jwt: accessToken) else {
-                            completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
-                            return
-                        }
-
-                        if let userId = jwt.body["user_id"] as? String {
-                            DispatchQueue.main.async { [weak self] in
-                                log.verbose("successful login for user: \(userId)")
-                                self?.userId = userId
-                                self?.accessToken = accessToken
-                                completion(nil)
-                            }
-                        } else {
-                            completion(NSError.error(code: ErrorEnum.parsingFailure, domain: RestSession.self, message: "Failed to parse user id"))
-                        }
-                    } else {
+                    guard let accessToken = details?.accessToken else {
                         completion(NSError.error(code: ErrorEnum.accessTokenFailure, domain: RestSession.self, message: "Failed to retrieve access token"))
+                        return
+                    }
+                    guard let jwt = try? decode(jwt: accessToken) else {
+                        completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
+                        return
+                    }
+                    guard let userId = jwt.body["user_id"] as? String else {
+                        completion(NSError.error(code: ErrorEnum.parsingFailure, domain: RestSession.self, message: "Failed to parse user id"))
+                        return
+                    }
+                    
+                    DispatchQueue.main.async { [weak self] in
+                        log.verbose("successful login for user: \(userId)")
+                        self?.userId = userId
+                        self?.accessToken = accessToken
+                        completion(nil)
                     }
                 }
             }
-        })
+        }
     }
-
-    internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
-
-    internal func acquireAccessToken(clientId: String, redirectUri: String, username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
+    
+    typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
+    
+    func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
-        let parameters = [
+        let parameters: [String: String] = [
             "response_type": "token",
-            "client_id": clientId,
-            "redirect_uri": redirectUri,
+            "client_id": FitpayConfig.clientId,
+            "redirect_uri": FitpayConfig.redirectURL,
             "credentials": ["username": username, "password": password].JSONString!
         ]
 
-        let request = _manager.request(self.authorizeURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate().responseJSON(queue: DispatchQueue.global()) {
-            (response) in
+        let request = _manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
 
             DispatchQueue.main.async {
                 if let resultError = response.result.error {
@@ -134,11 +112,10 @@ open class RestSession: NSObject {
 }
 
 extension RestSession {
-    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
-    {
-        case unknownError                   = 0
-        case deviceNotFound                 = 10001
-        case userOrDeviceEmpty				= 10002
+    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
+        case unknownError       = 0
+        case deviceNotFound     = 10001
+        case userOrDeviceEmpty  = 10002
         
         public var description : String {
             switch self {
@@ -153,21 +130,17 @@ extension RestSession {
     }
     
     public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, ErrorResponse?) -> Void
-
-    class func GetUserAndDeviceWith(sessionData: SessionData,
-                                    sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
-                                    completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
+    
+    class func GetUserAndDeviceWith(sessionData: SessionData, completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
         guard let userId = sessionData.userId, let deviceId = sessionData.deviceId else {
             completion(nil, nil, ErrorResponse(domain: RestSession.self, errorCode: RestSession.ErrorCode.userOrDeviceEmpty.rawValue, errorMessage: ""))
             return nil
         }
-
-        let session = RestSession(configuration: sdkConfiguration, sessionData: sessionData)
+        
+        let session = RestSession(sessionData: sessionData)
         let client = RestClient(session: session)
         
-        
         client.user(id: userId) { (user, error) in
-
             guard user != nil && error == nil else {
                 completion(nil, nil, error)
                 return
@@ -209,15 +182,9 @@ extension RestSession {
         return client
     }
     
-    class func GetUserAndDeviceWith(token: String,
-                                    userId: String,
-                                    deviceId: String,
-                                    sdkConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration,
-                                    completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
-        return RestSession.GetUserAndDeviceWith(sessionData: SessionData(token: token, userId: userId, deviceId: deviceId),
-                                                sdkConfiguration: sdkConfiguration,
-                                                completion: completion)
+    class func GetUserAndDeviceWith(token: String, userId: String, deviceId: String, completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
+        return RestSession.GetUserAndDeviceWith(sessionData: SessionData(token: token, userId: userId, deviceId: deviceId), completion: completion)
     }
-
+    
 }
 

@@ -21,19 +21,7 @@ extension RestClient {
      */
     public typealias UserHandler = (_ user: User?, _ error: ErrorResponse?) -> Void
     
-    //MARK: - Functions
-    
-    /**
-     Returns a list of all users that belong to your organization. The customers are returned sorted by creation date, with the most recently created customers appearing first
-     
-     - parameter limit:      Max number of profiles per page
-     - parameter offset:     Start index position for list of entities returned
-     - parameter completion: ListUsersHandler closure
-     */
-    open func listUsers(limit: Int, offset: Int, completion: ListUsersHandler) {
-        //TODO: Implement or remove this
-        assertionFailure("unimplemented functionality")
-    }
+    //MARK: - Public Functions
     
     /**
      Creates a new user within your organization
@@ -44,9 +32,9 @@ extension RestClient {
      - parameter email:      email of the user
      - parameter completion: CreateUserHandler closure
      */
-    open func createUser(_ email: String, password: String, firstName: String?, lastName: String?, birthDate: String?,
-                         termsVersion: String?, termsAccepted: String?, origin: String?, originAccountCreated: String?,
-                         clientId: String, completion: @escaping UserHandler) {
+    @objc public func createUser(_ email: String, password: String, firstName: String?, lastName: String?,
+                                 birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?,
+                                 originAccountCreated: String?, completion: @escaping UserHandler) {
         log.verbose("request create user: \(email)")
         
         self.preparKeyHeader { [weak self] (headers, error) in
@@ -74,7 +62,7 @@ extension RestClient {
                 parameters += ["originAccountCreatedTsEpoch": originAccountCreated!]
             }
             
-            parameters["client_id"] = clientId
+            parameters["client_id"] = FitpayConfig.clientId
             
             var rawUserInfo: [String: Any] = ["email": email, "pin": password ]
             
@@ -101,11 +89,11 @@ extension RestClient {
                 }
             }
             
-            log.verbose("user creation url: \(strongSelf._session.baseAPIURL)/users")
+            log.verbose("user creation url: \(FitpayConfig.apiURL)/users")
             log.verbose("Headers: \(headers)")
             log.verbose("user creation json: \(parameters)")
             
-            let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = strongSelf._manager.request(FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
@@ -134,7 +122,7 @@ extension RestClient {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
-            let request = strongSelf._manager.request(strongSelf._session.baseAPIURL + "/users/" + id,
+            let request = strongSelf._manager.request(FitpayConfig.apiURL + "/users/" + id,
                                                       method: .get,
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,
@@ -164,14 +152,9 @@ extension RestClient {
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    internal func updateUser(_ url: String,
-                             firstName: String?,
-                             lastName: String?,
-                             birthDate: String?,
-                             originAccountCreated: String?,
-                             termsAccepted: String?,
-                             termsVersion: String?,
-                             completion: @escaping UserHandler) {
+    @objc public func updateUser(_ url: String,  firstName: String?, lastName: String?,
+                                 birthDate: String?, originAccountCreated: String?, termsAccepted: String?,
+                                 termsVersion: String?, completion: @escaping UserHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(nil, error)
@@ -236,7 +219,7 @@ extension RestClient {
      - parameter id:         user id
      - parameter completion: DeleteHandler closure
      */
-    internal func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
+    @objc public func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(error)
@@ -250,7 +233,9 @@ extension RestClient {
         }
     }
     
-    open func user(_ url: String, completion: @escaping UserHandler) {
+    // MARK: - Internal Functions
+    
+    @objc public func user(_ url: String, completion: @escaping UserHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }

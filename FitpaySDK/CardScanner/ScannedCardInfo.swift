@@ -1,28 +1,18 @@
-//
-//  ScannedCard.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 29.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
+/// Object returned from FitpayCardScannerDelegate scanned
 @objc public class ScannedCardInfo: NSObject, Serializable {
-    public var cardNumber: String?
+    
+    /// Credit card number
+    @objc public var cardNumber: String?
+    
+    /// Expiration month between 1-12
     public var expiryMonth: UInt?
+    
+    /// Expiration year
     public var expiryYear: UInt?
-    public var cvv: String?
     
-    public override init() {
-        super.init()
-    }
+    /// 3-4 digit CVV
+    @objc public var cvv: String?
     
-    @objc open func setExpiryMonth(month: UInt) {
-        expiryMonth = month
-    }
-    
-    @objc open func setExpiryYear(year: UInt) {
-        expiryYear = year
-    }
 }

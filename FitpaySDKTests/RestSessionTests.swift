@@ -13,16 +13,9 @@ class RestSessionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let config = FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
-        if let error = config.loadEnvironmentVariables() {
-            print("Can't load config from environment. Error: \(error)")
-        } else {
-            clientId = config.clientId
-        }
-        
-        self.session = RestSession(configuration: config)
+        self.session = RestSession()
         self.client = RestClient(session: self.session!)
-        self.testHelper = TestHelper(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
+        self.testHelper = TestHelper(session: self.session, client: self.client)
     }
     
     override func tearDown() {
@@ -34,26 +27,19 @@ class RestSessionTests: XCTestCase {
         let email = TestHelper.randomEmail()
         let expectation = super.expectation(description: "'acquireAccessToken' retrieves auth details")
         
-        self.client.createUser(
-            email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
-            termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId, completion:
-            {
-                (user, error) in
+        self.client.createUser(email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil) { (user, error) in
                 
                 XCTAssertNil(error)
                 
-                self.session.acquireAccessToken(
-                    clientId: self.clientId, redirectUri: self.redirectUri, username: email, password: self.password, completion:
-                    {
-                        authDetails, error in
+                self.session.acquireAccessToken(username: email, password: self.password) { authDetails, error in
                         
                         XCTAssertNotNil(authDetails)
                         XCTAssertNil(error)
                         XCTAssertNotNil(authDetails?.accessToken)
                         
                         expectation.fulfill()
-                });
-        })
+                }
+        }
         
         super.waitForExpectations(timeout: 10, handler: nil)
     }
@@ -64,20 +50,16 @@ class RestSessionTests: XCTestCase {
         
         self.client.createUser(
             email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
-            termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId, completion:
-            {
-                (user, error) in
+            termsAccepted: nil, origin: nil, originAccountCreated: nil) { (user, error) in
                 
-                self.session.login(username: email, password: self.password) {
-                    [unowned self]
-                    (error) -> Void in
+                self.session.login(username: email, password: self.password) { [unowned self] (error) -> Void in
                     
                     XCTAssertNil(error)
                     XCTAssertNotNil(self.session.userId)
                     
                     expectation.fulfill()
                 }
-        })
+        }
         
         super.waitForExpectations(timeout: 10, handler: nil)
     }
@@ -85,9 +67,7 @@ class RestSessionTests: XCTestCase {
     func testLoginFailsForWrongCredentials() {
         let expectation = super.expectation(description: "'login' fails for wrong credentials")
         
-        self.session.login(username: "totally@wrong.abc", password: "fail") {
-            [unowned self]
-            (error) -> Void in
+        self.session.login(username: "totally@wrong.abc", password: "fail") { [unowned self] (error) -> Void in
             
             XCTAssertNotNil(error)
             XCTAssertNil(self.session.userId)

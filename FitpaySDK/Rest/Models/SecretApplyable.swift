@@ -1,5 +1,4 @@
 
-internal protocol SecretApplyable
-{
+protocol SecretApplyable {
     func applySecret(_ secret: Foundation.Data, expectedKeyId: String?)
 }

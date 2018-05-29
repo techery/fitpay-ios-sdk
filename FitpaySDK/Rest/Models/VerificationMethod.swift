@@ -26,9 +26,8 @@ public enum VerificationResult: String, Serializable {
 }
 
 @objcMembers
-open class VerificationMethod: NSObject, ClientModel, Serializable
-{
-    internal var links: [ResourceLink]?
+open class VerificationMethod: NSObject, ClientModel, Serializable {
+    
     open var verificationId: String?
     open var state: VerificationState?
     open var methodType: VerificationMethodType?
@@ -42,7 +41,9 @@ open class VerificationMethod: NSObject, ClientModel, Serializable
     open var verifiedEpoch: TimeInterval?
     open var appToAppContext: A2AContext?
 
-    public weak var client: RestClient?
+    weak var client: RestClient?
+    
+    var links: [ResourceLink]?
 
     open var selectAvailable: Bool {
         return self.links?.url(VerificationMethod.selectResourceKey) != nil

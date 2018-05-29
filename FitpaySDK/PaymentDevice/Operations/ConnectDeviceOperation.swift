@@ -1,11 +1,3 @@
-//
-//  ConnectDeviceOperation.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 10.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 import RxSwift
 
@@ -15,7 +7,7 @@ public enum SyncOperationConnectionState {
     case disconnected
 }
 
-public protocol ConnectDeviceOperationProtocol {
+protocol ConnectDeviceOperationProtocol {
     func start() -> Observable<SyncOperationConnectionState>
 }
 
@@ -63,7 +55,7 @@ open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
         self.deviceDisconnectedBinding = nil
     }
     
-    internal static let paymentDeviceConnectionTimeoutInSecs: Int = 60
+    static let paymentDeviceConnectionTimeoutInSecs: Int = 60
 
     // private
     private var paymentDevice: PaymentDevice
@@ -82,7 +74,7 @@ open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
             self.paymentDevice.removeBinding(binding: binding)
         }
         
-        self.deviceConnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected) {
+        self.deviceConnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) {
             [weak self] (event) in
             
             let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
@@ -102,7 +94,7 @@ open class ConnectDeviceOperation: ConnectDeviceOperationProtocol {
             observable.onNext(.connected)
         }
         
-        self.deviceDisconnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
+        self.deviceDisconnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
             [weak self] (event) in
             
             if let binding = self?.deviceConnectedBinding {

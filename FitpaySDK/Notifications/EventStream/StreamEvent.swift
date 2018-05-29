@@ -1,10 +1,10 @@
 import Foundation
 
-public struct StreamEvent: Decodable {
+public class StreamEvent: Decodable {
     public var type: StreamEventType
     public var payload: [String: Any]?
 
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container =  try decoder.container(keyedBy: CodingKeys.self)
         
         type = try container.decode(StreamEventType.self, forKey: .type)

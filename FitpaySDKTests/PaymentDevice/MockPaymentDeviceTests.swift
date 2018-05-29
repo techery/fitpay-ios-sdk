@@ -29,7 +29,7 @@ class MockPaymentDeviceTests: XCTestCase {
     
     func testConnectToDeviceCheck() {
         let expectation = super.expectation(description: "connection to device check")
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected) { (event) in
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) { (event) in
             debugPrint("event: \(event), eventData: \(event.eventData)")
             let deviceInfo = self.paymentDevice.deviceInfo
             let error = (event.eventData as? [String:Any])?["error"]
@@ -61,7 +61,7 @@ class MockPaymentDeviceTests: XCTestCase {
         let expectation = super.expectation(description: "sending apdu commands")
         let successResponse = Data(bytes: UnsafePointer<UInt8>([0x90, 0x00] as [UInt8]), count: 2)
         
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected) { (event) in
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) { (event) in
             let error = (event.eventData as? [String: Any])?["error"]
             
             XCTAssertNil(error)
@@ -91,7 +91,7 @@ class MockPaymentDeviceTests: XCTestCase {
         let expectation = super.expectation(description: "package check")
         let successResponse = Data(bytes: UnsafePointer<UInt8>([0x90, 0x00] as [UInt8]), count: 2)
         
-        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected) { (event) in
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceConnected) { (event) in
             let error = (event.eventData as? [String: Any])?["error"]
             let package = ApduPackage()
             package.apduCommands = [self.command1, self.command2]

@@ -8,7 +8,7 @@
 
 import Foundation
 
-internal class BindedToDeviceSyncRequestQueue {
+class BindedToDeviceSyncRequestQueue {
     init(deviceInfo: DeviceInfo?, syncManager: SyncManagerProtocol) {
         self.deviceInfo = deviceInfo
         self.syncManager = syncManager
@@ -60,7 +60,7 @@ internal class BindedToDeviceSyncRequestQueue {
 
     }
     
-    internal func dequeue() -> SyncRequest? {
+    func dequeue() -> SyncRequest? {
         return self.requestsQueue.dequeue()
     }
     
@@ -86,16 +86,10 @@ internal class BindedToDeviceSyncRequestQueue {
     }
     
     private func processNext() {
-        guard let request = self.requestsQueue.peekAtQueue() else {
-            return
-        }
+        guard let request = requestsQueue.peekAtQueue() else { return }
         
-        // giving some time for direct sync call
-        // can be deleted when deprecated methods will be removed
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            if let error = self?.startSyncFor(request: request) {
-                self?.syncCompletedFor(request: request, withStatus: .failed, andError: error)
-            }
+        if let error = startSyncFor(request: request) {
+            syncCompletedFor(request: request, withStatus: .failed, andError: error)
         }
     }
 

@@ -1,11 +1,3 @@
-//
-//  PaymentDeviceApduExecuter.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 15.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 enum PaymentDeviceAPDUExecuterError: Error {
@@ -15,7 +7,7 @@ enum PaymentDeviceAPDUExecuterError: Error {
     case responseDataIsEmpty
 }
 
-internal class PaymentDeviceApduExecuter {
+class PaymentDeviceApduExecuter {
     weak var paymentDevice: PaymentDevice?
     var isExecuting: Bool = false
     var completion: PaymentDevice.APDUExecutionHandler!
@@ -24,7 +16,7 @@ internal class PaymentDeviceApduExecuter {
     
     // bindings
     private weak var deviceDisconnectedBinding : FitpayEventBinding?
-
+    
     typealias OnResponseReadyToHandle = (_ apduResultMessage: ApduResultMessage?, _ state: String?, _ error: Error?) -> Void
     typealias ExecutionBlock = (_ command: APDUCommand, _ completion: @escaping OnResponseReadyToHandle) -> Void
     
@@ -52,12 +44,12 @@ internal class PaymentDeviceApduExecuter {
         self.currentApduCommand = command
         self.executionBlock = executionBlock
         
-        self.deviceDisconnectedBinding = self.paymentDevice?.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: { [weak self] (event) in
+        self.deviceDisconnectedBinding = self.paymentDevice?.bindToEvent(eventType: PaymentDevice.PaymentDeviceEventTypes.onDeviceDisconnected, completion: { [weak self] (event) in
             log.error("APDU_DATA: Device was disconnected during APDU execution.")
             self?.isExecuting = false
             self?.completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceWasDisconnected, domain: PaymentDevice.self))
         })
-
+        
         
         self.executionBlock(command, self.handleApduResponse)
     }
@@ -119,7 +111,7 @@ internal class PaymentDeviceApduExecuter {
         completion(apduCommand, nil, nil)
     }
     
-    internal func removeDisconnectedBinding() {
+    func removeDisconnectedBinding() {
         if let binding = self.deviceDisconnectedBinding {
             self.paymentDevice?.removeBinding(binding: binding)
             self.deviceDisconnectedBinding = nil

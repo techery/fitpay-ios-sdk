@@ -59,7 +59,7 @@ class MocksFactory: SyncFactory {
         return MockNonAPDUConfirm()
     }
     
-    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: IPaymentDeviceConnector?) -> FetchCommitsOperationProtocol {
+    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
         return commitsFetcher
     }
 }
@@ -76,12 +76,7 @@ class SyncOperationTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        if log.outputs.count == 0 {
-            log.addOutput(output: ConsoleOutput())
-        }
-        log.minLogLevel = .debug
-        
+                
         disposeBag = DisposeBag()
         
         mocksFactory.commitsFetcher = commitsFetcher

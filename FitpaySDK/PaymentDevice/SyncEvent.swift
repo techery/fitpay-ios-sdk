@@ -1,19 +1,11 @@
-//
-//  SyncEvent.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 10.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 struct SyncEvent {
     var event: SyncEventType
-    var data: [String:Any]
+    var data: [String: Any]
 }
 
-@objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
+@objc public enum SyncEventType: Int, FitpayEventTypeProtocol {
     case connectingToDevice = 0x1
     case connectingToDeviceFailed
     case connectingToDeviceCompleted
@@ -39,7 +31,6 @@ struct SyncEvent {
     case resetDefaultCard
     case cardProvisionFailed
     case cardMetadataUpdated
-
     
     public func eventId() -> Int {
         return rawValue
@@ -91,4 +82,5 @@ struct SyncEvent {
             return "Card metadata updated event."
         }
     }
+
 }

@@ -1,20 +1,23 @@
-
-open class Transaction : NSObject, ClientModel, Serializable
-{
-    internal var links:[ResourceLink]?
-    open var transactionId:String?
-    open var transactionType:String?
-    open var amount:NSDecimalNumber?
-    open var currencyCode:String?
-    open var authorizationStatus:String?
-    open var transactionTime:String?
-    open var transactionTimeEpoch:TimeInterval?
-    open var merchantName:String?
-    open var merchantCode:String?
-    open var merchantType:String?
+// TODO: Document well
+/// don't store / must have agreement to display outside of fitpay webview
+open class Transaction: NSObject, ClientModel, Serializable {
     
-    private static let selfResource = "self"
-    public weak var client:RestClient?
+    open var transactionId: String?
+    open var transactionType: String?
+    open var amount: NSDecimalNumber?
+    open var currencyCode: String?
+    open var authorizationStatus: String?
+    open var transactionTime: String?
+    open var transactionTimeEpoch: TimeInterval?
+    open var merchantName: String?
+    open var merchantCode: String?
+    open var merchantType: String?
+    
+    weak var client: RestClient?
+    
+    var links: [ResourceLink]?
+    
+    private static let selfResourceKey = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"

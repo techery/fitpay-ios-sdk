@@ -1,36 +1,43 @@
-//
-//  A2AIssuerResponse.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 3/6/18.
-//
-
 import Foundation
 
-public enum A2AStepupResult: String, Serializable {
-    case Approved  = "approved"
-    case Declined  = "declined"
-    case Failure   = "failure"
-}
-
-public class A2AIssuerRequest: NSObject, Codable {
+/// Helper Object to build from issuer response
+/// Used in creating webURL
+/// Create in `application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:])`
+@objc open class A2AIssuerRequest: NSObject, Serializable {
     private var response: A2AStepupResult?
     private var authCode: String?
 
+    /// Init A2AIssuerRequest
+    ///
+    /// - Parameters:
+    ///   - response: returned as query param "stepupresponse"
+    ///   - authCode: returned as query param "stepupauthcode" if applicable
     public init(response: A2AStepupResult, authCode: String?) {
         self.response = response
         self.authCode = authCode
         super.init()
     }
 
-    public func toString() -> String? {
-        let encoder = JSONEncoder()
-        guard let jsonData = try? encoder.encode(self) else { return nil }
-        return String(data: jsonData, encoding: .utf8)!
-    }
-
-    public func getEncodedString() -> String? {
-        guard let string = toString() else { return nil }
+    /// Call to create url String
+    ///
+    /// - Returns: base64URLencoded object
+    @objc open func getEncodedString() -> String? {
+        guard let string = toJSONString() else { return nil }
         return Data(string.utf8).base64URLencoded()
     }
+    
+}
+
+// MARK: - Nested Objects
+
+extension A2AIssuerRequest {
+    
+    /// Result that comes back from issuer
+    /// Create from response `A2AIssuerRequest.A2AStepupResult(rawValue: stepupResponse)`
+    public enum A2AStepupResult: String, Serializable {
+        case approved
+        case declined
+        case failure
+    }
+    
 }

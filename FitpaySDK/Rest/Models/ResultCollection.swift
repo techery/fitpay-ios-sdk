@@ -4,7 +4,9 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
     open var offset: Int?
     open var totalResults: Int?
     open var results: [T]?
-    internal var links: [ResourceLink]?
+    
+    var links: [ResourceLink]?
+    
     private let lastResourse = "last"
     private let nextResourse = "next"
     private let previousResource = "previous"
@@ -21,7 +23,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         return self.links?.url(self.previousResource) != nil
     }
 
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             if _client != nil {
                 return _client
@@ -29,7 +31,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
             
             if let results = self.results {
                 for result in results {
-                    if var result = result as? ClientModel {
+                    if let result = result as? ClientModel {
                         return result.client
                     }
                 }
@@ -81,7 +83,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         try? container.encode(totalResults, forKey: .totalResults)
     }
 
-    internal func applySecret(_ secret: Data, expectedKeyId: String?) {
+    func applySecret(_ secret: Data, expectedKeyId: String?) {
         if let results = self.results {
             for modelObject in results {
                 if let objectWithEncryptedData = modelObject as? SecretApplyable {

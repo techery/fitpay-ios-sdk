@@ -4,7 +4,7 @@ open class RtmMessageResponse: RtmMessage {
 
     var success: Bool?
     
-    public required init(callbackId: Int? = nil, data: [String: Any]? = nil, type: RtmMessageType, success: Bool = true) {
+    public required init(callbackId: Int? = nil, data: [String: Any]? = nil, type: String, success: Bool = true) {
         super.init()
         
         self.callBackId = callbackId

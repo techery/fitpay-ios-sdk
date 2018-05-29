@@ -1,5 +1,5 @@
 
-public enum APDUPackageResponseState : String {
+public enum APDUPackageResponseState: String {
     case processed    = "PROCESSED"
     case failed       = "FAILED"
     case error        = "ERROR"
@@ -7,10 +7,8 @@ public enum APDUPackageResponseState : String {
     case notProcessed = "NOT_PROCESSED"
 }
 
-@objcMembers
-open class ApduPackage : NSObject, Serializable
-{
-    internal var links: [ResourceLink]?
+@objcMembers open class ApduPackage: NSObject, Serializable {
+
     open var seIdType: String?
     open var targetDeviceType: String?
     open var targetDeviceId: String?
@@ -27,29 +25,26 @@ open class ApduPackage : NSObject, Serializable
     open var validUntilEpoch: Date?
     open var apduPackageUrl: String?
     
-    @objc open static var APDUPackageResponseStateProcessed: String
-    {
+    var links: [ResourceLink]?
+    
+    @objc open static var APDUPackageResponseStateProcessed: String {
         return APDUPackageResponseState.processed.rawValue
     }
-    @objc open static var APDUPackageResponseStateFailed: String
-    {
+    
+    @objc open static var APDUPackageResponseStateFailed: String {
         return APDUPackageResponseState.failed.rawValue
     }
-    @objc open static var APDUPackageResponseStateError: String
-    {
+    
+    @objc open static var APDUPackageResponseStateError: String {
         return APDUPackageResponseState.error.rawValue
     }
-    @objc open static var APDUPackageResponseStateExpired: String
-    {
+    
+    @objc open static var APDUPackageResponseStateExpired: String {
         return APDUPackageResponseState.expired.rawValue
     }
-    @objc open static var APDUPackageResponseStateNotProcessed: String
-    {
+    
+    @objc open static var APDUPackageResponseStateNotProcessed: String {
         return APDUPackageResponseState.notProcessed.rawValue
-    }
-
-    override init() {
-        super.init()
     }
 
     //Date format for date transformation
@@ -65,6 +60,10 @@ open class ApduPackage : NSObject, Serializable
         case apduCommands = "commandApdus"
         case validUntil
         case apduPackageUrl
+    }
+    
+    override init() {
+        super.init()
     }
 
     public required init(from decoder: Decoder) throws {
