@@ -31,13 +31,14 @@ import Foundation
     var links: [ResourceLink]?
     var encryptedData: String?
 
-    private static let selfResourceKey          = "self"
-    private static let acceptTermsResourceKey   = "acceptTerms"
-    private static let declineTermsResourceKey  = "declineTerms"
-    private static let deactivateResourceKey    = "deactivate"
-    private static let reactivateResourceKey    = "reactivate"
-    private static let makeDefaultResourceKey   = "makeDefault"
-    private static let transactionsResourceKey  = "transactions"
+    private static let selfResourceKey            = "self"
+    private static let acceptTermsResourceKey     = "acceptTerms"
+    private static let declineTermsResourceKey    = "declineTerms"
+    private static let deactivateResourceKey      = "deactivate"
+    private static let reactivateResourceKey      = "reactivate"
+    private static let makeDefaultResourceKey     = "makeDefault"
+    private static let transactionsResourceKey    = "transactions"
+    private static let getVerificationMethodsKey  = "getVerificationMethods"
 
     private weak var _client: RestClient?
 
@@ -377,6 +378,21 @@ import Foundation
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.transactions(url, limit: limit, offset: offset, completion: completion)
+        } else {
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
+        }
+    }
+
+    /**
+     Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
+
+     - parameter completion:   VerifyMethodsHandler closure
+     */
+    open func getVerificationMethods(_ completion: @escaping RestClient.VerifyMethodsHandler) {
+        let resource = CreditCard.getVerificationMethodsKey
+        let url = self.links?.url(resource)
+        if let url = url, let client = self.client {
+            client.getVerificationMethods(url, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }

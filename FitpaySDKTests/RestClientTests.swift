@@ -458,6 +458,22 @@ class RestClientTests: XCTestCase {
         
         super.waitForExpectations(timeout: 20, handler: nil)
     }
+
+    func testCreditCardGetVerificationMethods() {
+        let expectation = super.expectation(description: "'creditCard' get verification methods")
+
+        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
+            self.testHelper.createDevice(expectation, user: user) { (user, device) in
+                self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
+                    self.testHelper.getVerificationMethods(expectation, card: creditCard) { (verificationMethod) in
+                        self.testHelper.deleteUser(user, expectation: expectation)
+                    }
+                }
+            }
+        }
+
+        super.waitForExpectations(timeout: 20, handler: nil)
+    }
     
     func testCreditCardDeclineTerms() {
         let expectation = super.expectation(description: "'creditCard' decline terms")
