@@ -1,5 +1,5 @@
 //
-//  MocRestClient.swift
+//  MocMocRestClient.swift
 //  FitpaySDK
 //
 //  Created by Illya Kyznetsov on 5/29/18.
@@ -7,25 +7,127 @@
 //
 
 import UIKit
+@testable import FitpaySDK
+import XCTest
 
- class MocRestClient: RestClient {
+class MocRestClient: NSObject {
+    /**
+     FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
 
-    // MARK: - Confirm package
+     Not all errors map cleanly onto HTTP response codes, however. When a request is valid but does not complete successfully (e.g. a card is declined), we return a 402 error code.
 
-    override func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
+     - OK:               Everything worked as expected
+     - BadRequest:       Often missing a required parameter
+     - Unauthorized:     No valid API key provided
+     - RequestFailed:    Parameters were valid but request failed
+     - NotFound:         The requested item doesn't exist
+     - ServerError[0-3]: Something went wrong on FitPay's end
+     */
+    public enum ErrorCode: Int, Error, RawIntValue {
+        case ok            = 200
+        case badRequest    = 400
+        case unauthorized  = 401
+        case requestFailed = 402
+        case notFound      = 404
+        case serverError0  = 500
+        case serverError1  = 502
+        case serverError2  = 503
+        case serverError3  = 504
+    }
+
+    static let fpKeyIdKey: String = "fp-key-id"
+
+    private let defaultHeaders = [
+        "Accept": "application/json",
+        "X-FitPay-SDK": "iOS-\(FitpayConfig.sdkVersion)"
+    ]
+
+    var _session: RestSession
+    var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
+
+    var key: EncryptionKey?
+
+    var secret: Data {
+        let secret = self.keyPair.generateSecretForPublicKey(key?.serverPublicKey ?? "")
+        if secret == nil || secret?.count == 0 {
+            log.warning("Encription secret is empty.")
+        }
+        return secret ?? Data()
+    }
+
+    public init(session: RestSession) {
+        _session = session;
+    }
+
+  /* TODO  func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T? {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+
+            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                guard let strongSelf = self else { return }
+                let result = try? ResultCollection<T>(resultValue)
+                result?.client = self
+                result?.applySecret(strongSelf.secret, expectedKeyId: headers[MocRestClient.fpKeyIdKey])
+                completion(result, nil)
+            }
+        }
+
+        return nil
+    }
+*/
+    /**
+     Completion handler
+
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    public typealias DeleteHandler = (_ error: ErrorResponse?) -> Void
+
+    /**
+     Completion handler
+
+     - parameter ErrorType?:   Provides error object, or nil if no error occurs
+     */
+    public typealias ConfirmCommitHandler = (_ error: ErrorResponse?) -> Void
+
+    public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+            let request = Request(request: url)
+            request.response = response
 
-            let params = ["result": executionResult.description]
-            let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
         }
     }
+
+}
+
+// MARK: - Confirm package
+
+extension MocRestClient {
+
+
+    /**
+     Completion handler
+
+     - parameter ErrorType?:   Provides error object, or nil if no error occurs
+     */
+    public typealias ConfirmAPDUPackageHandler = (_ error: ErrorResponse?) -> Void
 
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -33,9 +135,9 @@ import UIKit
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    @objc override func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
+    public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
         guard package.packageId != nil else {
-            completion(ErrorResponse(domain: RestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
+            completion(ErrorResponse(domain: MocRestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
             return
         }
 
@@ -45,44 +147,81 @@ import UIKit
                 return
             }
 
-            let request = self._manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+            let request = Request(request: url)
+            request.response = response
+
             self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
         }
     }
+}
+
+// MARK: - Transactions
+
+extension MocRestClient {
+    /**
+     Completion handler
+
+     - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
+     - parameter error:        Provides error object, or nil if no error occurs
+     */
+    public typealias TransactionsHandler = (_ result: ResultCollection<Transaction>?, _ error: ErrorResponse?) -> Void
+
+    /**
+     Completion handler
+
+     - parameter transaction: Provides Transaction object, or nil if error occurs
+     - parameter error:       Provides error object, or nil if no error occurs
+     */
+    public typealias TransactionHandler = (_ transaction: Transaction?, _ error: ErrorResponse?) -> Void
 
 
-    // MARK: - Transactions
-
-    @objc override func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
+    func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         self.transactions(url, parameters: parameters, completion: completion)
     }
 
-    @objc override func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler) {
+    func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
 
-            let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+            let request = Request(request: url)
+            request.response = response
+
             self.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let transaction = try? ResultCollection<Transaction>(resultValue)
-                transaction?.client = self
+               //TODO transaction?.client = self
                 completion(transaction, error)
             }
         }
     }
 
+}
 
+// MARK: - Encryption
 
-    // MARK: - Encryption
+extension MocRestClient {
+    /**
+     Completion handler
+
+     - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
+     - parameter error?:         Provides error object, or nil if no error occurs
+     */
+    typealias CreateEncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
 
     /**
      Creates a new encryption key pair
@@ -90,11 +229,14 @@ import UIKit
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    @objc override func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
+    func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
         let headers = self.defaultHeaders
-        let parameters = ["clientPublicKey": clientPublicKey]
-
-        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        var response = Response()
+        let url = FitpayConfig.apiURL + "/config/encryptionKeys"
+        response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+        response.json = self.loadDataFromJSONFile(filename: "createEncryptionKeyJson")
+        let request = Request(request: url)
+        request.response = response
         self.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
@@ -103,6 +245,14 @@ import UIKit
             completion(try? EncryptionKey(resultValue), error)
         }
     }
+
+    /**
+     Completion handler
+
+     - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
+     - parameter error?:         Provides error object, or nil if no error occurs
+     */
+    typealias EncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
 
     /**
      Retrieve and individual key pair
@@ -110,9 +260,15 @@ import UIKit
      - parameter keyId:      key id
      - parameter completion: EncryptionKeyHandler closure
      */
-    @objc override func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
+    func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
-        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+        var response = Response()
+        let url = FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId
+        response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+        response.json = self.loadDataFromJSONFile(filename: "getEncryptionKeyJson")
+        let request = Request(request: url)
+        request.response = response
+
         self.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
@@ -123,22 +279,36 @@ import UIKit
     }
 
     /**
+     Completion handler
+
+     - parameter error?: Provides error object, or nil if no error occurs
+     */
+    typealias DeleteEncryptionKeyHandler = (_ error: Error?) -> Void
+
+    /**
      Deletes encryption key
 
      - parameter keyId:      key id
      - parameter completion: DeleteEncryptionKeyHandler
      */
-    @objc override func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler) {
-        let headers = self.defaultHeaders
-        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        request.validate().responseString { (response: DataResponse<String>) in
-            DispatchQueue.main.async {
-                completion(response.result.error)
-            }
-        }
+    func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler) {
+    /* TODO   let headers = self.defaultHeaders
+        var response = Response()
+        let url = FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId
+        response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+        response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+        let request = Request(request: url)
+        request.response = response
+
+        self.makeRequest(request: request) { (resultValue, error) in
+            completion(error)
+        }*/
+           completion(nil)
     }
 
-    @objc override func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler) {
+    typealias CreateKeyIfNeededHandler = CreateEncryptionKeyHandler
+
+    func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler) {
         if let key = self.key, !key.isExpired() {
             completion(key, nil)
         } else {
@@ -153,24 +323,29 @@ import UIKit
         }
     }
 
+}
 
+// MARK: Request Signature Helpers
+extension MocRestClient {
 
-    // MARK: Request Signature Helpers
+    typealias CreateAuthHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
 
-    @objc override func createAuthHeaders(_ completion: CreateAuthHeaders) {
+    func createAuthHeaders(_ completion: CreateAuthHeaders) {
         if self._session.isAuthorized {
-            completion(defaultHeaders + ["Authorization": "Bearer " + _session.accessToken!], nil)
+            completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
         } else {
-            completion(nil, ErrorResponse(domain: RestClient.self, errorCode: ErrorCode.unauthorized.rawValue, errorMessage: "\(ErrorCode.unauthorized)"))
+            completion(nil, ErrorResponse(domain: MocRestClient.self, errorCode: ErrorCode.unauthorized.rawValue, errorMessage: "\(ErrorCode.unauthorized)"))
         }
     }
 
-    @objc override func skipAuthHeaders(_ completion: CreateAuthHeaders) {
+    func skipAuthHeaders(_ completion: CreateAuthHeaders) {
         // do nothing
         completion(self.defaultHeaders, nil)
     }
 
-    @objc override func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders) {
+    typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
+
+    func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.createAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
@@ -179,14 +354,16 @@ import UIKit
                     if let keyError = keyError {
                         completion(nil, keyError)
                     } else {
-                        completion(headers! + [RestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
+                        completion(headers! + [MocRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
                     }
                 }
             }
         }
     }
 
-    @objc override func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders) {
+    typealias PrepareKeyHeader = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
+
+    func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.skipAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
@@ -195,17 +372,20 @@ import UIKit
                     if let keyError = keyError {
                         completion(nil, keyError)
                     } else {
-                        completion(headers! + [RestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
+                        completion(headers! + [MocRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
                     }
                 }
             }
         }
     }
 
+}
 
+// MARK: Issuers
+extension MocRestClient {
+    public typealias IssuersHandler = (_ issuers: Issuers?, _ error: ErrorResponse?) -> Void
 
-    // MARK: Issuers
-    @objc override func issuers(completion: @escaping IssuersHandler) {
+    public func issuers(completion: @escaping IssuersHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers  else {
@@ -213,27 +393,44 @@ import UIKit
                 return
             }
 
-            let request = strongSelf._manager.request(FitpayConfig.apiURL + "/issuers",
-                                                      method: .get,
-                                                      parameters: nil,
-                                                      encoding: JSONEncoding.default,
-                                                      headers: headers)
+            var response = Response()
+            let url = FitpayConfig.apiURL + "/issuers"
+            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self?.loadDataFromJSONFile(filename: "confirmJson")
+            let request = Request(request: url)
+            request.response = response
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let issuers = try? Issuers(resultValue)
-                issuers?.client = self
+                //TODO issuers?.client = self
                 completion(issuers, error)
             }
         }
     }
+}
 
-    @objc override func assets(_ url: String, completion: @escaping AssetsHandler) {
-        let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
+// MARK: Assets
+extension MocRestClient {
 
-        DispatchQueue.global().async {
+    /**
+     Completion handler
+
+     - parameter asset: Provides Asset object, or nil if error occurs
+     - parameter error: Provides error object, or nil if no error occurs
+     */
+    public typealias AssetsHandler = (_ asset: Asset?, _ error: ErrorResponse?) -> Void
+
+    func assets(_ url: String, completion: @escaping AssetsHandler) {
+        var response = Response()
+        response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+        response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+        let request = Request(request: url)
+        request.response = response
+
+    /*    DispatchQueue.global().async {
             request.responseData { (response: DataResponse<Data>) in
                 if response.result.error != nil {
                     let error = try? ErrorResponse(response.data)
@@ -256,22 +453,37 @@ import UIKit
                     }
                 } else {
                     DispatchQueue.main.async {
-                        completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
+                        completion(nil, ErrorResponse.unhandledError(domain: MocRestClient.self))
                     }
                 }
             }
-        }
+        }*/
     }
 
-    @objc override func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
+}
+
+// MARK: Sync Statistics
+extension MocRestClient {
+    /**
+     Completion handler
+
+     - parameter error: Provides error object, or nil if no error occurs
+     */
+    public typealias SyncHandler = (_ error: ErrorResponse?) -> Void
+
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
 
-            let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            DispatchQueue.global().async {
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self?.loadDataFromJSONFile(filename: "confirmJson")
+            let request = Request(request: url)
+            request.response = response
+         /*   DispatchQueue.global().async {
                 request?.response { (response: DefaultDataResponse) in
                     if response.error != nil {
                         DispatchQueue.main.async {
@@ -289,9 +501,21 @@ import UIKit
                         }
                     }
                 }
-            }
+            } */
         }
     }
+
+}
+
+// MARK: Reset Device Tasks
+extension MocRestClient {
+
+    /**
+     Completion handler
+
+     - parameter error: Provides error object, or nil if no error occurs
+     */
+    public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
 
     /**
      Creates a request for resetting a device
@@ -300,7 +524,7 @@ import UIKit
      - parameter userId: user id
      - parameter completion:      ResetHandler closure
      */
-    @objc override func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
+    func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async(execute: {
@@ -308,18 +532,19 @@ import UIKit
                 })
                 return
             }
-            let request = self._manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            request.validate().responseJSON { (response) in
-                DispatchQueue.main.async {
-                    if response.result.error != nil {
-                        let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                        completion(nil, error)
-                    } else if let resultValue = response.result.value {
-                        completion(try? ResetDeviceResult(resultValue), nil)
-                    } else {
-                        completion(nil, NSError.unhandledError(RestClient.self))
-                    }
+            var response = Response()
+            response.data = HTTPURLResponse(url: resetUrl, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self.loadDataFromJSONFile(filename: "resetDeviceTask")
+            let request = Request(request: resetUrl.absoluteString)
+            request.response = response
+            self.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
                 }
+                let resetDeviceResult = try? ResetDeviceResult(resultValue)
+
+                completion(resetDeviceResult, error)
             }
         }
     }
@@ -330,49 +555,72 @@ import UIKit
      - parameter resetId:  reset device task id
      - parameter completion:   ResetHandler closure
      */
-    @objc override func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
+    func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(resetUrl, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                request.validate().responseJSON { (response) in
-                    DispatchQueue.main.async {
-                        if response.result.error != nil {
-                            let error = NSError.errorWith(dataResponse: response, domain: RestClient.self)
-                            completion(nil, error)
-                        } else if let resultValue = response.result.value {
-                            completion(try? ResetDeviceResult(resultValue), nil)
-                        } else {
-                            completion(nil, NSError.unhandledError(RestClient.self))
-                        }
+                var response = Response()
+                response.data = HTTPURLResponse(url: resetUrl, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+                response.json = self.loadDataFromJSONFile(filename: "resetDeviceTask")
+                let request = Request(request: resetUrl.absoluteString)
+                request.response = response
+                self.makeRequest(request: request) { (resultValue, error) in
+                    guard let resultValue = resultValue else {
+                        completion(nil, error)
+                        return
                     }
-                }
-            } else {
-                DispatchQueue.main.async(execute: {
-                    completion(nil, error)
-                })
-            }
-        }
-    }
+                    let resetDeviceResult = try? ResetDeviceResult(resultValue)
 
-    @objc override func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-
-            DispatchQueue.main.async {
-                if response.result.error != nil {
-                    let JSON = response.data!.UTF8String
-                    var error = try? ErrorResponse(JSON)
-                    if error == nil {
-                        error = ErrorResponse(domain: RestClient.self, errorCode: response.response?.statusCode ?? 0 , errorMessage: response.result.error?.localizedDescription)
-                    }
-                    completion(nil, error)
-
-                } else if let resultValue = response.result.value {
-                    completion(resultValue, nil)
-                } else {
-                    completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
+                    completion(resetDeviceResult, error)
                 }
             }
         }
     }
+
 }
 
+extension MocRestClient {
+    /**
+     Completion handler
+
+     - parameter resultValue: Provides request object, or nil if error occurs
+     - parameter error: Provides error object, or nil if no error occurs
+     */
+    public typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
+
+    func makeRequest(request: Request?, completion: @escaping RequestHandler) {
+        request?.responseJSON(){ (request) in
+
+            DispatchQueue.main.async {
+                if request.response?.error != nil {
+                    let JSON = request.response?.json
+                    var error = try? ErrorResponse(JSON)
+                    if error == nil {
+                        error = ErrorResponse(domain: MocRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
+                    }
+                    completion(nil, error)
+
+                } else if let resultValue = request.response?.json {
+                    completion(resultValue, nil)
+                } else {
+                    completion(nil, ErrorResponse.unhandledError(domain: MocRestClient.self))
+                }
+            }
+        }
+    }
+
+    func loadDataFromJSONFile(filename: String) -> String? {
+        let bundle = Bundle(for: type(of: self))
+        if let filepath = bundle.path(forResource: filename, ofType: "json") {
+            do {
+                let contents = try String(contentsOfFile: filepath)
+                XCTAssertNotNil(contents)
+                return contents
+            } catch {
+                XCTAssert(false, "Can't read from file")
+            }
+        } else {
+            XCTAssert(false, "File not found")
+        }
+        return nil
+    }
+}

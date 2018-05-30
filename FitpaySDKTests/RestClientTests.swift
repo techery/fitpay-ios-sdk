@@ -36,10 +36,9 @@ class RestClientTests: XCTestCase {
     }
     
     func testCreateEncryptionKeyCreatesKey() {
-        let expectation = super.expectation(description: "'createEncryptionKey' creates key")
-        
+        let expectation = super.expectation(description: "'encryptionKey' create key")
         self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!) { (encryptionKey, error) -> Void in
-            
+
             XCTAssertNil(error)
             XCTAssertNotNil(encryptionKey)
             XCTAssertNotNil(encryptionKey?.links)
@@ -51,11 +50,9 @@ class RestClientTests: XCTestCase {
             XCTAssertNotNil(encryptionKey?.clientPublicKey)
             XCTAssertNotNil(encryptionKey?.active)
             XCTAssertNotEqual(encryptionKey?.links?.count, 0)
-            
             expectation.fulfill()
         }
-        
-        super.waitForExpectations(timeout: 10, handler: nil)
+          super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testEncryptionKeyRetrievesKeyWithSameFieldsAsCreated() {
