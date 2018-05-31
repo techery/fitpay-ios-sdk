@@ -568,7 +568,7 @@ extension RestClient {
     public typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
     
     func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        request?.responseJSON(queue: DispatchQueue.global()) { (response) in
+        request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
             
             DispatchQueue.main.async {
                 if response.result.error != nil && response.response?.statusCode != 202 {
