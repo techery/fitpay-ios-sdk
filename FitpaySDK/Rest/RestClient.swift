@@ -568,10 +568,10 @@ extension RestClient {
     public typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
     
     func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
+        request?.responseJSON(queue: DispatchQueue.global()) { (response) in
             
             DispatchQueue.main.async {
-                if response.result.error != nil {
+                if response.result.error != nil && response.response?.statusCode != 202 {
                     let JSON = response.data!.UTF8String
                     var error = try? ErrorResponse(JSON)
                     if error == nil {
@@ -581,6 +581,8 @@ extension RestClient {
                     
                 } else if let resultValue = response.result.value {
                     completion(resultValue, nil)
+                } else if response.response?.statusCode == 202 {
+                    completion(nil, nil)
                 } else {
                     completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
                 }

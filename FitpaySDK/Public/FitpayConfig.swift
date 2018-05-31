@@ -45,10 +45,7 @@ import Foundation
     @objc public static func configure(clientId: String) {
         self.clientId = clientId
         
-        loadEnvironmentVariables()
-        log.addOutput(output: ConsoleOutput())
-        
-        log.debug("Fitpay configured successfully")
+        finishConfigure()
     }
     
     /**
@@ -87,12 +84,18 @@ import Foundation
         FitpayConfig.Web.demoCardGroup = fitpayConfigModel.web.demoCardGroup
         FitpayConfig.Web.cssURL = fitpayConfigModel.web.cssURL
         FitpayConfig.Web.baseLanguageURL = fitpayConfigModel.web.baseLanguageURL
-        FitpayConfig.Web.supportCardScanner = fitpayConfigModel.web.supportCardScanner
         
-        log.debug("Fitpay configured from file successfully")
+       finishConfigure()
     }
     
     // MARK: - Private
+    
+    private static func finishConfigure() {
+        loadEnvironmentVariables()
+        
+        log.addOutput(output: ConsoleOutput())
+        log.debug("CONFIG: Fitpay configured from file successfully")
+    }
     
     private static func loadEnvironmentVariables() {
         let envDict = ProcessInfo.processInfo.environment
