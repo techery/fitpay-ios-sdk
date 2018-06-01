@@ -1,17 +1,8 @@
-//
-//  IdVerificationResponse.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 30.08.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
-import ObjectMapper
 
-open class IdVerificationResponse: NSObject, Mappable {
+open class IdVerificationResponse: NSObject, Serializable {
     
-    /// Most recent date this user update their: Billing Address, Name, Email, password, 
+    /// Most recent date this user updated their: Billing Address, Name, Email, password,
     /// or other Personally Identifiable Information associated to their account.
     open var oemAccountInfoUpdatedDate: Date?
     
@@ -42,7 +33,6 @@ open class IdVerificationResponse: NSObject, Mappable {
     /// Only needed if your device is NOT nfcCapable
     open var nfcCapable: Bool?
     
-    
     /// Country of user's billing address in ISO 3166-1 alpha-2 format, e.g., US; maximum 2 characters
     open var billingCountryCode: String?
     
@@ -61,8 +51,8 @@ open class IdVerificationResponse: NSObject, Mappable {
     /// Time Zone Abbreviation. Example: PDT, MST
     open var deviceTimeZone: String?
     
-    /// 1 - Time Zone Set by Network; 
-    /// 2 - Time Zone Set by User; 
+    /// 1 - Time Zone Set by Network
+    /// 2 - Time Zone Set by User
     /// 3 - Time Zone set by Device Location.
     open var deviceTimeZoneSetBy: Int?
     
@@ -75,46 +65,109 @@ open class IdVerificationResponse: NSObject, Mappable {
     open var billingState: String?
     open var billingZip: String?
     
-    private var locale: String? //[language designator ISO-639-1]‌‌‌‌-[region designator ISO 3166-1 alpha-2]
+    /// [language designator ISO-639-1]‌‌‌‌-[region designator ISO 3166-1 alpha-2]
+    public private(set) var locale: String?
+
+    //Date format for date transformation
+    private let dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
     
     public override init() {
         super.init()
-        if let languageCode = NSLocale.current.languageCode, let regionCode = NSLocale.current.regionCode {
-            self.locale = languageCode + "-" + regionCode
-        } else {
-            self.locale = "en-US"
-        }
+        updateLocale()
     }
     
-    public required init?(map: Map) {
-        super.init()
+    private enum CodingKeys: String, CodingKey {
+        case oemAccountInfoUpdatedDate
+        case oemAccountCreatedDate
+        case suspendedCardsInOemAccount
+        case lastOemAccountActivityDate
+        case deviceLostModeDate
+        case devicesWithIdenticalActiveToken
+        case activeTokensOnAllDevicesForOemAccount
+        case oemAccountScore
+        case deviceScore
+        case nfcCapable
+        case billingCountryCode
+        case oemAccountCountryCode
+        case deviceCountry
+        case oemAccountUserName
+        case devicePairedToOemAccountDate
+        case deviceTimeZone
+        case deviceTimeZoneSetBy
+        case deviceIMEI
+        case billingLine1
+        case billingLine2
+        case billingCity
+        case billingState
+        case billingZip
+        case locale
     }
-    
-    open func mapping(map: Map) {
-        oemAccountInfoUpdatedDate <- (map["oemAccountInfoUpdatedDate"], ISO8601DateTransform())
-        oemAccountCreatedDate <- (map["oemAccountCreatedDate"], ISO8601DateTransform())
-        suspendedCardsInOemAccount <- map["suspendedCardsInOemAccount"]
-        lastOemAccountActivityDate <- (map["lastOemAccountActivityDate"], ISO8601DateTransform())
-        deviceLostModeDate <- (map["deviceLostModeDate"], ISO8601DateTransform())
-        devicesWithIdenticalActiveToken <- map["devicesWithIdenticalActiveToken"]
-        activeTokensOnAllDevicesForOemAccount <- map["activeTokensOnAllDevicesForOemAccount"]
-        oemAccountScore <- map["oemAccountScore"]
-        deviceScore <- map["deviceScore"]
-        nfcCapable <- map["nfcCapable"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        billingCountryCode <- map["billingCountryCode"]
-        oemAccountCountryCode <- map["oemAccountCountryCode"]
-        deviceCountry <- map["deviceCountry"]
-        oemAccountUserName <- map["oemAccountUserName"]
-        devicePairedToOemAccountDate <- (map["devicePairedToOemAccountDate"], ISO8601DateTransform())
-        deviceTimeZone <- map["deviceTimeZone"]
-        deviceTimeZoneSetBy <- map["deviceTimeZoneSetBy"]
-        deviceIMEI <- map["deviceIMEI"]
-        billingLine1 <- map["billingLine1"]
-        billingLine2 <- map["billingLine2"]
-        billingCity <- map["billingCity"]
-        billingState <- map["billingState"]
-        billingZip <- map["billingZip"]
-        locale <- map["locale"]
+        oemAccountInfoUpdatedDate = try container.decode(.oemAccountInfoUpdatedDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        oemAccountCreatedDate = try container.decode(.oemAccountCreatedDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        suspendedCardsInOemAccount = try? container.decode(.suspendedCardsInOemAccount)
+        lastOemAccountActivityDate = try container.decode(.lastOemAccountActivityDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        deviceLostModeDate = try container.decode(.deviceLostModeDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        devicesWithIdenticalActiveToken = try? container.decode(.devicesWithIdenticalActiveToken)
+        activeTokensOnAllDevicesForOemAccount = try? container.decode(.activeTokensOnAllDevicesForOemAccount)
+        oemAccountScore = try? container.decode(.oemAccountScore)
+        deviceScore = try? container.decode(.deviceScore)
+        nfcCapable = try? container.decode(.nfcCapable)
+        billingCountryCode = try? container.decode(.billingCountryCode)
+        oemAccountCountryCode = try? container.decode(.oemAccountCountryCode)
+        deviceCountry = try? container.decode(.deviceCountry)
+        oemAccountUserName = try? container.decode(.oemAccountUserName)
+        devicePairedToOemAccountDate = try container.decode(.devicePairedToOemAccountDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        deviceTimeZone = try? container.decode(.deviceTimeZone)
+        deviceTimeZoneSetBy = try? container.decode(.deviceTimeZoneSetBy)
+        deviceIMEI = try? container.decode(.deviceIMEI)
+        billingLine1 = try? container.decode(.billingLine1)
+        billingLine2 = try? container.decode(.billingLine2)
+        billingCity = try? container.decode(.billingCity)
+        billingState = try? container.decode(.billingState)
+        billingZip = try? container.decode(.billingZip)
+        locale = try? container.decode(.locale)
+
+        super.init()
+        updateLocale() //needed to override locale when creating from JSON
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try? container.encode(oemAccountInfoUpdatedDate, forKey: .oemAccountInfoUpdatedDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        try? container.encode(oemAccountCreatedDate, forKey: .oemAccountCreatedDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        try? container.encode(suspendedCardsInOemAccount, forKey: .suspendedCardsInOemAccount)
+        try? container.encode(lastOemAccountActivityDate, forKey: .lastOemAccountActivityDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        try? container.encode(deviceLostModeDate, forKey: .deviceLostModeDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        try? container.encode(devicesWithIdenticalActiveToken, forKey: .devicesWithIdenticalActiveToken)
+        try? container.encode(activeTokensOnAllDevicesForOemAccount, forKey: .activeTokensOnAllDevicesForOemAccount)
+        try? container.encode(oemAccountScore, forKey: .oemAccountScore)
+        try? container.encode(deviceScore, forKey: .deviceScore)
+        try? container.encode(nfcCapable, forKey: .nfcCapable)
+        try? container.encode(billingCountryCode, forKey: .billingCountryCode)
+        try? container.encode(oemAccountCountryCode, forKey: .oemAccountCountryCode)
+        try? container.encode(deviceCountry, forKey: .deviceCountry)
+        try? container.encode(oemAccountUserName, forKey: .oemAccountUserName)
+        try? container.encode(devicePairedToOemAccountDate, forKey: .devicePairedToOemAccountDate, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        try? container.encode(deviceTimeZone, forKey: .deviceTimeZone)
+        try? container.encode(deviceTimeZoneSetBy, forKey: .deviceTimeZoneSetBy)
+        try? container.encode(billingLine1, forKey: .billingLine1)
+        try? container.encode(billingLine2, forKey: .billingLine2)
+        try? container.encode(billingCity, forKey: .billingCity)
+        try? container.encode(billingState, forKey: .billingState)
+        try? container.encode(billingZip, forKey: .billingZip)
+        try? container.encode(locale, forKey: .locale)
+    }
+
+    private func updateLocale() {
+        guard let preferredLanguage = NSLocale.preferredLanguages.first else { return }
+        guard let languageCode = NSLocale.current.languageCode else { return }
+        guard let regionCode = NSLocale.current.regionCode else { return }
+        
+        locale = PaymentDeviceUtils.getStandardLocale(preferredLanguage: preferredLanguage, languageCode: languageCode, regionCode: regionCode)
+    }
+
 }

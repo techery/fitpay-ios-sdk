@@ -1,7 +1,5 @@
 
-import ObjectMapper
-
-public enum VerificationMethodType: String {
+public enum VerificationMethodType: String, Serializable {
     case TEXT_TO_CARDHOLDER_NUMBER          = "TEXT_TO_CARDHOLDER_NUMBER",
         EMAIL_TO_CARDHOLDER_ADDRESS         = "EMAIL_TO_CARDHOLDER_ADDRESS",
         CARDHOLDER_TO_CALL_AUTOMATED_NUMBER = "CARDHOLDER_TO_CALL_AUTOMATED_NUMBER",
@@ -11,14 +9,14 @@ public enum VerificationMethodType: String {
         ISSUER_TO_CALL_CARDHOLDER_NUMBER    = "ISSUER_TO_CALL_CARDHOLDER_NUMBER"
 }
 
-public enum VerificationState: String {
+public enum VerificationState: String, Serializable {
     case AVAILABLE_FOR_SELECTION = "AVAILABLE_FOR_SELECTION",
         AWAITING_VERIFICATION    = "AWAITING_VERIFICATION",
         EXPIRED                  = "EXPIRED",
         VERIFIED                 = "VERIFIED"
 }
 
-public enum VerificationResult: String {
+public enum VerificationResult: String, Serializable {
     case SUCCESS                        = "SUCCESS",
         INCORRECT_CODE                  = "INCORRECT_CODE",
         INCORRECT_CODE_RETRIES_EXCEEDED = "INCORRECT_CODE_RETRIES_EXCEEDED",
@@ -27,9 +25,9 @@ public enum VerificationResult: String {
         EXPIRED_SESSION                 = "EXPIRED_SESSION"
 }
 
-open class VerificationMethod: NSObject, ClientModel, Mappable
-{
-    internal var links: [ResourceLink]?
+@objcMembers
+open class VerificationMethod: NSObject, ClientModel, Serializable {
+    
     open var verificationId: String?
     open var state: VerificationState?
     open var methodType: VerificationMethodType?
@@ -41,110 +39,121 @@ open class VerificationMethod: NSObject, ClientModel, Mappable
     open var lastModifiedEpoch: TimeInterval?
     open var verified: String?
     open var verifiedEpoch: TimeInterval?
-    fileprivate static let selectResource = "select"
-    fileprivate static let verifyResource = "verify"
-    fileprivate static let cardResource = "card"
+    open var appToAppContext: A2AContext?
 
-    public weak var client: RestClient?
+    weak var client: RestClient?
+    
+    var links: [ResourceLink]?
 
     open var selectAvailable: Bool {
-        return self.links?.url(VerificationMethod.selectResource) != nil
+        return self.links?.url(VerificationMethod.selectResourceKey) != nil
     }
 
     open var verifyAvailable: Bool {
-        return self.links?.url(VerificationMethod.verifyResource) != nil
+        return self.links?.url(VerificationMethod.verifyResourceKey) != nil
     }
 
     open var cardAvailable: Bool {
-        return self.links?.url(VerificationMethod.cardResource) != nil
+        return self.links?.url(VerificationMethod.cardResourceKey) != nil
     }
 
-    public required init?(map: Map){
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case verificationId
+        case state
+        case methodType
+        case value
+        case verificationResult
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case lastModified = "lastModifiedTs"
+        case lastModifiedEpoch = "lastModifiedTsEpoch"
+        case verified = "verifiedTs"
+        case verifiedEpoch = "verifiedTsEpoch"
+        case appToAppContext
     }
 
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.verificationId <- map["verificationId"]
-        self.state <- map["state"]
-        self.methodType <- map["methodType"]
-        self.value <- map["value"]
-        self.verificationResult <- map["verificationResult"]
-        self.created <- map["createdTs"]
-        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        self.lastModified <- map["lastModifiedTs"]
-        self.lastModifiedEpoch <- (map["lastModifiedTsEpoch"], NSTimeIntervalTransform())
-        self.verified <- map["verifiedTs"]
-        self.verifiedEpoch <- (map["verifiedTsEpoch"], NSTimeIntervalTransform())
+    private static let selectResourceKey = "select"
+    private static let verifyResourceKey = "verify"
+    private static let cardResourceKey = "card"
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        verificationId = try? container.decode(.verificationId)
+        state = try? container.decode(.state)
+        methodType = try? container.decode(.methodType)
+        value = try? container.decode(.value)
+        verificationResult = try? container.decode(.verificationResult)
+        created = try? container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        lastModified = try? container.decode(.lastModified)
+        lastModifiedEpoch = try container.decode(.lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+        verified = try? container.decode(.verified)
+        verifiedEpoch = try container.decode(.verifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+
+        appToAppContext = try? container.decode(.appToAppContext)
     }
 
-    /**
-     When an issuer requires additional authentication to verfiy the identity of the cardholder, this indicates the user has selected the specified verification method by the indicated verificationTypeId
-     
-     - parameter completion:         SelectVerificationTypeHandler closure
-     */
-    @objc open func selectVerificationType(_ completion: @escaping RestClient.SelectVerificationTypeHandler) {
-        let resource = VerificationMethod.selectResource
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(verificationId, forKey: .verificationId)
+        try? container.encode(state, forKey: .state)
+        try? container.encode(methodType, forKey: .methodType)
+        try? container.encode(value, forKey: .value)
+        try? container.encode(verificationResult, forKey: .verificationResult)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(lastModified, forKey: .lastModified)
+        try? container.encode(lastModifiedEpoch, forKey: .lastModifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(verified, forKey: .verified)
+        try? container.encode(verifiedEpoch, forKey: .verifiedEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(appToAppContext, forKey: .appToAppContext)
+    }
+
+
+    /// When an issuer requires additional authentication to verfiy the identity of the cardholder,
+    /// this indicates the user has selected the specified verification method by the indicated verificationTypeId
+    ///
+    /// - Parameter completion: VerifyHandler closure
+    @objc open func selectVerificationType(_ completion: @escaping RestClient.VerifyHandler) {
+        let resource = VerificationMethod.selectResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.selectVerificationType(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: VerificationMethod.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: VerificationMethod.self, client: client, url: url, resource: resource))
         }
     }
 
-    /**
-     If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
-     
-     - parameter completion:         VerifyHandler closure
-     */
+    /// If the selected verification method requires the submission of a one time passcode (OTP), this transition will be available.
+    /// Not all verification methods will require an OTP to be submitted through the FitPay API
+    ///
+    /// - Parameters:
+    ///   - verificationCode: one time OTP
+    ///   - completion: VerifyHandler closure
     @objc open func verify(_ verificationCode: String, completion: @escaping RestClient.VerifyHandler) {
-        let resource = VerificationMethod.verifyResource
+        let resource = VerificationMethod.verifyResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.verify(url, verificationCode: verificationCode, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: VerificationMethod.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: VerificationMethod.self, client: client, url: url, resource: resource))
         }
     }
 
-    /**
-     Retrieves the details of an existing credit card. You need only supply the uniqueidentifier that was returned upon creation.
-     
-     - parameter completion:   CreditCardHandler closure
-     */
+    /// Retrieves the details of an existing credit card. You need only supply the uniqueidentifier that was returned upon creation.
+    ///
+    /// - Parameter completion: CreditCardHandler closure
     @objc open func retrieveCreditCard(_ completion: @escaping RestClient.CreditCardHandler) {
-        let resource = VerificationMethod.cardResource
+        let resource = VerificationMethod.cardResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.retrieveCreditCard(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: VerificationMethod.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: VerificationMethod.self, client: client, url: url, resource: resource))
         }
-    }
-}
-
-internal class VerificationMethodTransformType: TransformType
-{
-    typealias Object = [VerificationMethod]
-    typealias JSON = [[String: AnyObject]]
-
-    func transformFromJSON(_ value: Any?) -> Array<VerificationMethod>? {
-        if let items = value as? [[String: AnyObject]] {
-            var list = [VerificationMethod]()
-
-            for raw in items {
-                if let item = Mapper<VerificationMethod>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [VerificationMethod]?) -> [[String: AnyObject]]? {
-        return nil
     }
 }

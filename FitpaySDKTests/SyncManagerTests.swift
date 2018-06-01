@@ -1,13 +1,6 @@
-//
-//  SyncManagerTests.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 13.12.2017.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import XCTest
 import RxSwift
+
 @testable import FitpaySDK
 
 class SyncManagerTests: XCTestCase {
@@ -25,15 +18,11 @@ class SyncManagerTests: XCTestCase {
         syncManager = SyncManager(syncFactory: syncFactory)
         syncQueue = SyncRequestQueue(syncManager: syncManager)
     }
-    
-    override func tearDown() {
-        super.tearDown()
-    }
-    
+
     func testMake1SuccessfullSync() {
         let expectation = super.expectation(description: "making 1 successfull sync")
-
-        fetcher.commits = [fetcher.getAPDUCommit(), fetcher.getCreateCardCommit()]
+        guard let commit1 = fetcher.getAPDUCommit(), let commit2 = fetcher.getCreateCardCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit1, commit2]
         
         self.syncQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
@@ -55,14 +44,15 @@ class SyncManagerTests: XCTestCase {
                 self.syncQueue.add(request: SyncRequest()) { (status, error) in
                     XCTAssertEqual(status, .success)
                     XCTAssertNil(error)
-
+                    
                     expectation.fulfill()
                 }
             }
             isFirstSync = false
         }
-        
-        fetcher.commits = [fetcher.getAPDUCommit()]
+
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         self.syncQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
@@ -90,8 +80,9 @@ class SyncManagerTests: XCTestCase {
             }
             isFirstSync = false
         }
-        
-        fetcher.commits = [fetcher.getAPDUCommit()]
+
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         self.syncQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
@@ -105,7 +96,8 @@ class SyncManagerTests: XCTestCase {
     func testMakeFirstSyncWithEmptySyncRequest() {
         let expectation = super.expectation(description: "making first sync with empty sync request")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         self.syncQueue.add(request: SyncRequest()) { (status, error) in
             XCTAssertEqual(status, .failed)
@@ -120,7 +112,8 @@ class SyncManagerTests: XCTestCase {
     func testCheckDissconnectHandlerDuringAPDUExecution() {
         let expectation = super.expectation(description: "")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         let device = PaymentDevice()
         let connector = MockPaymentDeviceConnectorWithAPDUDisconnects(paymentDevice: device)
         connector.connectDelayTime = 0.2
@@ -140,8 +133,9 @@ class SyncManagerTests: XCTestCase {
     
     func testCheckDissconnectHandlerDuringNonAPDUExecution() {
         let expectation = super.expectation(description: "")
-        
-        fetcher.commits = [fetcher.getCreateCardCommit()]
+
+        guard let commit = fetcher.getCreateCardCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = MockPaymentDeviceConnectorWithNonAPDUDisconnects(paymentDevice: device)
@@ -161,8 +155,9 @@ class SyncManagerTests: XCTestCase {
     
     func testAPDUSyncTwoTimesWhenFirstWasFailedBecauseDeviceDisconnected() {
         let expectation = super.expectation(description: "")
-        
-        fetcher.commits = [fetcher.getAPDUCommit()]
+
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = MockPaymentDeviceConnectorWithAPDUDisconnects(paymentDevice: device)
@@ -183,7 +178,7 @@ class SyncManagerTests: XCTestCase {
             }
             isFirstSync = false
         }
-
+        
         self.syncQueue.add(request: getSyncRequest1(device: connector.paymentDevice)) { (status, error) in
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
@@ -196,21 +191,22 @@ class SyncManagerTests: XCTestCase {
     func testSyncAPDUTimeoutTest() {
         let expectation = super.expectation(description: "")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = TimeoutedMockPaymentDeviceConnector(paymentDevice: device)
         connector.connectDelayTime = 0.1
         connector.disconnectDelayTime = 0.1
         _ = device.changeDeviceInterface(connector)
-
-        FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs = 0.2
+        
+        device.commitProcessingTimeout = 0.2
         
         self.syncQueue.add(request: getSyncRequest1(device: device)) { (status, error) in
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
             XCTAssertEqual((error as NSError?)?.code, PaymentDevice.ErrorCode.apduSendingTimeout.rawValue)
-            FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs = 30 // return to default state
+            device.commitProcessingTimeout = 30 // return to default state
             expectation.fulfill()
         }
         
@@ -219,8 +215,9 @@ class SyncManagerTests: XCTestCase {
     
     func testSyncNonAPDUTimeoutTest() {
         let expectation = super.expectation(description: "")
-        
-        fetcher.commits = [fetcher.getCreateCardCommit()]
+
+        guard let commit = fetcher.getCreateCardCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let device = PaymentDevice()
         let connector = TimeoutedMockPaymentDeviceConnector(paymentDevice: device)
@@ -228,13 +225,13 @@ class SyncManagerTests: XCTestCase {
         connector.disconnectDelayTime = 0.1
         _ = device.changeDeviceInterface(connector)
         
-        FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs = 0.2
+        device.commitProcessingTimeout = 0.2
         
         self.syncQueue.add(request: getSyncRequest1(device: device)) { (status, error) in
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)
             XCTAssertEqual((error as NSError?)?.code, PaymentDevice.ErrorCode.nonApduProcessingTimeout.rawValue)
-            FitpaySDKConfiguration.defaultConfiguration.commitProcessingTimeoutSecs = 30 // return to default state
+            device.commitProcessingTimeout = 30 // return to default state
             expectation.fulfill()
         }
         
@@ -259,7 +256,7 @@ extension SyncManagerTests {
             device = passedDevice!
         }
         
-        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: deviceInfo, paymentDevice: device)
+        let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: deviceInfo, paymentDevice: device)
         SyncRequest.syncManager = self.syncManager
         return request
     }
@@ -279,7 +276,7 @@ extension SyncManagerTests {
             return MockNonAPDUConfirm()
         }
         
-        func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: IPaymentDeviceConnector?) -> FetchCommitsOperationProtocol {
+        func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
             return commitsFetcher
         }
     }
@@ -320,7 +317,7 @@ extension SyncManagerTests {
             if !self.connected {
                 return
             }
-
+            
             self.disconnect()
         }
     }

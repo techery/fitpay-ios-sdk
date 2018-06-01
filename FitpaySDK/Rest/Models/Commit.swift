@@ -1,91 +1,106 @@
 
-import ObjectMapper
-
-open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
-{
-    var links:[ResourceLink]?
-    open var commitType:CommitType? {
+open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
+    
+    open var commitType: CommitType? {
         return CommitType(rawValue: commitTypeString ?? "") ?? .UNKNOWN
     }
     open var commitTypeString: String?
-    open var payload:Payload?
-    open var created:CLong?
-    open var previousCommit:String?
-    open var commit:String?
-    open var executedDuration:Int?
+    open var payload: Payload?
+    open var created: CLong?
+    open var previousCommit: String?
+    open var commit: String?
+    open var executedDuration: Int?
     
-    fileprivate static let apduResponseResource = "apduResponse"
-    fileprivate static let confirmResource = "confirm"
-    
-    public weak var client: RestClient? {
+    weak var client: RestClient? {
         didSet {
             payload?.creditCard?.client = self.client
         }
     }
-    
-    internal var encryptedData:String?
-    
-    public required init?(map: Map) {
-        
+
+    var links: [ResourceLink]?
+    var encryptedData: String?
+
+    private static let apduResponseResourceKey = "apduResponse"
+    private static let confirmResourceKey = "confirm"
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case commitTypeString = "commitType"
+        case created = "createdTs"
+        case previousCommit
+        case commit = "commitId"
+        case encryptedData
     }
-    
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        commitTypeString <- map["commitType"]
-        created <- map["createdTs"]
-        previousCommit <- map["previousCommit"]
-        commit <- map["commitId"]
-        encryptedData <- map["encryptedData"]
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        commitTypeString = try? container.decode(.commitTypeString)
+        created = try? container.decode(.created)
+        previousCommit = try? container.decode(.previousCommit)
+        commit = try? container.decode(.commit)
+        encryptedData = try? container.decode(.encryptedData)
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(commitTypeString, forKey: .commitTypeString)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(previousCommit, forKey: .previousCommit)
+        try? container.encode(commit, forKey: .commit)
+        try? container.encode(encryptedData, forKey: .encryptedData)
+    }
+
     
-    internal func applySecret(_ secret:Data, expectedKeyId:String?) {
+    func applySecret(_ secret:Data, expectedKeyId:String?) {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
         self.payload?.creditCard?.client = self.client
     }
     
-    internal func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmCommitHandler) {
+    func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmCommitHandler) {
         log.verbose("Confirming commit - \(self.commit ?? "")")
         
         guard self.commitType != CommitType.APDU_PACKAGE else {
             log.error("Trying send confirm for APDU commit but should be non APDU.")
-            completion(NSError.unhandledError(Commit.self))
+            completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
         
-        let resource = Commit.confirmResource
-        guard let url = self.links?.url(resource) else {
+        let resource = Commit.confirmResourceKey
+       guard let url = self.links?.url(resource) else {
             completion(nil)
             return
         }
         
         guard let client = self.client else {
-            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Commit.self, client: nil, url: url, resource: resource))
             return
         }
         
         client.confirm(url, executionResult: result, completion: completion)
     }
     
-    internal func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
+    func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
         log.verbose("in the confirmAPDU method")
         guard self.commitType == CommitType.APDU_PACKAGE else {
-            completion(NSError.unhandledError(Commit.self))
+            completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
         
-        let resource = Commit.apduResponseResource
+        let resource = Commit.apduResponseResourceKey
         guard let url = self.links?.url(resource) else {
-            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Commit.self, client: client, url: nil, resource: resource))
             return
         }
         
         guard let client = self.client else {
-            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Commit.self, client: nil, url: url, resource: resource))
             return
         }
         
         guard let apduPackage = self.payload?.apduPackage else {
-            completion(NSError.unhandledError(Commit.self))
+            completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
         
@@ -94,8 +109,7 @@ open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     }
 }
 
-public enum CommitType : String
-{
+public enum CommitType: String {
     case CREDITCARD_CREATED          = "CREDITCARD_CREATED"
     case CREDITCARD_DEACTIVATED      = "CREDITCARD_DEACTIVATED"
     case CREDITCARD_ACTIVATED        = "CREDITCARD_ACTIVATED"
@@ -109,30 +123,30 @@ public enum CommitType : String
     case UNKNOWN                     = "UNKNOWN"
 }
 
-open class Payload : NSObject, Mappable
-{
-    open var creditCard:CreditCard?
-    internal var payloadDictionary:[String : AnyObject]?
-    internal var apduPackage:ApduPackage?
+open class Payload: NSObject, Serializable {
     
-    public required init?(map: Map)
-    {
-        
+    open var creditCard: CreditCard?
+    
+    var payloadDictionary: [String: Any]?
+    var apduPackage: ApduPackage?
+    
+    private enum CodingKeys: String, CodingKey {
+        case creditCardId
+        case packageId
     }
-    
-    open func mapping(map: Map)
-    {
-        let info = map.JSON
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        apduPackage = try? ApduPackage(from: decoder)
+        creditCard = try? CreditCard(from: decoder)
+
+        self.payloadDictionary = try? container.decode([String : Any].self)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
         
-        if let _ = info["creditCardId"]
-        {
-            self.creditCard = Mapper<CreditCard>().map(JSON: info)
-        }
-        else if let _ = info["packageId"]
-        {
-            self.apduPackage = Mapper<ApduPackage>().map(JSON: info)
-        }
-        
-        self.payloadDictionary = info as [String : AnyObject]?
+        try? container.encode(creditCard, forKey: .creditCardId)
+        try? container.encode(apduPackage, forKey: .packageId)
     }
 }

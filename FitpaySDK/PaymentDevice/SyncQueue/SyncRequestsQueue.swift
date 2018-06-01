@@ -15,8 +15,8 @@ open class SyncRequestQueue {
     public func add(request: SyncRequest, payload: String? = nil, completion: SyncRequestCompletion?) {
         request.completion = completion
         if let payload = payload {
-            if let notificationDetail = NotificationDetail(JSONString: payload) {
-                request.syncInitiator = .WebHook
+            if let notificationDetail = try? NotificationDetail(payload) {
+                request.syncInitiator = .webHook
                 request.notificationAsc = notificationDetail
             } else {
                 log.error("Payload data is wrong. Payload: \(payload)")
@@ -42,7 +42,7 @@ open class SyncRequestQueue {
         queue.add(request: request)
     }
     
-    internal init(syncManager: SyncManagerProtocol) {
+    init(syncManager: SyncManagerProtocol) {
         self.syncManager = syncManager
         self.bind()
     }
@@ -72,7 +72,7 @@ open class SyncRequestQueue {
     }
     
     private func queueForDeviceWithoutDeviceIdentifier(syncRequest: SyncRequest) -> BindedToDeviceSyncRequestQueue? {
-        log.warning("Searching queue for SyncRequest without deviceIdentifier (empty SyncRequests is deprycated)... ")
+        log.warning("Searching queue for SyncRequest without deviceIdentifier (empty SyncRequests is deprecated)... ")
         guard let lastFullSyncRequest = self.lastFullSyncRequest else {
             log.error("Can't find queue for empty SyncRequest")
             return nil
@@ -86,7 +86,7 @@ open class SyncRequestQueue {
         return queueFor(syncRequest: syncRequest)
     }
     
-    fileprivate func bind() {
+    private func bind() {
         var binding = self.syncManager.bindToSyncEvent(eventType: .syncCompleted) { [weak self] (event) in
             guard let request = (event.eventData as? [String:Any])?["request"] as? SyncRequest else {
                 log.warning("Can't get request from sync event.")
@@ -119,13 +119,13 @@ open class SyncRequestQueue {
     }
     
     
-    fileprivate func unbind() {
+    private func unbind() {
         for binding in self.bindings {
             self.syncManager.removeSyncBinding(binding: binding)
         }
     }
     
-    internal var lastFullSyncRequest: SyncRequest?
+    var lastFullSyncRequest: SyncRequest?
 }
 
 extension SyncRequestQueue {

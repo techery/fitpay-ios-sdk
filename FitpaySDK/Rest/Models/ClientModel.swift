@@ -1,6 +1,5 @@
-internal protocol ClientModel
-{
-    weak var client: RestClient? {
+protocol ClientModel {
+    var client: RestClient? {
         get set
     }
 }

@@ -1,6 +1,5 @@
-import ObjectMapper
 
-public enum APDUPackageResponseState : String {
+public enum APDUPackageResponseState: String {
     case processed    = "PROCESSED"
     case failed       = "FAILED"
     case error        = "ERROR"
@@ -8,9 +7,8 @@ public enum APDUPackageResponseState : String {
     case notProcessed = "NOT_PROCESSED"
 }
 
-open class ApduPackage : NSObject, Mappable
-{
-    internal var links: [ResourceLink]?
+@objcMembers open class ApduPackage: NSObject, Serializable {
+
     open var seIdType: String?
     open var targetDeviceType: String?
     open var targetDeviceId: String?
@@ -27,47 +25,74 @@ open class ApduPackage : NSObject, Mappable
     open var validUntilEpoch: Date?
     open var apduPackageUrl: String?
     
-    @objc open static var APDUPackageResponseStateProcessed: String
-    {
+    var links: [ResourceLink]?
+    
+    @objc open static var APDUPackageResponseStateProcessed: String {
         return APDUPackageResponseState.processed.rawValue
     }
-    @objc open static var APDUPackageResponseStateFailed: String
-    {
+    
+    @objc open static var APDUPackageResponseStateFailed: String {
         return APDUPackageResponseState.failed.rawValue
     }
-    @objc open static var APDUPackageResponseStateError: String
-    {
+    
+    @objc open static var APDUPackageResponseStateError: String {
         return APDUPackageResponseState.error.rawValue
     }
-    @objc open static var APDUPackageResponseStateExpired: String
-    {
+    
+    @objc open static var APDUPackageResponseStateExpired: String {
         return APDUPackageResponseState.expired.rawValue
     }
-    @objc open static var APDUPackageResponseStateNotProcessed: String
-    {
+    
+    @objc open static var APDUPackageResponseStateNotProcessed: String {
         return APDUPackageResponseState.notProcessed.rawValue
     }
 
+    //Date format for date transformation
+    private let dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case seIdType
+        case targetDeviceType
+        case targetDeviceId
+        case packageId
+        case seId
+        case apduCommands = "commandApdus"
+        case validUntil
+        case apduPackageUrl
+    }
+    
     override init() {
         super.init()
     }
-    
-    public required init?(map: Map)
-    {
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        seIdType = try? container.decode(.seIdType)
+        targetDeviceType = try? container.decode(.targetDeviceType)
+        targetDeviceId = try? container.decode(.targetDeviceId)
+        packageId = try? container.decode(.packageId)
+        seId = try? container.decode(.seId)
+        apduCommands = try? container.decode(.apduCommands)
+        validUntil = try? container.decode(.validUntil)
+        validUntilEpoch = try container.decode(.validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        apduPackageUrl = try? container.decode(.apduPackageUrl)
     }
     
-    open func mapping(map: Map)
-    {
-        links <- (map["_links"], ResourceLinkTransformType())
-        seIdType <- map["seIdType"]
-        targetDeviceType <- map["targetDeviceType"]
-        targetDeviceId <- map["targetDeviceId"]
-        packageId <- map["packageId"]
-        seId <- map["seId"]
-        apduCommands <- map["commandApdus"]
-        validUntil <- map["validUntil"]
-        validUntilEpoch <- (map["validUntil"], CustomDateFormatTransform(formatString: "yyyy-MM-dd'T'HH:mm:ss.SSSX"))
-        apduPackageUrl <- map["apduPackageUrl"]
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(seIdType, forKey: .seIdType)
+        try? container.encode(targetDeviceType, forKey: .targetDeviceType)
+        try? container.encode(targetDeviceId, forKey: .targetDeviceId)
+        try? container.encode(packageId, forKey: .packageId)
+        try? container.encode(apduCommands, forKey: .apduCommands)
+        try? container.encode(validUntil, forKey: .validUntil)
+        try? container.encode(validUntilEpoch, forKey: .validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
+        try? container.encode(apduPackageUrl, forKey: .apduPackageUrl)
     }
 
     open var isExpired: Bool {

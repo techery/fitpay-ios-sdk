@@ -7,17 +7,16 @@
 //
 
 import Foundation
-import ObjectMapper
 
 class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
-    enum RtmMessageTypeVer2: RtmMessageType, RtmMessageTypeWithHandler {
-        case rtmVersion   = "version"
-        case sync         = "sync"
-        case deviceStatus = "deviceStatus"
-        case userData     = "userData"
-        case logout       = "logout"
-        case resolve      = "resolve"
+    enum RtmMessageTypeVer2: String, RtmMessageTypeWithHandler {
+        case rtmVersion = "version"
+        case sync
+        case deviceStatus
+        case userData
+        case logout
+        case resolve
         
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
             switch self {
@@ -32,15 +31,15 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     }
     
     weak var outputDelegate: RtmOutputDelegate?
-    weak var wvRtmDelegate: WvRTMDelegate?
+    weak var wvRtmDelegate: RTMDelegate?
     
     weak var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate?
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
-
+    weak var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
+    
     var wvConfigStorage: WvConfigStorage!
     var webViewSessionData: SessionData?
     var restClient: RestClient?
-
 
     var syncCallBacks = [RtmMessage]()
     
@@ -48,10 +47,10 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
         self.wvConfigStorage = wvConfigStorage
     }
     
-    func handle(message: [String : Any]) {
+    func handle(message: [String: Any]) {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
-        guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
+        guard let rtmMessage = try? RtmMessage(String(data: jsonData!, encoding: .utf8)) else {
             log.error("WV_DATA: Can't create RtmMessage.")
             return
         }
@@ -61,8 +60,8 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
         }
     }
     
-    func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler? {
-        guard let messageAction = RtmMessageTypeVer2(rawValue: rtmMessage ) else {
+    func handlerFor(rtmMessage: String) -> MessageTypeHandler? {
+        guard let messageAction = RtmMessageTypeVer2(rawValue: rtmMessage) else {
             log.error("WV_DATA: RtmMessage. Action is missing or unknown: \(rtmMessage)")
             return nil
         }
@@ -80,7 +79,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
                 log.warning("WV_DATA: rtm not yet configured to handle syncs requests, failing sync.")
                 if let delegate = self.outputDelegate {
                     delegate.send(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first?.callBackId ?? 0,
-                                                                 data: WVResponse.noSessionData.dictionaryRepresentation(),
+                                                                 data: WvConfig.WVResponse.noSessionData.dictionaryRepresentation(),
                                                                  type: RtmMessageTypeVer2.sync.rawValue,
                                                                  success: false), retries: 3)
                     delegate.show(status: .syncError, message: "Can't make sync. Session data or user or deviceInfo or payment device is nil.", error: nil)
@@ -91,29 +90,21 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
         log.verbose("WV_DATA: Adding sync to rtm callback queue.")
         syncCallBacks.append(message)
         log.verbose("WV_DATA: initiating sync.")
-        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: user, deviceInfo: deviceInfo, paymentDevice: paymentDevice, initiator: .Platform),
-                                            completion: nil)
+        SyncRequestQueue.sharedInstance.add(request: SyncRequest(user: user, deviceInfo: deviceInfo, paymentDevice: paymentDevice, initiator: .platform), completion: nil)
     }
     
     func handleSessionData(_ message: RtmMessage) {
-        guard let data = message.data as? [String: Any] else {
-            log.error("WV_DATA: Can't get data from rtmBridge message.")
+        guard let webViewSessionData = try? SessionData(message.data) else {
+            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(message.data)")
             return
         }
-
-        guard let webViewSessionData = Mapper<SessionData>().map(JSONObject: data) else {
-            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(data)")
-            return
-        }
-
 
         self.webViewSessionData = webViewSessionData
-        self.restClient = RestSession.GetUserAndDeviceWith(sessionData: webViewSessionData,
-                                                           sdkConfiguration: self.wvConfigStorage.sdkConfiguration!) { [weak self] (user, device, error) in
+        self.restClient = RestSession.GetUserAndDeviceWith(sessionData: webViewSessionData) { [weak self] (user, device, error) in
             guard error == nil else {
                 if let delegate = self?.outputDelegate {
                     delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
-                                                                 data: WVResponse.failed.dictionaryRepresentation(param: error.debugDescription),
+                                                                 data: WvConfig.WVResponse.failed.dictionaryRepresentation(param: error.debugDescription),
                                                                  type: RtmMessageTypeVer2.userData.rawValue,
                                                                  success: false), retries: 3)
                     delegate.show(status: .syncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
@@ -127,8 +118,8 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             self?.wvConfigStorage.device = device
             self?.wvConfigStorage.paymentDevice?.deviceInfo?.client = self?.wvConfigStorage.user?.client
 
-            if let delegate = self?.wvRtmDelegate {
-                delegate.didAuthorizeWithEmail(user?.email)
+            if let delegate = self?.wvRtmDelegate, let email = user?.email {
+                delegate.didAuthorizeWith(email: email)
             }
 
             if self?.wvConfigStorage.rtmConfig?.hasAccount == false {
@@ -139,7 +130,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
 
             if let delegate = self?.outputDelegate {
                 delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
-                                                             data: WVResponse.success.dictionaryRepresentation(),
+                                                             data: WvConfig.WVResponse.success.dictionaryRepresentation(),
                                                              type: RtmMessageTypeVer2.resolve.rawValue,
                                                              success: true), retries: 3)
             }
@@ -151,11 +142,11 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
         return RtmMessageResponse(type: RtmMessageTypeVer2.logout.rawValue)
     }
 
-    func versionResponseMessage(version: RtmProtocolVersion) -> RtmMessageResponse? {
-        return RtmMessageResponse(data: ["version":version.rawValue], type: RtmMessageTypeVer2.rtmVersion.rawValue)
+    func versionResponseMessage(version: WvConfig.RtmProtocolVersion) -> RtmMessageResponse? {
+        return RtmMessageResponse(data: ["version": version.rawValue], type: RtmMessageTypeVer2.rtmVersion.rawValue)
     }
     
-    func statusResponseMessage(message: String, type: WVMessageType) -> RtmMessageResponse? {
+    func statusResponseMessage(message: String, type: WvConfig.WVMessageType) -> RtmMessageResponse? {
         return RtmMessageResponse(data: ["message": message, "type": type.rawValue], type: RtmMessageTypeVer2.deviceStatus.rawValue)
     }
 
@@ -164,10 +155,10 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             log.verbose("WV_DATA: resolving rtm sync promise.")
             if let delegate = self.outputDelegate {
                 if self.syncCallBacks.count > 1 {
-                    delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: WVResponse.successStillWorking.dictionaryRepresentation(param: self.syncCallBacks.count), type: RtmMessageTypeVer2.sync.rawValue, success: true), retries: 3)
+                    delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: WvConfig.WVResponse.successStillWorking.dictionaryRepresentation(param: self.syncCallBacks.count), type: RtmMessageTypeVer2.sync.rawValue, success: true), retries: 3)
                     log.verbose("WV_DATA: there was another rtm sync request, syncing again.")
                 } else {
-                    delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: WVResponse.success.dictionaryRepresentation(), type: RtmMessageTypeVer2.sync.rawValue, success: true), retries: 3)
+                    delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: WvConfig.WVResponse.success.dictionaryRepresentation(), type: RtmMessageTypeVer2.sync.rawValue, success: true), retries: 3)
                     
                     log.verbose("WV_DATA. no more rtm sync requests in queue.")
                 }

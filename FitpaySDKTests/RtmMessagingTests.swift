@@ -1,19 +1,14 @@
-//
-//  WVRtmTest.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 18.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import XCTest
 @testable import FitpaySDK
 
 class MockRtmMessageHandler: RtmMessageHandler {
-    weak var wvConfigStorage: WvConfigStorage!
+    
+    var a2aVerificationDelegate: FitpayA2AVerificationDelegate?
+    
+    var wvConfigStorage: WvConfigStorage!
     
     weak var outputDelegate: RtmOutputDelegate?
-    weak var wvRtmDelegate: WvRTMDelegate?
+    weak var wvRtmDelegate: RTMDelegate?
     weak var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate?
     weak var cardScannerDataSource: FitpayCardScannerDataSource?
     
@@ -27,7 +22,7 @@ class MockRtmMessageHandler: RtmMessageHandler {
         completion?(message)
     }
     
-    func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler? {
+    func handlerFor(rtmMessage: String) -> MessageTypeHandler? {
         return nil
     }
     
@@ -46,36 +41,32 @@ class MockRtmMessageHandler: RtmMessageHandler {
         return nil
     }
     
-    func statusResponseMessage(message: String, type: WVMessageType) -> RtmMessageResponse? {
+    func statusResponseMessage(message: String, type: WvConfig.WVMessageType) -> RtmMessageResponse? {
         return nil
     }
     
-    func versionResponseMessage(version: RtmProtocolVersion) -> RtmMessageResponse? {
+    func versionResponseMessage(version: WvConfig.RtmProtocolVersion) -> RtmMessageResponse? {
         return nil
     }
-
+    
 }
 
 class RtmMessagingTests: XCTestCase {
     
     var rtmMessaging: RtmMessaging!
     let wvConfigStorage = WvConfigStorage()
-
+    
     override func setUp() {
         super.setUp()
         
         rtmMessaging = RtmMessaging(wvConfigStorage: wvConfigStorage)
     }
     
-    override func tearDown() {
-        super.tearDown()
-    }
-    
     func testSuccessVersionNegotiating() {
         let expectation = super.expectation(description: "rtm messaging")
-
+        
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver3: handler]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver3: handler]
         
         handler.completion = { (_) in
             expectation.fulfill()
@@ -86,7 +77,7 @@ class RtmMessagingTests: XCTestCase {
         })
         
         rtmMessaging.received(message: ["type":"ping","callBackId":1])
-
+        
         super.waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -94,7 +85,7 @@ class RtmMessagingTests: XCTestCase {
         let expectation = super.expectation(description: "rtm messaging")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver3: handler]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver3: handler]
         
         rtmMessaging.received(message: ["type":"version","callBackId":0,"data":["version":99]], completion: { (success) in
             XCTAssertFalse(success)
@@ -112,8 +103,8 @@ class RtmMessagingTests: XCTestCase {
         let expectation = super.expectation(description: "rtm messaging")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver2: handler,
-                                        RtmProtocolVersion.ver3: MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver2: handler,
+                                        WvConfig.RtmProtocolVersion.ver3: MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)]
         
         handler.completion = { (_) in
             expectation.fulfill()
@@ -134,19 +125,19 @@ class RtmMessagingTests: XCTestCase {
         let expectation = super.expectation(description: "rtm messaging - unknown message type")
         
         let handler = MockRtmMessageHandler(wvConfigStorage: wvConfigStorage)
-        rtmMessaging.handlersMapping = [RtmProtocolVersion.ver2: handler]
+        rtmMessaging.handlersMapping = [WvConfig.RtmProtocolVersion.ver2: handler]
         
         handler.completion = { (message) in
             expectation.fulfill()
         }
-
+        
         rtmMessaging.received(message: ["type":"UnknownType","callBackId":21,"data":["string parameter":"Some Details", "number parameter": 99]])
-
+        
         rtmMessaging.received(message: ["type":"version","callBackId":0,"data":["version":2]], completion: { (success) in
             XCTAssertTrue(success)
         })
         
         super.waitForExpectations(timeout: 5, handler: nil)
     }
-
+    
 }

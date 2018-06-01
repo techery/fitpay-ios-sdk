@@ -1,119 +1,203 @@
+import Foundation
 
-import ObjectMapper
-
-open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
-{
-    internal var links: [ResourceLink]?
+@objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
+    
     open var deviceIdentifier: String?
+   
+    /// The name of the device model
     open var deviceName: String?
+    
     open var deviceType: String?
+    
+    /// The manufacturer name of the device
     open var manufacturerName: String?
+    
+    open var state: String?
+    
+    /// The serial number for a particular instance of the device
     open var serialNumber: String?
+    
+    /// The model number that is assigned by the device vendor
     open var modelNumber: String?
+    
+    /// The hardware revision for the hardware within the device
     open var hardwareRevision: String?
+    
+    /// The firmware revision for the firmware within the device. Value may be normalized to meet payment network specifications.
     open var firmwareRevision: String?
+    
     open var softwareRevision: String?
+    
     open var notificationToken: String?
+    
     open var createdEpoch: TimeInterval?
+    
     open var created: String?
+    
+    /// The code name of the firmware operating system on the device
     open var osName: String?
+    
+    /// A structure containing an Organizationally Unique Identifier (OUI) followed
+    /// by a manufacturer-defined identifier and is unique for each individual instance of the product
     open var systemId: String?
+    
     open var cardRelationships: [CardRelationship]?
+    
     open var licenseKey: String?
+    
     open var bdAddress: String?
+    
     open var pairing: String?
+    
+    /// The ID of a secure element in a payment capable device
     open var secureElementId: String?
+    
     open var casd: String?
     
-    fileprivate static let userResource = "user"
-    fileprivate static let commitsResource = "commits"
-    fileprivate static let selfResource = "self"
-    fileprivate static let lastAckCommitResource = "lastAckCommit"
-
-    fileprivate weak var _client: RestClient?
-
     // Extra metadata specific for a particural type of device
-    open var metadata: [String: AnyObject]?
+    open var metadata: [String: Any]?
 
-    open var userAvailable: Bool
-    {
-        return self.links?.url(DeviceInfo.userResource) != nil
+    open var userAvailable: Bool {
+        return self.links?.url(DeviceInfo.userResourceKey) != nil
     }
 
-    open var listCommitsAvailable: Bool
-    {
-        return self.links?.url(DeviceInfo.commitsResource) != nil
+    open var listCommitsAvailable: Bool {
+        return self.links?.url(DeviceInfo.commitsResourceKey) != nil
     }
 
-    public var client: RestClient?
-    {
-        get
-        {
+    open var deviceResetUrl: String? {
+        return self.links?.url(DeviceInfo.deviceResetTasksKey)
+    }
+
+    var client: RestClient? {
+        get {
             return self._client
         }
-        set
-        {
+        set {
             self._client = newValue
 
-            if let cardRelationships = self.cardRelationships
-                {
-                for cardRelationship in cardRelationships
-                {
+            if let cardRelationships = self.cardRelationships {
+                for cardRelationship in cardRelationships {
                     cardRelationship.client = self.client
                 }
             }
         }
     }
+    
+    var links: [ResourceLink]?
+    
+    private static let userResourceKey = "user"
+    private static let commitsResourceKey = "commits"
+    private static let selfResourceKey = "self"
+    private static let lastAckCommitResourceKey = "lastAckCommit"
+    private static let deviceResetTasksKey = "deviceResetTasks"
 
+    private weak var _client: RestClient?
+    
     override public init() {
-
+        super.init()
     }
 
-    public required init?(map: Map)
-    {
-
+    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElementId: String?, casd: String?) {
+        self.deviceType = deviceType
+        self.manufacturerName = manufacturerName
+        self.deviceName = deviceName
+        self.serialNumber = serialNumber
+        self.modelNumber = modelNumber
+        self.hardwareRevision = hardwareRevision
+        self.firmwareRevision = firmwareRevision
+        self.softwareRevision = softwareRevision
+        self.notificationToken = notificationToken
+        self.systemId = systemId
+        self.osName = osName
+        self.secureElementId = secureElementId
+        self.casd = casd
     }
 
-    open func mapping(map: Map)
-    {
-        links <- (map["_links"], ResourceLinkTransformType())
-        created <- map["createdTs"]
-        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        deviceIdentifier <- map["deviceIdentifier"]
-        deviceName <- map["deviceName"]
-        deviceType <- map["deviceType"]
-        manufacturerName <- map["manufacturerName"]
-        serialNumber <- map["serialNumber"]
-        modelNumber <- map["modelNumber"]
-        hardwareRevision <- map["hardwareRevision"]
-        firmwareRevision <- map["firmwareRevision"]
-        softwareRevision <- map["softwareRevision"]
-        notificationToken <- map["notificationToken"]
-        osName <- map["osName"]
-        systemId <- map["systemId"]
-        licenseKey <- map["licenseKey"]
-        bdAddress <- map["bdAddress"]
-        pairing <- map["pairing"]
-        casd <- map["casd"]
-        if let secureElement = map["secureElement"].currentValue as? [String: String] {
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case deviceIdentifier
+        case deviceName
+        case deviceType
+        case manufacturerName
+        case state
+        case serialNumber
+        case modelNumber
+        case hardwareRevision
+        case firmwareRevision
+        case softwareRevision
+        case notificationToken
+        case osName
+        case systemId
+        case licenseKey
+        case bdAddress
+        case pairing
+        case secureElement
+        case secureElementId
+        case casd
+        case cardRelationships
+        case metadata
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        created = try? container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        deviceIdentifier = try? container.decode(.deviceIdentifier)
+        deviceName = try? container.decode(.deviceName)
+        deviceType = try? container.decode(.deviceType)
+        manufacturerName = try? container.decode(.manufacturerName)
+        state = try? container.decode(.state)
+        serialNumber = try? container.decode(.serialNumber)
+        modelNumber = try? container.decode(.modelNumber)
+        hardwareRevision = try? container.decode(.hardwareRevision)
+        firmwareRevision =  try? container.decode(.firmwareRevision)
+        softwareRevision = try? container.decode(.softwareRevision)
+        notificationToken = try? container.decode(.notificationToken)
+        osName = try? container.decode(.osName)
+        systemId = try? container.decode(.systemId)
+        licenseKey = try? container.decode(.licenseKey)
+        bdAddress = try? container.decode(.bdAddress)
+        pairing = try? container.decode(.pairing)
+        if let secureElement: [String: String] = try? container.decode(.secureElement)  {
             secureElementId = secureElement["secureElementId"]
+            casd = secureElement["casdCert"]
         } else {
-            secureElementId <- map["secureElementId"]
+            secureElementId = try? container.decode(.secureElementId)
+            casd = try? container.decode(.casd)
         }
 
-        if let cardRelationships = map["cardRelationships"].currentValue as? [AnyObject] {
-            if cardRelationships.count > 0 {
-                self.cardRelationships = [CardRelationship]()
+        self.cardRelationships = try? container.decode(.cardRelationships)
+        metadata = try? container.decode([String : Any].self)
+    }
 
-                for itrObj in cardRelationships {
-                    if let parsedObj = Mapper<CardRelationship>().map(JSON: itrObj as! [String: Any]) {
-                        self.cardRelationships!.append(parsedObj)
-                    }
-                }
-            }
-        }
-
-        metadata = map.JSON as [String: AnyObject]?
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(deviceIdentifier, forKey: .deviceIdentifier)
+        try? container.encode(deviceName, forKey: .deviceName)
+        try? container.encode(deviceType, forKey: .deviceType)
+        try? container.encode(serialNumber, forKey: .serialNumber)
+        try? container.encode(modelNumber, forKey: .modelNumber)
+        try? container.encode(hardwareRevision, forKey: .hardwareRevision)
+        try? container.encode(firmwareRevision, forKey: .firmwareRevision)
+        try? container.encode(softwareRevision, forKey: .softwareRevision)
+        try? container.encode(notificationToken, forKey: .notificationToken)
+        try? container.encode(osName, forKey: .osName)
+        try? container.encode(systemId, forKey: .systemId)
+        try? container.encode(licenseKey, forKey: .licenseKey)
+        try? container.encode(bdAddress, forKey: .bdAddress)
+        try? container.encode(pairing, forKey: .pairing)
+        try? container.encode(secureElementId, forKey: .secureElementId)
+        try? container.encode(casd, forKey: .casd)
+        try? container.encode(cardRelationships, forKey: .cardRelationships)
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {
@@ -129,47 +213,47 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
         var dic: [String: Any] = [:]
 
         if let deviceType = self.deviceType {
-            dic["deviceType"] = deviceType as AnyObject?
+            dic["deviceType"] = deviceType
         }
 
         if let deviceName = self.deviceName {
-            dic["deviceName"] = deviceName as AnyObject?
+            dic["deviceName"] = deviceName
         }
 
         if let manufacturerName = self.manufacturerName {
-            dic["manufacturerName"] = manufacturerName as AnyObject?
+            dic["manufacturerName"] = manufacturerName
         }
 
         if let modelNumber = self.modelNumber {
-            dic["modelNumber"] = modelNumber as AnyObject?
+            dic["modelNumber"] = modelNumber
         }
 
         if let hardwareRevision = self.hardwareRevision {
-            dic["hardwareRevision"] = hardwareRevision as AnyObject?
+            dic["hardwareRevision"] = hardwareRevision
         }
 
         if let firmwareRevision = self.firmwareRevision {
-            dic["firmwareRevision"] = firmwareRevision as AnyObject?
+            dic["firmwareRevision"] = firmwareRevision
         }
 
         if let softwareRevision = self.softwareRevision {
-            dic["softwareRevision"] = softwareRevision as AnyObject?
+            dic["softwareRevision"] = softwareRevision
         }
 
         if let systemId = self.systemId {
-            dic["systemId"] = systemId as AnyObject?
+            dic["systemId"] = systemId
         }
 
         if let osName = self.osName {
-            dic["osName"] = osName as AnyObject?
+            dic["osName"] = osName
         }
 
         if let licenseKey = self.licenseKey {
-            dic["licenseKey"] = licenseKey as AnyObject?
+            dic["licenseKey"] = licenseKey
         }
 
         if let bdAddress = self.bdAddress {
-            dic["bdAddress"] = bdAddress as AnyObject?
+            dic["bdAddress"] = bdAddress
         }
 
         if let secureElementId = self.secureElementId {
@@ -182,19 +266,19 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
 
         return String(data: jsonData, encoding: String.Encoding.utf8)
     }
-
+    
     /**
      Delete a single device
      
      - parameter completion: DeleteDeviceHandler closure
      */
-    @objc open func deleteDeviceInfo(_ completion: @escaping RestClient.DeleteDeviceHandler) {
-        let resource = DeviceInfo.selfResource
+    @objc open func deleteDeviceInfo(_ completion: @escaping RestClient.DeleteHandler) {
+        let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deleteDevice(url, completion: completion)
         } else {
-            completion(NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -206,13 +290,13 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter softwareRevision?: software revision
      - parameter completion:        UpdateDeviceHandler closure
      */
-    @objc open func update(_ firmwareRevision: String?, softwareRevision: String?, notifcationToken: String?, completion: @escaping RestClient.UpdateDeviceHandler) {
-        let resource = DeviceInfo.selfResource
+    @objc open func update(_ firmwareRevision: String?, softwareRevision: String?, notifcationToken: String?, completion: @escaping RestClient.DeviceHandler) {
+        let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             // if notification token not exists on platform then we need to create this field
             if notifcationToken != nil && self.notificationToken == nil {
-                addNotificationToken(notifcationToken!, completion: { (deviceInfo, error) in
+                addNotificationToken(notifcationToken!) { (deviceInfo, error) in
                     // notificationToken added, check do we need to update other fields
                     if firmwareRevision == nil && softwareRevision == nil {
                         completion(deviceInfo, error)
@@ -220,12 +304,12 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
                     }
                     
                     client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
-                })
+                }
             } else {
                 client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
             }
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -238,12 +322,12 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter completion:   CommitsHandler closure
      */
     open func listCommits(commitsAfter: String?, limit: Int, offset: Int, completion: @escaping RestClient.CommitsHandler) {
-        let resource = DeviceInfo.commitsResource
+        let resource = DeviceInfo.commitsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.commits(url, commitsAfter: commitsAfter, limit: limit, offset: offset, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -253,37 +337,39 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter completion: CommitHandler closure
      */
     open func lastAckCommit(completion: @escaping RestClient.CommitHandler) {
-        let resource = DeviceInfo.lastAckCommitResource
+        let resource = DeviceInfo.lastAckCommitResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.commit(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
     @objc open func user(_ completion: @escaping RestClient.UserHandler) {
-        let resource = DeviceInfo.userResource
+        let resource = DeviceInfo.userResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.user(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
-    internal func addNotificationToken(_ token: String, completion: @escaping RestClient.UpdateDeviceHandler) {
-        let resource = DeviceInfo.selfResource
+    // MARK: - Internal
+    
+    func addNotificationToken(_ token: String, completion: @escaping RestClient.DeviceHandler) {
+        let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.addDeviceProperty(url, propertyPath: "/notificationToken", propertyValue: token, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceInfo.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
     }
 
-    internal typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: NSError?) -> Void
-    internal func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
+    typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: ErrorResponse?) -> Void
+    func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         if newNotificationToken != "" {
             if newNotificationToken != self.notificationToken {
@@ -306,59 +392,5 @@ open class DeviceInfo: NSObject, ClientModel, Mappable, SecretApplyable
             completion?(false, nil)
         }
     }
-}
-
-open class CardRelationship: NSObject, ClientModel, Mappable, SecretApplyable
-{
-    internal var links: [ResourceLink]?
-    open var creditCardId: String?
-    open var pan: String?
-    open var expMonth: Int?
-    open var expYear: Int?
-
-    internal var encryptedData: String?
-    fileprivate static let selfResource = "self"
-    public weak var client: RestClient?
-
-    public required init?(map: Map)
-    {
-
-    }
-
-    open func mapping(map: Map)
-    {
-        links <- (map["_links"], ResourceLinkTransformType())
-        creditCardId <- map["creditCardId"]
-        encryptedData <- map["encryptedData"]
-        pan <- map["pan"]
-        expMonth <- map["expMonth"]
-        expYear <- map["expYear"]
-    }
-
-    internal func applySecret(_ secret: Data, expectedKeyId: String?)
-    {
-        if let decryptedObj: CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
-            self.pan = decryptedObj.pan
-            self.expMonth = decryptedObj.expMonth
-            self.expYear = decryptedObj.expYear
-        }
-    }
-
-    /**
-     Get a single relationship
-     
-     - parameter completion:   RelationshipHandler closure
-     */
-    @objc open func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
-        let resource = CardRelationship.selfResource
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client
-            {
-            client.relationship(url, completion: completion)
-        }
-            else
-        {
-            completion(nil, NSError.clientUrlError(domain: CardRelationship.self, code: 0, client: client, url: url, resource: resource))
-        }
-    }
+    
 }

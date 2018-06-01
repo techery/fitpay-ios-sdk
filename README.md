@@ -1,22 +1,27 @@
-# Fitpay iOS SDK - README.md
+# FitPay iOS SDK 
 
 
-## Using the SDK
+[![GitHub license](https://img.shields.io/github/license/fitpay/fitpay-ios-sdk.svg)](https://github.com/fitpay/fitpay-ios-sdk/blob/develop/LICENSE)
+[![Build Status](https://travis-ci.org/fitpay/fitpay-ios-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-ios-sdk)
+[![Latest pod release](https://img.shields.io/cocoapods/v/FitpaySDK.svg)](https://cocoapods.org/pods/FitpaySDK)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Documentation coverage](docs/badge.svg)](docs/badge.svg)
+
+## Installing the SDK
+
 Fitpay distributes the SDK via cocoapods and carthage. Documentation on using **cocoapods** can be found [here](https://guides.cocoapods.org/using/getting-started.html) and for **carthage** [here](https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos). 
-#### Cocoapods
-Currently we are using cocoapods v1.1.1
+### Cocoapods
+Currently we are using cocoapods v1.5.2
 
 Once you have set up your project to use cocoapods, add the following to your Podfile:
 ```
-ruby
 pod 'FitpaySDK'
 ```
 
-#### Carthage
+### Carthage
 Once you have set up your project to use carthage, add the following to your Cartfile:
 ```
-ruby
-github "fitpay/fitpay-ios-sdk" "develop"
+github "fitpay/fitpay-ios-sdk"
 ```
 After that you should follow to default carthage workflow, which is:
 
@@ -31,15 +36,13 @@ After that you should follow to default carthage workflow, which is:
  
   ```
   $(SRCROOT)/Carthage/Build/iOS/Alamofire.framework
-  $(SRCROOT)/Carthage/Build/iOS/AlamofireObjectMapper.framework
-  $(SRCROOT)/Carthage/Build/iOS/JWTDecode.framework
-  $(SRCROOT)/Carthage/Build/iOS/KeychainAccess.framework
-  $(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework
+  $(SRCROOT)/Carthage/Build/iOS/JSONWebToken.framework
   $(SRCROOT)/Carthage/Build/iOS/FitpaySDK.framework
   ```
 
+## Using the SDK
 
-## Building the SDK locally
+### Building the SDK locally
 
 ```
 sudo gem install cocoapods
@@ -50,29 +53,11 @@ git clone git@github.com:fitpay/fitpay-ios-sdk.git
 cd fitpay-ios-sdk
 pod install  
 ```
-Open Xcode (currently using Xcode 8.3.3), and add a project (->Open another project->/users/yourname/fitpay/fitpay-ios-sdk)  
+Open Xcode (currently using Xcode 9.2), and add a project (->Open another project->/users/yourname/fitpay/fitpay-ios-sdk)  
 
-Select the **FitpaySDK-Universal** build under Product->Scheme. Ensure that the scheme is set to build for Generic iOS Device.
-## Using a local pod
-In the project Podfile, change the following line:
-```ruby
-pod ‘FitpaySDK’
-````
-to be:
-```ruby 
-pod ‘FitpaySDK’, :path => ‘~/fitpay/fitpay-ios-sdk’  
-```
+Select the **FitpaySDK** build under Product->Scheme. Ensure that the scheme is set to build for Generic iOS Device.
 
-Fit-Pay also utilizes a continuous integration system (travis) to build and test. Current Develop Branch Status: [![Build Status](https://travis-ci.org/fitpay/fitpay-ios-sdk.svg?branch=develop)](https://travis-ci.org/fitpay/fitpay-ios-sdk)
-
-
-## Running Tests Locally from XCode UI
-Open the project inside of Xcode
-Filemenu -> View, Navigators, Show Test Navigators
-Right click on FitpaySDK tests, Enable tests
-Click on a test, and press "Play"
-
-## Running Tests From the Commandline
+### Running Tests From the Commandline
 By default the tests will run in the iPhone 7 simulator.
 ```
 ./bin/test
@@ -82,10 +67,10 @@ To test on a different simulator, pass in a valid simulator same.
 ./bin/test "iPhone 5s"
 ```
 
-## Card Scanning
+### Card Scanning
 By default the FitPay WebView utilizes a web based card scanning service which is currently being EOL'ed, that means the ability to scan a card during card entry now must be handled natively by the SDK implementation.  The SDK provides an interface `IFitPayCardScanner` where a scanning implementation can be provided.   An full working example using the [Card.IO](https://www.card.io/) utility can be seen in our [reference implementation](https://github.com/fitpay/Pagare_iOS_WV/).
  
-## Logging
+### Logging
 In order to remain flexible with the various mobile logging strategies, the SDK provides a mechanism to utilize custom logging implementations. For custom implementation there is protocol `LogsOutputProtocol` which should be implemented, and after that object of that protocol implementation should be added to logs ouput.
 
 Code example:
@@ -119,5 +104,7 @@ Please contact the team via a github issue, OR, feel free to email us: sdk@fit-p
 
 ## Fit Pay Internal Instructions 
 ### Publishing Updated SDKs
+* Please add a name to each release using the following convention: `FitPay SDK for iOS vX.X.X`
+* Please also include notes using proper markdown about each major PR in the release.
 * [How-to publish (deploy) a new version of the iOS FitPay SDK](https://fitpay.atlassian.net/wiki/spaces/ENG/pages/92798977/How-to+publish+deploy+a+new+version+of+the+iOS+FitPay+SDK)
 

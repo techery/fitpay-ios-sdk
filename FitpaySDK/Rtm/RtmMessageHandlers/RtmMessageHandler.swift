@@ -1,35 +1,25 @@
-//
-//  RtmMessageHandler.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 30.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
-public typealias MessageTypeHandler = (_ message: RtmMessage) -> Void
+typealias MessageTypeHandler = (_ message: RtmMessage) -> Void
 
 protocol RtmMessageTypeWithHandler {
-    init?(rawValue: RtmMessageType)
-    
-    
+    init?(rawValue: String)
     func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler?
 }
 
 protocol RtmMessageHandler {
-    weak var wvConfigStorage: WvConfigStorage! { get }
+    var wvConfigStorage: WvConfigStorage! { get }
     
-    weak var outputDelegate: RtmOutputDelegate? { get set }
-    weak var wvRtmDelegate: WvRTMDelegate? { get set }
-    weak var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? { get set }
-    weak var cardScannerDataSource: FitpayCardScannerDataSource? { get set }
+    var outputDelegate: RtmOutputDelegate? { get set }
+    var wvRtmDelegate: RTMDelegate? { get set }
+    var cardScannerPresenterDelegate: FitpayCardScannerPresenterDelegate? { get set }
+    var cardScannerDataSource: FitpayCardScannerDataSource? { get set }
+    var a2aVerificationDelegate: FitpayA2AVerificationDelegate? { get set }
 
-    
     init(wvConfigStorage: WvConfigStorage)
     
     func handle(message: [String: Any])
-    func handlerFor(rtmMessage: RtmMessageType) -> MessageTypeHandler?
+    func handlerFor(rtmMessage: String) -> MessageTypeHandler?
     
     func handleSync(_ message: RtmMessage)
     func handleSessionData(_ message: RtmMessage)
@@ -39,8 +29,8 @@ protocol RtmMessageHandler {
     func resolveSync()
     
     func logoutResponseMessage() -> RtmMessageResponse?
-    func statusResponseMessage(message: String, type: WVMessageType) -> RtmMessageResponse?
-    func versionResponseMessage(version: RtmProtocolVersion) -> RtmMessageResponse?
+    func statusResponseMessage(message: String, type: WvConfig.WVMessageType) -> RtmMessageResponse?
+    func versionResponseMessage(version: WvConfig.RtmProtocolVersion) -> RtmMessageResponse?
 
 }
 

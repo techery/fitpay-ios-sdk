@@ -1,11 +1,3 @@
-//
-//  CommitsStorageTests.swift
-//  FitpaySDKTestsPods
-//
-//  Created by Aleksandr on 12/20/17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import XCTest
 import RxSwift
 @testable import FitpaySDK
@@ -34,10 +26,6 @@ class CommitsStorageTests: XCTestCase {
         let syncStorage = MockSyncStorage.sharedMockInstance
         syncManager = SyncManager(syncFactory: syncFactory, syncStorage: syncStorage)
         syncQueue = SyncRequestQueue(syncManager: syncManager)
-    }
-    
-    override func tearDown() {
-        super.tearDown()
     }
     
     func testCheckLoadCommitIdFromDevice() {
@@ -73,8 +61,6 @@ class CommitsStorageTests: XCTestCase {
         let localCommitId = "654321"
         syncStorage.setLastCommitId(self.deviceInfo.deviceIdentifier!, commitId: localCommitId)
         
-        sleep(1)
-        
         let fetch1 = FetchCommitsOperation(deviceInfo: self.deviceInfo,
                                            shouldStartFromSyncedCommit: true,
                                            syncStorage: syncStorage,
@@ -107,9 +93,13 @@ class CommitsStorageTests: XCTestCase {
     func testCheckSavingCommitIdToDevice() {
         let expectation = super.expectation(description: "check commitId what must be saved on device")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let connector = MockPaymentDeviceConnectorWithStorage(paymentDevice: self.paymentDevice)
+        connector.connectDelayTime = 0.2
+        connector.disconnectDelayTime = 0.2
+        connector.apduExecuteDelayTime = 0.1
         
         self.syncQueue.add(request: getSyncRequest(connector: connector)) { (status, error) in
             let storedDeviceCommitId = connector.getDeviceLastCommitId()
@@ -123,9 +113,13 @@ class CommitsStorageTests: XCTestCase {
     func testCheckSavingCommitIdToPhone() {
         let expectation = super.expectation(description: "check commitId what must be saved on phone")
         
-        fetcher.commits = [fetcher.getAPDUCommit()]
+        guard let commit = fetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        fetcher.commits = [commit]
         
         let connector = MockPaymentDeviceConnectorWithWrongStorage1(paymentDevice: self.paymentDevice)
+        connector.connectDelayTime = 0.2
+        connector.disconnectDelayTime = 0.2
+        connector.apduExecuteDelayTime = 0.1
         
         self.syncQueue.add(request: getSyncRequest(connector: connector)) { (status, error) in
             let storedDeviceCommitId = MockSyncStorage.sharedMockInstance.getLastCommitId(self.deviceInfo.deviceIdentifier!)
@@ -135,13 +129,13 @@ class CommitsStorageTests: XCTestCase {
         
         super.waitForExpectations(timeout: 20, handler: nil)
     }
+
 }
 
-
-// Mocks
-extension CommitsStorageTests {
+extension CommitsStorageTests { // Mocks
     class MockPaymentDeviceConnectorWithStorage: MockPaymentDeviceConnector {
         var commitId: String?
+        
         func getDeviceLastCommitId() -> String {
             return commitId ?? String()
         }
@@ -161,6 +155,7 @@ extension CommitsStorageTests {
 
     class MockPaymentDeviceConnectorWithWrongStorage2: MockPaymentDeviceConnector {
         var commitId: String?
+        
         func getDeviceLastCommitId() -> String {
             return commitId ?? String()
         }
@@ -180,13 +175,15 @@ extension CommitsStorageTests {
     }
 }
 
-extension CommitsStorageTests {
-    func getSyncRequest(connector: MockPaymentDeviceConnector) -> SyncRequest {
+extension CommitsStorageTests { // Private Helplers
+    
+    private func getSyncRequest(connector: MockPaymentDeviceConnector) -> SyncRequest {
         let device = self.paymentDevice!
         let _ = device.changeDeviceInterface(connector)
-        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: self.deviceInfo, paymentDevice: device)
+        let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: self.deviceInfo, paymentDevice: device)
         SyncRequest.syncManager = self.syncManager
         return request
     }
+    
 }
 

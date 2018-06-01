@@ -1,16 +1,6 @@
-//
-//  APDUCommand.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 15.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
-import ObjectMapper
-
-open class APDUCommand : NSObject, Mappable, APDUResponseProtocol {
+open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
     
-    internal var links: [ResourceLink]?
+    var links: [ResourceLink]?
     open var commandId: String?
     open var groupId: Int = 0
     open var sequence: Int = 0
@@ -24,23 +14,41 @@ open class APDUCommand : NSObject, Mappable, APDUResponseProtocol {
         super.init()
     }
     
-    public required init?(map: Map) {
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case commandId
+        case groupId
+        case sequence
+        case command
+        case type
+        case continueOnFailure 
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        commandId = try? container.decode(.commandId)
+        groupId = try container.decodeIfPresent(Int.self, forKey: .groupId) ?? 0
+        sequence = try container.decodeIfPresent(Int.self, forKey: .sequence) ?? 0
+        command = try? container.decode(.command)
+        continueOnFailure = try container.decodeIfPresent(Bool.self, forKey: .continueOnFailure) ?? false
     }
-    
-    open func mapping(map: Map) {
-        links <- (map["_links"], ResourceLinkTransformType())
-        commandId <- map["commandId"]
-        groupId <- map["groupId"]
-        sequence <- map["sequence"]
-        command <- map["command"]
-        type <- map["type"]
-        continueOnFailure <- map["continueOnFailure"]
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(commandId, forKey: .commandId)
+        try? container.encode(groupId, forKey: .groupId)
+        try? container.encode(sequence, forKey: .sequence)
+        try? container.encode(command, forKey: .command)
+        try? container.encode(continueOnFailure, forKey: .continueOnFailure)
     }
-    
-    open var responseDictionary : [String:Any] {
+
+    open var responseDictionary: [String: Any] {
         get {
-            var dic : [String:Any] = [:]
+            var dic: [String: Any] = [:]
             
             if let commandId = self.commandId {
                 dic["commandId"] = commandId

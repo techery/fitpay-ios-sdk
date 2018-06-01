@@ -1,26 +1,6 @@
-
 import Foundation
-import ObjectMapper
 
-public enum TokenizationState: String
-{
-    case NEW,
-    NOT_ELIGIBLE,
-    ELIGIBLE,
-    DECLINED_TERMS_AND_CONDITIONS,
-    PENDING_ACTIVE,
-    PENDING_VERIFICATION,
-    DELETED,
-    ACTIVE,
-    DEACTIVATED,
-    ERROR,
-    DECLINED
-}
-
-open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
-{
-    internal var links: [ResourceLink]?
-    internal var encryptedData: String?
+@objcMembers open class CreditCard: NSObject, ClientModel, Serializable, SecretApplyable {
 
     open var creditCardId: String?
     open var userId: String?
@@ -47,18 +27,21 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
     open var name: String?
     open var address: Address?
     open var topOfWalletAPDUCommands: [APDUCommand]?
+    
+    var links: [ResourceLink]?
+    var encryptedData: String?
 
-    fileprivate static let selfResource         = "self"
-    fileprivate static let acceptTermsResource  = "acceptTerms"
-    fileprivate static let declineTermsResource = "declineTerms"
-    fileprivate static let deactivateResource   = "deactivate"
-    fileprivate static let reactivateResource   = "reactivate"
-    fileprivate static let makeDefaultResource  = "makeDefault"
-    fileprivate static let transactionsResource = "transactions"
+    private static let selfResourceKey          = "self"
+    private static let acceptTermsResourceKey   = "acceptTerms"
+    private static let declineTermsResourceKey  = "declineTerms"
+    private static let deactivateResourceKey    = "deactivate"
+    private static let reactivateResourceKey    = "reactivate"
+    private static let makeDefaultResourceKey   = "makeDefault"
+    private static let transactionsResourceKey  = "transactions"
 
-    fileprivate weak var _client: RestClient?
+    private weak var _client: RestClient?
 
-    public var client: RestClient? {
+    var client: RestClient? {
         get {
             return self._client
         }
@@ -89,63 +72,120 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
     }
 
     open var acceptTermsAvailable: Bool {
-        return self.links?.url(CreditCard.acceptTermsResource) != nil
+        return self.links?.url(CreditCard.acceptTermsResourceKey) != nil
     }
 
     open var declineTermsAvailable: Bool {
-        return self.links?.url(CreditCard.declineTermsResource) != nil
+        return self.links?.url(CreditCard.declineTermsResourceKey) != nil
     }
 
     open var deactivateAvailable: Bool {
-        return self.links?.url(CreditCard.deactivateResource) != nil
+        return self.links?.url(CreditCard.deactivateResourceKey) != nil
     }
 
     open var reactivateAvailable: Bool {
-        return self.links?.url(CreditCard.reactivateResource) != nil
+        return self.links?.url(CreditCard.reactivateResourceKey) != nil
     }
 
     open var makeDefaultAvailable: Bool {
-        return self.links?.url(CreditCard.makeDefaultResource) != nil
+        return self.links?.url(CreditCard.makeDefaultResourceKey) != nil
     }
 
     open var listTransactionsAvailable: Bool {
-        return self.links?.url(CreditCard.transactionsResource) != nil
+        return self.links?.url(CreditCard.transactionsResourceKey) != nil
     }
 
-    public required init?(map: Map){
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case creditCardId
+        case userId
+        case isDefault = "default"
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case state
+        case cardType
+        case cardMetaData
+        case termsAssetId
+        case termsAssetReferences
+        case eligibilityExpiration
+        case eligibilityExpirationEpoch
+        case deviceRelationships
+        case encryptedData
+        case targetDeviceId
+        case targetDeviceType
+        case verificationMethods
+        case externalTokenReference
+        case pan
+        case expMonth
+        case expYear
+        case cvv
+        case name
+        case address
+        case topOfWalletAPDUCommands = "offlineSeActions.topOfWallet.apduCommands"
     }
 
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.creditCardId <- map["creditCardId"]
-        self.userId <- map["userId"]
-        self.isDefault <- map["default"]
-        self.created <- map["createdTs"]
-        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        self.state <- map["state"]
-        self.cardType <- map["cardType"]
-        self.cardMetaData = Mapper<CardMetadata>().map(JSONObject: map.JSON["cardMetaData"])
-        self.termsAssetId <- map["termsAssetId"]
-        self.termsAssetReferences <- (map["termsAssetReferences"], TermsAssetReferencesTransformType())
-        self.eligibilityExpiration <- map["eligibilityExpiration"]
-        self.eligibilityExpirationEpoch <- (map["eligibilityExpirationEpoch"], NSTimeIntervalTransform())
-        self.deviceRelationships <- (map["deviceRelationships"], DeviceRelationshipsTransformType())
-        self.encryptedData <- map["encryptedData"]
-        self.targetDeviceId <- map["targetDeviceId"]
-        self.targetDeviceType <- map["targetDeviceType"]
-        self.verificationMethods <- (map["verificationMethods"], VerificationMethodTransformType())
-        self.externalTokenReference <- map["externalTokenReference"]
-        self.pan <- map["pan"]
-        self.creditCardId <- map["creditCardId"]
-        self.expMonth <- map["expMonth"]
-        self.expYear <- map["expYear"]
-        self.cvv <- map["cvv"]
-        self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
-        self.name <- map["name"]
-        self.topOfWalletAPDUCommands <- map["offlineSeActions.topOfWallet.apduCommands"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        creditCardId = try? container.decode(.creditCardId)
+        userId = try? container.decode(.userId)
+        isDefault = try? container.decode(.isDefault)
+        created = try? container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        state = try? container.decode(.state)
+        cardType = try? container.decode(.cardType)
+        cardMetaData = try? container.decode(.cardMetaData)
+        termsAssetId = try? container.decode(.termsAssetId)
+        termsAssetReferences =  try? container.decode(.termsAssetReferences)
+        eligibilityExpiration = try? container.decode(.eligibilityExpiration)
+        eligibilityExpirationEpoch = try container.decode(.eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
+        deviceRelationships = try? container.decode(.deviceRelationships)
+        encryptedData = try? container.decode(.encryptedData)
+        targetDeviceId = try? container.decode(.targetDeviceId)
+        targetDeviceType = try? container.decode(.targetDeviceType)
+        verificationMethods = try? container.decode(.verificationMethods)
+        externalTokenReference = try? container.decode(.externalTokenReference)
+        pan = try? container.decode(.pan)
+        expMonth = try? container.decode(.expMonth)
+        expYear = try? container.decode(.expYear)
+        cvv = try? container.decode(.cvv)
+        name = try? container.decode(.name)
+        address = try? container.decode(.address)
+        topOfWalletAPDUCommands = try? container.decode(.topOfWalletAPDUCommands)
     }
 
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(creditCardId, forKey: .creditCardId)
+        try? container.encode(userId, forKey: .userId)
+        try? container.encode(isDefault, forKey: .isDefault)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(state, forKey: .state)
+        try? container.encode(cardType, forKey: .cardType)
+        try? container.encode(cardMetaData, forKey: .cardMetaData)
+        try? container.encode(termsAssetId, forKey: .termsAssetId)
+        try? container.encode(termsAssetReferences, forKey: .termsAssetReferences)
+        try? container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
+        try? container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(deviceRelationships, forKey: .deviceRelationships)
+        try? container.encode(encryptedData, forKey: .encryptedData)
+        try? container.encode(targetDeviceId, forKey: .targetDeviceId)
+        try? container.encode(targetDeviceType, forKey: .targetDeviceType)
+        try? container.encode(verificationMethods, forKey: .verificationMethods)
+        try? container.encode(externalTokenReference, forKey: .externalTokenReference)
+        try? container.encode(pan, forKey: .pan)
+        try? container.encode(expMonth, forKey: .expMonth)
+        try? container.encode(expYear, forKey: .expYear)
+        try? container.encode(cvv, forKey: .cvv)
+        try? container.encode(name, forKey: .name)
+        try? container.encode(address, forKey: .address)
+        try? container.encode(topOfWalletAPDUCommands, forKey: .topOfWalletAPDUCommands)
+    }
+    
     func applySecret(_ secret: Foundation.Data, expectedKeyId: String?) {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
@@ -156,13 +196,13 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter completion:   CreditCardHandler closure
      */
     @objc open func getCreditCard(_ completion: @escaping RestClient.CreditCardHandler) {
-        let resource = CreditCard.selfResource
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
 
         if let url = url, let client = self.client {
             client.retrieveCreditCard(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -173,19 +213,39 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
         
         return false
     }
+
+    /**
+     Get acceptTerms url
+     - return acceptTerms url
+     */
+    @objc open func getAcceptTermsUrl() -> String? {
+     return self.links?.url(CreditCard.acceptTermsResourceKey)
+    }
+
+    /**
+      Update acceptTerms url
+     - @param acceptTermsUrl url
+     */
+    @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
+        guard let link = self.links?.indexOf(CreditCard.acceptTermsResourceKey) else {
+            throw  AcceptTermsError.NoTerms("The card is not in a state to accept terms anymore")
+        }
+        
+        link.href = acceptTermsUrl
+    }
     
     /**
      Delete a single credit card from a user's profile. If you delete a card that is currently the default source, then the most recently added source will become the new default.
      
      - parameter completion:   DeleteCreditCardHandler closure
      */
-    @objc open func deleteCreditCard(_ completion: @escaping RestClient.DeleteCreditCardHandler) {
-        let resource = CreditCard.selfResource
+    @objc open func deleteCreditCard(_ completion: @escaping RestClient.DeleteHandler) {
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deleteCreditCard(url, completion: completion)
         } else {
-            completion(NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -198,7 +258,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter city:         city
      - parameter state:        state
      - parameter postalCode:   postal code
-     - parameter countryCode:  country code
+     - parameter countryCode:  country? code
      - parameter completion:   UpdateCreditCardHandler closure
      */
     @objc open func update(name: String?,
@@ -208,8 +268,8 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
                            state: String?,
                            postalCode: String?,
                            countryCode: String?,
-                           completion: @escaping RestClient.UpdateCreditCardHandler) {
-        let resource = CreditCard.selfResource
+                           completion: @escaping RestClient.CreditCardHandler) {
+        let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.updateCreditCard(url,
@@ -222,7 +282,7 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
                                     countryCode: countryCode,
                                     completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -231,13 +291,13 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   AcceptTermsHandler closure
      */
-    @objc open func acceptTerms(_ completion: @escaping RestClient.AcceptTermsHandler) {
-        let resource = CreditCard.acceptTermsResource
+    @objc open func acceptTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
+        let resource = CreditCard.acceptTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.acceptTerms(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -246,13 +306,13 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   DeclineTermsHandler closure
      */
-    @objc open func declineTerms(_ completion: @escaping RestClient.DeclineTermsHandler) {
-        let resource = CreditCard.declineTermsResource
+    @objc open func declineTerms(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
+        let resource = CreditCard.declineTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.declineTerms(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -263,13 +323,13 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter reason:       deactivation reason
      - parameter completion:   DeactivateHandler closure
      */
-    open func deactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.DeactivateHandler) {
-        let resource = CreditCard.deactivateResource
+    open func deactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
+        let resource = CreditCard.deactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -280,13 +340,13 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter reason:       reactivation reason
      - parameter completion:   ReactivateHandler closure
      */
-    open func reactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.ReactivateHandler) {
-        let resource = CreditCard.reactivateResource
+    open func reactivate(causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClient.CreditCardTransitionHandler) {
+        let resource = CreditCard.reactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -295,13 +355,13 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   MakeDefaultHandler closure
      */
-    @objc open func makeDefault(_ completion: @escaping RestClient.MakeDefaultHandler) {
-        let resource = CreditCard.makeDefaultResource
+    @objc open func makeDefault(_ completion: @escaping RestClient.CreditCardTransitionHandler) {
+        let resource = CreditCard.makeDefaultResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.makeDefault(url, completion: completion)
         } else {
-            completion(false, nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -313,19 +373,19 @@ open class CreditCard: NSObject, ClientModel, Mappable, SecretApplyable
      - parameter completion: TransactionsHandler closure
      */
     open func listTransactions(limit: Int, offset: Int, completion: @escaping RestClient.TransactionsHandler) {
-        let resource = CreditCard.transactionsResource
+        let resource = CreditCard.transactionsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.transactions(url, limit: limit, offset: offset, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: CreditCard.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
 }
 
-open class CardMetadata: NSObject, ClientModel, Mappable
-{
-    open var labelColor: String?
+open class CardMetadata: NSObject, ClientModel, Serializable {
+    
+    open var foregroundColor: String? // TODO: update to UIColor
     open var issuerName: String?
     open var shortDescription: String?
     open var longDescription: String?
@@ -341,9 +401,10 @@ open class CardMetadata: NSObject, ClientModel, Mappable
     open var coBrandLogo: [Image]?
     open var icon: [Image]?
     open var issuerLogo: [Image]?
-    fileprivate var _client: RestClient?
-    public var client: RestClient?
-    {
+    
+    private var _client: RestClient?
+    
+    var client: RestClient? {
         get {
             return self._client
         }
@@ -395,86 +456,110 @@ open class CardMetadata: NSObject, ClientModel, Mappable
         }
     }
 
-    public required init?(map: Map) {
+    private enum CodingKeys: String, CodingKey {
+        case foregroundColor
+        case issuerName
+        case shortDescription
+        case longDescription
+        case contactUrl
+        case contactPhone
+        case contactEmail
+        case termsAndConditionsUrl
+        case privacyPolicyUrl
+        case brandLogo
+        case cardBackground
+        case cardBackgroundCombined
+        case cardBackgroundCombinedEmbossed
+        case coBrandLogo
+        case icon
+        case issuerLogo
     }
 
-    open func mapping(map: Map) {
-        self.labelColor <- map["labelColor"]
-        self.issuerName <- map["issuerName"]
-        self.shortDescription <- map["shortDescription"]
-        self.longDescription <- map["longDescription"]
-        self.contactUrl <- map["contactUrl"]
-        self.contactPhone <- map["contactPhone"]
-        self.contactEmail <- map["contactEmail"]
-        self.termsAndConditionsUrl <- map["termsAndConditionsUrl"]
-        self.privacyPolicyUrl <- map["privacyPolicyUrl"]
-        self.brandLogo <- (map["brandLogo"], ImageTransformType())
-        self.cardBackground <- (map["cardBackground"], ImageTransformType())
-        self.cardBackgroundCombined <- (map["cardBackgroundCombined"], ImageTransformType())
-        self.cardBackgroundCombinedEmbossed <- (map["cardBackgroundCombinedEmbossed"], ImageTransformType())
-        self.coBrandLogo <- (map["coBrandLogo"], ImageTransformType())
-        self.icon <- (map["icon"], ImageTransformType())
-        self.issuerLogo <- (map["issuerLogo"], ImageTransformType())
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        foregroundColor = try? container.decode(.foregroundColor)
+        issuerName = try? container.decode(.issuerName)
+        shortDescription = try? container.decode(.shortDescription)
+        longDescription = try? container.decode(.longDescription)
+        contactUrl = try? container.decode(.contactUrl)
+        contactPhone = try? container.decode(.contactPhone)
+        contactEmail = try? container.decode(.contactEmail)
+        termsAndConditionsUrl = try? container.decode(.termsAndConditionsUrl)
+        privacyPolicyUrl = try? container.decode(.privacyPolicyUrl)
+        brandLogo = try? container.decode(.brandLogo)
+        cardBackground = try? container.decode(.cardBackground)
+        cardBackgroundCombined = try? container.decode(.cardBackgroundCombined)
+        cardBackgroundCombinedEmbossed = try? container.decode(.cardBackgroundCombinedEmbossed)
+        coBrandLogo = try? container.decode(.coBrandLogo)
+        icon = try? container.decode(.icon)
+        issuerLogo = try? container.decode(.issuerLogo)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try? container.encode(foregroundColor, forKey: .foregroundColor)
+        try? container.encode(issuerName, forKey: .issuerName)
+        try? container.encode(shortDescription, forKey: .shortDescription)
+        try? container.encode(longDescription, forKey: .longDescription)
+        try? container.encode(contactUrl, forKey: .contactUrl)
+        try? container.encode(contactPhone, forKey: .contactPhone)
+        try? container.encode(contactEmail, forKey: .contactEmail)
+        try? container.encode(termsAndConditionsUrl, forKey: .termsAndConditionsUrl)
+        try? container.encode(privacyPolicyUrl, forKey: .privacyPolicyUrl)
+        try? container.encode(brandLogo, forKey: .brandLogo)
+        try? container.encode(cardBackground, forKey: .cardBackground)
+        try? container.encode(cardBackgroundCombined, forKey: .cardBackgroundCombined)
+        try? container.encode(cardBackgroundCombinedEmbossed, forKey: .cardBackgroundCombinedEmbossed)
+        try? container.encode(coBrandLogo, forKey: .coBrandLogo)
+        try? container.encode(icon, forKey: .icon)
+        try? container.encode(issuerLogo, forKey: .issuerLogo)
     }
 }
 
-open class TermsAssetReferences: NSObject, ClientModel, Mappable, AssetRetrivable
-{
-    internal var links: [ResourceLink]?
+open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetrivable {
     open var mimeType: String?
-    public var client: RestClient?
-    fileprivate static let selfResource = "self"
+    
+    var client: RestClient?
+    var links: [ResourceLink]?
 
-    public required init?(map: Map) {
+    private static let selfResourceKey = "self"
+
+    private enum CodingKeys: String, CodingKey {
+        case links = "_links"
+        case mimeType
     }
 
-    open func mapping(map: Map) {
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.mimeType <- map["mimeType"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        mimeType = try? container.decode(.mimeType)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(mimeType, forKey: .mimeType)
     }
 
     @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler) {
-        let resource = TermsAssetReferences.selfResource
+        let resource = TermsAssetReferences.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.assets(url, completion: completion)
         } else {
-            let error = NSError.clientUrlError(domain: TermsAssetReferences.self, code: 0, client: client, url: url, resource: resource)
+            let error = ErrorResponse.clientUrlError(domain: TermsAssetReferences.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
 }
 
-internal class TermsAssetReferencesTransformType: TransformType
-{
-    typealias Object = [TermsAssetReferences]
-    typealias JSON = [[String: AnyObject]]
-
-    func transformFromJSON(_ value: Any?) -> [TermsAssetReferences]? {
-        if let items = value as? [[String: AnyObject]] {
-            var list = [TermsAssetReferences]()
-
-            for raw in items  {
-                if let item = Mapper<TermsAssetReferences>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [TermsAssetReferences]?) -> [[String: AnyObject]]? {
-        return nil
-    }
-}
-
-open class DeviceRelationships: NSObject, ClientModel, Mappable
-{
+open class DeviceRelationships: NSObject, ClientModel, Serializable {
+    
     open var deviceType: String?
-    internal var links: [ResourceLink]?
     open var deviceIdentifier: String?
     open var manufacturerName: String?
     open var deviceName: String?
@@ -488,69 +573,78 @@ open class DeviceRelationships: NSObject, ClientModel, Mappable
     open var osName: String?
     open var systemId: String?
 
-    fileprivate static let selfResource = "self"
-    public var client: RestClient?
+    var client: RestClient?
+    var links: [ResourceLink]?
 
-    public required init?(map: Map) {
+    private static let selfResourceKey = "self"
+
+    private enum CodingKeys: String, CodingKey {
+        case deviceType
+        case links = "_links"
+        case deviceIdentifier
+        case manufacturerName
+        case deviceName
+        case serialNumber
+        case modelNumber
+        case hardwareRevision
+        case firmwareRevision
+        case softwareRevision
+        case created = "createdTs"
+        case createdEpoch = "createdTsEpoch"
+        case osName
+        case systemId
     }
 
-    open func mapping(map: Map) {
-        self.deviceType <- map["deviceType"]
-        self.links <- (map["_links"], ResourceLinkTransformType())
-        self.deviceIdentifier <- map["deviceIdentifier"]
-        self.manufacturerName <- map["manufacturerName"]
-        self.deviceName <- map["deviceName"]
-        self.serialNumber <- map["serialNumber"]
-        self.modelNumber <- map["modelNumber"]
-        self.hardwareRevision <- map["hardwareRevision"]
-        self.firmwareRevision <- map["firmwareRevision"]
-        self.softwareRevision <- map["softwareRevision"]
-        self.created <- map["createdTs"]
-        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
-        self.osName <- map["osName"]
-        self.systemId <- map["systemId"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
+        deviceType = try? container.decode(.deviceType)
+        deviceIdentifier = try? container.decode(.deviceIdentifier)
+        manufacturerName = try? container.decode(.manufacturerName)
+        deviceName = try? container.decode(.deviceName)
+        serialNumber = try? container.decode(.serialNumber)
+        modelNumber = try? container.decode(.modelNumber)
+        hardwareRevision = try? container.decode(.hardwareRevision)
+        firmwareRevision =  try? container.decode(.firmwareRevision)
+        softwareRevision = try? container.decode(.softwareRevision)
+        created = try? container.decode(.created)
+        createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        osName = try? container.decode(.osName)
+        systemId = try? container.decode(.systemId)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(deviceType, forKey: .deviceType)
+        try? container.encode(deviceIdentifier, forKey: .deviceIdentifier)
+        try? container.encode(manufacturerName, forKey: .manufacturerName)
+        try? container.encode(deviceName, forKey: .deviceName)
+        try? container.encode(serialNumber, forKey: .serialNumber)
+        try? container.encode(modelNumber, forKey: .modelNumber)
+        try? container.encode(hardwareRevision, forKey: .hardwareRevision)
+        try? container.encode(firmwareRevision, forKey: .firmwareRevision)
+        try? container.encode(softwareRevision, forKey: .softwareRevision)
+        try? container.encode(created, forKey: .created)
+        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try? container.encode(osName, forKey: .osName)
+        try? container.encode(systemId, forKey: .systemId)
     }
 
     @objc func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
-        let resource = DeviceRelationships.selfResource
+        let resource = DeviceRelationships.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.relationship(url, completion: completion)
         } else {
-            completion(nil, NSError.clientUrlError(domain: DeviceRelationships.self, code: 0, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: DeviceRelationships.self, client: client, url: url, resource: resource))
         }
     }
 }
 
-internal class DeviceRelationshipsTransformType: TransformType
-{
-    typealias Object = [DeviceRelationships]
-    typealias JSON = [[String: AnyObject]]
-
-    func transformFromJSON(_ value: Any?) -> [DeviceRelationships]? {
-        if let items = value as? [[String: AnyObject]] {
-            var list = [DeviceRelationships]()
-
-            for raw in items {
-                if let item = Mapper<DeviceRelationships>().map(JSON: raw) {
-                    list.append(item)
-                }
-            }
-
-            return list
-        }
-
-        return nil
-    }
-
-    func transformToJSON(_ value: [DeviceRelationships]?) -> [[String: AnyObject]]? {
-        return nil
-    }
-}
-
-
-open class CardInfo: Mappable
-{
+open class CardInfo: Serializable {
     open var pan: String?
     open var expMonth: Int?
     open var expYear: Int?
@@ -559,19 +653,53 @@ open class CardInfo: Mappable
     open var name: String?
     open var address: Address?
 
-    public required init?(map: Map) {
+    private enum CodingKeys: String, CodingKey {
+        case pan
+        case creditCardId
+        case expMonth
+        case expYear
+        case cvv
+        case name
+        case address
     }
 
-    open func mapping(map: Map) {
-        self.pan <- map["pan"]
-        self.creditCardId <- map["creditCardId"]
-        self.expMonth <- map["expMonth"]
-        self.expYear <- map["expYear"]
-        self.cvv <- map["cvv"]
-        self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
-        self.name <- map["name"]
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        pan = try? container.decode(.pan)
+        creditCardId = try? container.decode(.creditCardId)
+        expMonth = try? container.decode(.expMonth)
+        expYear = try? container.decode(.expYear)
+        cvv = try? container.decode(.cvv)
+        name = try? container.decode(.name)
+        address = try? container.decode(.address)
+        name = try? container.decode(.name)
     }
+
+}
+
+// MARK: - Nested Objects
+
+extension CreditCard {
+    
+    public enum TokenizationState: String, Codable {
+        case NEW,
+        NOT_ELIGIBLE,
+        ELIGIBLE,
+        DECLINED_TERMS_AND_CONDITIONS,
+        PENDING_ACTIVE,
+        PENDING_VERIFICATION,
+        DELETED,
+        ACTIVE,
+        DEACTIVATED,
+        ERROR,
+        DECLINED
+    }
+    
+    enum AcceptTermsError: Error {
+        case NoTerms(String)
+    }
+
 }
 
 /**
@@ -581,6 +709,6 @@ open class CardInfo: Mappable
  - ISSUER:     issuer
  */
 public enum CreditCardInitiator: String {
-    case CARDHOLDER
-    case ISSUER
+    case cardholder = "CARDHOLDER"
+    case issuer = "ISSUER"
 }

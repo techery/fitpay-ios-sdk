@@ -1,20 +1,14 @@
-//
-//  SyncRequestsQueueTests.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 24.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import XCTest
 @testable import FitpaySDK
 
 class MockSyncManager: SyncManagerProtocol {
     var synchronousModeOn: Bool = true
     var isSyncing: Bool = false
-    fileprivate let eventsDispatcher = FitpayEventDispatcher()
+    
     static var syncCompleteDelay: Double = 0.2
-
+    
+    private let eventsDispatcher = FitpayEventDispatcher()
+    
     private var lastSyncRequest: SyncRequest?
     
     func syncWith(request: SyncRequest) throws {
@@ -50,10 +44,10 @@ class MockSyncManager: SyncManagerProtocol {
     func callCompletionForSyncEvent(_ event: SyncEventType, params: [String: Any]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
-
+    
     func startSync(request: SyncRequest) {
         self.isSyncing = true
-
+        
         DispatchQueue.main.asyncAfter(deadline: self.delayForSync) { [weak self] in
             self?.isSyncing = false
             self?.callCompletionForSyncEvent(.syncCompleted, params: ["request":request])
@@ -90,14 +84,10 @@ class SyncRequestsQueueTests: XCTestCase {
         self.requestsQueue = SyncRequestQueue(syncManager: self.mockSyncManager)
     }
     
-    override func tearDown() {
-        super.tearDown()
-    }
-    
     func getSyncRequest1() -> SyncRequest {
         let deviceInfo = DeviceInfo()
         deviceInfo.deviceIdentifier = "111-111-111"
-        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
+        let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
         SyncRequest.syncManager = self.mockSyncManager
         return request
     }
@@ -105,14 +95,14 @@ class SyncRequestsQueueTests: XCTestCase {
     func getSyncRequest2() -> SyncRequest {
         let deviceInfo = DeviceInfo()
         deviceInfo.deviceIdentifier = "123-123-123"
-        let request = SyncRequest(user: User(JSONString: "{\"id\":\"1\"}")!, deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
+        let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
         SyncRequest.syncManager = self.mockSyncManager
         return request
     }
     
     func testMake1SuccessSync() {
         let expectation = super.expectation(description: "making 1 success sync")
-
+        
         self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
             XCTAssertEqual(status, .success)
             XCTAssertNil(error)
@@ -126,7 +116,7 @@ class SyncRequestsQueueTests: XCTestCase {
     func testMake1FailedSync() {
         
         self.requestsQueue = SyncRequestQueue(syncManager: MockFailedSyncManger())
-
+        
         let expectation = super.expectation(description: "making 1 failed sync")
         
         self.requestsQueue.add(request: getSyncRequest1()) { (status, error) in
@@ -137,7 +127,7 @@ class SyncRequestsQueueTests: XCTestCase {
         }
         
         super.waitForExpectations(timeout: MockSyncManager.syncCompleteDelay + 1, handler: nil)
-
+        
     }
     
     func testSuccessQueueOrder() {
@@ -174,7 +164,7 @@ class SyncRequestsQueueTests: XCTestCase {
     
     func testFailedQueueOrder() {
         self.requestsQueue = SyncRequestQueue(syncManager: MockFailedSyncManger())
-
+        
         let expectation = super.expectation(description: "making failed queue")
         
         MockSyncManager.syncCompleteDelay = 0.02
@@ -288,9 +278,9 @@ class SyncRequestsQueueTests: XCTestCase {
         let expectation = super.expectation(description: "making sync without device info")
         mockSyncManager.synchronousModeOn = true
         SyncRequest.syncManager = self.mockSyncManager
-
+        
         let request = SyncRequest()
-
+        
         self.requestsQueue.add(request: request) { (status, error) in
             XCTAssertEqual(status, .failed)
             XCTAssertNotNil(error)

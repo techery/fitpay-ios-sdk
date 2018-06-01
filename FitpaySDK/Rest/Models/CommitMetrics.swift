@@ -1,14 +1,13 @@
-import ObjectMapper
 
-public enum SyncInitiator : String {
-    case Platform = "PLATFORM"
-    case Notification = "NOTIFICATION"
-    case WebHook = "WEB_HOOK"
-    case NotDefined = "NOT DEFINED"
+public enum SyncInitiator: String, Serializable {
+    case platform = "PLATFORM"
+    case notification = "NOTIFICATION"
+    case webHook = "WEB_HOOK"
+    case eventStream = "EVENT_STREAM"
+    case notDefined = "NOT DEFINED"
 }
 
-open class CommitMetrics : Mappable
-{
+open class CommitMetrics: Serializable {
     public var syncId: String?
     public var deviceId: String?
     public var userId: String?
@@ -23,28 +22,24 @@ open class CommitMetrics : Mappable
         }
     }
     
-    public required init?(map: Map) {
-        
+    private enum CodingKeys: String, CodingKey {
+        case syncId
+        case deviceId
+        case userId
+        case sdkVersion
+        case osVersion
+        case initiator
+        case totalProcessingTimeMs
+        case commitStatistics = "commits"
     }
     
     public init() {
-        self.sdkVersion = FitpaySDKVersion
+        self.sdkVersion = FitpayConfig.sdkVersion
         self.osVersion = UIDevice.current.systemName + " " + UIDevice.current.systemVersion
     }
-    
-    open func mapping(map: Map) {
-        syncId <- map["syncId"]
-        deviceId <- map["deviceId"]
-        userId <- map["userId"]
-        sdkVersion <- map["sdkVersion"]
-        osVersion <- map["osVersion"]
-        initiator <- map["initiator"]
-        totalProcessingTimeMs <- map["totalProcessingTimeMs"]
-        commitStatistics <- map["commits"]
-    }
-    
+
     open func sendCompleteSync() {
-        guard let completeSync = self.notificationAsc?.completeSync else {
+        guard let completeSync = self.notificationAsc?.links?.url("completeSync") else {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send completeSync without URL.")
             return
         }
@@ -54,8 +49,8 @@ open class CommitMetrics : Mappable
             return
         }
         
-        let params = ["params": self.toJSON()]
-        client.makePostCall(completeSync, parameters: params as [String: AnyObject]?) { (error) in
+        let params: [String: Any]? = self.toJSON() != nil ? ["params": self.toJSON()!] : nil
+        client.makePostCall(completeSync, parameters: params) { (error) in
             if let error = error {
                 log.error("SYNC_ACKNOWLEDGMENT: completeSync failed to send. Error: \(error)")
             } else {

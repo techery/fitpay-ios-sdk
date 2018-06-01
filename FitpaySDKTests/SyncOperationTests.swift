@@ -1,13 +1,4 @@
-//
-//  SyncOperationTests.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 12.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import XCTest
-import ObjectMapper
 import RxSwift
 import RxBlocking
 
@@ -27,32 +18,39 @@ class MockNonAPDUConfirm: NonAPDUConfirmOperationProtocol {
 
 class MockCommitsFetcher: FetchCommitsOperationProtocol {
     var deviceInfo: DeviceInfo!
-
+    
     var commits: [Commit] = []
     
     func startWith(limit: Int, andOffset offset: Int) -> Observable<[Commit]> {
         return Observable<[Commit]>.just(commits)
     }
     
-    func getCreateCardCommit(id: String = "12323") -> Commit {
-        return Commit(JSONString: "{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"commitType\":\"CREDITCARD_CREATED\",\"payload\":{\"createdTsEpoch\":1446587257324,\"cvv\":\"###\",\"address\":{\"street1\":\"1035 Pearl St\",\"street2\":\"5th Floor\",\"city\":\"Boulder\",\"state\":\"CO\",\"postalCode\":\"80302\",\"countryCode\":\"US\"},\"deviceRelationships\":[{\"deviceType\":\"ACTIVITY_TRACKER\",\"deviceIdentifier\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"manufacturerName\":\"Pebble\",\"deviceName\":\"Pebble Time\",\"serialNumber\":\"074DCC022E14\",\"modelNumber\":\"FB404\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2015-11-03T21:47:37.146+0000\",\"createdTsEpoch\":1446587257146,\"osName\":\"ANDROID\",\"systemId\":\"0x123456FFFE9ABCDE\"}],\"cardType\":\"VISA\",\"creditCardId\":\"da635517-7f9e-4833-a772-2eab3b9d30c9\",\"termsAssetId\":\"c076a474-222c-48f4-9f87-776ee2cb0140\",\"userId\":\"9469bfe0-3fa1-4465-9abf-f78cacc740b2\",\"createdTs\":\"2015-11-03T21:47:37.324Z\",\"expMonth\":12,\"targetDeviceType\":\"fitpay.tokenization.model.Device\",\"expYear\":2018,\"targetDeviceId\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"termsAssetReferences\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-498647650&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=40\",\"title\":null}},\"mimeType\":\"text/html\"}],\"name\":\"John Doe\",\"state\":\"ELIGIBLE\",\"pan\":\"############4441\",\"cardMetaData\":{\"labelColor\":\"00000\",\"issuerName\":\"JPMorgan Chase\",\"shortDescription\":\"Chase Freedom Visa\",\"longDescription\":\"Chase Freedom Visa with the super duper rewards\",\"contactUrl\":\"www.chase.com\",\"contactPhone\":\"18001234567\",\"contactEmail\":\"goldcustomer@chase.com\",\"termsAndConditionsUrl\":\"http://visa.com/terms\",\"privacyPolicyUrl\":\"http://visa.com/privacy\",\"brandLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}],\"cardBackground\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=42\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"cardBackgroundCombined\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=43\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"icon\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=1661540331&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/jpeg\",\"height\":\"1024\",\"width\":\"1024\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1279887808&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"64\",\"width\":\"64\"}],\"issuerLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}]}},\"createdTs\":1446587258151,\"commit\":\"\(id)\"}")!
+    func getCreateCardCommit(id: String = "12323") -> Commit? {
+       let commit = try? Commit("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"commitType\":\"CREDITCARD_CREATED\",\"payload\":{\"createdTsEpoch\":1446587257324,\"cvv\":\"###\",\"address\":{\"street1\":\"1035 Pearl St\",\"street2\":\"5th Floor\",\"city\":\"Boulder\",\"state\":\"CO\",\"postalCode\":\"80302\",\"countryCode\":\"US\"},\"deviceRelationships\":[{\"deviceType\":\"ACTIVITY_TRACKER\",\"deviceIdentifier\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"manufacturerName\":\"Pebble\",\"deviceName\":\"Pebble Time\",\"serialNumber\":\"074DCC022E14\",\"modelNumber\":\"FB404\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2015-11-03T21:47:37.146+0000\",\"createdTsEpoch\":1446587257146,\"osName\":\"ANDROID\",\"systemId\":\"0x123456FFFE9ABCDE\"}],\"cardType\":\"VISA\",\"creditCardId\":\"da635517-7f9e-4833-a772-2eab3b9d30c9\",\"termsAssetId\":\"c076a474-222c-48f4-9f87-776ee2cb0140\",\"userId\":\"9469bfe0-3fa1-4465-9abf-f78cacc740b2\",\"createdTs\":\"2015-11-03T21:47:37.324Z\",\"expMonth\":12,\"targetDeviceType\":\"fitpay.tokenization.model.Device\",\"expYear\":2018,\"targetDeviceId\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"termsAssetReferences\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-498647650&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=40\",\"title\":null}},\"mimeType\":\"text/html\"}],\"name\":\"John Doe\",\"state\":\"ELIGIBLE\",\"pan\":\"############4441\",\"cardMetaData\":{\"labelColor\":\"00000\",\"issuerName\":\"JPMorgan Chase\",\"shortDescription\":\"Chase Freedom Visa\",\"longDescription\":\"Chase Freedom Visa with the super duper rewards\",\"contactUrl\":\"www.chase.com\",\"contactPhone\":\"18001234567\",\"contactEmail\":\"goldcustomer@chase.com\",\"termsAndConditionsUrl\":\"http://visa.com/terms\",\"privacyPolicyUrl\":\"http://visa.com/privacy\",\"brandLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}],\"cardBackground\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=42\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"cardBackgroundCombined\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=43\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"icon\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=1661540331&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/jpeg\",\"height\":\"1024\",\"width\":\"1024\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1279887808&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"64\",\"width\":\"64\"}],\"issuerLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}]}},\"createdTs\":1446587258151,\"commit\":\"\(id)\"}")
+          XCTAssertNotNil(commit)
+         return commit
     }
     
-    func getAPDUCommit() -> Commit {
-        let commit = Commit(JSONString: "{\"commitType\":\"APDU_PACKAGE\"}")!
-        commit.payload = Payload(JSONString: "{\"seIdType\":\"cplc\",\"targetDeviceType\":\"fitpay.gandd.model.Device\",\"targetDeviceId\":\"74534d29-d23d-4f6e-a306-679edc080915\",\"packageId\":\"baff97fb-0b73-5019-8877-7c490a43dc64\",\"seId\":\"274689f09352405792e9493356ac880c4444444\",\"targetAid\":\"8050200008CF0AFB2A88611AD51C\",\"commandApdus\":[{\"commandId\":\"e69e3bc6-bf36-4432-9db0-1f9e19b9d513\",\"groupId\":0,\"sequence\":0,\"command\":\"00DA1234567890\",\"type\":\"PUT_DATA\"},{\"commandId\":\"239ec5db-a19a-4813-ab4c-471dacc726ee\",\"groupId\":1,\"sequence\":1,\"command\":\"8050200008CF0AFB2A88611AD51C\",\"type\":\"UNKNOWN\"},{\"commandId\":\"445c3aec-22c7-41fe-a0ef-eee48bf8801c\",\"groupId\":1,\"sequence\":2,\"command\":\"84820300106BBC29E6A224522E83A9B26FD456111500\",\"type\":\"UNKNOWN\"},{\"commandId\":\"3abec35d-ed88-4d2c-ae09-442aee51ffac\",\"groupId\":1,\"sequence\":3,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"},{\"commandId\":\"c8246e40-98df-45da-9906-78cb87ae6253\",\"groupId\":2,\"sequence\":4,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"},{\"commandId\":\"2fc6b4eb-9fdb-4df6-a7f8-d4d9d407d673\",\"groupId\":3,\"sequence\":5,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"}],\"validUntil\":\"2030-12-11T21:22:58.691Z\",\"packageType\":\"NORMAL\",\"apduPackageUrl\":\"http://localhost:9103/transportservice/v1/apdupackages/baff97fb-0b73-5019-8877-7c490a43dc64\"}")
-        commit.commit = "21321312"
+    func getAPDUCommit() -> Commit? {
+        let commit = try? Commit("{\"commitType\":\"APDU_PACKAGE\"}")
+        XCTAssertNotNil(commit)
+        let payload = try? Payload("{\"seIdType\":\"cplc\",\"targetDeviceType\":\"fitpay.gandd.model.Device\",\"targetDeviceId\":\"74534d29-d23d-4f6e-a306-679edc080915\",\"packageId\":\"baff97fb-0b73-5019-8877-7c490a43dc64\",\"seId\":\"274689f09352405792e9493356ac880c4444444\",\"targetAid\":\"8050200008CF0AFB2A88611AD51C\",\"commandApdus\":[{\"commandId\":\"e69e3bc6-bf36-4432-9db0-1f9e19b9d513\",\"groupId\":0,\"sequence\":0,\"command\":\"00DA1234567890\",\"type\":\"PUT_DATA\"},{\"commandId\":\"239ec5db-a19a-4813-ab4c-471dacc726ee\",\"groupId\":1,\"sequence\":1,\"command\":\"8050200008CF0AFB2A88611AD51C\",\"type\":\"UNKNOWN\"},{\"commandId\":\"445c3aec-22c7-41fe-a0ef-eee48bf8801c\",\"groupId\":1,\"sequence\":2,\"command\":\"84820300106BBC29E6A224522E83A9B26FD456111500\",\"type\":\"UNKNOWN\"},{\"commandId\":\"3abec35d-ed88-4d2c-ae09-442aee51ffac\",\"groupId\":1,\"sequence\":3,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"},{\"commandId\":\"c8246e40-98df-45da-9906-78cb87ae6253\",\"groupId\":2,\"sequence\":4,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"},{\"commandId\":\"2fc6b4eb-9fdb-4df6-a7f8-d4d9d407d673\",\"groupId\":3,\"sequence\":5,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"}],\"validUntil\":\"2030-12-11T21:22:58.691Z\",\"packageType\":\"NORMAL\",\"apduPackageUrl\":\"http://localhost:9103/transportservice/v1/apdupackages/baff97fb-0b73-5019-8877-7c490a43dc64\"}")
+        XCTAssertNotNil(payload)
+        commit?.payload = payload
+        commit?.commit = "21321312"
         return commit
     }
     
-    func getUnknownCommitType() -> Commit {
-        return Commit(JSONString: "{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"commitType\":\"NOT_EXIST\",\"payload\":{\"createdTsEpoch\":1446587257324,\"cvv\":\"###\",\"address\":{\"street1\":\"1035 Pearl St\",\"street2\":\"5th Floor\",\"city\":\"Boulder\",\"state\":\"CO\",\"postalCode\":\"80302\",\"countryCode\":\"US\"},\"deviceRelationships\":[{\"deviceType\":\"ACTIVITY_TRACKER\",\"deviceIdentifier\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"manufacturerName\":\"Pebble\",\"deviceName\":\"Pebble Time\",\"serialNumber\":\"074DCC022E14\",\"modelNumber\":\"FB404\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2015-11-03T21:47:37.146+0000\",\"createdTsEpoch\":1446587257146,\"osName\":\"ANDROID\",\"systemId\":\"0x123456FFFE9ABCDE\"}],\"cardType\":\"VISA\",\"creditCardId\":\"da635517-7f9e-4833-a772-2eab3b9d30c9\",\"termsAssetId\":\"c076a474-222c-48f4-9f87-776ee2cb0140\",\"userId\":\"9469bfe0-3fa1-4465-9abf-f78cacc740b2\",\"createdTs\":\"2015-11-03T21:47:37.324Z\",\"expMonth\":12,\"targetDeviceType\":\"fitpay.tokenization.model.Device\",\"expYear\":2018,\"targetDeviceId\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"termsAssetReferences\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-498647650&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=40\",\"title\":null}},\"mimeType\":\"text/html\"}],\"name\":\"John Doe\",\"state\":\"ELIGIBLE\",\"pan\":\"############4441\",\"cardMetaData\":{\"labelColor\":\"00000\",\"issuerName\":\"JPMorgan Chase\",\"shortDescription\":\"Chase Freedom Visa\",\"longDescription\":\"Chase Freedom Visa with the super duper rewards\",\"contactUrl\":\"www.chase.com\",\"contactPhone\":\"18001234567\",\"contactEmail\":\"goldcustomer@chase.com\",\"termsAndConditionsUrl\":\"http://visa.com/terms\",\"privacyPolicyUrl\":\"http://visa.com/privacy\",\"brandLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}],\"cardBackground\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=42\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"cardBackgroundCombined\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=43\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"icon\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=1661540331&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/jpeg\",\"height\":\"1024\",\"width\":\"1024\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1279887808&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"64\",\"width\":\"64\"}],\"issuerLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}]}},\"createdTs\":1446587258151,\"commit\":\"1\"}")!
+    func getUnknownCommitType() -> Commit? {
+        let commit = try? Commit("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}},\"commitType\":\"NOT_EXIST\",\"payload\":{\"createdTsEpoch\":1446587257324,\"cvv\":\"###\",\"address\":{\"street1\":\"1035 Pearl St\",\"street2\":\"5th Floor\",\"city\":\"Boulder\",\"state\":\"CO\",\"postalCode\":\"80302\",\"countryCode\":\"US\"},\"deviceRelationships\":[{\"deviceType\":\"ACTIVITY_TRACKER\",\"deviceIdentifier\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"manufacturerName\":\"Pebble\",\"deviceName\":\"Pebble Time\",\"serialNumber\":\"074DCC022E14\",\"modelNumber\":\"FB404\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"2015-11-03T21:47:37.146+0000\",\"createdTsEpoch\":1446587257146,\"osName\":\"ANDROID\",\"systemId\":\"0x123456FFFE9ABCDE\"}],\"cardType\":\"VISA\",\"creditCardId\":\"da635517-7f9e-4833-a772-2eab3b9d30c9\",\"termsAssetId\":\"c076a474-222c-48f4-9f87-776ee2cb0140\",\"userId\":\"9469bfe0-3fa1-4465-9abf-f78cacc740b2\",\"createdTs\":\"2015-11-03T21:47:37.324Z\",\"expMonth\":12,\"targetDeviceType\":\"fitpay.tokenization.model.Device\",\"expYear\":2018,\"targetDeviceId\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"termsAssetReferences\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-498647650&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=40\",\"title\":null}},\"mimeType\":\"text/html\"}],\"name\":\"John Doe\",\"state\":\"ELIGIBLE\",\"pan\":\"############4441\",\"cardMetaData\":{\"labelColor\":\"00000\",\"issuerName\":\"JPMorgan Chase\",\"shortDescription\":\"Chase Freedom Visa\",\"longDescription\":\"Chase Freedom Visa with the super duper rewards\",\"contactUrl\":\"www.chase.com\",\"contactPhone\":\"18001234567\",\"contactEmail\":\"goldcustomer@chase.com\",\"termsAndConditionsUrl\":\"http://visa.com/terms\",\"privacyPolicyUrl\":\"http://visa.com/privacy\",\"brandLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}],\"cardBackground\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=42\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"cardBackgroundCombined\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-2027889239&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=43\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"184\",\"width\":\"275\"}],\"icon\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=1661540331&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/jpeg\",\"height\":\"1024\",\"width\":\"1024\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1279887808&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=2\",\"title\":null}},\"mimeType\":\"image/png\",\"height\":\"64\",\"width\":\"64\"}],\"issuerLogo\":[{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-210715922&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"20\",\"width\":\"60\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-905912687&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"58\",\"width\":\"180\"},{\"_links\":{\"self\":{\"rel\":\"self\",\"href\":\"https://api.fit-pay.com/assets?assetId=-1988261446&adapterId=1131178c-aab5-438b-ab9d-a6572cb64c8c&adapterData=41\",\"title\":null}},\"mimeType\":\"image/gif\",\"height\":\"32\",\"width\":\"100\"}]}},\"createdTs\":1446587258151,\"commit\":\"1\"}")
+        XCTAssertNotNil(commit)
+        return commit
     }
 }
 
 class MocksFactory: SyncFactory {
     var commitsFetcher: MockCommitsFetcher!
-
+    
     func apduConfirmOperation() -> APDUConfirmOperationProtocol {
         return MockAPDUConfirm()
     }
@@ -61,7 +59,7 @@ class MocksFactory: SyncFactory {
         return MockNonAPDUConfirm()
     }
     
-    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: IPaymentDeviceConnector?) -> FetchCommitsOperationProtocol {
+    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
         return commitsFetcher
     }
 }
@@ -78,12 +76,7 @@ class SyncOperationTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        if log.outputs.count == 0 {
-            log.addOutput(output: ConsoleOutput())
-        }
-        log.minLogLevel = .debug
-
+                
         disposeBag = DisposeBag()
         
         mocksFactory.commitsFetcher = commitsFetcher
@@ -92,8 +85,8 @@ class SyncOperationTests: XCTestCase {
         connector = MockPaymentDeviceConnector(paymentDevice: paymentDevice)
         connector.apduExecuteDelayTime = 0.01
         _ = paymentDevice.changeDeviceInterface(connector)
-
-        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: DeviceInfo(), user: User(JSONString: "{\"id\":\"1\"}")!, syncFactory: mocksFactory)
+        
+        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: DeviceInfo(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory)
     }
     
     override func tearDown() {
@@ -112,7 +105,8 @@ class SyncOperationTests: XCTestCase {
     
     func testSuccessfullSyncWithAddCardCommits() {
         connector.connectDelayTime = 0.001
-        commitsFetcher.commits = [commitsFetcher.getCreateCardCommit(id: "123213213")]
+        guard let commit = commitsFetcher.getCreateCardCommit(id: "123213213") else { XCTAssert(false, "Bad parsing."); return }
+        commitsFetcher.commits = [commit]
         guard let events = try? syncOperation.start().toBlocking(timeout: 2).toArray() else {
             XCTAssert(false, "Timeouted.")
             return
@@ -123,7 +117,8 @@ class SyncOperationTests: XCTestCase {
     
     func testSuccessSyncWithAPDUCommit() {
         connector.connectDelayTime = 0.001
-        commitsFetcher.commits = [commitsFetcher.getAPDUCommit()]
+        guard let commit = commitsFetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return }
+        commitsFetcher.commits = [commit]
         syncOperation.commitsApplyer.apduConfirmOperation = MockAPDUConfirm()
         guard let events = try? syncOperation.start().toBlocking(timeout: 2).toArray() else {
             XCTAssert(false, "Timeouted.")
@@ -136,7 +131,8 @@ class SyncOperationTests: XCTestCase {
     
     func testSuccessSyncWithAPDUAndNonAPDUCommits() {
         connector.connectDelayTime = 0.001
-        commitsFetcher.commits = [commitsFetcher.getCreateCardCommit(id: "1"), commitsFetcher.getAPDUCommit()]
+        guard let commit1 = commitsFetcher.getCreateCardCommit(id: "1"), let commit2 = commitsFetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return  }
+        commitsFetcher.commits = [commit1, commit2]
         guard let events = try? syncOperation.start().toBlocking(timeout: 2).toArray() else {
             XCTAssert(false, "Timeouted.")
             return
@@ -150,15 +146,15 @@ class SyncOperationTests: XCTestCase {
     func testParallelSync() {
         
         let expectation = super.expectation(description: "making parallel sync")
-
+        
         let paymentDevice = PaymentDevice()
         let secondConnector = MockPaymentDeviceConnector(paymentDevice: paymentDevice)
         _ = paymentDevice.changeDeviceInterface(secondConnector)
-
-        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: DeviceInfo(), user: User(JSONString: "{\"id\":\"1\"}")!, syncFactory: mocksFactory)
         
-        commitsFetcher.commits = [commitsFetcher.getCreateCardCommit(id: "1"), commitsFetcher.getAPDUCommit()]
-
+        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: DeviceInfo(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory)
+        guard let commit1 = commitsFetcher.getCreateCardCommit(id: "1"), let commit2 = commitsFetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return  }
+        commitsFetcher.commits = [commit1, commit2]
+        
         secondConnector.connectDelayTime = 0.1 // second operation should work faster
         secondConnector.apduExecuteDelayTime = 0.01
         connector.connectDelayTime = 0.3
@@ -178,13 +174,14 @@ class SyncOperationTests: XCTestCase {
                 syncCompleteCounter += 1
             }
         }).disposed(by: self.disposeBag)
-
+        
         super.waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testSyncWithUnknownCommitType() {
         connector.connectDelayTime = 0.001
-        commitsFetcher.commits = [commitsFetcher.getCreateCardCommit(id: "1"), commitsFetcher.getUnknownCommitType()]
+        guard let commit1 = commitsFetcher.getCreateCardCommit(id: "1"), let commit2 = commitsFetcher.getUnknownCommitType() else { XCTAssert(false, "Bad parsing."); return }
+        commitsFetcher.commits = [commit1, commit2]
         guard let events = try? syncOperation.start().toBlocking(timeout: 2).toArray() else {
             XCTAssert(false, "Timeouted.")
             return
