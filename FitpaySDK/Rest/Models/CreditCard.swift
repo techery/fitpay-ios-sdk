@@ -39,6 +39,8 @@ import Foundation
     private static let makeDefaultResourceKey     = "makeDefault"
     private static let transactionsResourceKey    = "transactions"
     private static let getVerificationMethodsKey  = "verificationMethods"
+    private static let selectedVerificationMethodsKey  = "selectedVerificationMethods"
+
 
     private weak var _client: RestClient?
 
@@ -384,12 +386,27 @@ import Foundation
     }
 
     /**
-     Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
+      Provides a user all available verifications methods
 
      - parameter completion:   VerifyMethodsHandler closure
      */
     open func getVerificationMethods(_ completion: @escaping RestClient.VerifyMethodsHandler) {
         let resource = CreditCard.getVerificationMethodsKey
+        let url = self.links?.url(resource)
+        if let url = url, let client = self.client {
+            client.getVerificationMethods(url, completion: completion)
+        } else {
+            completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
+        }
+    }
+
+    /**
+      Provides a user selected verifications methods
+
+     - parameter completion:   VerifyMethodsHandler closure
+     */
+    open func getSelectedVerificationMethods(_ completion: @escaping RestClient.VerifyMethodsHandler) {
+        let resource = CreditCard.selectedVerificationMethodsKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.getVerificationMethods(url, completion: completion)
