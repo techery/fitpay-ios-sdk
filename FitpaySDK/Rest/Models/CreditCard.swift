@@ -38,7 +38,7 @@ import Foundation
     private static let reactivateResourceKey      = "reactivate"
     private static let makeDefaultResourceKey     = "makeDefault"
     private static let transactionsResourceKey    = "transactions"
-    private static let getVerificationMethodsKey  = "getVerificationMethods"
+    private static let getVerificationMethodsKey  = "verificationMethods"
 
     private weak var _client: RestClient?
 
