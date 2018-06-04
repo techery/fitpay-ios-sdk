@@ -20,6 +20,7 @@ public class StreamEvent: Decodable {
 
 public enum StreamEventType: String, Decodable {
     case connected = "STREAM_CONNECTED"
+    case disconnected = "STREAM_DISCONNECTED"
     case heartbeat = "STREAM_HEARTBEAT"
     case sync = "SYNC"
 }
