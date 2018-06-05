@@ -46,6 +46,8 @@
 		27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
 		27A5B65920AF2A030012BFB4 /* CardRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0302720ACBEE6009120AD /* CardRelationship.swift */; };
 		27A5B65A20AF40260012BFB4 /* ImageWithOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8884C20A4C9DC0027969D /* ImageWithOptions.swift */; };
+		27B5660120C5F1040012C14A /* RtmDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B5660020C5F1030012C14A /* RtmDeviceInfo.swift */; };
+		27B5660220C5F1040012C14A /* RtmDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B5660020C5F1030012C14A /* RtmDeviceInfo.swift */; };
 		27B8884D20A4C9DC0027969D /* ImageWithOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8884C20A4C9DC0027969D /* ImageWithOptions.swift */; };
 		27B8885120A4FBA40027969D /* A2AContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8884F20A4FA560027969D /* A2AContextTests.swift */; };
 		27B8885220A4FBA40027969D /* A2AContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B8884F20A4FA560027969D /* A2AContextTests.swift */; };
@@ -332,6 +334,7 @@
 		277C181620B33748003BD78B /* ResetDeviceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetDeviceResult.swift; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStreamManager.swift; sourceTree = "<group>"; };
+		27B5660020C5F1030012C14A /* RtmDeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmDeviceInfo.swift; sourceTree = "<group>"; };
 		27B8884C20A4C9DC0027969D /* ImageWithOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageWithOptions.swift; sourceTree = "<group>"; };
 		27B8884F20A4FA560027969D /* A2AContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A2AContextTests.swift; sourceTree = "<group>"; };
 		27C0242E20A3940900681023 /* MockPaymentDeviceConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPaymentDeviceConnector.swift; sourceTree = "<group>"; };
@@ -944,6 +947,7 @@
 			children = (
 				918E26C020B42AA100D9D750 /* ErrorResponse.swift */,
 				0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */,
+				27B5660020C5F1030012C14A /* RtmDeviceInfo.swift */,
 				CD03843A84ED76B33DA758D4 /* WebViewSessionData.swift */,
 				3A640B451DDF110E008AD936 /* RtmMessage.swift */,
 				3A640B461DDF110E008AD936 /* RtmMessageResponse.swift */,
@@ -1227,6 +1231,7 @@
 				27E0303020ADE58A009120AD /* JSONCodingKeys.swift in Sources */,
 				37D0CFF21EDD5E6A0049B5AA /* RtmMessageHandlerV2.swift in Sources */,
 				91185B7920615E0C00E5E1CE /* A2AVerificationError.swift in Sources */,
+				27B5660120C5F1040012C14A /* RtmDeviceInfo.swift in Sources */,
 				3A9180BB1DE8824A00C183CE /* FitpayEventsSubscriber.swift in Sources */,
 				CD038952A85B6214173CC785 /* Commit.swift in Sources */,
 				0AF2B4121CDA6F410090CFCF /* WvConfig.swift in Sources */,
@@ -1454,6 +1459,7 @@
 				3767B8171ED31BC2007443D2 /* RestClientUser.swift in Sources */,
 				3767B81A1ED31D48007443D2 /* RestClientDevice.swift in Sources */,
 				276CD260209A65C500076648 /* FitpayConfig.swift in Sources */,
+				27B5660220C5F1040012C14A /* RtmDeviceInfo.swift in Sources */,
 				3A93A0A71DB8CA2C00A9FEB4 /* FitpayNotificationsManager.swift in Sources */,
 				3A93A0A91DB8CA2C00A9FEB4 /* RestSession.swift in Sources */,
 				91185B7F2061694400E5E1CE /* A2AVerificationRequest.swift in Sources */,

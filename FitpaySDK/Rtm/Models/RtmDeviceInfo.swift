@@ -1,12 +1,5 @@
-//
-//  RtmDeviceInfo.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 14.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 public class RtmDeviceInfo: DeviceInfo {
+
     public init(deviceInfo: DeviceInfo) {
         super.init()
         copyFieldsFrom(deviceInfo: deviceInfo)
