@@ -159,8 +159,7 @@ class RestClientTests: XCTestCase {
         super.waitForExpectations(timeout: 20, handler: nil)
     }
 
-    func testUserCreate()
-    {
+    func testUserCreate() {
         let expectation = super.expectation(description: "'user' created")
         
         let email = TestHelper.randomEmail()
@@ -181,18 +180,8 @@ class RestClientTests: XCTestCase {
         super.waitForExpectations(timeout: 10, handler: nil)
     }
     
-    func testUserCreateAndLogin() {
+    func testUserCreateLoginAndDeleteUser() {
         let expectation = super.expectation(description: "'user' created")
-        
-        self.testHelper.createAndLoginUser(expectation) { [unowned self] user in
-            self.testHelper.deleteUser(user, expectation: expectation)
-        }
-        
-        super.waitForExpectations(timeout: 10, handler: nil)
-    }
-    
-    func testUserDeleteUserDeletesUser() {
-        let expectation = super.expectation(description: "'user.deleteUser' deletes user")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] user in
             self.testHelper.deleteUser(user, expectation: expectation)
@@ -290,6 +279,7 @@ class RestClientTests: XCTestCase {
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
+                sleep(1)
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     
                     let name = "User\(NSDate().timeIntervalSince1970)"
@@ -744,8 +734,8 @@ class RestClientTests: XCTestCase {
         let expectation = super.expectation(description: "'transaction' retrieves transactions by user id")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
-            
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
+                sleep(1)
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard) { (card) in
                         self.testHelper.selectVerificationType(expectation, card: card) { (verificationMethod) in

@@ -106,7 +106,7 @@ class TestHelper {
         }
     }
     
-    func assetCreditCard(_ card: CreditCard?) {
+    func assertCreditCard(_ card: CreditCard?) {
         XCTAssertNotNil(card?.links)
         XCTAssertNotNil(card?.creditCardId)
         XCTAssertNotNil(card?.userId)
@@ -133,7 +133,7 @@ class TestHelper {
             street2: "Ste. #209-A", street3: "underneath a bird's nest", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
         ) { [unowned self](card, error) -> Void in
             debugPrint("creating credit card with \(pan)")
-            self.assetCreditCard(card)
+            self.assertCreditCard(card)
             
             XCTAssertNil(error)
             if card?.state == .PENDING_ACTIVE {
@@ -151,7 +151,7 @@ class TestHelper {
                                street2: "Street 2", street3: "Street 3", city: "Boulder", state: "CO", postalCode: "80302", country: "US"
         ) { [unowned self] (card, error) -> Void in
             
-            self.assetCreditCard(card)
+            self.assertCreditCard(card)
             XCTAssertNil(error)
             
             if card?.state == .PENDING_ACTIVE {
@@ -177,7 +177,7 @@ class TestHelper {
             
             if let results = result?.results {
                 for card in results {
-                    self.assetCreditCard(card)
+                    self.assertCreditCard(card)
                 }
             }
             
@@ -301,7 +301,7 @@ class TestHelper {
             
             XCTAssertNil(error)
             
-            self.assetCreditCard(creditCard)
+            self.assertCreditCard(creditCard)
             
             self.acceptTermsForCreditCard(expectation, card: creditCard) { (card) in
                 self.selectVerificationType(expectation, card: card) { (verificationMethod) in
