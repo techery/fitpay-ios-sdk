@@ -1,6 +1,7 @@
 import Foundation
 
 class RtmMessageHandlerV5: RtmMessageHandlerV4 {
+    
     enum RtmMessageTypeVer5: String, RtmMessageTypeWithHandler {
         case rtmVersion = "version"
         case sync
@@ -18,6 +19,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
         case appToAppVerification
         case navigationStart
         case navigationSuccess
+        case apiErrorDetails
         
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
             guard let handlerObject = handlerObject as? RtmMessageHandlerV5 else {
@@ -39,6 +41,8 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
                 return handlerObject.issuerAppVerificationRequest
             case .appToAppVerification:
                 return handlerObject.handleAppToAppVerificationRequest
+            case .apiErrorDetails:
+                return handlerObject.handleApiErrorDetails
             case .deviceStatus,
                  .logout,
                  .resolve,
@@ -62,7 +66,9 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
         return messageAction.msgHandlerFor(handlerObject: self)
     }
     
-    func handleIdVerificationRequest(_ message: RtmMessage) {
+    // MARK: - Private
+    
+    private func handleIdVerificationRequest(_ message: RtmMessage) {
         wvConfigStorage.paymentDevice?.handleIdVerificationRequest() { [weak self] (response) in
             if let delegate = self?.outputDelegate {
                 delegate.send(rtmMessage: RtmMessageResponse(data: response.toJSON(), type: RtmMessageTypeVer5.idVerification.rawValue, success: true), retries: 3)
@@ -70,7 +76,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
         }
     }
     
-    func issuerAppVerificationRequest(_ message: RtmMessage) {
+    private func issuerAppVerificationRequest(_ message: RtmMessage) {
         guard let delegate = self.outputDelegate else { return }
         let data = [RtmMessageTypeVer5.supportsIssuerAppVerification.rawValue: FitpayConfig.supportApp2App]
         delegate.send(rtmMessage: RtmMessageResponse(callbackId: message.callBackId,
@@ -79,7 +85,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
                                                      success: true), retries: 3)
     }
     
-    func handleAppToAppVerificationRequest(_ message: RtmMessage) {
+    private func handleAppToAppVerificationRequest(_ message: RtmMessage) {
         guard let delegate = self.outputDelegate else { return }
         
         func appToAppVerificationFailed(reason: A2AVerificationError) {
@@ -114,4 +120,18 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
             appToAppVerificationFailed(reason: A2AVerificationError.NotSupported)
         }
     }
+
+    private func handleApiErrorDetails(_ message: RtmMessage) {
+        let code = message.data?["code"] as? Int
+        var developerMessage: Any = "unknown error"
+        
+        if let detailedMessage = message.data?["detailedMessage"] {
+            developerMessage = detailedMessage
+        } else if let fullMessage = message.data?["fullMessage"] {
+            developerMessage = fullMessage
+        }
+        
+        log.error("WV_DATA: API Error - Code: \(code ?? 0) Message: \(developerMessage)")
+    }
+    
 }
