@@ -95,7 +95,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
     func handleSessionData(_ message: RtmMessage) {
         guard let webViewSessionData = try? SessionData(message.data) else {
-            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(message.data)")
+            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(String(describing: message.data))")
             return
         }
 
