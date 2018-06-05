@@ -282,7 +282,7 @@ class RestClientTests: XCTestCase {
         }
         
         
-        super.waitForExpectations(timeout: 15, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testUpdateUpdatesCreditCard() {
@@ -301,7 +301,7 @@ class RestClientTests: XCTestCase {
                     let postCode = "90210"
                     
                     // TODO: Ask why this causes error 400 is passed
-                    let countryCode: String? = nil//"USA"
+                    let countryCode: String? = nil//"US"
                     
                     creditCard?.update(name:name, street1: street1, street2: street2, city: city, state: state, postalCode: postCode, countryCode: countryCode) { (updatedCard, error) -> Void in
                         XCTAssertNil(error)
