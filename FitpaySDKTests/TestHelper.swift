@@ -62,7 +62,7 @@ class TestHelper {
                 
                 self.client.user(id: self.session.userId!) { (user, userError) in
                     
-                    XCTAssertNotNil(user)
+                    XCTAssertNotNil(user, "user should not be nil")
                     if (user != nil) { self.userValid(user!) }
                     XCTAssertEqual(user?.email, email, "Want emails to match up after logging in")
                     
@@ -243,9 +243,9 @@ class TestHelper {
         }
     }
 
-    func getVerificationMethods(_ expectation: XCTestExpectation, card: CreditCard?, completion: @escaping (_ verificationMethod: ResultCollection<VerificationMethod>?) -> Void){
-        card?.getVerificationMethods{ (verificationMethods, error) in
-            XCTAssertNotNil(verificationMethods)
+    func getVerificationMethods(_ expectation: XCTestExpectation, card: CreditCard?, completion: @escaping (_ verificationMethod: ResultCollection<VerificationMethod>?) -> Void) {
+        card?.getVerificationMethods { (verificationMethods, error) in
+            XCTAssertNotNil(verificationMethods, "verification methods should not be nil")
             XCTAssertNil(error)
 
             completion(verificationMethods)

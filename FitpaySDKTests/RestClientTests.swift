@@ -687,7 +687,7 @@ class RestClientTests: XCTestCase {
     }
     
     func testAssetsRetrievesAssetWithOptions() {
-        let expectation = super.expectation(description: "'assets' retrievs asset")
+        let expectation = super.expectation(description: "'assets' retrieves asset")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
@@ -711,7 +711,7 @@ class RestClientTests: XCTestCase {
     }
     
     func testAssetsRetrievesAsset() {
-        let expectation = super.expectation(description: "'assets' retrievs asset")
+        let expectation = super.expectation(description: "'assets' retrieves asset")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
