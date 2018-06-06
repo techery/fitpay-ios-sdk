@@ -465,8 +465,10 @@ class RestClientTests: XCTestCase {
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    self.testHelper.getVerificationMethods(expectation, card: creditCard) { (verificationMethod) in
-                        self.testHelper.deleteUser(user, expectation: expectation)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard) { (creditCard) in
+                        self.testHelper.getVerificationMethods(expectation, card: creditCard) { (verificationMethod) in
+                            self.testHelper.deleteUser(user, expectation: expectation)
+                        }
                     }
                 }
             }

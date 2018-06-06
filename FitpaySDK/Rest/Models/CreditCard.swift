@@ -31,15 +31,15 @@ import Foundation
     var links: [ResourceLink]?
     var encryptedData: String?
 
-    private static let selfResourceKey            = "self"
-    private static let acceptTermsResourceKey     = "acceptTerms"
-    private static let declineTermsResourceKey    = "declineTerms"
-    private static let deactivateResourceKey      = "deactivate"
-    private static let reactivateResourceKey      = "reactivate"
-    private static let makeDefaultResourceKey     = "makeDefault"
-    private static let transactionsResourceKey    = "transactions"
-    private static let getVerificationMethodsKey  = "verificationMethods"
-    private static let selectedVerificationMethodsKey  = "selectedVerificationMethods"
+    private static let selfResourceKey                  = "self"
+    private static let acceptTermsResourceKey           = "acceptTerms"
+    private static let declineTermsResourceKey          = "declineTerms"
+    private static let deactivateResourceKey            = "deactivate"
+    private static let reactivateResourceKey            = "reactivate"
+    private static let makeDefaultResourceKey           = "makeDefault"
+    private static let transactionsResourceKey          = "transactions"
+    private static let getVerificationMethodsKey        = "verificationMethods"
+    private static let selectedVerificationMethodsKey   = "selectedVerificationMethods"
 
 
     private weak var _client: RestClient?
@@ -48,7 +48,6 @@ import Foundation
         get {
             return self._client
         }
-
         set {
             self._client = newValue
 
