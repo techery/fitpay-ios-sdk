@@ -736,17 +736,17 @@ class RestClientTests: XCTestCase {
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.client.issuers() { (issuers, error) in
-                XCTAssertNotNil(issuers)
+                XCTAssertNotNil(issuers, "issuers should not be nil")
                 XCTAssertNil(error)
-                XCTAssertNotNil(issuers?.countries)
+                XCTAssertNotNil(issuers?.countries, "countries should not be nil")
                 XCTAssertNotNil(issuers?.countries?["US"])
                 
                 for country in issuers!.countries! {
-                    XCTAssertNotNil(country.value.cardNetworks)
+                    XCTAssertNotNil(country.value.cardNetworks, "cardNetworks should not be nil")
                     XCTAssertNotEqual(country.value.cardNetworks?.count, 0)
                     
                     for cardNetwork in country.value.cardNetworks! {
-                        XCTAssertNotNil(cardNetwork.value.issuers)
+                        XCTAssertNotNil(cardNetwork.value.issuers, "issuers should not be nil")
                         XCTAssertNotEqual(cardNetwork.value.issuers?.count, 0)
                     }
                 }
