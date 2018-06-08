@@ -47,6 +47,14 @@ extension RestClient {
      */
     public typealias VerifyMethodsHandler = (_ verificationMethods: ResultCollection<VerificationMethod>?, _ error: ErrorResponse?) -> Void
     
+    /**
+     Completion handler
+     
+     - parameter verificationMethod: Provides VerificationMethod object, or nil if error occurs
+     - parameter error:              Provides error object, or nil if no error occurs
+     */
+    public typealias VerifyMethodHandler = (_ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
+    
     //MARK - Internal Functions
     
     func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
@@ -260,6 +268,25 @@ extension RestClient {
                 }
                 let verificationMethods = try? ResultCollection<VerificationMethod>(resultValue)
                 completion(verificationMethods, error)
+            }
+        }
+    }
+    
+    func getVerificationMethod(_ url: String, completion: @escaping VerifyMethodHandler) {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers  else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let verificationMethod = try? VerificationMethod(resultValue)
+                completion(verificationMethod, error)
             }
         }
     }

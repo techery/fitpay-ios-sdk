@@ -31,16 +31,15 @@ import Foundation
     var links: [ResourceLink]?
     var encryptedData: String?
 
-    private static let selfResourceKey                  = "self"
-    private static let acceptTermsResourceKey           = "acceptTerms"
-    private static let declineTermsResourceKey          = "declineTerms"
-    private static let deactivateResourceKey            = "deactivate"
-    private static let reactivateResourceKey            = "reactivate"
-    private static let makeDefaultResourceKey           = "makeDefault"
-    private static let transactionsResourceKey          = "transactions"
-    private static let getVerificationMethodsKey        = "verificationMethods"
-    private static let selectedVerificationMethodsKey   = "selectedVerificationMethods"
-
+    private static let selfResourceKey              = "self"
+    private static let acceptTermsResourceKey       = "acceptTerms"
+    private static let declineTermsResourceKey      = "declineTerms"
+    private static let deactivateResourceKey        = "deactivate"
+    private static let reactivateResourceKey        = "reactivate"
+    private static let makeDefaultResourceKey       = "makeDefault"
+    private static let transactionsResourceKey      = "transactions"
+    private static let getVerificationMethodsKey    = "verificationMethods"
+    private static let selectedVerificationKey      = "selectedVerification"
 
     private weak var _client: RestClient?
 
@@ -400,15 +399,15 @@ import Foundation
     }
 
     /**
-      Provides a user selected verifications methods
+      Provides a user selected verification method
 
      - parameter completion:   VerifyMethodsHandler closure
      */
-    open func getSelectedVerificationMethods(_ completion: @escaping RestClient.VerifyMethodsHandler) {
-        let resource = CreditCard.selectedVerificationMethodsKey
+    open func getSelectedVerification(_ completion: @escaping RestClient.VerifyMethodHandler) {
+        let resource = CreditCard.selectedVerificationKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.getVerificationMethods(url, completion: completion)
+            client.getVerificationMethod(url, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
