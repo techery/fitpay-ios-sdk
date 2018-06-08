@@ -262,7 +262,7 @@ import Foundation
      - parameter city:         city
      - parameter state:        state
      - parameter postalCode:   postal code
-     - parameter countryCode:  country? code
+     - parameter countryCode:  country code
      - parameter completion:   UpdateCreditCardHandler closure
      */
     @objc open func update(name: String?,
