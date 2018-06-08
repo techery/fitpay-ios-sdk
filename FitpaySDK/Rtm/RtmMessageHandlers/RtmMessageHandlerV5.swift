@@ -100,7 +100,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
         
         if (FitpayConfig.supportApp2App) {
             guard let appToAppVerification = try? A2AVerificationRequest(message.data) else {
-                appToAppVerificationFailed(reason: A2AVerificationError.CantProcess)
+                appToAppVerificationFailed(reason: A2AVerificationError.cantProcess)
                 return
             }
             
@@ -114,10 +114,10 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
                 a2aVerificationDelegate?.verificationFinished(verificationInfo: appToAppVerification)
                 self.wvConfigStorage.a2aReturnLocation = appToAppVerification.returnLocation
             } else {
-                appToAppVerificationFailed(reason: A2AVerificationError.NotSupported)
+                appToAppVerificationFailed(reason: A2AVerificationError.notSupported)
             }
         } else {
-            appToAppVerificationFailed(reason: A2AVerificationError.NotSupported)
+            appToAppVerificationFailed(reason: A2AVerificationError.notSupported)
         }
     }
 
