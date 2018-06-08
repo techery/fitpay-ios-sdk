@@ -27,6 +27,7 @@ import Foundation
     open var name: String?
     open var address: Address?
     open var topOfWalletAPDUCommands: [APDUCommand]?
+    open var tokenLastFour: String?
     
     var links: [ResourceLink]?
     var encryptedData: String?
@@ -122,6 +123,7 @@ import Foundation
         case name
         case address
         case topOfWalletAPDUCommands = "offlineSeActions.topOfWallet.apduCommands"
+        case tokenLastFour
     }
 
     public required init(from decoder: Decoder) throws {
@@ -153,6 +155,7 @@ import Foundation
         name = try? container.decode(.name)
         address = try? container.decode(.address)
         topOfWalletAPDUCommands = try? container.decode(.topOfWalletAPDUCommands)
+        tokenLastFour = try? container.decode(.tokenLastFour)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -184,6 +187,7 @@ import Foundation
         try? container.encode(name, forKey: .name)
         try? container.encode(address, forKey: .address)
         try? container.encode(topOfWalletAPDUCommands, forKey: .topOfWalletAPDUCommands)
+        try? container.encode(tokenLastFour, forKey: .tokenLastFour)
     }
     
     func applySecret(_ secret: Foundation.Data, expectedKeyId: String?) {
@@ -258,7 +262,7 @@ import Foundation
      - parameter city:         city
      - parameter state:        state
      - parameter postalCode:   postal code
-     - parameter countryCode:  country? code
+     - parameter countryCode:  country code
      - parameter completion:   UpdateCreditCardHandler closure
      */
     @objc open func update(name: String?,
