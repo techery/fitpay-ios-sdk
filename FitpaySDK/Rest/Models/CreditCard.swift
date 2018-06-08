@@ -385,7 +385,7 @@ import Foundation
     }
 
     /**
-      Provides a user all available verifications methods
+      Provides a fresh list of available verification methods for the credit card when an issuer requires additional authentication to verify the identity of the cardholder.
 
      - parameter completion:   VerifyMethodsHandler closure
      */
