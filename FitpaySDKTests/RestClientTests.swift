@@ -448,6 +448,24 @@ class RestClientTests: XCTestCase {
         
         super.waitForExpectations(timeout: 20, handler: nil)
     }
+
+    func testCreditCardGetVerificationMethods() {
+        let expectation = super.expectation(description: "'creditCard' get verification methods")
+
+        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
+            self.testHelper.createDevice(expectation, user: user) { (user, device) in
+                self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard) { (creditCard) in
+                        self.testHelper.getVerificationMethods(expectation, card: creditCard) { (verificationMethod) in
+                            self.testHelper.deleteUser(user, expectation: expectation)
+                        }
+                    }
+                }
+            }
+        }
+
+        super.waitForExpectations(timeout: 20, handler: nil)
+    }
     
     func testCreditCardDeclineTerms() {
         let expectation = super.expectation(description: "'creditCard' decline terms")
@@ -661,7 +679,7 @@ class RestClientTests: XCTestCase {
     }
     
     func testAssetsRetrievesAssetWithOptions() {
-        let expectation = super.expectation(description: "'assets' retrievs asset")
+        let expectation = super.expectation(description: "'assets' retrieves asset")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
@@ -685,7 +703,7 @@ class RestClientTests: XCTestCase {
     }
     
     func testAssetsRetrievesAsset() {
-        let expectation = super.expectation(description: "'assets' retrievs asset")
+        let expectation = super.expectation(description: "'assets' retrieves asset")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
@@ -708,17 +726,17 @@ class RestClientTests: XCTestCase {
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.client.issuers() { (issuers, error) in
-                XCTAssertNotNil(issuers)
+                XCTAssertNotNil(issuers, "issuers should not be nil")
                 XCTAssertNil(error)
-                XCTAssertNotNil(issuers?.countries)
+                XCTAssertNotNil(issuers?.countries, "countries should not be nil")
                 XCTAssertNotNil(issuers?.countries?["US"])
                 
                 for country in issuers!.countries! {
-                    XCTAssertNotNil(country.value.cardNetworks)
+                    XCTAssertNotNil(country.value.cardNetworks, "cardNetworks should not be nil")
                     XCTAssertNotEqual(country.value.cardNetworks?.count, 0)
                     
                     for cardNetwork in country.value.cardNetworks! {
-                        XCTAssertNotNil(cardNetwork.value.issuers)
+                        XCTAssertNotNil(cardNetwork.value.issuers, "issuers should not be nil")
                         XCTAssertNotEqual(cardNetwork.value.issuers?.count, 0)
                     }
                 }

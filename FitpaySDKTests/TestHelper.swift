@@ -239,6 +239,15 @@ class TestHelper {
             completion(verificationMethod)
         }
     }
+
+    func getVerificationMethods(_ expectation: XCTestExpectation, card: CreditCard?, completion: @escaping (_ verificationMethod: ResultCollection<VerificationMethod>?) -> Void) {
+        card?.getVerificationMethods { (verificationMethods, error) in
+            XCTAssertNotNil(verificationMethods, "verification methods should not be nil")
+            XCTAssertNil(error)
+
+            completion(verificationMethods)
+        }
+    }
     
     func verifyCreditCard(_ expectation: XCTestExpectation, verificationMethod: VerificationMethod?, completion: @escaping (_ card: CreditCard?) -> Void) {
         verificationMethod?.verify("12345") { (pending, verificationMethod, error) -> Void in
