@@ -617,7 +617,7 @@ extension RestClient {
             print(response.description)
             print(NSString(data: response.data!, encoding: String.Encoding.utf8.rawValue)!)
             DispatchQueue.main.async {
-                if response.result.error != nil {
+                if response.result.error != nil && response.response?.statusCode != 202 {
                     let JSON = response.data!.UTF8String
                     var error = try? ErrorResponse(JSON)
                     if error == nil {
@@ -626,6 +626,8 @@ extension RestClient {
                     completion(nil, error)
                 } else if let resultValue = response.result.value {
                     completion(resultValue, nil)
+                } else if response.response?.statusCode == 202 {
+                    completion(nil, nil)
                 } else {
                     completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
                 }

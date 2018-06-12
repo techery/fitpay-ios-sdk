@@ -200,6 +200,23 @@ import Alamofire
      */
     typealias VerifyHandler = (_ pending: Bool, _ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
 
+    /**
+     Completion handler
+
+     - parameter verificationMethod: Provides VerificationMethod object, or nil if error occurs
+     - parameter error:              Provides error object, or nil if no error occurs
+     */
+    typealias VerifyMethodHandler = (_ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
+
+    /**
+     Completion handler
+
+     - parameter verificationMethods: Provides VerificationMethods objects, or nil if error occurs
+     - parameter error:              Provides error object, or nil if no error occurs
+     */
+    typealias VerifyMethodsHandler = (_ verificationMethods: ResultCollection<VerificationMethod>?, _ error: ErrorResponse?) -> Void
+
+
     //MARK: - RestClientRelationship
 
     /**
@@ -254,10 +271,6 @@ import Alamofire
     func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler)
 
     func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler)
-
-
-
-
 
     func createAuthHeaders(_ completion: CreateAuthHeaders)
 
@@ -398,6 +411,10 @@ import Alamofire
     func makeDefault(_ url: String, completion: @escaping CreditCardTransitionHandler)
     
     func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler)
+
+    func getVerificationMethods(_ url: String, completion: @escaping VerifyMethodsHandler)
+
+    func getVerificationMethod(_ url: String, completion: @escaping VerifyMethodHandler)
 
     func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler)
 
