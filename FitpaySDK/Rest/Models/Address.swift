@@ -13,7 +13,7 @@
     /// The billing address city
     @objc open var city: String?
     
-    /// The billing address state
+    /// The billing address state 2 letter code
     @objc open var state: String?
     
     /// The billing address five-digit zip code
@@ -21,5 +21,18 @@
     
     /// The billing address country code in ISO 3166-1 alpha-2 format
     @objc open var countryCode: String?
+    
+    /// Initialize class with all variables
+    @objc public init(street1: String?, street2: String?, street3: String?, city: String?, state: String?, postalCode: String?, countryCode: String?) {
+        super.init()
+        
+        self.street1 = street1
+        self.street2 = street2
+        self.street3 = street3
+        self.city = city
+        self.state = state
+        self.postalCode = postalCode
+        self.countryCode = countryCode
+    }
     
 }

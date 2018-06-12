@@ -281,24 +281,10 @@ class RestClientTests: XCTestCase {
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 sleep(1)
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    
                     let name = "User\(NSDate().timeIntervalSince1970)"
-                    let street1 = "Street1\(NSDate().timeIntervalSince1970)"
-                    let street2 = "Street2\(NSDate().timeIntervalSince1970)"
-                    let city = "Beverly Hills"
-                    let state = "MO"
-                    let postalCode = "90210"
-                    let countryCode = "AB"
-                    
-                    let newAddress = Address()
-                    newAddress.street1 = street1
-                    newAddress.street2 = street2
-                    newAddress.city = city
-                    newAddress.state = state
-                    newAddress.postalCode = postalCode
-                    newAddress.countryCode = countryCode
+                    let address = Address(street1: "Street1\(NSDate().timeIntervalSince1970)", street2: "Street2\(NSDate().timeIntervalSince1970)", street3: nil, city: "Beverly Hills", state: "MO", postalCode: "90210", countryCode: "AB")
 
-                    creditCard?.update(name: name, address: newAddress) { (updatedCard, error) -> Void in
+                    creditCard?.update(name: name, address: address) { (updatedCard, error) -> Void in
                         XCTAssertNil(error)
                         XCTAssertNotNil(updatedCard)
                         
@@ -309,22 +295,22 @@ class RestClientTests: XCTestCase {
                                 XCTAssertEqual(updatedCard?.info?.name, name)
                                 XCTAssertEqual(updatedCard?.info?.name, currentCard?.info?.name)
                                 
-                                XCTAssertEqual(updatedCard?.info?.address?.street1, street1)
+                                XCTAssertEqual(updatedCard?.info?.address?.street1, address.street1)
                                 XCTAssertEqual(updatedCard?.info?.address?.street1, currentCard?.info?.address?.street1)
                                 
-                                XCTAssertEqual(updatedCard?.info?.address?.street2, street2)
+                                XCTAssertEqual(updatedCard?.info?.address?.street2, address.street2)
                                 XCTAssertEqual(updatedCard?.info?.address?.street2, currentCard?.info?.address?.street2)
                                 
-                                XCTAssertEqual(updatedCard?.info?.address?.city, city)
+                                XCTAssertEqual(updatedCard?.info?.address?.city, address.city)
                                 XCTAssertEqual(updatedCard?.info?.address?.city, currentCard?.info?.address?.city)
                                 
-                                XCTAssertEqual(updatedCard?.info?.address?.state, state)
+                                XCTAssertEqual(updatedCard?.info?.address?.state, address.state)
                                 XCTAssertEqual(updatedCard?.info?.address?.state, currentCard?.info?.address?.state)
                                 
-                                XCTAssertEqual(updatedCard?.info?.address?.postalCode, postalCode)
+                                XCTAssertEqual(updatedCard?.info?.address?.postalCode, address.postalCode)
                                 XCTAssertEqual(updatedCard?.info?.address?.postalCode, currentCard?.info?.address?.postalCode)
                                 
-                                XCTAssertEqual(updatedCard?.info?.address?.countryCode, countryCode)
+                                XCTAssertEqual(updatedCard?.info?.address?.countryCode, address.countryCode)
                                 XCTAssertEqual(updatedCard?.info?.address?.countryCode, currentCard?.info?.address?.countryCode)
                                 
                                 self.testHelper.deleteUser(user, expectation: expectation)

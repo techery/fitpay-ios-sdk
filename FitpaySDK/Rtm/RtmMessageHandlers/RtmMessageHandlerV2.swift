@@ -110,7 +110,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             self?.wvConfigStorage.device = device
             self?.wvConfigStorage.paymentDevice?.deviceInfo?.client = self?.wvConfigStorage.user?.client
 
-            if let delegate = self?.wvRtmDelegate, let email = user?.email {
+            if let delegate = self?.wvRtmDelegate, let email = user?.info?.email {
                 delegate.didAuthorizeWith(email: email)
             }
 

@@ -57,7 +57,7 @@ extension RestClient {
     
     //MARK - Internal Functions
     
-    func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String, address: Address, completion: @escaping CreditCardHandler) {
+    func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
@@ -65,32 +65,22 @@ extension RestClient {
                 return
             }
             
-            var parameters: [String: String] = [:]
-            let address: [String: Any?] = [
-                "street1": address.street1,
-                "street2": address.street2,
-                "street3": address.street3,
-                "city": address.city,
-                "state": address.state,
-                "postalCode": address.postalCode,
-                "countryCode": address.countryCode
-            ]
-            let rawCard: [String: Any] = [
-                "pan": pan,
-                "expMonth": expMonth,
-                "expYear": expYear,
-                "cvv": cvv,
-                "name": name,
-                "address": address
-            ]
-            
-            if let cardJSON = rawCard.JSONString {
-                if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId: headers[RestClient.fpKeyIdKey]!) {
-                    if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
-                        parameters["encryptedData"] = encrypted
-                    }
-                }
+            guard let cardJSON = cardInfo.toJSONString() else {
+                completion(nil, ErrorResponse(domain: RestClient.self, errorCode: nil, errorMessage: "Failed to parse JSON"))
+                return
             }
+            
+            guard let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId: headers[RestClient.fpKeyIdKey]!) else {
+                completion(nil, ErrorResponse(domain: RestClient.self, errorCode: nil, errorMessage: "Failed to create jweObject object"))
+                return
+            }
+          
+            guard let encrypted = try? jweObject.encrypt(strongSelf.secret), let unwrappedEncrypted = encrypted else {
+                completion(nil, ErrorResponse(domain: RestClient.self, errorCode: nil, errorMessage: "Failed to encrypt object"))
+                return
+            }
+            
+            let parameters: [String: String] =  ["encryptedData": unwrappedEncrypted]
             
             let request = strongSelf._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in

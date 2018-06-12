@@ -128,15 +128,10 @@ class TestHelper {
     }
     
     func createEricCard(_ expectation: XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:@escaping (_ user: User?, _ creditCard: CreditCard?) -> Void) {
-        let address = Address()
-        address.street1 = "4883 Dakota Blvd."
-        address.street2 = "Ste. #209-A"
-        address.street3 = "underneath a bird's nest"
-        address.city = "Boulder"
-        address.state = "CO"
-        address.postalCode = "80302"
-        address.countryCode = "US"
-        user?.createCreditCard( pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", address: address) { [unowned self](card, error) -> Void in
+        let address = Address(street1: "4883 Dakota Blvd.", street2: "Ste. #209-A", street3: "underneath a bird's nest", city: "Boulder", state: "CO", postalCode: "80302", countryCode: "US")
+        let cardInfo = CardInfo(pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", address: address, riskData: nil)
+
+        user?.createCreditCard(cardInfo: cardInfo) { [unowned self](card, error) -> Void in
             
             debugPrint("creating credit card with \(pan)")
             self.assertCreditCard(card)
@@ -153,15 +148,10 @@ class TestHelper {
     }
     
     func createCreditCard(_ expectation: XCTestExpectation, user: User?, completion: @escaping (_ user: User?, _ creditCard: CreditCard?) -> Void) {
-        let address = Address()
-        address.street1 = "1035 Pearl St"
-        address.street2 = "Street 2"
-        address.street3 = "Street 3"
-        address.city = "Boulder"
-        address.state = "CO"
-        address.postalCode = "80302"
-        address.countryCode = "US"
-        user?.createCreditCard(pan: "9999405454540004", expMonth: 10, expYear: 2018, cvv: "133", name: "TEST CARD", address: address) { [unowned self] (card, error) -> Void in
+        let address = Address(street1: "1035 Pearl St", street2: "Street 2", street3: "Street 3", city: "Boulder", state: "CO", postalCode: "80302", countryCode: "US")
+        let cardInfo = CardInfo(pan: "9999405454540004", expMonth: 10, expYear: 2018, cvv: "133", name: "TEST CARD", address: address, riskData: nil)
+        
+        user?.createCreditCard(cardInfo: cardInfo) { [unowned self] (card, error) -> Void in
             self.assertCreditCard(card)
             XCTAssertNil(error)
             
@@ -315,15 +305,10 @@ class TestHelper {
     }
     
     func createAcceptVerifyAmExCreditCard(_ expectation: XCTestExpectation, pan: String, user: User?, completion: @escaping (_ creditCard: CreditCard?) -> Void) {
-        let address = Address()
-        address.street1 = "Street 1"
-        address.street2 = "Street 2"
-        address.street3 = "Street 3"
-        address.city = "New York"
-        address.state = "NY"
-        address.postalCode = "80302"
-        address.countryCode = "US"
-        user?.createCreditCard(pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", address: address) { [unowned self] (creditCard, error) in
+        let address = Address(street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "New York", state: "NY", postalCode: "80302", countryCode: "US")
+        let cardInfo = CardInfo(pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", address: address, riskData: nil)
+        
+        user?.createCreditCard(cardInfo: cardInfo) { [unowned self] (creditCard, error) in
             
             XCTAssertNil(error)
             

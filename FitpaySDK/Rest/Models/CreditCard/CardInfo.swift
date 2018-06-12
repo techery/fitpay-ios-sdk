@@ -1,27 +1,40 @@
 import Foundation
 
 /// Credit card info
-open class CardInfo: Serializable {
+@objc open class CardInfo: NSObject, Serializable {
     
     /// The credit card number, also known as a Primary Account Number (PAN)
-    open var pan: String?
+    @objc open var pan: String?
     
     /// The credit card expiration month
     open var expMonth: Int?
     
-    /// The credit card expiration year
+    /// The credit card expiration year in 4 digits
     open var expYear: Int?
     
     /// The credit card cvv2 code
-    open var cvv: String?
+    @objc open var cvv: String?
     
     /// Card holder name
-    open var name: String?
+    @objc open var name: String?
     
     /// Card holder billing address
-    open var address: Address?
+    @objc open var address: Address?
     
     /// Card holder risk data
-    open var riskData: IdVerification?
+    @objc open var riskData: IdVerification?
+    
+    /// Initialize class with all variables
+    public init(pan: String?, expMonth: Int?, expYear: Int?, cvv: String?, name: String?, address: Address?, riskData: IdVerification?) {
+        super.init()
+        
+        self.pan = pan
+        self.expMonth = expMonth
+        self.expYear = expYear
+        self.cvv = cvv
+        self.name = name
+        self.address = address
+        self.riskData = riskData
+    }
     
 }
