@@ -1,5 +1,6 @@
 import Foundation
 
+/// IdVerification used for Risk Assesment by Issuers
 open class IdVerification: NSObject, Serializable {
     
     /// Most recent date this user updated their: Billing Address, Name, Email, password,
@@ -35,9 +36,6 @@ open class IdVerification: NSObject, Serializable {
     /// Only needed if your device is NOT nfcCapable
     open var nfcCapable: Bool?
     
-    /// Country of user's billing address in ISO 3166-1 alpha-2 format, e.g., US; maximum 2 characters
-    open var billingCountryCode: String?
-    
     /// Country setting of account or phone in ISO 3166-1 alpha-2 format
     open var oemAccountCountryCode: String?
     
@@ -59,21 +57,6 @@ open class IdVerification: NSObject, Serializable {
     
     /// Only needed if your payment device has a cell connection
     open var deviceIMEI: String?
-    
-    /// billing line 1
-    open var billingLine1: String?
-    
-    /// billing line 2
-    open var billingLine2: String?
-    
-    /// billing city
-    open var billingCity: String?
-    
-    /// billing state
-    open var billingState: String?
-    
-    /// billing zip
-    open var billingZip: String?
     
     /// [language designator ISO-639-1]‌‌‌‌-[region designator ISO 3166-1 alpha-2]
     public private(set) var locale: String?
@@ -128,7 +111,6 @@ open class IdVerification: NSObject, Serializable {
         oemAccountScore = try? container.decode(.oemAccountScore)
         deviceScore = try? container.decode(.deviceScore)
         nfcCapable = try? container.decode(.nfcCapable)
-        billingCountryCode = try? container.decode(.billingCountryCode)
         oemAccountCountryCode = try? container.decode(.oemAccountCountryCode)
         deviceCountry = try? container.decode(.deviceCountry)
         oemAccountUserName = try? container.decode(.oemAccountUserName)
@@ -136,11 +118,6 @@ open class IdVerification: NSObject, Serializable {
         deviceTimeZone = try? container.decode(.deviceTimeZone)
         deviceTimeZoneSetBy = try? container.decode(.deviceTimeZoneSetBy)
         deviceIMEI = try? container.decode(.deviceIMEI)
-        billingLine1 = try? container.decode(.billingLine1)
-        billingLine2 = try? container.decode(.billingLine2)
-        billingCity = try? container.decode(.billingCity)
-        billingState = try? container.decode(.billingState)
-        billingZip = try? container.decode(.billingZip)
 
         super.init()
         updateLocale() //needed to override locale when creating from JSON
@@ -161,7 +138,6 @@ open class IdVerification: NSObject, Serializable {
         try? container.encode(oemAccountScore, forKey: .oemAccountScore)
         try? container.encode(deviceScore, forKey: .deviceScore)
         try? container.encode(nfcCapable, forKey: .nfcCapable)
-        try? container.encode(billingCountryCode, forKey: .billingCountryCode)
         try? container.encode(oemAccountCountryCode, forKey: .oemAccountCountryCode)
         try? container.encode(deviceCountry, forKey: .deviceCountry)
         try? container.encode(oemAccountUserName, forKey: .oemAccountUserName)
@@ -169,11 +145,6 @@ open class IdVerification: NSObject, Serializable {
         try? container.encode(deviceTimeZone, forKey: .deviceTimeZone)
         try? container.encode(deviceTimeZoneSetBy, forKey: .deviceTimeZoneSetBy)
         try? container.encode(deviceIMEI, forKey: .deviceIMEI)
-        try? container.encode(billingLine1, forKey: .billingLine1)
-        try? container.encode(billingLine2, forKey: .billingLine2)
-        try? container.encode(billingCity, forKey: .billingCity)
-        try? container.encode(billingState, forKey: .billingState)
-        try? container.encode(billingZip, forKey: .billingZip)
         try? container.encode(locale, forKey: .locale)
     }
 

@@ -429,7 +429,6 @@
 		91185B7520615E0C00E5E1CE /* A2AVerificationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = A2AVerificationRequest.swift; sourceTree = "<group>"; };
 		916CE9C120A18CA100C2F621 /* KeyedEncodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedEncodingContainerExtension.swift; sourceTree = "<group>"; };
 		916FC0BA209C44D20071B66D /* SerializableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableExtension.swift; sourceTree = "<group>"; };
-		9186499C20A9D1760073FBFC /* ResetDeviceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetDeviceResult.swift; sourceTree = "<group>"; };
 		918E26C020B42AA100D9D750 /* ErrorResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		91FED0D920BD39BE002E7BFD /* ModelsParsingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelsParsingTests.swift; sourceTree = "<group>"; };
 		91FED0DA20BD39BE002E7BFD /* MockModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockModels.swift; sourceTree = "<group>"; };
@@ -536,7 +535,6 @@
 				0AD9229E1C1F7EFC007693AB /* Products */,
 				B2C94647591B581A09E4A254 /* Frameworks */,
 				006D1FC3632F93941B04336A /* Pods */,
-				277C181520B33372003BD78B /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -646,14 +644,6 @@
 				2773CD94207D53A300DFE113 /* IdVerificationTests.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		277C181520B33372003BD78B /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				9186499C20A9D1760073FBFC /* ResetDeviceResult.swift */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		27B8884B20A4C9BD0027969D /* Images */ = {

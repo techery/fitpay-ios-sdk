@@ -45,6 +45,7 @@ import Foundation
     
     open var licenseKey: String?
     
+    /// MAC address for Bluetooth
     open var bdAddress: String?
     
     open var pairing: String?
