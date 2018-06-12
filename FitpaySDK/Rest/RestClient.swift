@@ -19,8 +19,8 @@ class CustomJSONArrayEncoding: ParameterEncoding {
 }
 
 
-open class RestClient: NSObject {
-    /**
+open class RestClient: NSObject, RestClientInterface {
+      /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
      
      Not all errors map cleanly onto HTTP response codes, however. When a request is valid but does not complete successfully (e.g. a card is declined), we return a 402 error code.
@@ -232,7 +232,7 @@ extension RestClient {
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
+  /*TODO  func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let parameters = ["clientPublicKey": clientPublicKey]
         
@@ -244,7 +244,60 @@ extension RestClient {
             }
             completion(try? EncryptionKey(resultValue), error)
         }
+    } */
+
+    func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
+        let headers = self.defaultHeaders
+        var response = Response()
+        let url = FitpayConfig.apiURL + "/config/encryptionKeys"
+        response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+        response.json = self.loadDataFromJSONFile(filename: "getEncryptionKeyJson")
+        let request = Request(request: url)
+        request.response = response
+        self.makeRequest(request: request) { (resultValue, error) in
+            guard let resultValue = resultValue else {
+                completion(nil, error)
+                return
+            }
+            completion(try? EncryptionKey(resultValue), error)
+        }
     }
+
+    func makeRequest(request: Request?, completion: @escaping RequestHandler) {
+        request?.responseJSON(){ (request) in
+
+            DispatchQueue.main.async {
+                if request.response?.error != nil {
+                    let JSON = request.response?.json
+                    var error = try? ErrorResponse(JSON)
+                    if error == nil {
+                        error = ErrorResponse(domain: RestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
+                    }
+                    completion(nil, error)
+
+                } else if let resultValue = request.response?.json {
+                    completion(resultValue, nil)
+                } else {
+                    completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
+                }
+            }
+        }
+    }
+
+    func loadDataFromJSONFile(filename: String) -> String? {
+        let bundle = Bundle(for: type(of: self))
+        if let filepath = bundle.path(forResource: filename, ofType: "json") {
+            do {
+                let contents = try String(contentsOfFile: filepath)
+
+                return contents
+            } catch {
+            }
+        } else {
+        }
+        return nil
+    }
+
     
     /**
      Completion handler

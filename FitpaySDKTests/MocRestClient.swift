@@ -7,10 +7,15 @@
 //
 
 import UIKit
+import Alamofire
 @testable import FitpaySDK
 import XCTest
 
-class MocRestClient: NSObject {
+class MocRestClient: NSObject, RestClientInterface {
+    func collectionItems<T>(_ url: String, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) -> T? where T : Decodable, T : Encodable {
+        return nil //TODO
+    }
+
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
 
@@ -42,7 +47,7 @@ class MocRestClient: NSObject {
         "X-FitPay-SDK": "iOS-\(FitpayConfig.sdkVersion)"
     ]
 
-    var _session: RestSession
+    var _session: MocRestSession
     var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
 
     var key: EncryptionKey?
@@ -55,7 +60,7 @@ class MocRestClient: NSObject {
         return secret ?? Data()
     }
 
-    public init(session: RestSession) {
+    public init(session: MocRestSession) {
         _session = session;
     }
 
@@ -83,20 +88,6 @@ class MocRestClient: NSObject {
         return nil
     }
 */
-    /**
-     Completion handler
-
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
-     */
-    public typealias DeleteHandler = (_ error: ErrorResponse?) -> Void
-
-    /**
-     Completion handler
-
-     - parameter ErrorType?:   Provides error object, or nil if no error occurs
-     */
-    public typealias ConfirmCommitHandler = (_ error: ErrorResponse?) -> Void
-
     public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers  else {
@@ -120,15 +111,6 @@ class MocRestClient: NSObject {
 // MARK: - Confirm package
 
 extension MocRestClient {
-
-
-    /**
-     Completion handler
-
-     - parameter ErrorType?:   Provides error object, or nil if no error occurs
-     */
-    public typealias ConfirmAPDUPackageHandler = (_ error: ErrorResponse?) -> Void
-
     /**
      Endpoint to allow for returning responses to APDU execution
 
@@ -163,23 +145,6 @@ extension MocRestClient {
 // MARK: - Transactions
 
 extension MocRestClient {
-    /**
-     Completion handler
-
-     - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
-     - parameter error:        Provides error object, or nil if no error occurs
-     */
-    public typealias TransactionsHandler = (_ result: ResultCollection<Transaction>?, _ error: ErrorResponse?) -> Void
-
-    /**
-     Completion handler
-
-     - parameter transaction: Provides Transaction object, or nil if error occurs
-     - parameter error:       Provides error object, or nil if no error occurs
-     */
-    public typealias TransactionHandler = (_ transaction: Transaction?, _ error: ErrorResponse?) -> Void
-
-
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         self.transactions(url, parameters: parameters, completion: completion)
@@ -194,7 +159,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+            response.json = self.loadDataFromJSONFile(filename: "listTransactions")
             let request = Request(request: url)
             request.response = response
 
@@ -204,7 +169,7 @@ extension MocRestClient {
                     return
                 }
                 let transaction = try? ResultCollection<Transaction>(resultValue)
-               //TODO transaction?.client = self
+                transaction?.client = self
                 completion(transaction, error)
             }
         }
@@ -216,14 +181,6 @@ extension MocRestClient {
 
 extension MocRestClient {
     /**
-     Completion handler
-
-     - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
-     - parameter error?:         Provides error object, or nil if no error occurs
-     */
-    typealias CreateEncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
-
-    /**
      Creates a new encryption key pair
 
      - parameter clientPublicKey: client public key
@@ -234,7 +191,7 @@ extension MocRestClient {
         var response = Response()
         let url = FitpayConfig.apiURL + "/config/encryptionKeys"
         response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-        response.json = self.loadDataFromJSONFile(filename: "createEncryptionKeyJson")
+        response.json = self.loadDataFromJSONFile(filename: "getEncryptionKeyJson")
         let request = Request(request: url)
         request.response = response
         self.makeRequest(request: request) { (resultValue, error) in
@@ -245,14 +202,6 @@ extension MocRestClient {
             completion(try? EncryptionKey(resultValue), error)
         }
     }
-
-    /**
-     Completion handler
-
-     - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
-     - parameter error?:         Provides error object, or nil if no error occurs
-     */
-    typealias EncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
 
     /**
      Retrieve and individual key pair
@@ -268,6 +217,10 @@ extension MocRestClient {
         response.json = self.loadDataFromJSONFile(filename: "getEncryptionKeyJson")
         let request = Request(request: url)
         request.response = response
+        if keyId == "some_fake_id" {
+        response.json = self.loadDataFromJSONFile(filename: "Error")
+        request.response.error = ErrorResponse.unhandledError(domain: MocRestClient.self)
+        }
 
         self.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
@@ -277,13 +230,6 @@ extension MocRestClient {
             completion(try? EncryptionKey(resultValue), error)
         }
     }
-
-    /**
-     Completion handler
-
-     - parameter error?: Provides error object, or nil if no error occurs
-     */
-    typealias DeleteEncryptionKeyHandler = (_ error: Error?) -> Void
 
     /**
      Deletes encryption key
@@ -306,8 +252,6 @@ extension MocRestClient {
            completion(nil)
     }
 
-    typealias CreateKeyIfNeededHandler = CreateEncryptionKeyHandler
-
     func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler) {
         if let key = self.key, !key.isExpired() {
             completion(key, nil)
@@ -328,8 +272,6 @@ extension MocRestClient {
 // MARK: Request Signature Helpers
 extension MocRestClient {
 
-    typealias CreateAuthHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
-
     func createAuthHeaders(_ completion: CreateAuthHeaders) {
         if self._session.isAuthorized {
             completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
@@ -342,8 +284,6 @@ extension MocRestClient {
         // do nothing
         completion(self.defaultHeaders, nil)
     }
-
-    typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
 
     func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.createAuthHeaders { [weak self] (headers, error) in
@@ -360,8 +300,6 @@ extension MocRestClient {
             }
         }
     }
-
-    typealias PrepareKeyHeader = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
 
     func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders) {
         self.skipAuthHeaders { [weak self] (headers, error) in
@@ -383,9 +321,7 @@ extension MocRestClient {
 
 // MARK: Issuers
 extension MocRestClient {
-    public typealias IssuersHandler = (_ issuers: Issuers?, _ error: ErrorResponse?) -> Void
-
-    public func issuers(completion: @escaping IssuersHandler) {
+     public func issuers(completion: @escaping IssuersHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers  else {
@@ -396,7 +332,7 @@ extension MocRestClient {
             var response = Response()
             let url = FitpayConfig.apiURL + "/issuers"
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "confirmJson")
+            response.json = self?.loadDataFromJSONFile(filename: "issuers")
             let request = Request(request: url)
             request.response = response
             self?.makeRequest(request: request) { (resultValue, error) in
@@ -405,7 +341,7 @@ extension MocRestClient {
                     return
                 }
                 let issuers = try? Issuers(resultValue)
-                //TODO issuers?.client = self
+                issuers?.client = self
                 completion(issuers, error)
             }
         }
@@ -414,63 +350,14 @@ extension MocRestClient {
 
 // MARK: Assets
 extension MocRestClient {
-
-    /**
-     Completion handler
-
-     - parameter asset: Provides Asset object, or nil if error occurs
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    public typealias AssetsHandler = (_ asset: Asset?, _ error: ErrorResponse?) -> Void
-
     func assets(_ url: String, completion: @escaping AssetsHandler) {
-        var response = Response()
-        response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
-        response.json = self.loadDataFromJSONFile(filename: "confirmJson")
-        let request = Request(request: url)
-        request.response = response
-
-    /*    DispatchQueue.global().async {
-            request.responseData { (response: DataResponse<Data>) in
-                if response.result.error != nil {
-                    let error = try? ErrorResponse(response.data)
-
-                    DispatchQueue.main.async {
-                        completion(nil, error)
-                    }
-                } else if let resultValue = response.result.value {
-                    var asset: Asset?
-                    if let image = UIImage(data: resultValue) {
-                        asset = Asset(image: image)
-                    } else if let string = resultValue.UTF8String {
-                        asset = Asset(text: string)
-                    } else {
-                        asset = Asset(data: resultValue)
-                    }
-
-                    DispatchQueue.main.async {
-                        completion(asset, nil)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        completion(nil, ErrorResponse.unhandledError(domain: MocRestClient.self))
-                    }
-                }
-            }
-        }*/
-    }
-
+           let asset = Asset(image: UIImage())
+            completion(asset, nil)
+        }
 }
 
 // MARK: Sync Statistics
 extension MocRestClient {
-    /**
-     Completion handler
-
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    public typealias SyncHandler = (_ error: ErrorResponse?) -> Void
-
     func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
@@ -480,28 +367,13 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "confirmJson")
+            response.json = self?.loadDataFromJSONFile(filename: "")
             let request = Request(request: url)
             request.response = response
-         /*   DispatchQueue.global().async {
-                request?.response { (response: DefaultDataResponse) in
-                    if response.error != nil {
-                        DispatchQueue.main.async {
-                            if let _ = response.error {
-                                let error = try? ErrorResponse(response.data)
-                                completion(error)
-                            }
-                            else {
-                                completion(nil)
-                            }
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            completion(nil)
-                        }
-                    }
-                }
-            } */
+
+            self?.makeRequest(request: request) { (resultValue, error) in
+              completion(error)
+            }
         }
     }
 
@@ -509,14 +381,6 @@ extension MocRestClient {
 
 // MARK: Reset Device Tasks
 extension MocRestClient {
-
-    /**
-     Completion handler
-
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
-
     /**
      Creates a request for resetting a device
 
@@ -579,14 +443,6 @@ extension MocRestClient {
 }
 
 extension MocRestClient {
-    /**
-     Completion handler
-
-     - parameter resultValue: Provides request object, or nil if error occurs
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    public typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
-
     func makeRequest(request: Request?, completion: @escaping RequestHandler) {
         request?.responseJSON(){ (request) in
 

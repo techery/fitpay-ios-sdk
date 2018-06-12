@@ -87,7 +87,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "createCreditCard")
             let request = Request(request: url)
             request.response = response
 
@@ -99,7 +99,7 @@ extension MocRestClient {
                 }
                 let card = try? CreditCard(resultValue)
                 card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-               //TODO card?.client = self
+                card?.client = self
                 completion(card, error)
             }
         }
@@ -119,7 +119,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "listCreditCards")
             let request = Request(request: url)
             request.response = response
             
@@ -131,25 +131,32 @@ extension MocRestClient {
                 }
                 let creditCard = try? ResultCollection<CreditCard>(resultValue)
                 creditCard?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                //TODO creditCard?.client = self
+                creditCard?.client = self
                 completion(creditCard, error)
             }
         }
     }
 
     func deleteCreditCard(_ url: String, completion: @escaping DeleteHandler) {
-     /* TODO   self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
-
-            let request = strongSelf._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self?.loadDataFromJSONFile(filename: "")
+            let request = Request(request: url)
+            request.response = response
+            
             self?.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
+                self?.makeRequest(request: request) { (resultValue, error) in
+                    completion(error)
+                }
             }
-        } */
+        }
     }
 
     func updateCreditCard(_ url: String, name: String?, street1: String?, street2: String?, city: String?, state: String?, postalCode: String?, countryCode: String?, completion: @escaping CreditCardHandler) {
@@ -201,7 +208,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "updateCreditCard")
             let request = Request(request: url)
             request.response = response
 
@@ -213,7 +220,7 @@ extension MocRestClient {
                 }
                 let card = try? CreditCard(resultValue)
                 card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-               //TODO card?.client = self
+                card?.client = self
                 completion(card, error)
             }
         }
@@ -228,7 +235,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "acceptTermsForCreditCard")
             let request = Request(request: url)
             request.response = response
 
@@ -238,7 +245,7 @@ extension MocRestClient {
                     return
                 }
                 let card = try? CreditCard(resultValue)
-              //TODO  card?.client = self
+                card?.client = self
                 completion(false, card, nil)
             }
         }
@@ -253,7 +260,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "declineTerms")
             let request = Request(request: url)
             request.response = response
 
@@ -263,7 +270,7 @@ extension MocRestClient {
                     return
                 }
                 let card = try? CreditCard(resultValue)
-              //TODO  card?.client = self
+                card?.client = self
                 completion(false, card, error)
             }
         }
@@ -278,7 +285,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "selectVerificationType")
             let request = Request(request: url)
             request.response = response
 
@@ -288,7 +295,7 @@ extension MocRestClient {
                     return
                 }
                 let verificationMethod = try? VerificationMethod(resultValue)
-              //TODO  verificationMethod?.client = self
+                verificationMethod?.client = self
                 completion(false, verificationMethod, error)
             }
         }
@@ -303,7 +310,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "verified")
             let request = Request(request: url)
             request.response = response
 
@@ -313,7 +320,7 @@ extension MocRestClient {
                     return
                 }
                 let verificationMethod = try? VerificationMethod(resultValue)
-                //TODO  verificationMethod?.client = self
+                verificationMethod?.client = self
                 completion(false, verificationMethod, error)
             }
         }
@@ -328,7 +335,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "deactivateCreditCard")
             let request = Request(request: url)
             request.response = response
 
@@ -338,7 +345,7 @@ extension MocRestClient {
                     return
                 }
                 let card = try? CreditCard(resultValue)
-               //TODO   card?.client = self
+                card?.client = self
                 completion(false, card, error)
             }
         }
@@ -353,7 +360,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "reactivateCreditCard")
             let request = Request(request: url)
             request.response = response
 
@@ -363,7 +370,7 @@ extension MocRestClient {
                     return
                 }
                 let card = try? CreditCard(resultValue)
-               //TODO card?.client = self
+                card?.client = self
                 completion(false, card, error)
             }
         }
@@ -378,7 +385,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "retrieveCreditCard")
             let request = Request(request: url)
             request.response = response
 
@@ -389,7 +396,7 @@ extension MocRestClient {
                     return
                 }
                 let card = try? CreditCard(resultValue)
-               //TODO card?.client = self
+                card?.client = self
                 card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 completion(card, error)
             }
@@ -405,7 +412,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserCreditCardsList")
+            response.json = self?.loadDataFromJSONFile(filename: "makeCreditCardDefault")
             let request = Request(request: url)
             request.response = response
 
@@ -415,14 +422,14 @@ extension MocRestClient {
                     return
                 }
                 let card = try? CreditCard(resultValue)
-               //TODO card?.client = self
+                card?.client = self
                 completion(false, card, error)
             }
         }
     }
 
     //MARK: - Private Functions
-    private func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
+    func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
             return
@@ -436,7 +443,7 @@ extension MocRestClient {
         }
     }
 
-    private func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler) {
+    func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
             return

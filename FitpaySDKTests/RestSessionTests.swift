@@ -3,8 +3,8 @@ import XCTest
 
 class RestSessionTests: XCTestCase {
     
-    var session: RestSession!
-    var client: RestClient!
+    var session: MocRestSession!
+    var client: MocRestClient!
     var testHelper: TestHelper!
     var clientId = "fp_webapp_pJkVp2Rl"
     let redirectUri = "https://webapp.fit-pay.com"
@@ -13,8 +13,8 @@ class RestSessionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        self.session = RestSession()
-        self.client = RestClient(session: self.session!)
+        self.session = MocRestSession()
+        self.client = MocRestClient(session: self.session!)
         self.testHelper = TestHelper(session: self.session, client: self.client)
     }
     

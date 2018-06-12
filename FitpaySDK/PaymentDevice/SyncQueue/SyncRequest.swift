@@ -63,7 +63,7 @@ open class SyncRequest {
     private var state = SyncRequestState.pending
     
     // we should capture restClient to prevent deallocation
-    private var restClient: RestClient?
+    private var restClient: RestClientInterface?
     
     convenience init() {
         self.init(notificationAsc: nil, initiator: .notDefined)

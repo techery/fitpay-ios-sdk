@@ -52,59 +52,10 @@ extension MocRestClient {
                 return
             }
 
-            log.verbose("got headers: \(headers)")
-            var parameters: [String: Any] = [:]
-            if (termsVersion != nil) {
-                parameters += ["termsVersion": termsVersion!]
-            }
-
-            if (termsAccepted != nil) {
-                parameters += ["termsAcceptedTsEpoch": termsAccepted!]
-            }
-
-            if (origin != nil) {
-                parameters += ["origin": origin!]
-            }
-
-            if (termsVersion != nil) {
-                parameters += ["originAccountCreatedTsEpoch": originAccountCreated!]
-            }
-
-            parameters["client_id"] = FitpayConfig.clientId
-
-            var rawUserInfo: [String: Any] = ["email": email, "pin": password ]
-
-            if (firstName != nil) {
-                rawUserInfo += ["firstName": firstName!]
-            }
-
-            if (lastName != nil) {
-                rawUserInfo += ["lastName": lastName!]
-            }
-
-            if (birthDate != nil) {
-                rawUserInfo += ["birthDate": birthDate!]
-            }
-
-            if let userInfoJSON = rawUserInfo.JSONString {
-                if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW,
-                                                                  enc: JWEEncryption.A256GCM,
-                                                                  payload: userInfoJSON,
-                                                                  keyId: headers[RestClient.fpKeyIdKey]!) {
-                    if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
-                        parameters["encryptedData"] = encrypted
-                    }
-                }
-            }
-
-            log.verbose("user creation url: \(FitpayConfig.apiURL)/users")
-            log.verbose("Headers: \(headers)")
-            log.verbose("user creation json: \(parameters)")
-
             var response = Response()
             let url = FitpayConfig.apiURL + "/users"
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "createUserJson")
+            response.json = self?.loadDataFromJSONFile(filename: "getUser")
             let request = Request(request: url)
             request.response = response
             self?.makeRequest(request: request) { (resultValue, error) in
@@ -138,7 +89,7 @@ extension MocRestClient {
             var response = Response()
             let url = FitpayConfig.apiURL + "/users/" + id
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUserJson")
+            response.json = self?.loadDataFromJSONFile(filename: "getUser")
             let request = Request(request: url)
             request.response = response
 
@@ -149,7 +100,7 @@ extension MocRestClient {
                 }
                 let user = try? User(resultValue)
                 user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-             //TODO   user?.client = self
+                user?.client = self
                 completion(user, error)
             }
         }
@@ -214,7 +165,8 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "user400ErrorJson")
+            response.json = self.loadDataFromJSONFile(filename: "Error")
+            response.error = ErrorResponse.unhandledError(domain: MocRestClient.self)
             let request = Request(request: url)
             request.response = response
             self.makeRequest(request: request) { [weak self] (resultValue, error) in
@@ -225,7 +177,7 @@ extension MocRestClient {
                 }
                 let user = try? User(resultValue)
                 user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                //TODO user?.client = self
+                user?.client = self
                 completion(user, error)
             }
         }
@@ -268,7 +220,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "confirmJson")
+            response.json = self?.loadDataFromJSONFile(filename: "getUser")
             let request = Request(request: url)
             request.response = response
             self?.makeRequest(request: request) { (resultValue, error) in
@@ -279,7 +231,7 @@ extension MocRestClient {
                 }
                 let user = try? User(resultValue)
                 user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-             //TODO   user?.client = self
+                user?.client = self
                 completion(user, error)
             }
         }
