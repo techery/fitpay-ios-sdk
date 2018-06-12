@@ -61,7 +61,7 @@ class TestHelper {
                     XCTAssertNotNil(user, "user should not be nuil")
                     
                     self.userValid(user!)
-                        
+                    
                     XCTAssertEqual(user?.email, email, "Want emails to match up after logging in")
                     XCTAssertNil(userError)
                     
@@ -128,15 +128,21 @@ class TestHelper {
     }
     
     func createEricCard(_ expectation: XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:@escaping (_ user: User?, _ creditCard: CreditCard?) -> Void) {
-        user?.createCreditCard(
-            pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", street1: "4883 Dakota Blvd.",
-            street2: "Ste. #209-A", street3: "underneath a bird's nest", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
-        ) { [unowned self](card, error) -> Void in
+        let address = Address()
+        address.street1 = "4883 Dakota Blvd."
+        address.street2 = "Ste. #209-A"
+        address.street3 = "underneath a bird's nest"
+        address.city = "Boulder"
+        address.state = "CO"
+        address.postalCode = "80302"
+        address.countryCode = "US"
+        user?.createCreditCard( pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", address: address) { [unowned self](card, error) -> Void in
+            
             debugPrint("creating credit card with \(pan)")
             self.assertCreditCard(card)
             
             XCTAssertNil(error)
-            if card?.state == .PENDING_ACTIVE {
+            if card?.state == .pendingActive {
                 self.waitForActive(card!) { (activeCard) in
                     completion(user, activeCard)
                 }
@@ -147,14 +153,19 @@ class TestHelper {
     }
     
     func createCreditCard(_ expectation: XCTestExpectation, user: User?, completion: @escaping (_ user: User?, _ creditCard: CreditCard?) -> Void) {
-        user?.createCreditCard(pan: "9999405454540004", expMonth: 10, expYear: 2018, cvv: "133", name: "TEST CARD", street1: "1035 Pearl St",
-                               street2: "Street 2", street3: "Street 3", city: "Boulder", state: "CO", postalCode: "80302", country: "US"
-        ) { [unowned self] (card, error) -> Void in
-            
+        let address = Address()
+        address.street1 = "1035 Pearl St"
+        address.street2 = "Street 2"
+        address.street3 = "Street 3"
+        address.city = "Boulder"
+        address.state = "CO"
+        address.postalCode = "80302"
+        address.countryCode = "US"
+        user?.createCreditCard(pan: "9999405454540004", expMonth: 10, expYear: 2018, cvv: "133", name: "TEST CARD", address: address) { [unowned self] (card, error) -> Void in
             self.assertCreditCard(card)
             XCTAssertNil(error)
             
-            if card?.state == .PENDING_ACTIVE {
+            if card?.state == .pendingActive {
                 self.waitForActive(card!) { (activeCard) in
                     completion(user, activeCard)
                 }
@@ -192,15 +203,13 @@ class TestHelper {
             XCTAssertNil(error)
             XCTAssertNotNil(acceptedCard)
             
-            if acceptedCard?.state != .PENDING_VERIFICATION {
-                if acceptedCard?.state != .PENDING_ACTIVE {
-                    XCTFail("Need to have a pending verification or active after accepting terms")
-                }
+            if acceptedCard?.state != .pendingVerification && acceptedCard?.state != .pendingActive {
+                XCTFail("Need to have a pending verification or active after accepting terms")
             }
             
             debugPrint("acceptingTerms done")
             
-            if acceptedCard?.state == .PENDING_ACTIVE {
+            if acceptedCard?.state == .pendingActive {
                 self.waitForActive(acceptedCard!) { (activeCard) in
                     completion(activeCard)
                 }
@@ -221,7 +230,7 @@ class TestHelper {
             let acceptTermsUrl = card?.getAcceptTermsUrl()
             XCTAssertEqual(acceptTermsUrl, randomText)
             
-        } catch CreditCard.AcceptTermsError.NoTerms(let errorMessage) {
+        } catch CreditCard.AcceptTermsError.noTerms(let errorMessage) {
             XCTFail(errorMessage)
         } catch {
             XCTFail("some error")
@@ -239,12 +248,12 @@ class TestHelper {
             completion(verificationMethod)
         }
     }
-
+    
     func getVerificationMethods(_ expectation: XCTestExpectation, card: CreditCard?, completion: @escaping (_ verificationMethod: ResultCollection<VerificationMethod>?) -> Void) {
         card?.getVerificationMethods { (verificationMethods, error) in
             XCTAssertNotNil(verificationMethods, "verification methods should not be nil")
             XCTAssertNil(error)
-
+            
             completion(verificationMethods)
         }
     }
@@ -275,12 +284,12 @@ class TestHelper {
     func waitForActive(_ pendingCard: CreditCard, retries: Int = 0, completion: @escaping (_ activeCard: CreditCard) -> Void) {
         debugPrint("pending card state is \(String(describing: pendingCard.state))")
         
-        if pendingCard.state == CreditCard.TokenizationState.ACTIVE {
+        if pendingCard.state == CreditCard.TokenizationState.active {
             completion(pendingCard)
             return
         }
         
-        if pendingCard.state != CreditCard.TokenizationState.PENDING_ACTIVE {
+        if pendingCard.state != CreditCard.TokenizationState.pendingActive {
             XCTFail("Cards that aren't in pending active state will not transition to active")
             return
         }
@@ -306,7 +315,15 @@ class TestHelper {
     }
     
     func createAcceptVerifyAmExCreditCard(_ expectation: XCTestExpectation, pan: String, user: User?, completion: @escaping (_ creditCard: CreditCard?) -> Void) {
-        user?.createCreditCard(pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "New York", state: "NY", postalCode: "80302", country: "USA") { [unowned self] (creditCard, error) in
+        let address = Address()
+        address.street1 = "Street 1"
+        address.street2 = "Street 2"
+        address.street3 = "Street 3"
+        address.city = "New York"
+        address.state = "NY"
+        address.postalCode = "80302"
+        address.countryCode = "US"
+        user?.createCreditCard(pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", address: address) { [unowned self] (creditCard, error) in
             
             XCTAssertNil(error)
             
@@ -326,7 +343,7 @@ class TestHelper {
         debugPrint("deactivateCreditCard")
         creditCard?.deactivate(causedBy: .cardholder, reason: "lost card") { (pending, creditCard, error) in
             XCTAssertNil(error)
-            XCTAssertEqual(creditCard?.state, CreditCard.TokenizationState.DEACTIVATED)
+            XCTAssertEqual(creditCard?.state, CreditCard.TokenizationState.deactivated)
             completion(creditCard)
         }
     }

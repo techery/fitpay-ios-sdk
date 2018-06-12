@@ -57,9 +57,7 @@ extension RestClient {
     
     //MARK - Internal Functions
     
-    func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
-                                   street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
-                                   completion: @escaping CreditCardHandler) {
+    func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String, address: Address, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
@@ -68,21 +66,22 @@ extension RestClient {
             }
             
             var parameters: [String: String] = [:]
+            let address: [String: Any?] = [
+                "street1": address.street1,
+                "street2": address.street2,
+                "street3": address.street3,
+                "city": address.city,
+                "state": address.state,
+                "postalCode": address.postalCode,
+                "countryCode": address.countryCode
+            ]
             let rawCard: [String: Any] = [
                 "pan": pan,
                 "expMonth": expMonth,
                 "expYear": expYear,
                 "cvv": cvv,
                 "name": name,
-                "address": [
-                    "street1": street1,
-                    "street2": street2,
-                    "street3": street3,
-                    "city": city,
-                    "state": state,
-                    "postalCode": postalCode,
-                    "country": country
-                ]
+                "address": address
             ]
             
             if let cardJSON = rawCard.JSONString {
@@ -151,7 +150,7 @@ extension RestClient {
         }
     }
     
-    func updateCreditCard(_ url: String, name: String?, street1: String?, street2: String?, city: String?, state: String?, postalCode: String?, countryCode: String?, completion: @escaping CreditCardHandler) {
+    func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers  else {
@@ -166,27 +165,27 @@ extension RestClient {
                 operations.append(["op": "replace", "path": "/name", "value": name])
             }
             
-            if let street1 = street1 {
+            if let street1 = address.street1 {
                 operations.append(["op": "replace", "path": "/address/street1", "value": street1])
             }
             
-            if let street2 = street2 {
+            if let street2 = address.street2 {
                 operations.append(["op": "replace", "path": "/address/street2", "value": street2])
             }
             
-            if let city = city {
+            if let city = address.city {
                 operations.append(["op": "replace", "path": "/address/city", "value": city])
             }
             
-            if let state = state {
+            if let state = address.state {
                 operations.append(["op": "replace", "path": "/address/state", "value": state])
             }
             
-            if let postalCode = postalCode {
+            if let postalCode = address.postalCode {
                 operations.append(["op": "replace", "path": "/address/postalCode", "value": postalCode])
             }
             
-            if let countryCode = countryCode {
+            if let countryCode = address.countryCode {
                 operations.append(["op": "replace", "path": "/address/countryCode", "value": countryCode])
             }
             

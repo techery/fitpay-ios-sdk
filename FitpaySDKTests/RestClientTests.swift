@@ -286,14 +286,19 @@ class RestClientTests: XCTestCase {
                     let street1 = "Street1\(NSDate().timeIntervalSince1970)"
                     let street2 = "Street2\(NSDate().timeIntervalSince1970)"
                     let city = "Beverly Hills"
-                    
                     let state = "MO"
-                    let postCode = "90210"
+                    let postalCode = "90210"
+                    let countryCode = "AB"
                     
-                    // TODO: Ask why this causes error 400 is passed
-                    let countryCode: String? = nil//"US"
-                    
-                    creditCard?.update(name:name, street1: street1, street2: street2, city: city, state: state, postalCode: postCode, countryCode: countryCode) { (updatedCard, error) -> Void in
+                    let newAddress = Address()
+                    newAddress.street1 = street1
+                    newAddress.street2 = street2
+                    newAddress.city = city
+                    newAddress.state = state
+                    newAddress.postalCode = postalCode
+                    newAddress.countryCode = countryCode
+
+                    creditCard?.update(name: name, address: newAddress) { (updatedCard, error) -> Void in
                         XCTAssertNil(error)
                         XCTAssertNotNil(updatedCard)
                         
@@ -316,11 +321,11 @@ class RestClientTests: XCTestCase {
                                 XCTAssertEqual(updatedCard?.info?.address?.state, state)
                                 XCTAssertEqual(updatedCard?.info?.address?.state, currentCard?.info?.address?.state)
                                 
-                                XCTAssertEqual(updatedCard?.info?.address?.postalCode, postCode)
+                                XCTAssertEqual(updatedCard?.info?.address?.postalCode, postalCode)
                                 XCTAssertEqual(updatedCard?.info?.address?.postalCode, currentCard?.info?.address?.postalCode)
                                 
-                                //XCTAssertEqual(updatedCard?.info?.address?.countryCode, countryCode)
-                                //XCTAssertEqual(updatedCard?.info?.address?.countryCode, currentCard.info?.address?.countryCode)
+                                XCTAssertEqual(updatedCard?.info?.address?.countryCode, countryCode)
+                                XCTAssertEqual(updatedCard?.info?.address?.countryCode, currentCard?.info?.address?.countryCode)
                                 
                                 self.testHelper.deleteUser(user, expectation: expectation)
                             }
@@ -418,7 +423,7 @@ class RestClientTests: XCTestCase {
                                     
                                     deactivatedCard?.reactivate(causedBy: .cardholder, reason: "found card") { (pending, creditCard, error) in
                                         XCTAssertNil(error)
-                                        XCTAssertEqual(creditCard?.state, .ACTIVE)
+                                        XCTAssertEqual(creditCard?.state, .active)
                                         
                                         self.testHelper.deleteUser(user, expectation: expectation)
                                     }
@@ -475,7 +480,7 @@ class RestClientTests: XCTestCase {
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     creditCard?.declineTerms { (pending, card, error) in
                         XCTAssertNil(error)
-                        XCTAssertEqual(card?.state, .DECLINED_TERMS_AND_CONDITIONS)
+                        XCTAssertEqual(card?.state, .declinedTermsAndConditions)
                         
                         self.testHelper.deleteUser(user, expectation: expectation)
                     }

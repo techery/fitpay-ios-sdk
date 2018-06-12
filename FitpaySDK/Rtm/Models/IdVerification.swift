@@ -81,7 +81,6 @@ open class IdVerification: NSObject, Serializable {
         case oemAccountScore = "accountScore"
         case deviceScore
         case nfcCapable
-        case billingCountryCode
         case oemAccountCountryCode
         case deviceCountry
         case oemAccountUserName
@@ -89,11 +88,6 @@ open class IdVerification: NSObject, Serializable {
         case deviceTimeZone
         case deviceTimeZoneSetBy
         case deviceIMEI
-        case billingLine1
-        case billingLine2
-        case billingCity
-        case billingState
-        case billingZip
         case locale
     }
 

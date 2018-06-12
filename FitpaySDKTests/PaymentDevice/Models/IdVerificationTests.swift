@@ -43,7 +43,6 @@ class IdVerificationTests: XCTestCase {
         XCTAssertEqual(idVerification?.oemAccountScore, 4)
         XCTAssertEqual(idVerification?.deviceScore, 5)
         XCTAssertEqual(idVerification?.nfcCapable, false)
-        XCTAssertEqual(idVerification?.billingCountryCode, "US")
         XCTAssertEqual(idVerification?.oemAccountCountryCode, "US")
         XCTAssertEqual(idVerification?.deviceCountry, "US")
         XCTAssertEqual(idVerification?.oemAccountUserName, mockModels.someName)
@@ -52,11 +51,6 @@ class IdVerificationTests: XCTestCase {
         XCTAssertEqual(idVerification?.deviceTimeZone, "CST")
         XCTAssertEqual(idVerification?.deviceTimeZoneSetBy, 0)
         XCTAssertEqual(idVerification?.deviceIMEI, "123456")
-        XCTAssertEqual(idVerification?.billingLine1, "line 1")
-        XCTAssertEqual(idVerification?.billingLine2, "line 2")
-        XCTAssertEqual(idVerification?.billingCity, "St. Louis")
-        XCTAssertEqual(idVerification?.billingState, "MO")
-        XCTAssertEqual(idVerification?.billingZip, "12345")
 
         
         let json = idVerification?.toJSON()
@@ -73,7 +67,6 @@ class IdVerificationTests: XCTestCase {
         XCTAssertEqual(json?["accountScore"] as? Int, 4)
         XCTAssertEqual(json?["deviceScore"] as? Int, 5)
         XCTAssertEqual(json?["nfcCapable"] as? Bool, false)
-        XCTAssertEqual(json?["billingCountryCode"] as? String, "US")
         XCTAssertEqual(json?["oemAccountCountryCode"] as? String, "US")
         XCTAssertEqual(json?["deviceCountry"] as? String, "US")
         XCTAssertEqual(json?["oemAccountUserName"] as? String, mockModels.someName)
@@ -81,11 +74,7 @@ class IdVerificationTests: XCTestCase {
         XCTAssertEqual(json?["deviceTimeZone"] as? String, "CST")
         XCTAssertEqual(json?["deviceTimeZoneSetBy"] as? Int, 0)
         XCTAssertEqual(json?["deviceIMEI"] as? String, "123456")
-        XCTAssertEqual(json?["billingLine1"] as? String, "line 1")
-        XCTAssertEqual(json?["billingLine2"] as? String, "line 2")
-        XCTAssertEqual(json?["billingCity"] as? String, "St. Louis")
-        XCTAssertEqual(json?["billingState"] as? String, "MO")
-        XCTAssertEqual(json?["billingZip"] as? String, "12345")
+
     }
 
 }

@@ -91,13 +91,11 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter country:    country
      - parameter completion: CreateCreditCardHandler closure
      */
-    @objc public func createCreditCard(pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
-                                       street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
-                                       completion: @escaping RestClient.CreditCardHandler) {
+    @objc public func createCreditCard(pan: String, expMonth: Int, expYear: Int, cvv: String, name: String, address: Address, completion: @escaping RestClient.CreditCardHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.createCreditCard(url, pan: pan, expMonth: expMonth, expYear: expYear, cvv: cvv, name: name, street1: street1, street2: street2, street3: street3, city: city, state: state, postalCode: postalCode, country: country, completion: completion)
+            client.createCreditCard(url, pan: pan, expMonth: expMonth, expYear: expYear, cvv: cvv, name: name, address: address, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }

@@ -242,26 +242,11 @@ import Foundation
      - parameter countryCode:  country code
      - parameter completion:   UpdateCreditCardHandler closure
      */
-    @objc open func update(name: String?,
-                           street1: String?,
-                           street2: String?,
-                           city: String?,
-                           state: String?,
-                           postalCode: String?,
-                           countryCode: String?,
-                           completion: @escaping RestClient.CreditCardHandler) {
+    @objc open func update(name: String?, address: Address, completion: @escaping RestClient.CreditCardHandler) {
         let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.updateCreditCard(url,
-                                    name: name,
-                                    street1: street1,
-                                    street2: street2,
-                                    city: city,
-                                    state: state,
-                                    postalCode: postalCode,
-                                    countryCode: countryCode,
-                                    completion: completion)
+            client.updateCreditCard(url, name: name, address: address, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }

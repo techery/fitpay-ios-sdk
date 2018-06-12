@@ -88,21 +88,20 @@ class MockModels {
     
     func getCreditCardInfo() -> CardInfo? {
         let address = getAddress()?.toJSONString() ?? ""
-        let cardInfo = try? CardInfo("{\"pan\":\"pan\", \"expMonth\": 2, \"expYear\": 2018, \"cvv\":\"cvv\", \"creditCardId\": \"\(someId)\", \"name\": \"\(someName)\",\"address\": \(address)}")
+        let cardInfo = try? CardInfo("{\"pan\":\"pan\", \"expMonth\": 2, \"expYear\": 2018, \"cvv\":\"cvv\", \"creditCardId\": \"\(someId)\", \"name\": \"\(someName)\", \"address\": \(address)}")
         return cardInfo
     }
     
     func getCreditCard() -> CreditCard? {
-        let cardMetadata = getCreditCardMetadata()?.toJSONString() ?? ""
-        let termsAssetReferences = getTermsAssetReferences()?.toJSONString() ?? ""
-        let deviceRelationship = getDeviceRelationship()?.toJSONString() ?? ""
-        let verificationMethod = getVerificationMethod()?.toJSONString() ?? ""
-        let address = getAddress()?.toJSONString() ?? ""
         let apduCommand = getApduCommand()?.toJSONString() ?? ""
-        let creditCardInfo = getCreditCardInfo()
 
-        let creditCard = try? CreditCard("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"creditCardId\": \"\(someId)\",\"userId\": \"\(someId)\", \"default\": true,  \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"state\": \"NOT_ELIGIBLE\", \"cardType\": \"\(someType)\", \"cardMetaData\": \(cardMetadata), \"termsAssetId\": \"\(someId)\", \"termsAssetReferences\": [\(termsAssetReferences)], \"eligibilityExpiration\": \"\(someDate)\", \"eligibilityExpirationEpoch\": \(timeEpoch), \"deviceRelationships\": [\(deviceRelationship)], \"encryptedData\":\"\(someEncryptionData)\", \"targetDeviceId\": \"\(someId)\", \"targetDeviceType\": \"\(someType)\", \"verificationMethods\": [\(verificationMethod)], \"externalTokenReference\": \"someToken\", \"pan\": \"1234\", \"expMonth\": 12, \"expYear\": 2018, \"cvv\": \"123\", \"name\": \"\(someName)\", \"address\": \(address), \"offlineSeActions.topOfWallet.apduCommands\": [\(apduCommand)], \"tokenLastFour\": \"4321\"}")
-        creditCard?.info = creditCardInfo
+        let creditCard = try? CreditCard("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"creditCardId\": \"\(someId)\",\"userId\": \"\(someId)\", \"default\": true,  \"createdTs\": \"\(someDate)\", \"createdTsEpoch\": \(timeEpoch), \"state\": \"NOT_ELIGIBLE\", \"cardType\": \"\(someType)\", \"termsAssetId\": \"\(someId)\", \"eligibilityExpiration\": \"\(someDate)\", \"eligibilityExpirationEpoch\": \(timeEpoch), \"encryptedData\":\"\(someEncryptionData)\", \"targetDeviceId\": \"\(someId)\", \"targetDeviceType\": \"\(someType)\", \"externalTokenReference\": \"someToken\", \"offlineSeActions.topOfWallet.apduCommands\": [\(apduCommand)], \"tokenLastFour\": \"4321\"}")
+        
+        creditCard?.cardMetaData = getCreditCardMetadata()
+        creditCard?.termsAssetReferences = [getTermsAssetReferences()!]
+        creditCard?.verificationMethods = [getVerificationMethod()!]
+        creditCard?.info = getCreditCardInfo()
+        creditCard?.deviceRelationships = [getDeviceRelationship()!]
         XCTAssertNotNil(creditCard)
         return creditCard
     }
@@ -174,7 +173,7 @@ class MockModels {
     }
     
     func getIdVerification() -> IdVerification? {
-        let idVerification = try? IdVerification("{\"oemAccountInfoUpdatedDate\": \"\(someDate2)\", \"oemAccountCreatedDate\": \"\(someDate2)\", \"suspendedCardsInAccount\": 1, \"daysSinceLastAccountActivity\": \"\(someDate2)\", \"deviceLostMode\": \"\(someDate2)\", \"deviceWithActiveTokens\": 2, \"activeTokenOnAllDevicesForAccount\": 3, \"accountScore\": 4, \"deviceScore\": 5, \"nfcCapable\": false, \"billingCountryCode\": \"US\", \"oemAccountCountryCode\": \"US\", \"deviceCountry\": \"US\", \"oemAccountUserName\": \"\(someName)\", \"devicePairedToOemAccountDate\": \"\(someDate2)\", \"deviceTimeZone\": \"CST\", \"deviceTimeZoneSetBy\": 0, \"deviceIMEI\": \"123456\", \"billingLine1\": \"line 1\", \"billingLine2\": \"line 2\", \"billingCity\": \"St. Louis\", \"billingState\": \"MO\", \"billingZip\": \"12345\"}")
+        let idVerification = try? IdVerification("{\"oemAccountInfoUpdatedDate\": \"\(someDate2)\", \"oemAccountCreatedDate\": \"\(someDate2)\", \"suspendedCardsInAccount\": 1, \"daysSinceLastAccountActivity\": \"\(someDate2)\", \"deviceLostMode\": \"\(someDate2)\", \"deviceWithActiveTokens\": 2, \"activeTokenOnAllDevicesForAccount\": 3, \"accountScore\": 4, \"deviceScore\": 5, \"nfcCapable\": false, \"oemAccountCountryCode\": \"US\", \"deviceCountry\": \"US\", \"oemAccountUserName\": \"\(someName)\", \"devicePairedToOemAccountDate\": \"\(someDate2)\", \"deviceTimeZone\": \"CST\", \"deviceTimeZoneSetBy\": 0, \"deviceIMEI\": \"123456\"}")
         XCTAssertNotNil(idVerification)
         return idVerification
     }
