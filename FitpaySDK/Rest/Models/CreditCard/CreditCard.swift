@@ -209,7 +209,7 @@ import Foundation
      */
     @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
         guard let link = self.links?.indexOf(CreditCard.acceptTermsResourceKey) else {
-            throw  AcceptTermsError.NoTerms("The card is not in a state to accept terms anymore")
+            throw  AcceptTermsError.noTerms("The card is not in a state to accept terms anymore")
         }
         
         link.href = acceptTermsUrl
@@ -399,21 +399,21 @@ import Foundation
 extension CreditCard {
     
     public enum TokenizationState: String, Codable {
-        case NEW,
-        NOT_ELIGIBLE,
-        ELIGIBLE,
-        DECLINED_TERMS_AND_CONDITIONS,
-        PENDING_ACTIVE,
-        PENDING_VERIFICATION,
-        DELETED,
-        ACTIVE,
-        DEACTIVATED,
-        ERROR,
-        DECLINED
+        case new = "NEW"
+        case notEligible = "NOT_ELIGIBLE"
+        case eligible = "ELIGIBLE"
+        case declinedTermsAndConditions = "DECLINED_TERMS_AND_CONDITIONS"
+        case pendingActive = "PENDING_ACTIVE"
+        case pendingVerification = "PENDING_VERIFICATION"
+        case deleted = "DELETED"
+        case active = "ACTIVE"
+        case deactivated = "DEACTIVATED"
+        case error = "ERROR"
+        case declined = "DECLINED"
     }
     
     enum AcceptTermsError: Error {
-        case NoTerms(String)
+        case noTerms(String)
     }
 
 }
