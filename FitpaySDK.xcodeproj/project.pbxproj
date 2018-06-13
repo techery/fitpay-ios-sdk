@@ -241,22 +241,20 @@
 		918E26C220B42AA400D9D750 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26C020B42AA100D9D750 /* ErrorResponse.swift */; };
 		919431EA20D01DEA0086B39B /* RestClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431E920D01DEA0086B39B /* RestClientInterface.swift */; };
 		919431EB20D01DEC0086B39B /* RestClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431E920D01DEA0086B39B /* RestClientInterface.swift */; };
-		919431EE20D01DFE0086B39B /* MocRestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D720D01D870086B39B /* MocRestClient.swift */; };
-		919431EF20D01DFE0086B39B /* MocRestClientCreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D520D01D860086B39B /* MocRestClientCreditCard.swift */; };
-		919431F020D01DFE0086B39B /* MocRestClientDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D920D01D880086B39B /* MocRestClientDevice.swift */; };
-		919431F120D01DFE0086B39B /* MocRestClientRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D620D01D860086B39B /* MocRestClientRelationship.swift */; };
-		919431F220D01DFE0086B39B /* MocRestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DD20D01D8A0086B39B /* MocRestClientUser.swift */; };
-		919431F320D01DFE0086B39B /* MocRestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DC20D01D890086B39B /* MocRestSession.swift */; };
+		919431EE20D01DFE0086B39B /* MockRestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D720D01D870086B39B /* MockRestClient.swift */; };
+		919431EF20D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D520D01D860086B39B /* MockRestClientCreditCard.swift */; };
+		919431F020D01DFE0086B39B /* MockRestClientDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D920D01D880086B39B /* MockRestClientDevice.swift */; };
+		919431F120D01DFE0086B39B /* MockRestClientRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D620D01D860086B39B /* MockRestClientRelationship.swift */; };
+		919431F220D01DFE0086B39B /* MockRestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DD20D01D8A0086B39B /* MockRestClientUser.swift */; };
+		919431F320D01DFE0086B39B /* MockRestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DC20D01D890086B39B /* MockRestSession.swift */; };
 		919431F520D01DFE0086B39B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DB20D01D890086B39B /* Request.swift */; };
-		919431F720D01DFE0086B39B /* MocRestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D720D01D870086B39B /* MocRestClient.swift */; };
-		919431F820D01DFE0086B39B /* MocRestClientCreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D520D01D860086B39B /* MocRestClientCreditCard.swift */; };
-		919431F920D01DFE0086B39B /* MocRestClientDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D920D01D880086B39B /* MocRestClientDevice.swift */; };
-		919431FA20D01DFE0086B39B /* MocRestClientRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D620D01D860086B39B /* MocRestClientRelationship.swift */; };
-		919431FB20D01DFE0086B39B /* MocRestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DD20D01D8A0086B39B /* MocRestClientUser.swift */; };
-		919431FC20D01DFE0086B39B /* MocRestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DC20D01D890086B39B /* MocRestSession.swift */; };
+		919431F720D01DFE0086B39B /* MockRestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D720D01D870086B39B /* MockRestClient.swift */; };
+		919431F820D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D520D01D860086B39B /* MockRestClientCreditCard.swift */; };
+		919431F920D01DFE0086B39B /* MockRestClientDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D920D01D880086B39B /* MockRestClientDevice.swift */; };
+		919431FA20D01DFE0086B39B /* MockRestClientRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D620D01D860086B39B /* MockRestClientRelationship.swift */; };
+		919431FB20D01DFE0086B39B /* MockRestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DD20D01D8A0086B39B /* MockRestClientUser.swift */; };
+		919431FC20D01DFE0086B39B /* MockRestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DC20D01D890086B39B /* MockRestSession.swift */; };
 		919431FE20D01DFE0086B39B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DB20D01D890086B39B /* Request.swift */; };
-		919431FF20D01FD50086B39B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DB20D01D890086B39B /* Request.swift */; };
-		9194320020D01FD60086B39B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DB20D01D890086B39B /* Request.swift */; };
 		9194320120D020480086B39B /* MockPaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */; };
 		9194320220D020490086B39B /* MockPaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */; };
 		9194323820D024700086B39B /* selectVerificationType.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320420D024430086B39B /* selectVerificationType.json */; };
@@ -311,6 +309,12 @@
 		9194326920D024700086B39B /* declineTerms.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321B20D024430086B39B /* declineTerms.json */; };
 		9194326A20D024700086B39B /* reactivateCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321C20D024430086B39B /* reactivateCreditCard.json */; };
 		9194326B20D024700086B39B /* listTransactions.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321D20D024430086B39B /* listTransactions.json */; };
+		91FD051C20D1116400092234 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
+		91FD051D20D1116400092234 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
+		91FD052120D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */; };
+		91FD052220D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */; };
+		91FD052620D15A5B00092234 /* getVerificationMethods.json in Resources */ = {isa = PBXBuildFile; fileRef = 91FD052520D15A5700092234 /* getVerificationMethods.json */; };
+		91FD052720D15A5B00092234 /* getVerificationMethods.json in Resources */ = {isa = PBXBuildFile; fileRef = 91FD052520D15A5700092234 /* getVerificationMethods.json */; };
 		91FED0DB20BD39BF002E7BFD /* ModelsParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FED0D920BD39BE002E7BFD /* ModelsParsingTests.swift */; };
 		91FED0DC20BD39BF002E7BFD /* ModelsParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FED0D920BD39BE002E7BFD /* ModelsParsingTests.swift */; };
 		91FED0DD20BD39BF002E7BFD /* MockModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FED0DA20BD39BE002E7BFD /* MockModels.swift */; };
@@ -484,14 +488,13 @@
 		916FC0BA209C44D20071B66D /* SerializableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableExtension.swift; sourceTree = "<group>"; };
 		9186499C20A9D1760073FBFC /* ResetDeviceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetDeviceResult.swift; sourceTree = "<group>"; };
 		918E26C020B42AA100D9D750 /* ErrorResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
-		919431D520D01D860086B39B /* MocRestClientCreditCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MocRestClientCreditCard.swift; sourceTree = "<group>"; };
-		919431D620D01D860086B39B /* MocRestClientRelationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MocRestClientRelationship.swift; sourceTree = "<group>"; };
-		919431D720D01D870086B39B /* MocRestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MocRestClient.swift; sourceTree = "<group>"; };
-		919431D820D01D870086B39B /* MockPaymentDeviceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPaymentDeviceTests.swift; sourceTree = "<group>"; };
-		919431D920D01D880086B39B /* MocRestClientDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MocRestClientDevice.swift; sourceTree = "<group>"; };
+		919431D520D01D860086B39B /* MockRestClientCreditCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClientCreditCard.swift; sourceTree = "<group>"; };
+		919431D620D01D860086B39B /* MockRestClientRelationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClientRelationship.swift; sourceTree = "<group>"; };
+		919431D720D01D870086B39B /* MockRestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClient.swift; sourceTree = "<group>"; };
+		919431D920D01D880086B39B /* MockRestClientDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClientDevice.swift; sourceTree = "<group>"; };
 		919431DB20D01D890086B39B /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
-		919431DC20D01D890086B39B /* MocRestSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MocRestSession.swift; sourceTree = "<group>"; };
-		919431DD20D01D8A0086B39B /* MocRestClientUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MocRestClientUser.swift; sourceTree = "<group>"; };
+		919431DC20D01D890086B39B /* MockRestSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestSession.swift; sourceTree = "<group>"; };
+		919431DD20D01D8A0086B39B /* MockRestClientUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClientUser.swift; sourceTree = "<group>"; };
 		919431E920D01DEA0086B39B /* RestClientInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientInterface.swift; sourceTree = "<group>"; };
 		9194320420D024430086B39B /* selectVerificationType.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = selectVerificationType.json; sourceTree = "<group>"; };
 		9194320520D024430086B39B /* updateCreditCard.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = updateCreditCard.json; sourceTree = "<group>"; };
@@ -519,6 +522,8 @@
 		9194321B20D024430086B39B /* declineTerms.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = declineTerms.json; sourceTree = "<group>"; };
 		9194321C20D024430086B39B /* reactivateCreditCard.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reactivateCreditCard.json; sourceTree = "<group>"; };
 		9194321D20D024430086B39B /* listTransactions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = listTransactions.json; sourceTree = "<group>"; };
+		91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSECP256R1KeyPair.swift; sourceTree = "<group>"; };
+		91FD052520D15A5700092234 /* getVerificationMethods.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = getVerificationMethods.json; sourceTree = "<group>"; };
 		91FED0D920BD39BE002E7BFD /* ModelsParsingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelsParsingTests.swift; sourceTree = "<group>"; };
 		91FED0DA20BD39BE002E7BFD /* MockModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockModels.swift; sourceTree = "<group>"; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
@@ -662,16 +667,9 @@
 		0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */ = {
 			isa = PBXGroup;
 			children = (
+				91FD052820D15DBD00092234 /* Mocks */,
 				9194320320D024430086B39B /* RestJsons */,
-				919431D820D01D870086B39B /* MockPaymentDeviceTests.swift */,
-				919431D720D01D870086B39B /* MocRestClient.swift */,
-				919431D520D01D860086B39B /* MocRestClientCreditCard.swift */,
-				919431D920D01D880086B39B /* MocRestClientDevice.swift */,
-				919431D620D01D860086B39B /* MocRestClientRelationship.swift */,
-				919431DD20D01D8A0086B39B /* MocRestClientUser.swift */,
-				919431DC20D01D890086B39B /* MocRestSession.swift */,
 				919431DB20D01D890086B39B /* Request.swift */,
-				91FED0DA20BD39BE002E7BFD /* MockModels.swift */,
 				91FED0D920BD39BE002E7BFD /* ModelsParsingTests.swift */,
 				0AD922AE1C1F7EFC007693AB /* Info.plist */,
 				1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */,
@@ -898,6 +896,7 @@
 		9194320320D024430086B39B /* RestJsons */ = {
 			isa = PBXGroup;
 			children = (
+				91FD052520D15A5700092234 /* getVerificationMethods.json */,
 				9194320420D024430086B39B /* selectVerificationType.json */,
 				9194320520D024430086B39B /* updateCreditCard.json */,
 				9194320620D024430086B39B /* Error.json */,
@@ -926,6 +925,21 @@
 				9194321D20D024430086B39B /* listTransactions.json */,
 			);
 			path = RestJsons;
+			sourceTree = "<group>";
+		};
+		91FD052820D15DBD00092234 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */,
+				919431D720D01D870086B39B /* MockRestClient.swift */,
+				919431D520D01D860086B39B /* MockRestClientCreditCard.swift */,
+				919431D920D01D880086B39B /* MockRestClientDevice.swift */,
+				919431D620D01D860086B39B /* MockRestClientRelationship.swift */,
+				919431DD20D01D8A0086B39B /* MockRestClientUser.swift */,
+				919431DC20D01D890086B39B /* MockRestSession.swift */,
+				91FED0DA20BD39BE002E7BFD /* MockModels.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		9A7C78781CC77F130097BAB9 /* EventListeners */ = {
@@ -1266,6 +1280,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91FD051C20D1116400092234 /* getEncryptionKeyJson.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1297,6 +1312,7 @@
 				9194324C20D024700086B39B /* createCreditCard.json in Resources */,
 				9194323E20D024700086B39B /* createUserJson.json in Resources */,
 				9194324D20D024700086B39B /* getUser.json in Resources */,
+				91FD052620D15A5B00092234 /* getVerificationMethods.json in Resources */,
 				9194323B20D024700086B39B /* verified.json in Resources */,
 				9194324720D024700086B39B /* getEncryptionKeyJson.json in Resources */,
 			);
@@ -1330,6 +1346,7 @@
 				9194326620D024700086B39B /* createCreditCard.json in Resources */,
 				9194325820D024700086B39B /* createUserJson.json in Resources */,
 				9194326720D024700086B39B /* getUser.json in Resources */,
+				91FD052720D15A5B00092234 /* getVerificationMethods.json in Resources */,
 				9194325520D024700086B39B /* verified.json in Resources */,
 				9194326120D024700086B39B /* getEncryptionKeyJson.json in Resources */,
 			);
@@ -1339,6 +1356,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91FD051D20D1116400092234 /* getEncryptionKeyJson.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1427,7 +1445,6 @@
 				91185B7920615E0C00E5E1CE /* A2AVerificationError.swift in Sources */,
 				27B5660120C5F1040012C14A /* RtmDeviceInfo.swift in Sources */,
 				3A9180BB1DE8824A00C183CE /* FitpayEventsSubscriber.swift in Sources */,
-				919431FF20D01FD50086B39B /* Request.swift in Sources */,
 				CD038952A85B6214173CC785 /* Commit.swift in Sources */,
 				0AF2B4121CDA6F410090CFCF /* WvConfig.swift in Sources */,
 				3767B8211ED32134007443D2 /* RestClientRelationship.swift in Sources */,
@@ -1540,13 +1557,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				919431F320D01DFE0086B39B /* MocRestSession.swift in Sources */,
+				919431F320D01DFE0086B39B /* MockRestSession.swift in Sources */,
 				919431F520D01DFE0086B39B /* Request.swift in Sources */,
 				9194320120D020480086B39B /* MockPaymentDeviceTests.swift in Sources */,
 				2773CD96207D546400DFE113 /* IdVerificationTests.swift in Sources */,
-				919431F220D01DFE0086B39B /* MocRestClientUser.swift in Sources */,
+				919431F220D01DFE0086B39B /* MockRestClientUser.swift in Sources */,
 				1F5DE2C51FEA7E3B00BB0531 /* CommitsStorageTests.swift in Sources */,
-				919431EE20D01DFE0086B39B /* MocRestClient.swift in Sources */,
+				919431EE20D01DFE0086B39B /* MockRestClient.swift in Sources */,
+				91FD052120D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */,
 				37D0CFE41ED599C00049B5AA /* SyncRequestsQueueTests.swift in Sources */,
 				37D908221F1E546700AA9F86 /* RtmMessagingTests.swift in Sources */,
 				27C0243520A4A27F00681023 /* TransformsTests.swift in Sources */,
@@ -1554,14 +1572,14 @@
 				91FED0DD20BD39BF002E7BFD /* MockModels.swift in Sources */,
 				27B8885120A4FBA40027969D /* A2AContextTests.swift in Sources */,
 				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
-				919431EF20D01DFE0086B39B /* MocRestClientCreditCard.swift in Sources */,
+				919431EF20D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */,
 				37330EB620289E2000948BC6 /* TransactionTests.swift in Sources */,
 				37C94AAE1FE15E96009C0FE7 /* SyncManagerTests.swift in Sources */,
 				9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */,
 				0A7EE11B1CFE0A2B00503BC8 /* TestHelper.swift in Sources */,
-				919431F020D01DFE0086B39B /* MocRestClientDevice.swift in Sources */,
+				919431F020D01DFE0086B39B /* MockRestClientDevice.swift in Sources */,
 				91FED0DB20BD39BF002E7BFD /* ModelsParsingTests.swift in Sources */,
-				919431F120D01DFE0086B39B /* MocRestClientRelationship.swift in Sources */,
+				919431F120D01DFE0086B39B /* MockRestClientRelationship.swift in Sources */,
 				3701AE551F1613B200550890 /* SyncOperationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1571,24 +1589,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F5DE2C61FEAB4C600BB0531 /* CommitsStorageTests.swift in Sources */,
+				91FD052220D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */,
 				37D0CFE51ED599C00049B5AA /* SyncRequestsQueueTests.swift in Sources */,
 				37D908231F1E546700AA9F86 /* RtmMessagingTests.swift in Sources */,
-				919431FC20D01DFE0086B39B /* MocRestSession.swift in Sources */,
+				919431FC20D01DFE0086B39B /* MockRestSession.swift in Sources */,
 				3A46E14A1DF023F9002D0270 /* RestSessionTests.swift in Sources */,
 				27B8885220A4FBA40027969D /* A2AContextTests.swift in Sources */,
 				27C0243620A4A28100681023 /* TransformsTests.swift in Sources */,
 				3A46E14D1DF023F9002D0270 /* JWETests.swift in Sources */,
 				91FED0DE20BD39BF002E7BFD /* MockModels.swift in Sources */,
 				919431FE20D01DFE0086B39B /* Request.swift in Sources */,
-				919431FB20D01DFE0086B39B /* MocRestClientUser.swift in Sources */,
+				919431FB20D01DFE0086B39B /* MockRestClientUser.swift in Sources */,
 				9194320220D020490086B39B /* MockPaymentDeviceTests.swift in Sources */,
 				37330EB720289E2100948BC6 /* TransactionTests.swift in Sources */,
-				919431F820D01DFE0086B39B /* MocRestClientCreditCard.swift in Sources */,
-				919431F720D01DFE0086B39B /* MocRestClient.swift in Sources */,
+				919431F820D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */,
+				919431F720D01DFE0086B39B /* MockRestClient.swift in Sources */,
 				37C94AAF1FE15E96009C0FE7 /* SyncManagerTests.swift in Sources */,
-				919431FA20D01DFE0086B39B /* MocRestClientRelationship.swift in Sources */,
+				919431FA20D01DFE0086B39B /* MockRestClientRelationship.swift in Sources */,
 				3A46E14E1DF023F9002D0270 /* RestClientTests.swift in Sources */,
-				919431F920D01DFE0086B39B /* MocRestClientDevice.swift in Sources */,
+				919431F920D01DFE0086B39B /* MockRestClientDevice.swift in Sources */,
 				3A46E14F1DF023F9002D0270 /* TestHelper.swift in Sources */,
 				3701AE561F1613B200550890 /* SyncOperationTests.swift in Sources */,
 				91FED0DC20BD39BF002E7BFD /* ModelsParsingTests.swift in Sources */,
@@ -1696,7 +1715,6 @@
 				27EA81D7208F8A3400FFBB56 /* PaymentDeviceUtils.swift in Sources */,
 				3A93A0AE1DB8CA2C00A9FEB4 /* NSJSONSerializationExtensions.swift in Sources */,
 				27EA81E0208F96F700FFBB56 /* StreamEvent.swift in Sources */,
-				9194320020D01FD60086B39B /* Request.swift in Sources */,
 				37D0CFEC1EDC40860049B5AA /* ScannedCardInfo.swift in Sources */,
 				3701AE481F14C29900550890 /* ConnectDeviceOperation.swift in Sources */,
 				3A93A0AF1DB8CA2C00A9FEB4 /* DictionaryExtensions.swift in Sources */,

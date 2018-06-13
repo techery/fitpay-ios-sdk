@@ -1,15 +1,6 @@
-//
-//  MocRestClientUser.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 5/30/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
-
-import UIKit
 @testable import FitpaySDK
 
-extension MocRestClient {
+extension MockRestClient {
 
     // MARK: - Completion Handlers
 
@@ -52,10 +43,55 @@ extension MocRestClient {
                 return
             }
 
+            log.verbose("got headers: \(headers)")
+            var parameters: [String: Any] = [:]
+            if (termsVersion != nil) {
+                parameters += ["termsVersion": termsVersion!]
+            }
+
+            if (termsAccepted != nil) {
+                parameters += ["termsAcceptedTsEpoch": termsAccepted!]
+            }
+
+            if (origin != nil) {
+                parameters += ["origin": origin!]
+            }
+
+            if (termsVersion != nil) {
+                parameters += ["originAccountCreatedTsEpoch": originAccountCreated!]
+            }
+
+            parameters["client_id"] = FitpayConfig.clientId
+
+            var rawUserInfo: [String: Any] = ["email": email, "pin": password ]
+
+            if (firstName != nil) {
+                rawUserInfo += ["firstName": firstName!]
+            }
+
+            if (lastName != nil) {
+                rawUserInfo += ["lastName": lastName!]
+            }
+
+            if (birthDate != nil) {
+                rawUserInfo += ["birthDate": birthDate!]
+            }
+
+            if let userInfoJSON = rawUserInfo.JSONString {
+                if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW,
+                                                                  enc: JWEEncryption.A256GCM,
+                                                                  payload: userInfoJSON,
+                                                                  keyId: headers[RestClient.fpKeyIdKey]!) {
+                    if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
+                        parameters["encryptedData"] = encrypted
+                    }
+                }
+            }
+
             var response = Response()
             let url = FitpayConfig.apiURL + "/users"
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUser")
+            response.json = self?.loadDataFromJSONFile(filename: "getUser")//?.replacingOccurrences(of: "\"encryptedData\":\"\"", with: "\"encryptedData\":\"\(parameters["encryptedData"] ?? "")\"")
             let request = Request(request: url)
             request.response = response
             self?.makeRequest(request: request) { (resultValue, error) in
@@ -166,7 +202,7 @@ extension MocRestClient {
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
             response.json = self.loadDataFromJSONFile(filename: "Error")
-            response.error = ErrorResponse.unhandledError(domain: MocRestClient.self)
+            response.error = ErrorResponse.unhandledError(domain: MockRestClient.self)
             let request = Request(request: url)
             request.response = response
             self.makeRequest(request: request) { [weak self] (resultValue, error) in

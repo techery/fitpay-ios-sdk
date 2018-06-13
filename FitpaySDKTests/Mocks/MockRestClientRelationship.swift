@@ -1,15 +1,6 @@
-//
-//  MocRestClientRelationship.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 6/11/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
-
-import UIKit
 @testable import FitpaySDK
 
-extension  MocRestClient {
+extension  MockRestClient {
 
     //MARK - Completion Handlers
 

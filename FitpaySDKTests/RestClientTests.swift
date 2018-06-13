@@ -6,8 +6,8 @@ class RestClientTests: XCTestCase {
     let redirectUri = "https://webapp.fit-pay.com"
     let password = "1029"
 
-    var session: MocRestSession!
-    var client: MocRestClient!
+    var session: MockRestSession!
+    var client: MockRestClient!
     var testHelper: TestHelper!
     
     override func invokeTest() {
@@ -24,8 +24,8 @@ class RestClientTests: XCTestCase {
         super.setUp()
 
         FitpayConfig.configure(clientId: clientId)
-        self.session = MocRestSession()
-        self.client = MocRestClient(session: self.session!)
+        self.session = MockRestSession()
+        self.client = MockRestClient(session: self.session!)
         self.testHelper = TestHelper(session: self.session, client: self.client)
     }
     
@@ -156,8 +156,8 @@ class RestClientTests: XCTestCase {
         
         self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil) { (user, error) -> Void in
             XCTAssertNotNil(user, "user is nil")
-           //TODO XCTAssertNotNil(user?.info)
-          //TODO  XCTAssertNotNil(user?.info?.email)
+            XCTAssertNotNil(user?.info)
+            XCTAssertNotNil(user?.info?.email)
             XCTAssertNotNil(user?.created)
             XCTAssertNotNil(user?.links)
             XCTAssertNotNil(user?.createdEpoch)
@@ -167,7 +167,7 @@ class RestClientTests: XCTestCase {
             expectation.fulfill()
         }
         
-        super.waitForExpectations(timeout: 10, handler: nil)
+        super.waitForExpectations(timeout: 100, handler: nil)
     }
     
     func testUserCreateLoginAndDeleteUser() {
@@ -291,7 +291,7 @@ class RestClientTests: XCTestCase {
                             let currentCard = result?.results?.first
                             
                             if currentCard?.creditCardId == updatedCard?.creditCardId {
-                            /*    XCTAssertEqual(updatedCard?.info?.name, name)
+                                XCTAssertEqual(updatedCard?.info?.name, name)
                                 XCTAssertEqual(updatedCard?.info?.name, currentCard?.info?.name)
                                 
                                 XCTAssertEqual(updatedCard?.info?.address?.street1, street1)
@@ -311,7 +311,7 @@ class RestClientTests: XCTestCase {
                                 
                                 //XCTAssertEqual(updatedCard?.info?.address?.countryCode, countryCode)
                                 //XCTAssertEqual(updatedCard?.info?.address?.countryCode, currentCard.info?.address?.countryCode)
-                                */
+                                
                                 self.testHelper.deleteUser(user, expectation: expectation)
                             }
                             
@@ -552,13 +552,7 @@ class RestClientTests: XCTestCase {
                     
                     deviceInfo.deleteDeviceInfo { (error) in
                         XCTAssertNil(error)
-                         expectation.fulfill()
-                       /*TODO user?.listDevices(limit: 10, offset: 0) { (result, error) in
-                            XCTAssertNil(error)
-                            
-                            XCTAssertEqual(result?.totalResults, 0)
-                            self.testHelper.deleteUser(user, expectation: expectation)
-                        } */
+                        expectation.fulfill()
                     }
                 }
             }
@@ -627,7 +621,7 @@ class RestClientTests: XCTestCase {
                         
                         for commit in commits!.results! {
                             XCTAssertNotNil(commit.commitType)
-                          //TODO  XCTAssertNotNil(commit.payload)
+                            XCTAssertNotNil(commit.payload)
                             XCTAssertNotNil(commit.commit)
                         }
                         

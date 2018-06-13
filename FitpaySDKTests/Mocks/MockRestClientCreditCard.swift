@@ -1,15 +1,6 @@
-//
-//  MocRestClientCreditCard.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 5/30/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
-
-import UIKit
 @testable import FitpaySDK
 
-extension MocRestClient {
+extension MockRestClient {
 
     //MARK - Completion Handlers
 
@@ -301,7 +292,7 @@ extension MocRestClient {
 
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "") //TODO
+            response.json = self?.loadDataFromJSONFile(filename: "getVerificationMethods") 
             let request = Request(request: url)
             request.response = response
 

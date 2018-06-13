@@ -1,20 +1,7 @@
-//
-//  MocMocRestClient.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 5/29/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
-
-import UIKit
-import Alamofire
 @testable import FitpaySDK
 import XCTest
 
-class MocRestClient: NSObject, RestClientInterface {
-    func collectionItems<T>(_ url: String, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) -> T? where T : Decodable, T : Encodable {
-        return nil //TODO
-    }
+class MockRestClient: NSObject, RestClientInterface {
 
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
@@ -47,31 +34,37 @@ class MocRestClient: NSObject, RestClientInterface {
         "X-FitPay-SDK": "iOS-\(FitpayConfig.sdkVersion)"
     ]
 
-    var _session: MocRestSession
-    var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
+    var _session: MockRestSession
+    var keyPair: MockSECP256R1KeyPair = MockSECP256R1KeyPair()
 
     var key: EncryptionKey?
 
     var secret: Data {
         let secret = self.keyPair.generateSecretForPublicKey(key?.serverPublicKey ?? "")
+
         if secret == nil || secret?.count == 0 {
             log.warning("Encription secret is empty.")
         }
         return secret ?? Data()
     }
 
-    public init(session: MocRestSession) {
+    public init(session: MockRestSession) {
         _session = session;
     }
 
-  /* TODO  func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T? {
+     func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T? {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
 
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            response.json = self?.loadDataFromJSONFile(filename: "")
+            let request = Request(request: url)
+            request.response = response
+
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -80,14 +73,14 @@ class MocRestClient: NSObject, RestClientInterface {
                 guard let strongSelf = self else { return }
                 let result = try? ResultCollection<T>(resultValue)
                 result?.client = self
-                result?.applySecret(strongSelf.secret, expectedKeyId: headers[MocRestClient.fpKeyIdKey])
+                result?.applySecret(strongSelf.secret, expectedKeyId: headers[MockRestClient.fpKeyIdKey])
                 completion(result, nil)
             }
         }
 
         return nil
     }
-*/
+
     public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers  else {
@@ -96,7 +89,7 @@ class MocRestClient: NSObject, RestClientInterface {
             }
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+            response.json = self.loadDataFromJSONFile(filename: "")
             let request = Request(request: url)
             request.response = response
 
@@ -110,7 +103,7 @@ class MocRestClient: NSObject, RestClientInterface {
 
 // MARK: - Confirm package
 
-extension MocRestClient {
+extension MockRestClient {
     /**
      Endpoint to allow for returning responses to APDU execution
 
@@ -119,7 +112,7 @@ extension MocRestClient {
      */
     public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
         guard package.packageId != nil else {
-            completion(ErrorResponse(domain: MocRestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
+            completion(ErrorResponse(domain: MockRestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
             return
         }
 
@@ -144,7 +137,7 @@ extension MocRestClient {
 
 // MARK: - Transactions
 
-extension MocRestClient {
+extension MockRestClient {
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         self.transactions(url, parameters: parameters, completion: completion)
@@ -179,7 +172,7 @@ extension MocRestClient {
 
 // MARK: - Encryption
 
-extension MocRestClient {
+extension MockRestClient {
     /**
      Creates a new encryption key pair
 
@@ -219,7 +212,7 @@ extension MocRestClient {
         request.response = response
         if keyId == "some_fake_id" {
         response.json = self.loadDataFromJSONFile(filename: "Error")
-        request.response.error = ErrorResponse.unhandledError(domain: MocRestClient.self)
+        request.response.error = ErrorResponse.unhandledError(domain: MockRestClient.self)
         }
 
         self.makeRequest(request: request) { (resultValue, error) in
@@ -238,18 +231,17 @@ extension MocRestClient {
      - parameter completion: DeleteEncryptionKeyHandler
      */
     func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler) {
-    /* TODO   let headers = self.defaultHeaders
+       let headers = self.defaultHeaders
         var response = Response()
         let url = FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId
         response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-        response.json = self.loadDataFromJSONFile(filename: "confirmJson")
+        response.json = self.loadDataFromJSONFile(filename: "")
         let request = Request(request: url)
         request.response = response
 
         self.makeRequest(request: request) { (resultValue, error) in
             completion(error)
-        }*/
-           completion(nil)
+        }
     }
 
     func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler) {
@@ -270,13 +262,13 @@ extension MocRestClient {
 }
 
 // MARK: Request Signature Helpers
-extension MocRestClient {
+extension MockRestClient {
 
     func createAuthHeaders(_ completion: CreateAuthHeaders) {
         if self._session.isAuthorized {
             completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
         } else {
-            completion(nil, ErrorResponse(domain: MocRestClient.self, errorCode: ErrorCode.unauthorized.rawValue, errorMessage: "\(ErrorCode.unauthorized)"))
+            completion(nil, ErrorResponse(domain: MockRestClient.self, errorCode: ErrorCode.unauthorized.rawValue, errorMessage: "\(ErrorCode.unauthorized)"))
         }
     }
 
@@ -294,7 +286,7 @@ extension MocRestClient {
                     if let keyError = keyError {
                         completion(nil, keyError)
                     } else {
-                        completion(headers! + [MocRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
+                        completion(headers! + [MockRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
                     }
                 }
             }
@@ -310,7 +302,7 @@ extension MocRestClient {
                     if let keyError = keyError {
                         completion(nil, keyError)
                     } else {
-                        completion(headers! + [MocRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
+                        completion(headers! + [MockRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
                     }
                 }
             }
@@ -320,7 +312,7 @@ extension MocRestClient {
 }
 
 // MARK: Issuers
-extension MocRestClient {
+extension MockRestClient {
      public func issuers(completion: @escaping IssuersHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
@@ -349,7 +341,7 @@ extension MocRestClient {
 }
 
 // MARK: Assets
-extension MocRestClient {
+extension MockRestClient {
     func assets(_ url: String, completion: @escaping AssetsHandler) {
            let asset = Asset(image: UIImage())
             completion(asset, nil)
@@ -357,7 +349,7 @@ extension MocRestClient {
 }
 
 // MARK: Sync Statistics
-extension MocRestClient {
+extension MockRestClient {
     func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
@@ -380,7 +372,7 @@ extension MocRestClient {
 }
 
 // MARK: Reset Device Tasks
-extension MocRestClient {
+extension MockRestClient {
     /**
      Creates a request for resetting a device
 
@@ -442,7 +434,7 @@ extension MocRestClient {
 
 }
 
-extension MocRestClient {
+extension MockRestClient {
     func makeRequest(request: Request?, completion: @escaping RequestHandler) {
         request?.responseJSON(){ (request) in
 
@@ -451,14 +443,14 @@ extension MocRestClient {
                     let JSON = request.response?.json
                     var error = try? ErrorResponse(JSON)
                     if error == nil {
-                        error = ErrorResponse(domain: MocRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
+                        error = ErrorResponse(domain: MockRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
                     }
                     completion(nil, error)
 
                 } else if let resultValue = request.response?.json {
                     completion(resultValue, nil)
                 } else {
-                    completion(nil, ErrorResponse.unhandledError(domain: MocRestClient.self))
+                    completion(nil, ErrorResponse.unhandledError(domain: MockRestClient.self))
                 }
             }
         }

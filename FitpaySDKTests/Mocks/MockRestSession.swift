@@ -1,17 +1,8 @@
-//
-//  MocRestSession.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 6/11/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
-
-import Foundation
 import JWTDecode
 @testable import FitpaySDK
 import XCTest
 
-@objcMembers open class MocRestSession: NSObject {
+@objcMembers open class MockRestSession: NSObject {
     public enum ErrorEnum: Int, Error, RawIntValue {
         case decodeFailure = 1000
         case parsingFailure
@@ -79,7 +70,7 @@ import XCTest
         response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
         if password == "fail" {
             response.json = loadDataFromJSONFile(filename: "Error")
-            response.error = ErrorResponse.unhandledError(domain: MocRestClient.self)
+            response.error = ErrorResponse.unhandledError(domain: MockRestClient.self)
         } else {
         response.json = loadDataFromJSONFile(filename: "getAuthorizationDetails")
         }
@@ -93,7 +84,7 @@ import XCTest
                     let JSON = request.response?.json
                     var error = try? ErrorResponse(JSON)
                     if error == nil {
-                        error = ErrorResponse(domain: MocRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
+                        error = ErrorResponse(domain: MockRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
                     }
                     completion(nil, error)
 
@@ -101,7 +92,7 @@ import XCTest
                     let authorizationDetails = try? AuthorizationDetails(resultValue)
                     completion(authorizationDetails, nil)
                 } else {
-                    completion(nil, ErrorResponse.unhandledError(domain: MocRestClient.self))
+                    completion(nil, ErrorResponse.unhandledError(domain: MockRestClient.self))
                 }
             }
         }
@@ -125,7 +116,7 @@ import XCTest
     }
 }
 
-extension MocRestSession {
+extension MockRestSession {
     public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
         case unknownError       = 0
         case deviceNotFound     = 10001
@@ -145,14 +136,14 @@ extension MocRestSession {
 
     public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, ErrorResponse?) -> Void
 
-    class func GetUserAndDeviceWith(sessionData: SessionData, completion: @escaping GetUserAndDeviceCompletion) -> MocRestClient? {
+    class func GetUserAndDeviceWith(sessionData: SessionData, completion: @escaping GetUserAndDeviceCompletion) -> MockRestClient? {
         guard let userId = sessionData.userId, let deviceId = sessionData.deviceId else {
             completion(nil, nil, ErrorResponse(domain: RestSession.self, errorCode: RestSession.ErrorCode.userOrDeviceEmpty.rawValue, errorMessage: ""))
             return nil
         }
 
-        let session = MocRestSession(sessionData: sessionData)
-        let client = MocRestClient(session: session)
+        let session = MockRestSession(sessionData: sessionData)
+        let client = MockRestClient(session: session)
 
         client.user(id: userId) { (user, error) in
             guard user != nil && error == nil else {
