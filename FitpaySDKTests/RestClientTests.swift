@@ -361,7 +361,7 @@ class RestClientTests: XCTestCase {
             let device = DeviceInfo(deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: nil,
                                     modelNumber: nil, hardwareRevision: nil, firmwareRevision: nil,
                                     softwareRevision: nil, notificationToken: nil, systemId: nil, osName: nil,
-                                    secureElementId: nil, casd: nil)
+                                    secureElement: nil)
             
             user?.createDevice(device) { (device, error) -> Void in
                 XCTAssertNotNil(device)
@@ -676,7 +676,7 @@ class RestClientTests: XCTestCase {
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     user?.listCreditCards(excludeState: [], limit: 1, offset: 0) { (collection, error) in
-                        let creditCard: CreditCard = (collection?.results?[0])!
+                        let creditCard: CreditCard = collection!.results![0]
                         creditCard.cardMetaData?.cardBackgroundCombinedEmbossed?.first?.retrieveAssetWith(options: [.width(600), .height(600), .fontBold(false)]) { (asset, error) in
                             
                             XCTAssertNil(error)

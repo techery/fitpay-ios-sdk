@@ -124,11 +124,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.createNewDevice(url, deviceType: device.deviceType!, manufacturerName: device.manufacturerName!, deviceName: device.deviceName!,
-                                   serialNumber: device.serialNumber, modelNumber: device.modelNumber, hardwareRevision: device.hardwareRevision,
-                                   firmwareRevision: device.firmwareRevision, softwareRevision: device.softwareRevision,
-                                   notificationToken: device.notificationToken, systemId: device.systemId, osName: device.osName,
-                                   secureElementId: device.secureElementId, casd: device.casd, completion: completion)
+            client.createNewDevice(url, deviceInfo: device, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }

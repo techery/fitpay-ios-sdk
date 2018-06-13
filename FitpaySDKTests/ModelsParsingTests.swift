@@ -92,8 +92,8 @@ class ModelsParsingTests: XCTestCase {
         XCTAssertEqual(deviceInfo?.licenseKey, "147PLO")
         XCTAssertEqual(deviceInfo?.bdAddress, "someAddress")
         XCTAssertEqual(deviceInfo?.pairing, "pairing")
-        XCTAssertEqual(deviceInfo?.secureElementId, mockModels.someId)
-        XCTAssertEqual(deviceInfo?.casd, "casd")
+        XCTAssertEqual(deviceInfo?.secureElement?.secureElementId, mockModels.someId)
+        XCTAssertEqual(deviceInfo?.secureElement?.casd, "casd")
         XCTAssertNotNil(deviceInfo?.shortRTMRepersentation)
 
         let json = deviceInfo?.toJSON()
@@ -117,8 +117,8 @@ class ModelsParsingTests: XCTestCase {
         XCTAssertEqual(json?["licenseKey"] as? String, "147PLO")
         XCTAssertEqual(json?["bdAddress"] as? String, "someAddress")
         XCTAssertEqual(json?["pairing"] as? String, "pairing")
-        XCTAssertEqual(json?["secureElementId"] as? String, mockModels.someId)
-        XCTAssertEqual(json?["casd"] as? String, "casd")
+        XCTAssertEqual((json?["secureElement"] as? [String: Any])?["secureElementId"] as? String, mockModels.someId)
+        XCTAssertEqual((json?["secureElement"] as? [String: Any])?["casd"] as? String, "casd")
     }
 
     func testCardRelationship() {

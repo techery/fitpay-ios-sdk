@@ -66,35 +66,13 @@ extension RestClient {
         }
     }
     
-    func createNewDevice(_ url: String, deviceType: String, manufacturerName: String, deviceName: String,
-                                  serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?,
-                                  softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?,
-                                  secureElementId: String?, casd: String?, completion: @escaping DeviceHandler) {
+    func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
-            var params: [String: Any] = [
-                "deviceType": deviceType,
-                "manufacturerName": manufacturerName,
-                "deviceName": deviceName,
-                "serialNumber": serialNumber ?? NSNull(),
-                "modelNumber": modelNumber ?? NSNull(),
-                "hardwareRevision": hardwareRevision ?? NSNull(),
-                "firmwareRevision": firmwareRevision ?? NSNull(),
-                "softwareRevision": softwareRevision ?? NSNull(),
-                "notificationToken": notificationToken ?? NSNull(),
-                "systemId": systemId ?? NSNull(),
-                "osName": osName ?? NSNull()]
-            
-            if (secureElementId != nil || casd != nil) {
-                params["secureElement"] = [
-                    "secureElementId": secureElementId ?? NSNull(),
-                    "casdCert": casd ?? NSNull()
-                    ] as [String: Any]
-            }
-            
+            let params = deviceInfo.toJSON()
             
             let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
