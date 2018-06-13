@@ -33,13 +33,12 @@ class BLEApduResultMessage: ApduResultMessage {
         
         super.init()
 
-        let range : NSRange = NSMakeRange(msg.count - 2, 2)
+        let range = NSMakeRange(msg.count - 2, 2)
         var buffer = [UInt8](repeating: 0x00, count: 2)
         (msg as NSData).getBytes(&buffer, range: range)
         
         responseCode = Data(bytes: UnsafePointer<UInt8>(buffer), count: 2)
         responseData = self.msg
-        print("responseCode \(responseCode ?? Data())")
     }
     
     public init(msg: Data) {

@@ -1,9 +1,8 @@
-
 import Foundation
 import Alamofire
 
 class CustomJSONArrayEncoding: ParameterEncoding {
-    public static var `default`: CustomJSONArrayEncoding { return CustomJSONArrayEncoding() }
+    static var `default`: CustomJSONArrayEncoding { return CustomJSONArrayEncoding() }
     
     func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var mutableRequest = try urlRequest.asURLRequest()
@@ -218,13 +217,6 @@ extension RestClient {
 // MARK: - Encryption
 
 extension RestClient {
-    /**
-     Completion handler
-     
-     - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
-     - parameter error?:         Provides error object, or nil if no error occurs
-     */
-    typealias CreateEncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
     
     /**
      Creates a new encryption key pair
@@ -232,7 +224,7 @@ extension RestClient {
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
- func createEncryptionKey(clientPublicKey: String, completion: @escaping CreateEncryptionKeyHandler) {
+ func createEncryptionKey(clientPublicKey: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let parameters = ["clientPublicKey": clientPublicKey]
         
@@ -273,31 +265,20 @@ extension RestClient {
     }
     
     /**
-     Completion handler
-     
-     - parameter error?: Provides error object, or nil if no error occurs
-     */
-    typealias DeleteEncryptionKeyHandler = (_ error: Error?) -> Void
-    
-    /**
      Deletes encryption key
      
      - parameter keyId:      key id
-     - parameter completion: DeleteEncryptionKeyHandler
+     - parameter completion: DeleteHandler
      */
-    func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler) {
+    func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteHandler) {
         let headers = self.defaultHeaders
         let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        request.validate().responseString { (response: DataResponse<String>) in
-            DispatchQueue.main.async {
-                completion(response.result.error)
-            }
+        self.makeRequest(request: request) { (response, error) in
+                completion(error)
         }
     }
     
-    typealias CreateKeyIfNeededHandler = CreateEncryptionKeyHandler
-    
-    func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler) {
+    func createKeyIfNeeded(_ completion: @escaping EncryptionKeyHandler) {
         if let key = self.key, !key.isExpired() {
             completion(key, nil)
         } else {
@@ -317,9 +298,9 @@ extension RestClient {
 // MARK: Request Signature Helpers
 extension RestClient {
     
-    typealias CreateAuthHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
+    typealias AuthHeaderHandler = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
     
-    func createAuthHeaders(_ completion: CreateAuthHeaders) {
+    func createAuthHeaders(_ completion: AuthHeaderHandler) {
         if self._session.isAuthorized {
             completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
         } else {
@@ -327,7 +308,7 @@ extension RestClient {
         }
     }
     
-    func skipAuthHeaders(_ completion: CreateAuthHeaders) {
+    func skipAuthHeaders(_ completion: AuthHeaderHandler) {
         // do nothing
         completion(self.defaultHeaders, nil)
     }
@@ -350,9 +331,7 @@ extension RestClient {
         }
     }
     
-    typealias PrepareKeyHeader = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
-    
-    func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders) {
+    func preparKeyHeader(_ completion: @escaping AuthHeaderHandler) {
         self.skipAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
@@ -561,8 +540,6 @@ extension RestClient {
     
     func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
         request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-            print(response.description)
-            print(NSString(data: response.data!, encoding: String.Encoding.utf8.rawValue)!)
             DispatchQueue.main.async {
                 if response.result.error != nil && response.response?.statusCode != 202 {
                     let JSON = response.data!.UTF8String

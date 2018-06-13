@@ -50,18 +50,7 @@ protocol RestClientInterface: class {
      */
     typealias EncryptionKeyHandler = (_ encryptionKey: EncryptionKey?, _ error: ErrorResponse?) -> Void
     
-    /**
-     Completion handler
-     
-     - parameter error?: Provides error object, or nil if no error occurs
-     */
-    typealias DeleteEncryptionKeyHandler = (_ error: Error?) -> Void
-    
-    typealias CreateAuthHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
-    
-    typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
-    
-    typealias PrepareKeyHeader = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
+    typealias AuthHeaderHandler = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
     
     typealias IssuersHandler = (_ issuers: Issuers?, _ error: ErrorResponse?) -> Void
     
@@ -250,19 +239,19 @@ protocol RestClientInterface: class {
      Deletes encryption key
      
      - parameter keyId:      key id
-     - parameter completion: DeleteEncryptionKeyHandler
+     - parameter completion: DeleteHandler
      */
-    func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteEncryptionKeyHandler)
+    func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteHandler)
     
     func createKeyIfNeeded(_ completion: @escaping EncryptionKeyHandler)
     
-    func createAuthHeaders(_ completion: CreateAuthHeaders)
+    func createAuthHeaders(_ completion: AuthHeaderHandler)
     
-    func skipAuthHeaders(_ completion: CreateAuthHeaders)
+    func skipAuthHeaders(_ completion: AuthHeaderHandler)
     
-    func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders)
+    func prepareAuthAndKeyHeaders(_ completion: @escaping AuthHeaderHandler)
     
-    func preparKeyHeader(_ completion: @escaping PrepareAuthAndKeyHeaders)
+    func preparKeyHeader(_ completion: @escaping AuthHeaderHandler)
     
     func issuers(completion: @escaping IssuersHandler)
     
