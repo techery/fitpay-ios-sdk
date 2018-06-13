@@ -1,11 +1,3 @@
-//
-//  BindedToDeviceSyncRequestQueue.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 13.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 class BindedToDeviceSyncRequestQueue {

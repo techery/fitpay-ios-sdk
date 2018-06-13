@@ -1,12 +1,5 @@
-//
-//  ApduResultMessage.swift
-//  FitpaySDK
-//
-//  Created by Carol Bloch on 5/19/16.
-//  Copyright © 2016 Fitpay. All rights reserved.
-//
 
-open class ApduResultMessage : NSObject, APDUResponseProtocol {
+open class ApduResultMessage: NSObject, APDUResponseProtocol {
     open var responseData: Data?
 
     public init(hexResult: String) {

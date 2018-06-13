@@ -3,7 +3,7 @@ import Foundation
 open class TermsAssetReferences: NSObject, ClientModel, Serializable, AssetRetrivable {
     open var mimeType: String?
     
-    var client: RestClient?
+    var client: RestClientInterface?
     var links: [ResourceLink]?
     
     private static let selfResourceKey = "self"

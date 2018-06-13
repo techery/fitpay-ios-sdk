@@ -36,9 +36,9 @@ import Foundation
     private static let getVerificationMethodsKey    = "verificationMethods"
     private static let selectedVerificationKey      = "selectedVerification"
 
-    private weak var _client: RestClient?
+    private weak var _client: RestClientInterface?
 
-    var client: RestClient? {
+    var client: RestClientInterface? {
         get {
             return self._client
         }

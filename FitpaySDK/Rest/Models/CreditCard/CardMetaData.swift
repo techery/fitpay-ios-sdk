@@ -19,13 +19,12 @@ open class CardMetadata: NSObject, ClientModel, Serializable {
     open var icon: [Image]?
     open var issuerLogo: [Image]?
     
-    private var _client: RestClient?
+    private var _client: RestClientInterface?
     
-    var client: RestClient? {
+    var client: RestClientInterface? {
         get {
             return self._client
         }
-        
         set {
             self._client = newValue
             

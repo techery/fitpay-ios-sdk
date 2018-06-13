@@ -16,7 +16,7 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
     open var osName: String?
     open var systemId: String?
     
-    var client: RestClient?
+    var client: RestClientInterface?
     var links: [ResourceLink]?
     
     private static let selfResourceKey = "self"
