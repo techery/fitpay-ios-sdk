@@ -284,7 +284,7 @@ class TestHelper {
         
         DispatchQueue.main.asyncAfter(deadline: time) {
             
-            pendingCard.getCreditCard() { (creditCard, error) in
+            pendingCard.getCard() { (creditCard, error) in
                 guard error == nil else {
                     XCTFail("failed to retrieve credit card will polling for active state")
                     return

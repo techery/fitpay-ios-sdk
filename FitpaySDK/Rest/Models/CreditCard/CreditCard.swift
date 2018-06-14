@@ -176,7 +176,7 @@ import Foundation
 
      - parameter completion:   CreditCardHandler closure
      */
-    @objc open func getCreditCard(_ completion: @escaping RestClient.CreditCardHandler) {
+    @objc open func getCard(_ completion: @escaping RestClient.CreditCardHandler) {
         let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
 
@@ -220,7 +220,7 @@ import Foundation
      
      - parameter completion:   DeleteCreditCardHandler closure
      */
-    @objc open func deleteCreditCard(_ completion: @escaping RestClient.DeleteHandler) {
+    @objc open func deleteCard(_ completion: @escaping RestClient.DeleteHandler) {
         let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -234,15 +234,10 @@ import Foundation
      Update the details of an existing credit card
      
      - parameter name:         name
-     - parameter street1:      address
-     - parameter street2:      address
-     - parameter city:         city
-     - parameter state:        state
-     - parameter postalCode:   postal code
-     - parameter countryCode:  country code
+     - parameter address:      address
      - parameter completion:   UpdateCreditCardHandler closure
      */
-    @objc open func update(name: String?, address: Address, completion: @escaping RestClient.CreditCardHandler) {
+    @objc open func updateCard(name: String?, address: Address, completion: @escaping RestClient.CreditCardHandler) {
         let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {

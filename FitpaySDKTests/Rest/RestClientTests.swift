@@ -251,7 +251,7 @@ class RestClientTests: XCTestCase {
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     
-                    creditCard?.deleteCreditCard { deleteCardError in
+                    creditCard?.deleteCard { deleteCardError in
                         XCTAssertNil(deleteCardError)
                         
                         self.testHelper.deleteUser(user, expectation: expectation)
@@ -273,7 +273,7 @@ class RestClientTests: XCTestCase {
                     let name = "NewUser"
                     let address = Address(street1: "NewStreet1", street2: "NewStreet2", street3: nil, city: "Beverly Hills", state: "MO", postalCode: "90210", countryCode: "AB")
 
-                    creditCard?.update(name: name, address: address) { (updatedCard, error) -> Void in
+                    creditCard?.updateCard(name: name, address: address) { (updatedCard, error) -> Void in
                         XCTAssertNil(error)
                         XCTAssertNotNil(updatedCard)
                         
