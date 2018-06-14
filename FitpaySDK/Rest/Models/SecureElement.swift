@@ -7,13 +7,13 @@ import Foundation
     
     /// Controlling authority security domain certificate
     /// Like an SSL certificate, but for secure elements
-    @objc open var casd: String?
+    @objc open var casdCert: String?
     
     /// Initialize class with all variables
-    @objc public init(secureElementId: String?, casd: String?) {
+    @objc public init(secureElementId: String?, casdCert: String?) {
         super.init()
         self.secureElementId = secureElementId
-        self.casd = casd
+        self.casdCert = casdCert
     }
     
 }

@@ -27,7 +27,7 @@ class DeviceInfoTests: BaseTestProvider {
         XCTAssertEqual(deviceInfo?.bdAddress, "someAddress")
         XCTAssertEqual(deviceInfo?.pairing, "pairing")
         XCTAssertEqual(deviceInfo?.secureElement?.secureElementId, mockModels.someId)
-        XCTAssertEqual(deviceInfo?.secureElement?.casd, "casd")
+        XCTAssertEqual(deviceInfo?.secureElement?.casdCert, "casd")
         XCTAssertNotNil(deviceInfo?.shortRTMRepersentation)
 
         let json = deviceInfo?.toJSON()
@@ -52,6 +52,6 @@ class DeviceInfoTests: BaseTestProvider {
         XCTAssertEqual(json?["bdAddress"] as? String, "someAddress")
         XCTAssertEqual(json?["pairing"] as? String, "pairing")
         XCTAssertEqual((json?["secureElement"] as? [String: Any])?["secureElementId"] as? String, mockModels.someId)
-        XCTAssertEqual((json?["secureElement"] as? [String: Any])?["casd"] as? String, "casd")
+        XCTAssertEqual((json?["secureElement"] as? [String: Any])?["casdCert"] as? String, "casd")
     }
 }
