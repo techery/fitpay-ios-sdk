@@ -12,7 +12,7 @@ DEPENDENCIES:
   - RxSwift (~> 4.1)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - Alamofire
     - JWTDecode
     - RxBlocking
@@ -26,4 +26,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 26cdfa85f3619ccb1dd7083c46074a5dcc4d3c9f
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.2
