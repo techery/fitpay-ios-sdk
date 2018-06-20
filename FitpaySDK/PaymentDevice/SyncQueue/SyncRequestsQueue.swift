@@ -1,13 +1,4 @@
-//
-//  SyncRequestsQueue.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 23.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
-
 
 open class SyncRequestQueue {
     public static let sharedInstance = SyncRequestQueue(syncManager: SyncManager.sharedInstance)

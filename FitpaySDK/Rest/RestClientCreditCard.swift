@@ -38,12 +38,26 @@ extension RestClient {
      - parameter error:              Provides error object, or nil if no error occurs
      */
     public typealias VerifyHandler = (_ pending: Bool, _ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
+
+    /**
+     Completion handler
+
+     - parameter verificationMethods: Provides VerificationMethods objects, or nil if error occurs
+     - parameter error:              Provides error object, or nil if no error occurs
+     */
+    public typealias VerifyMethodsHandler = (_ verificationMethods: ResultCollection<VerificationMethod>?, _ error: ErrorResponse?) -> Void
+    
+    /**
+     Completion handler
+     
+     - parameter verificationMethod: Provides VerificationMethod object, or nil if error occurs
+     - parameter error:              Provides error object, or nil if no error occurs
+     */
+    public typealias VerifyMethodHandler = (_ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
     
     //MARK - Internal Functions
     
-    func createCreditCard(_ url: String, pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
-                                   street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
-                                   completion: @escaping CreditCardHandler) {
+    func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
@@ -51,31 +65,22 @@ extension RestClient {
                 return
             }
             
-            var parameters: [String: String] = [:]
-            let rawCard: [String: Any] = [
-                "pan": pan,
-                "expMonth": expMonth,
-                "expYear": expYear,
-                "cvv": cvv,
-                "name": name,
-                "address": [
-                    "street1": street1,
-                    "street2": street2,
-                    "street3": street3,
-                    "city": city,
-                    "state": state,
-                    "postalCode": postalCode,
-                    "country": country
-                ]
-            ]
-            
-            if let cardJSON = rawCard.JSONString {
-                if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId: headers[RestClient.fpKeyIdKey]!) {
-                    if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
-                        parameters["encryptedData"] = encrypted
-                    }
-                }
+            guard let cardJSON = cardInfo.toJSONString() else {
+                completion(nil, ErrorResponse(domain: RestClient.self, errorCode: nil, errorMessage: "Failed to parse JSON"))
+                return
             }
+            
+            guard let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId: headers[RestClient.fpKeyIdKey]!) else {
+                completion(nil, ErrorResponse(domain: RestClient.self, errorCode: nil, errorMessage: "Failed to create jweObject object"))
+                return
+            }
+          
+            guard let encrypted = try? jweObject.encrypt(strongSelf.secret), let unwrappedEncrypted = encrypted else {
+                completion(nil, ErrorResponse(domain: RestClient.self, errorCode: nil, errorMessage: "Failed to encrypt object"))
+                return
+            }
+            
+            let parameters: [String: String] =  ["encryptedData": unwrappedEncrypted]
             
             let request = strongSelf._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
@@ -135,7 +140,7 @@ extension RestClient {
         }
     }
     
-    func updateCreditCard(_ url: String, name: String?, street1: String?, street2: String?, city: String?, state: String?, postalCode: String?, countryCode: String?, completion: @escaping CreditCardHandler) {
+    func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers  else {
@@ -150,27 +155,27 @@ extension RestClient {
                 operations.append(["op": "replace", "path": "/name", "value": name])
             }
             
-            if let street1 = street1 {
+            if let street1 = address.street1 {
                 operations.append(["op": "replace", "path": "/address/street1", "value": street1])
             }
             
-            if let street2 = street2 {
+            if let street2 = address.street2 {
                 operations.append(["op": "replace", "path": "/address/street2", "value": street2])
             }
             
-            if let city = city {
+            if let city = address.city {
                 operations.append(["op": "replace", "path": "/address/city", "value": city])
             }
             
-            if let state = state {
+            if let state = address.state {
                 operations.append(["op": "replace", "path": "/address/state", "value": state])
             }
             
-            if let postalCode = postalCode {
+            if let postalCode = address.postalCode {
                 operations.append(["op": "replace", "path": "/address/postalCode", "value": postalCode])
             }
             
-            if let countryCode = countryCode {
+            if let countryCode = address.countryCode {
                 operations.append(["op": "replace", "path": "/address/countryCode", "value": countryCode])
             }
             
@@ -236,7 +241,45 @@ extension RestClient {
             }
         }
     }
+
+    func getVerificationMethods(_ url: String, completion: @escaping VerifyMethodsHandler) {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers  else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+
+            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let verificationMethods = try? ResultCollection<VerificationMethod>(resultValue)
+                completion(verificationMethods, error)
+            }
+        }
+    }
     
+    func getVerificationMethod(_ url: String, completion: @escaping VerifyMethodHandler) {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers  else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let verificationMethod = try? VerificationMethod(resultValue)
+                completion(verificationMethod, error)
+            }
+        }
+    }
+
     func selectVerificationType(_ url: String, completion: @escaping VerifyHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
@@ -363,7 +406,7 @@ extension RestClient {
     }
     
     //MARK: - Private Functions
-    private func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
+    internal func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
             return
@@ -377,7 +420,7 @@ extension RestClient {
         }
     }
     
-    private func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler) {
+    internal func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
             return

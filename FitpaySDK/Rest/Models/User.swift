@@ -1,3 +1,4 @@
+import Foundation
 
 open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     
@@ -7,30 +8,6 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     open var lastModified: String?
     open var lastModifiedEpoch: TimeInterval?
     
-    var links: [ResourceLink]?
-    var encryptedData: String?
-    var info: UserInfo?
-    
-    private static let creditCardsResourceKey = "creditCards"
-    private static let devicesResourceKey = "devices"
-    private static let selfResourceKey = "self"
-    
-    open var firstName: String? {
-        return self.info?.firstName
-    }
-    
-    open var lastName: String? {
-        return self.info?.lastName
-    }
-    
-    open var birthDate: String? {
-        return self.info?.birthDate
-    }
-    
-    open var email: String? {
-        return self.info?.email
-    }
-    
     open var listCreditCardsAvailable: Bool {
         return self.links?.url(User.creditCardsResourceKey) != nil
     }
@@ -39,7 +16,15 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         return self.links?.url(User.devicesResourceKey) != nil
     }
     
-    weak var client: RestClient?
+    var links: [ResourceLink]?
+    var encryptedData: String?
+    var info: UserInfo?
+
+    weak var client: RestClientInterface?
+    
+    private static let creditCardsResourceKey = "creditCards"
+    private static let devicesResourceKey = "devices"
+    private static let selfResourceKey = "self"
     
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
@@ -50,6 +35,8 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         case lastModifiedEpoch = "lastModifiedTsEpoch"
         case encryptedData
     }
+    
+    // MARK: - Lifecycle
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -65,8 +52,8 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
         try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
+        try? container.encode(id, forKey: .id)
         try? container.encode(created, forKey: .created)
         try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try? container.encode(lastModified, forKey: .lastModified)
@@ -74,30 +61,19 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         try? container.encode(encryptedData, forKey: .encryptedData)
     }
     
+    // MARK: - Public Functions
+    
     /**
      Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
      
-     - parameter pan:        pan
-     - parameter expMonth:   expiration month
-     - parameter expYear:    expiration year
-     - parameter cvv:        cvv code
-     - parameter name:       user name
-     - parameter street1:    address
-     - parameter street2:    address
-     - parameter street3:    street name
-     - parameter city:       address
-     - parameter state:      state
-     - parameter postalCode: postal code
-     - parameter country:    country
+     - parameter cardInfo: Credit Card Info including Address and IdVerification info
      - parameter completion: CreateCreditCardHandler closure
      */
-    @objc public func createCreditCard(pan: String, expMonth: Int, expYear: Int, cvv: String, name: String,
-                                       street1: String, street2: String, street3: String, city: String, state: String, postalCode: String, country: String,
-                                       completion: @escaping RestClient.CreditCardHandler) {
+    @objc public func createCreditCard(cardInfo: CardInfo, completion: @escaping RestClient.CreditCardHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.createCreditCard(url, pan: pan, expMonth: expMonth, expYear: expYear, cvv: cvv, name: name, street1: street1, street2: street2, street3: street3, city: city, state: state, postalCode: postalCode, country: country, completion: completion)
+            client.createCreditCard(url, cardInfo: cardInfo, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
@@ -115,7 +91,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     public func listCreditCards(excludeState: [String], limit: Int, offset: Int, completion: @escaping RestClient.CreditCardsHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
-        if  let url = url, let client = self.client {
+        if let url = url, let client = self.client {
             client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
@@ -148,11 +124,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.createNewDevice(url, deviceType: device.deviceType!, manufacturerName: device.manufacturerName!, deviceName: device.deviceName!,
-                                   serialNumber: device.serialNumber, modelNumber: device.modelNumber, hardwareRevision: device.hardwareRevision,
-                                   firmwareRevision: device.firmwareRevision, softwareRevision: device.softwareRevision,
-                                   notificationToken: device.notificationToken, systemId: device.systemId, osName: device.osName,
-                                   secureElementId: device.secureElementId, casd: device.casd, completion: completion)
+            client.createNewDevice(url, deviceInfo: device, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }

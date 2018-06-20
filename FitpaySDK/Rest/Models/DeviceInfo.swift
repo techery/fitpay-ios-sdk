@@ -45,14 +45,12 @@ import Foundation
     
     open var licenseKey: String?
     
+    /// MAC address for Bluetooth
     open var bdAddress: String?
     
     open var pairing: String?
-    
-    /// The ID of a secure element in a payment capable device
-    open var secureElementId: String?
-    
-    open var casd: String?
+
+    open var secureElement: SecureElement?
     
     // Extra metadata specific for a particural type of device
     open var metadata: [String: Any]?
@@ -69,7 +67,7 @@ import Foundation
         return self.links?.url(DeviceInfo.deviceResetTasksKey)
     }
 
-    var client: RestClient? {
+    var client: RestClientInterface? {
         get {
             return self._client
         }
@@ -92,13 +90,13 @@ import Foundation
     private static let lastAckCommitResourceKey = "lastAckCommit"
     private static let deviceResetTasksKey = "deviceResetTasks"
 
-    private weak var _client: RestClient?
+    private weak var _client: RestClientInterface?
     
     override public init() {
         super.init()
     }
 
-    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElementId: String?, casd: String?) {
+    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElement: SecureElement?) {
         self.deviceType = deviceType
         self.manufacturerName = manufacturerName
         self.deviceName = deviceName
@@ -110,8 +108,7 @@ import Foundation
         self.notificationToken = notificationToken
         self.systemId = systemId
         self.osName = osName
-        self.secureElementId = secureElementId
-        self.casd = casd
+        self.secureElement = secureElement
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -135,8 +132,6 @@ import Foundation
         case bdAddress
         case pairing
         case secureElement
-        case secureElementId
-        case casd
         case cardRelationships
         case metadata
     }
@@ -163,15 +158,8 @@ import Foundation
         licenseKey = try? container.decode(.licenseKey)
         bdAddress = try? container.decode(.bdAddress)
         pairing = try? container.decode(.pairing)
-        if let secureElement: [String: String] = try? container.decode(.secureElement)  {
-            secureElementId = secureElement["secureElementId"]
-            casd = secureElement["casdCert"]
-        } else {
-            secureElementId = try? container.decode(.secureElementId)
-            casd = try? container.decode(.casd)
-        }
-
-        self.cardRelationships = try? container.decode(.cardRelationships)
+        secureElement = try? container.decode(.secureElement)
+        cardRelationships = try? container.decode(.cardRelationships)
         metadata = try? container.decode([String : Any].self)
     }
 
@@ -180,10 +168,12 @@ import Foundation
         
         try? container.encode(links, forKey: .links, transformer: ResourceLinkTypeTransform())
         try? container.encode(created, forKey: .created)
-        try? container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
+        try container.encode(createdEpoch, forKey: .createdEpoch, transformer: NSTimeIntervalTypeTransform())
         try? container.encode(deviceIdentifier, forKey: .deviceIdentifier)
         try? container.encode(deviceName, forKey: .deviceName)
         try? container.encode(deviceType, forKey: .deviceType)
+        try? container.encode(manufacturerName, forKey: .manufacturerName)
+        try? container.encode(state, forKey: .state)
         try? container.encode(serialNumber, forKey: .serialNumber)
         try? container.encode(modelNumber, forKey: .modelNumber)
         try? container.encode(hardwareRevision, forKey: .hardwareRevision)
@@ -195,8 +185,7 @@ import Foundation
         try? container.encode(licenseKey, forKey: .licenseKey)
         try? container.encode(bdAddress, forKey: .bdAddress)
         try? container.encode(pairing, forKey: .pairing)
-        try? container.encode(secureElementId, forKey: .secureElementId)
-        try? container.encode(casd, forKey: .casd)
+        try? container.encode(secureElement, forKey: .secureElement)
         try? container.encode(cardRelationships, forKey: .cardRelationships)
     }
 
@@ -256,7 +245,7 @@ import Foundation
             dic["bdAddress"] = bdAddress
         }
 
-        if let secureElementId = self.secureElementId {
+        if let secureElementId = self.secureElement?.secureElementId {
             dic["secureElement"] = ["secureElementId": secureElementId]
         }
 

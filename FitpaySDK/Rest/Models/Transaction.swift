@@ -13,7 +13,7 @@ open class Transaction: NSObject, ClientModel, Serializable {
     open var merchantCode: String?
     open var merchantType: String?
     
-    weak var client: RestClient?
+    weak var client: RestClientInterface?
     
     var links: [ResourceLink]?
     
@@ -47,7 +47,7 @@ open class Transaction: NSObject, ClientModel, Serializable {
         currencyCode = try? container.decode(.currencyCode)
         authorizationStatus = try? container.decode(.authorizationStatus)
         transactionTime = try? container.decode(.transactionTime)
-        transactionTimeEpoch = try? container.decode(.transactionTimeEpoch)
+        transactionTimeEpoch = try container.decode(.transactionTimeEpoch, transformer: NSTimeIntervalTypeTransform())
         merchantName = try? container.decode(.merchantName)
         merchantCode = try? container.decode(.merchantCode)
         merchantType = try? container.decode(.merchantType)
@@ -63,7 +63,7 @@ open class Transaction: NSObject, ClientModel, Serializable {
         try? container.encode(currencyCode, forKey: .currencyCode)
         try? container.encode(authorizationStatus, forKey: .authorizationStatus)
         try? container.encode(transactionTime, forKey: .transactionTime)
-        try? container.encode(transactionTimeEpoch, forKey: .transactionTimeEpoch)
+        try? container.encode(transactionTimeEpoch, forKey: .transactionTimeEpoch, transformer: NSTimeIntervalTypeTransform())
         try? container.encode(merchantName, forKey: .merchantName)
         try? container.encode(merchantCode, forKey: .merchantCode)
         try? container.encode(merchantType, forKey: .merchantType)

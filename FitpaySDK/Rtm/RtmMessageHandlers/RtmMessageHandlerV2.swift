@@ -1,11 +1,3 @@
-//
-//  RtmMessageHandlerV2.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 30.05.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import Foundation
 
 class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
@@ -39,7 +31,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
     var wvConfigStorage: WvConfigStorage!
     var webViewSessionData: SessionData?
-    var restClient: RestClient?
+    var restClient: RestClientInterface?
 
     var syncCallBacks = [RtmMessage]()
     
@@ -95,7 +87,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
     func handleSessionData(_ message: RtmMessage) {
         guard let webViewSessionData = try? SessionData(message.data) else {
-            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(message.data)")
+            log.error("WV_DATA: Can't parse SessionData from rtmBridge message. Message: \(String(describing: message.data))")
             return
         }
 
@@ -118,7 +110,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             self?.wvConfigStorage.device = device
             self?.wvConfigStorage.paymentDevice?.deviceInfo?.client = self?.wvConfigStorage.user?.client
 
-            if let delegate = self?.wvRtmDelegate, let email = user?.email {
+            if let delegate = self?.wvRtmDelegate, let email = user?.info?.email {
                 delegate.didAuthorizeWith(email: email)
             }
 
@@ -135,7 +127,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
                                                              success: true), retries: 3)
             }
         }
-        FitpayNotificationsManager.sharedInstance.setRestClient(self.restClient)
+        FitpayNotificationsManager.sharedInstance.setRestClient(self.restClient as? RestClient)
     }
 
     func logoutResponseMessage() -> RtmMessageResponse? {

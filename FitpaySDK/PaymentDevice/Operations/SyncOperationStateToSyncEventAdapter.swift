@@ -1,11 +1,3 @@
-//
-//  SyncOperationStateToSyncEventAdapter.swift
-//  FitpaySDK
-//
-//  Created by Anton Popovichenko on 11.07.17.
-//  Copyright © 2017 Fitpay. All rights reserved.
-//
-
 import RxSwift
 
 class SyncOperationStateToSyncEventAdapter {

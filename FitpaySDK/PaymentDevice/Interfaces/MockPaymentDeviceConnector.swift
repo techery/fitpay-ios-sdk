@@ -1,3 +1,5 @@
+import Foundation
+
 public class MockPaymentDeviceConnector: NSObject {
     weak var paymentDevice: PaymentDevice!
     
@@ -28,8 +30,8 @@ public class MockPaymentDeviceConnector: NSObject {
             self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.disconnected
         }
     }
-
-    private func sendAPDUData(_ data: Data, sequenceNumber: UInt16) {
+    
+    private func sendAPDUData(string: String, sequenceNumber: UInt16) {
         let response = "9000"
         let packet = ApduResultMessage(hexResult: response)
         
@@ -80,14 +82,14 @@ extension MockPaymentDeviceConnector: PaymentDeviceConnectable {
     }
     
     public func executeAPDUCommand(_ apduCommand: APDUCommand) {
-        guard let commandData = apduCommand.command?.hexToData() else {
+        guard let command = apduCommand.command else {
             if let completion = self.paymentDevice.apduResponseHandler {
-                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: PaymentDeviceConnectable.self))
+                completion(nil, nil, NSError(domain: "\(PaymentDeviceConnectable.self)", code: PaymentDevice.ErrorCode.apduDataNotFull.rawValue, userInfo: nil))
             }
             return
         }
         
-        sendAPDUData(commandData as Data, sequenceNumber: UInt16(apduCommand.sequence))
+        sendAPDUData(string: command, sequenceNumber: UInt16(apduCommand.sequence))
     }
     
     public func deviceInfo() -> DeviceInfo? {
@@ -105,9 +107,11 @@ extension MockPaymentDeviceConnector: PaymentDeviceConnectable {
         deviceInfo.osName = "IOS"
         deviceInfo.licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
         deviceInfo.bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-        deviceInfo.secureElementId = self.generateRandomSeId()
-        deviceInfo.casd = "7F218201097F218201049310201608231634158F370493B60000000342038949325F200C434552542E434153442E43549501825F2504201607015F240420210701450CA000000151535043415344005314C0AC3B49223485BE2FCFECBC19CFE14CE01CD9795F378180C0F41E9813FDC0C4522AA72CA6DDFFCFEE5432A01D7FDCF37246C23B138C2C7E5F91431E7E445932A812E0473A713919E594002E257311E67A324F130CA56EDF13FE36616C6EDE85437F30450ADA2549122C0C879B1BF55D1C83FEC7F8AB5CC45DE3A36110226F1A7DC35D86B39445EBBC9325C2F7FDF79FA0410DF55074ABE25F3822905ACD4030B40F9B8BAF35678C439EB7F6862D198BE58CFB053F6BE4A3ECAE148D05"
-        
+        let secureElementId = self.generateRandomSeId()
+        let casd = "7F218201097F218201049310201608231634158F370493B60000000342038949325F200C434552542E434153442E43549501825F2504201607015F240420210701450CA000000151535043415344005314C0AC3B49223485BE2FCFECBC19CFE14CE01CD9795F378180C0F41E9813FDC0C4522AA72CA6DDFFCFEE5432A01D7FDCF37246C23B138C2C7E5F91431E7E445932A812E0473A713919E594002E257311E67A324F130CA56EDF13FE36616C6EDE85437F30450ADA2549122C0C879B1BF55D1C83FEC7F8AB5CC45DE3A36110226F1A7DC35D86B39445EBBC9325C2F7FDF79FA0410DF55074ABE25F3822905ACD4030B40F9B8BAF35678C439EB7F6862D198BE58CFB053F6BE4A3ECAE148D05"
+        let secureElement = SecureElement(secureElementId: secureElementId, casdCert: casd)
+        deviceInfo.secureElement = secureElement
+
         return deviceInfo
     }
     
@@ -117,11 +121,10 @@ extension MockPaymentDeviceConnector: PaymentDeviceConnectable {
     
 }
 
-
 //MARK: - Nested Objects
 
 extension MockPaymentDeviceConnector {
-
+    
     public enum TestingType: UInt64 {
         case partialSimulationMode = 0xBADC0FFEE000
         case fullSimulationMode    = 0xDEADBEEF0000
