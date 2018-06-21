@@ -4,8 +4,9 @@ import Foundation
 /// Used in creating webURL
 /// Create in `application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:])`
 @objc open class A2AIssuerResponse: NSObject, Serializable {
-    private var response: A2AStepupResult?
-    private var authCode: String?
+    
+    public var response: A2AStepupResult?
+    public var authCode: String?
 
     /// Init A2AIssuerRequest
     ///

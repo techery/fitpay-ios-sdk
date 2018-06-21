@@ -512,8 +512,6 @@
 		3A9180BA1DE8824A00C183CE /* FitpayEventsSubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FitpayEventsSubscriber.swift; sourceTree = "<group>"; };
 		3A93A1161DB8CA2C00A9FEB4 /* FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
-		3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlamofireObjectMapper.framework; path = Carthage/Build/iOS/AlamofireObjectMapper.framework; sourceTree = "<group>"; };
-		3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
 		3AF3A8ED1DDB15AE0037E105 /* BaseOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseOutput.swift; sourceTree = "<group>"; };
 		3AF3A8EE1DDB15AE0037E105 /* ConsoleOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleOutput.swift; sourceTree = "<group>"; };
 		3AF3A8EF1DDB15AE0037E105 /* FitpaySDKLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FitpaySDKLogger.swift; sourceTree = "<group>"; };
@@ -1148,8 +1146,6 @@
 				27781747208E42A200FE2770 /* RxSwift.framework */,
 				27781745208E42A100FE2770 /* RxTest.framework */,
 				3A93A1181DB8E68E00A9FEB4 /* Alamofire.framework */,
-				3A93A1191DB8E68E00A9FEB4 /* AlamofireObjectMapper.framework */,
-				3A93A11C1DB8E68E00A9FEB4 /* ObjectMapper.framework */,
 				B6183344EC5F4DB31C005E1B /* Pods_all_FitpaySDK.framework */,
 				576F8B977B9F8FB60903CA7D /* Pods_all_FitpaySDKTestsPods.framework */,
 			);

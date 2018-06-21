@@ -106,6 +106,10 @@ import WebKit
     @objc open func webViewPageLoaded() {
          wvConfig.webViewPageLoaded()
     }
+ 
+    open func respondToA2AWith(success: Bool, error: A2AVerificationError?) {
+        wvConfig.rtmMessaging.messageHandler?.appToAppVerificationResponse(success: success, reason: error)
+    }
     
 }
 
