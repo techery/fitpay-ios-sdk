@@ -37,6 +37,10 @@ class MockRtmMessageHandler: RtmMessageHandler {
         
     }
     
+    func appToAppVerificationResponse(success: Bool, reason: A2AVerificationError?) {
+        
+    }
+    
     func logoutResponseMessage() -> RtmMessageResponse? {
         return nil
     }

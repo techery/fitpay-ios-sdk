@@ -173,7 +173,7 @@ class MockModels {
     }
     
     func getIdVerification() -> IdVerification? {
-        let idVerification = try? IdVerification("{\"oemAccountInfoUpdatedDate\": \"\(someDate2)\", \"oemAccountCreatedDate\": \"\(someDate2)\", \"suspendedCardsInAccount\": 1, \"daysSinceLastAccountActivity\": \"\(someDate2)\", \"deviceLostMode\": \"\(someDate2)\", \"deviceWithActiveTokens\": 2, \"activeTokenOnAllDevicesForAccount\": 3, \"accountScore\": 4, \"deviceScore\": 5, \"nfcCapable\": false, \"oemAccountCountryCode\": \"US\", \"deviceCountry\": \"US\", \"oemAccountUserName\": \"\(someName)\", \"devicePairedToOemAccountDate\": \"\(someDate2)\", \"deviceTimeZone\": \"CST\", \"deviceTimeZoneSetBy\": 0, \"deviceIMEI\": \"123456\"}")
+        let idVerification = try? IdVerification("{\"oemAccountInfoUpdatedDate\": \"\(someDate2)\", \"oemAccountCreatedDate\": \"\(someDate2)\", \"suspendedCardsInAccount\": 1, \"daysSinceLastAccountActivity\": 6, \"deviceLostMode\": 7, \"deviceWithActiveTokens\": 2, \"activeTokenOnAllDevicesForAccount\": 3, \"accountScore\": 4, \"deviceScore\": 5, \"nfcCapable\": false, \"oemAccountCountryCode\": \"US\", \"deviceCountry\": \"US\", \"oemAccountUserName\": \"\(someName)\", \"devicePairedToOemAccountDate\": \"\(someDate2)\", \"deviceTimeZone\": \"CST\", \"deviceTimeZoneSetBy\": 0, \"deviceIMEI\": \"123456\"}")
         XCTAssertNotNil(idVerification)
         return idVerification
     }
