@@ -22,9 +22,7 @@ class RtmMessageHandlerV5: RtmMessageHandlerV4 {
         case apiErrorDetails
         
         func msgHandlerFor(handlerObject: RtmMessageHandler) -> MessageTypeHandler? {
-            guard let handlerObject = handlerObject as? RtmMessageHandlerV5 else {
-                return nil
-            }
+            guard let handlerObject = handlerObject as? RtmMessageHandlerV5 else { return nil }
             
             switch self {
             case .userData:
