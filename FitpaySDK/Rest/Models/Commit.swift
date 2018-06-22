@@ -121,6 +121,7 @@ public enum CommitType: String {
     case setDefaultCreditCard       = "SET_DEFAULT_CREDITCARD"
     case apduPackage                = "APDU_PACKAGE"
     case creditCardProvisionFailed  = "CREDITCARD_PROVISION_FAILED"
+    case creditCardProvisionSuccess = "CREDITCARD_PROVISION_SUCCESS"
     case creditCardMetaDataUpdated  = "CREDITCARD_METADATA_UPDATED"
     case unknown                    = "UNKNOWN"
 }
