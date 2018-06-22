@@ -32,6 +32,18 @@ open class CommitMetrics: Serializable {
         case totalProcessingTimeMs
         case commitStatistics = "commits"
     }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        syncId = try container.decode(.syncId)
+        deviceId = try container.decode(.deviceId)
+        userId = try container.decode(.userId)
+        sdkVersion = try container.decode(.sdkVersion)
+        osVersion = try container.decode(.osVersion)
+        initiator = try container.decode(.initiator)
+        totalProcessingTimeMs = try container.decode(.totalProcessingTimeMs)
+        commitStatistics = try container.decode(.commitStatistics)
+    }
     
     public init() {
         self.sdkVersion = FitpayConfig.sdkVersion
