@@ -51,9 +51,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
             self.configStorage.a2aReturnLocation = newValue
         }
     }
-    
-    //MARK: - and Private Variables
-    
+        
     var configStorage = WvConfigStorage()
 
     var url = FitpayConfig.webURL
@@ -257,7 +255,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
 
         log.debug("WV_DATA: sending data to wv: \(jsonRepresentation)")
         
-        webview?.evaluateJavaScript("window.RtmBridge.resolve(\(jsonRepresentation))", completionHandler: { [weak self] (result, error) in
+        webview?.evaluateJavaScript("window.RtmBridge.resolve(\(jsonRepresentation))") { [weak self] (result, error) in
             if let error = error {
                 if retries > 0 {
                     log.warning("WV_DATA: Can't send message to wv... retrying...")
@@ -268,7 +266,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
                     log.error("WV_DATA: Can't send message to wv, error: \(error)")
                 }
             }
-        })
+        }
     }
 
     func sendStatusMessage(_ message: String, type: WVMessageType) {

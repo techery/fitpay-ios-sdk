@@ -1,24 +1,37 @@
 import Foundation
 
 open class SyncRequestQueue {
+    
     public static let sharedInstance = SyncRequestQueue(syncManager: SyncManager.sharedInstance)
     
-    public func add(request: SyncRequest, payload: String? = nil, completion: SyncRequestCompletion?) {
-        request.completion = completion
-        if let payload = payload {
-            if let notificationDetail = try? NotificationDetail(payload) {
-                request.syncInitiator = .webHook
-                request.notificationAsc = notificationDetail
-            } else {
-                log.error("Payload data is wrong. Payload: \(payload)")
-            }
-        }
-        request.update(state: .pending)
+    var lastFullSyncRequest: SyncRequest?
 
+    private typealias DeviceIdentifier = String
+    private var queues: [DeviceIdentifier: BindedToDeviceSyncRequestQueue] = [:]
+    private let syncManager: SyncManagerProtocol
+    private var bindings: [FitpayEventBinding] = []
+    
+    // MARK: - Lifecycle
+    
+    init(syncManager: SyncManagerProtocol) {
+        self.syncManager = syncManager
+        self.bind()
+    }
+    
+    deinit {
+        self.unbind()
+    }
+
+    // MARK: - Public Functions
+    
+    public func add(request: SyncRequest, completion: SyncRequestCompletion?) {
+        request.completion = completion
+        request.update(state: .pending)
+        
         guard let queue = queueFor(syncRequest: request) else {
             log.error("Error. Can't get/create sync request queue for device. Device id: \(request.deviceInfo?.deviceIdentifier ?? "nil")")
             request.update(state: .done)
-
+            
             if let completion = completion {
                 completion(.failed, SyncRequestQueueError.cantCreateQueueForSyncRequest)
             }
@@ -29,26 +42,15 @@ open class SyncRequestQueue {
         if !request.isEmptyRequest {
             lastFullSyncRequest = request
         }
-
+        
         queue.add(request: request)
     }
     
-    init(syncManager: SyncManagerProtocol) {
-        self.syncManager = syncManager
-        self.bind()
-    }
-
-    deinit {
-        self.unbind()
-    }
+    // MARK: - Private Functins
     
-    private typealias DeviceIdentifier = String
-    private var queues: [DeviceIdentifier: BindedToDeviceSyncRequestQueue] = [:]
-    private let syncManager: SyncManagerProtocol
-    private var bindings: [FitpayEventBinding] = []
-
     private func queueFor(syncRequest: SyncRequest) -> BindedToDeviceSyncRequestQueue? {
         guard let deviceId = syncRequest.deviceInfo?.deviceIdentifier else {
+            log.warning("Searching queue for SyncRequest without deviceIdentifier (empty SyncRequests is deprecated)... ")
             return queueForDeviceWithoutDeviceIdentifier(syncRequest: syncRequest)
         }
         
@@ -109,14 +111,12 @@ open class SyncRequestQueue {
         }
     }
     
-    
     private func unbind() {
         for binding in self.bindings {
             self.syncManager.removeSyncBinding(binding: binding)
         }
     }
     
-    var lastFullSyncRequest: SyncRequest?
 }
 
 extension SyncRequestQueue {
