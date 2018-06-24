@@ -182,5 +182,8 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             self.syncCallBacks.removeFirst()
         }
     }
+    
+    func appToAppVerificationResponse(success: Bool, reason: A2AVerificationError?) {
+    }
 
 }

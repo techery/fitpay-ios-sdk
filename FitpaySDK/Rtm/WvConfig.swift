@@ -58,7 +58,6 @@ class WvConfig: NSObject, WKScriptMessageHandler {
     
     var webview: WKWebView?
     var connectionBinding: FitpayEventBinding?
-    var sessionDataCallBack: RtmMessage?
     var syncCallBacks = [RtmMessage]()
     
     private var bindings: [FitpayEventBinding] = []
@@ -275,7 +274,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
     
     //MARK: - Private
     
-    private var rtmMessaging: RtmMessaging
+    var rtmMessaging: RtmMessaging
     
     private func resolveSync() {
         self.rtmMessaging.messageHandler?.resolveSync()
