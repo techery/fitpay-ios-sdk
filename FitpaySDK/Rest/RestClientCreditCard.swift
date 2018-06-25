@@ -405,8 +405,9 @@ extension RestClient {
         }
     }
     
-    //MARK: - Private Functions
-    internal func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
+    //MARK: - Internal Functions
+    
+    func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
             return
@@ -416,11 +417,11 @@ extension RestClient {
         case 202:
             completion(true, nil, nil)
         default:
-            completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
+            completion(false, nil, response)
         }
     }
     
-    internal func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler) {
+    func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
             return
@@ -430,7 +431,7 @@ extension RestClient {
         case 202:
             completion(true, nil, nil)
         default:
-            completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
+            completion(false, nil, response)
         }
         
     }
