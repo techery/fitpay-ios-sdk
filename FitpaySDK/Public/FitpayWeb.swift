@@ -55,12 +55,13 @@ import WebKit
     ///   - paymentDeviceConnector: figuring out
     ///   - frame: needed for initializing the wkWebView
     /// - Returns: WKWebview with correct configuration and frame
-    @objc open func setupWebView(userEmail: String? = nil, userHasFitpayAccount: Bool = false, paymentDevice: PaymentDevice, paymentDeviceConnector: PaymentDeviceConnectable, frame: CGRect, script: WKUserScript? = nil) -> WKWebView {
+    @objc open func setupWebView(userEmail: String? = nil, userHasFitpayAccount: Bool = false, paymentDevice: PaymentDevice, paymentDeviceConnector: PaymentDeviceConnectable, frame: CGRect, script: WKUserScript? = nil, language: String? = nil) -> WKWebView {
 
         _ = paymentDevice.changeDeviceInterface(paymentDeviceConnector)
 
         let rtmConfig = RtmConfig(userEmail: userEmail, deviceInfo: paymentDeviceConnector.deviceInfo())
         rtmConfig.hasAccount = userHasFitpayAccount
+        rtmConfig.language = language
         
         wvConfig = WvConfig(paymentDevice: paymentDevice, rtmConfig: rtmConfig)
 
