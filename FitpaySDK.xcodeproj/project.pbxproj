@@ -34,6 +34,7 @@
 		2735864220E07021005EDA9D /* PlatformConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735864020E07021005EDA9D /* PlatformConfig.swift */; };
 		2735864420E127CE005EDA9D /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735864320E127CE005EDA9D /* Payload.swift */; };
 		2735864520E127CE005EDA9D /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735864320E127CE005EDA9D /* Payload.swift */; };
+		2735864620E13437005EDA9D /* CustomJSONArrayEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735863E20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift */; };
 		2745F3DF20A345B900EF46A4 /* FitpayWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2745F3DE20A345B900EF46A4 /* FitpayWeb.swift */; };
 		276CD25F209A5D1700076648 /* FitpayConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276CD25E209A5D1700076648 /* FitpayConfig.swift */; };
 		276CD260209A65C500076648 /* FitpayConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276CD25E209A5D1700076648 /* FitpayConfig.swift */; };
@@ -1827,6 +1828,7 @@
 				3A93A0821DB8CA2C00A9FEB4 /* RtmConfig.swift in Sources */,
 				3A93A0841DB8CA2C00A9FEB4 /* JWEObjectExtensions.swift in Sources */,
 				916CE9C320A18CA300C2F621 /* KeyedEncodingContainerExtension.swift in Sources */,
+				2735864620E13437005EDA9D /* CustomJSONArrayEncoding.swift in Sources */,
 				3A640B4A1DDF110E008AD936 /* RtmMessageResponse.swift in Sources */,
 				27982EBD20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift in Sources */,
 				3A93A0851DB8CA2C00A9FEB4 /* Transaction.swift in Sources */,
