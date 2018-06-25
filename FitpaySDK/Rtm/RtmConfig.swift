@@ -15,8 +15,7 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     var hasAccount: Bool = false
     var accessToken: String?
     
-    // TODO: shouldn't be private? / add to FitpayWeb
-    private var language: String?
+    var language: String?
     
     private var clientId: String?
     private var userEmail: String?
