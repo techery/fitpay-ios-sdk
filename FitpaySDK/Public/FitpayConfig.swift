@@ -81,6 +81,8 @@ import Foundation
             FitpayConfig.Web.cssURL = configModelWeb.cssURL
             FitpayConfig.Web.baseLanguageURL = configModelWeb.baseLanguageURL
             FitpayConfig.Web.supportCardScanner = configModelWeb.supportCardScanner ?? FitpayConfig.Web.supportCardScanner
+            FitpayConfig.Web.automaticallySubscribeToUserEventStream = configModelWeb.automaticallySubscribeToUserEventStream ?? FitpayConfig.Web.automaticallySubscribeToUserEventStream
+            FitpayConfig.Web.automaticallySyncFromUserEventStream = configModelWeb.automaticallySyncFromUserEventStream ?? FitpayConfig.Web.automaticallySyncFromUserEventStream
         }
         
        finishConfigure()
