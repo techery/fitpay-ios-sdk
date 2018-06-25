@@ -311,6 +311,9 @@ import RxSwift
                     case .creditCardProvisionFailed:
                         syncEvent = SyncEvent(event: .cardProvisionFailed, data: eventData)
                         break
+                    case .creditCardProvisionSuccess:
+                        syncEvent = SyncEvent(event: .cardProvisionSuccess, data: eventData)
+                        break
                     case .creditCardMetaDataUpdated:
                         syncEvent = SyncEvent(event: .cardMetadataUpdated, data: eventData)
                         break
