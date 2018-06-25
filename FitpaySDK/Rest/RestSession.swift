@@ -87,7 +87,7 @@ import JWTDecode
         }
     }
     
-    // MARK: - Internal Functions
+    // MARK: - Private Functions
     
     private func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
