@@ -199,7 +199,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
      */
     func getRequest() -> URLRequest {
         let client = self.configStorage.user?.client as? RestClient
-        if let accessToken = client?._session.accessToken {
+        if let accessToken = client?.session.accessToken {
             self.configStorage.rtmConfig!.accessToken = accessToken
         }
         
@@ -221,7 +221,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
     
     func getURLAndConfig() -> (url: String, encodedConfig: String)? {
         let client = self.configStorage.user?.client as? RestClient
-        if let accessToken = client?._session.accessToken {
+        if let accessToken = client?.session.accessToken {
             self.configStorage.rtmConfig!.accessToken = accessToken
         }
         

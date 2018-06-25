@@ -13,18 +13,11 @@ protocol RestClientInterface: class {
     typealias DeleteHandler = (_ error: ErrorResponse?) -> Void
     
     /**
-     Completion handler
+     Confirm handler
      
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    typealias ConfirmCommitHandler = (_ error: ErrorResponse?) -> Void
-    
-    /**
-     Completion handler
-     
-     - parameter ErrorType?:   Provides error object, or nil if no error occurs
-     */
-    typealias ConfirmAPDUPackageHandler = (_ error: ErrorResponse?) -> Void
+    typealias ConfirmHandler = (_ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -61,13 +54,6 @@ protocol RestClientInterface: class {
      - parameter error: Provides error object, or nil if no error occurs
      */
     typealias AssetsHandler = (_ asset: Asset?, _ error: ErrorResponse?) -> Void
-    
-    /**
-     Completion handler
-     
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    typealias SyncHandler = (_ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -205,7 +191,9 @@ protocol RestClientInterface: class {
     
     func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T?
     
-    func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler)
+    func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmHandler)
+    
+    func getPlatformConfig(completion: @escaping (_ platform: PlatformConfig?, _ error: ErrorResponse?) -> Void)
     
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -213,7 +201,7 @@ protocol RestClientInterface: class {
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler)
+    func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmHandler)
     
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler)
     
@@ -257,7 +245,7 @@ protocol RestClientInterface: class {
     
     func assets(_ url: String, completion: @escaping AssetsHandler)
     
-    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler)
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler)
     
     /**
      Creates a request for resetting a device

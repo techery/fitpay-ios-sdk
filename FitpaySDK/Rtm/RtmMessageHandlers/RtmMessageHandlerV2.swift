@@ -135,9 +135,9 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
             FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice)
             
             // start EventStream
-            if let userId = user?.id {
+            if let userId = user?.id, FitpayConfig.Web.automaticallySubscribeToUserEventStream {
                 UserEventStreamManager.sharedInstance.subscribe(userId: userId, sessionData: webViewSessionData) { event in
-                    if (event.type == .sync) {
+                    if (event.type == .sync && FitpayConfig.Web.automaticallySyncFromUserEventStream) {
                         self?.handleSync(event)
                     }
                 }

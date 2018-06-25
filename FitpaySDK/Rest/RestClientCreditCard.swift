@@ -82,7 +82,7 @@ extension RestClient {
             
             let parameters: [String: String] =  ["encryptedData": unwrappedEncrypted]
             
-            let request = strongSelf._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = strongSelf.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -110,7 +110,7 @@ extension RestClient {
                 return
             }
             
-            let request = strongSelf._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            let request = strongSelf.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -133,7 +133,7 @@ extension RestClient {
                 return
             }
             
-            let request = strongSelf._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            let request = strongSelf.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
@@ -187,7 +187,7 @@ extension RestClient {
                 }
             }
             
-            let request = strongSelf._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = strongSelf.manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -209,7 +209,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
@@ -229,7 +229,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
@@ -249,7 +249,7 @@ extension RestClient {
                 return
             }
 
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -268,7 +268,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -287,7 +287,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
@@ -308,7 +308,7 @@ extension RestClient {
             }
             
             let params = ["verificationCode": verificationCode]
-            let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
@@ -329,7 +329,7 @@ extension RestClient {
             }
             
             let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
-            let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
@@ -350,7 +350,7 @@ extension RestClient {
             }
             
             let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
-            let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
@@ -370,7 +370,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -392,7 +392,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
@@ -405,7 +405,8 @@ extension RestClient {
         }
     }
     
-    //MARK: - Private Functions
+    //MARK: - Internal Functions
+    
     internal func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
@@ -434,4 +435,5 @@ extension RestClient {
         }
         
     }
+
 }

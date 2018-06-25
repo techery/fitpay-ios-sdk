@@ -93,7 +93,7 @@ extension RestClient {
             log.verbose("Headers: \(headers)")
             log.verbose("user creation json: \(parameters)")
             
-            let request = strongSelf._manager.request(FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = strongSelf.manager.request(FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
@@ -122,7 +122,7 @@ extension RestClient {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
-            let request = strongSelf._manager.request(FitpayConfig.apiURL + "/users/" + id,
+            let request = strongSelf.manager.request(FitpayConfig.apiURL + "/users/" + id,
                                                       method: .get,
                                                       parameters: nil,
                                                       encoding: JSONEncoding.default,
@@ -197,7 +197,7 @@ extension RestClient {
                 }
             }
             
-            let request = self._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            let request = self.manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self.makeRequest(request: request) { [weak self] (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -226,15 +226,13 @@ extension RestClient {
                 return
             }
             
-            let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            let request = self.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
         }
     }
-    
-    // MARK: - Internal Functions
-    
+        
     @objc public func user(_ url: String, completion: @escaping UserHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
@@ -242,7 +240,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }                
                 guard let resultValue = resultValue else {
@@ -256,4 +254,5 @@ extension RestClient {
             }
         }
     }    
+
 }

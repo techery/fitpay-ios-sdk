@@ -31,7 +31,7 @@ extension RestClient {
             }
             
             let parameters = ["creditCardId": "\(creditCardId)", "deviceId": "\(deviceId)"]
-            let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
+            let request = self.manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -51,7 +51,7 @@ extension RestClient {
                 return
             }
             
-            let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            let request = self.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -71,7 +71,7 @@ extension RestClient {
                 return
             }
             
-            let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            let request = self.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
