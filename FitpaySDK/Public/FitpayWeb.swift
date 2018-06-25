@@ -80,14 +80,14 @@ import WebKit
     
     /// Loads the main page on Fitpay based on user variables
     @objc open func load() {
-        wkWebView.load(wvConfig!.getRequest())
+        wkWebView.load(wvConfig.getRequest())
     }
     
     /// Loads a specific page on Fitpay based on user variables
     ///
     /// Currently works with `/addCard`, `/privacyPolicy`, and `/terms`
     @objc open func load(relativePath: String) {
-        guard let (url, encodedConfig) =  wvConfig.getURLAndConfig() else { return }
+        guard let (url, encodedConfig) = wvConfig.getURLAndConfig() else { return }
         
         let configuredUrl = "\(url)\(relativePath)?config=\(encodedConfig)"
         
@@ -97,6 +97,21 @@ import WebKit
         let request = URLRequest(url: requestUrl!)
         
         wkWebView.load(request)
+    }
+    
+    /// Loads any valid url - use with discretion
+    ///
+    /// Can construct URL from `FitpayConfig.WebUrl` and config
+    @objc open func load(absolutePath: String) {
+        let requestUrl = URL(string: absolutePath)
+        let request = URLRequest(url: requestUrl!)
+        
+        wkWebView.load(request)
+    }
+    
+    /// Get the config to construct a url on your own if needed
+    @objc open func getConfig() -> String {
+        return wvConfig.getURLAndConfig().encodedConfig
     }
     
     /// Should be called once the webview is loaded
