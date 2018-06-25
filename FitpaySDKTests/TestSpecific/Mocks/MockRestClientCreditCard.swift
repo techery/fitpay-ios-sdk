@@ -424,7 +424,7 @@ extension MockRestClient {
         case 202:
             completion(true, nil, nil)
         default:
-            completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
+            completion(false, nil, response)
         }
     }
 
@@ -438,7 +438,7 @@ extension MockRestClient {
         case 202:
             completion(true, nil, nil)
         default:
-            completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))
+            completion(false, nil, response)
         }
 
     }
