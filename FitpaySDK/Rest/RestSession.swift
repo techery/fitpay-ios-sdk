@@ -107,11 +107,12 @@ import JWTDecode
     private func acquireAccessToken(firebaseToken: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
         let parameters: [String: String] = [
+            "response_type": "token",
             "client_id": FitpayConfig.clientId,
+            "redirect_uri": FitpayConfig.redirectURL,
             "firebase_token": firebaseToken
         ]
         
-        print(FitpayConfig.authURL)
         let request = manager.request(FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
         request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
            self.handleAuthorizationResponse(response, completion: completion)
@@ -121,7 +122,6 @@ import JWTDecode
     private func handleAuthorizationResponse(_ response: DataResponse<Any>, completion: @escaping AcquireAccessTokenHandler) {
         DispatchQueue.main.async {
             if let resultError = response.result.error {
-                print(response.result.error)
                 completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
             } else if let resultValue = response.result.value {
                 let authorizationDetails = try? AuthorizationDetails(resultValue)
