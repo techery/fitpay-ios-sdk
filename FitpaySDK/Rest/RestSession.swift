@@ -2,28 +2,7 @@ import Foundation
 import Alamofire
 import JWTDecode
 
-struct AuthorizationDetails: Serializable {
-    var tokenType: String?
-    var accessToken: String?
-    var expiresIn: String?
-    var scope: String?
-    var jti: String?
-
-    private enum CodingKeys: String, CodingKey {
-        case tokenType = "token_type"
-        case accessToken = "access_token"
-        case expiresIn = "expires_in"
-        case scope
-        case jti 
-    }
-}
-
 @objcMembers open class RestSession: NSObject {
-    public enum ErrorEnum: Int, Error, RawIntValue {
-        case decodeFailure = 1000
-        case parsingFailure
-        case accessTokenFailure
-    }
     
     open var userId: String?
     open var accessToken: String?
@@ -82,7 +61,7 @@ struct AuthorizationDetails: Serializable {
         }
     }
     
-    @objc open func getToken(firebaseToken: String, completion: @escaping (_ error: NSError?) -> Void) {
+    @objc open func login(firebaseToken: String, completion: @escaping (_ error: NSError?) -> Void) {
         acquireAccessToken(firebaseToken: firebaseToken) { (details, error) in
             if let error = error {
                 completion(error)
@@ -132,44 +111,30 @@ struct AuthorizationDetails: Serializable {
             "firebase_token": firebaseToken
         ]
         
+        print(FitpayConfig.authURL)
         let request = manager.request(FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        print(request.request?.url?.absoluteString)
         request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
            self.handleAuthorizationResponse(response, completion: completion)
         }
     }
     
     private func handleAuthorizationResponse(_ response: DataResponse<Any>, completion: @escaping AcquireAccessTokenHandler) {
-        if let resultError = response.result.error {
-            print(resultError.localizedDescription)
-            completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
-        } else if let resultValue = response.result.value {
-            let authorizationDetails = try? AuthorizationDetails(resultValue)
-            completion(authorizationDetails, nil)
-        } else {
-            completion(nil, NSError.unhandledError(RestClient.self))
+        DispatchQueue.main.async {
+            if let resultError = response.result.error {
+                print(response.result.error)
+                completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
+            } else if let resultValue = response.result.value {
+                let authorizationDetails = try? AuthorizationDetails(resultValue)
+                completion(authorizationDetails, nil)
+            } else {
+                completion(nil, NSError.unhandledError(RestClient.self))
+            }
         }
     }
     
 }
 
 extension RestSession {
-    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
-        case unknownError       = 0
-        case deviceNotFound     = 10001
-        case userOrDeviceEmpty  = 10002
-        
-        public var description : String {
-            switch self {
-            case .unknownError:
-                return "Unknown error"
-            case .deviceNotFound:
-                return "Can't find device provided by wv."
-            case .userOrDeviceEmpty:
-                return "User or device empty."
-            }
-        }
-    }
     
     public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, ErrorResponse?) -> Void
     
@@ -194,13 +159,9 @@ extension RestSession {
                     return
                 }
                 
-                if let devices = devicesCollection?.results {
-                    for device in devices {
-                        if device.deviceIdentifier == deviceId {
-                            completion(user!, device, nil)
-                            return
-                        }
-                    }
+                if let device = devicesCollection?.results?.first(where: { $0.deviceIdentifier == deviceId }) {
+                    completion(user!, device, nil)
+                    return
                 }
                 
                 devicesCollection?.collectAllAvailable { (devices, error) in
@@ -209,11 +170,9 @@ extension RestSession {
                         return
                     }
                     
-                    for device in devices {
-                        if device.deviceIdentifier == deviceId {
-                            completion(user!, device, nil)
-                            return
-                        }
+                    if let device = devices.first(where: { $0.deviceIdentifier == deviceId }) {
+                        completion(user!, device, nil)
+                        return
                     }
                     
                     completion(nil, nil, ErrorResponse(domain: RestSession.self, errorCode: RestSession.ErrorCode.deviceNotFound.rawValue, errorMessage: ""))
@@ -229,4 +188,51 @@ extension RestSession {
     }
     
 }
+
+// MARK: - Nested Objects
+
+extension RestSession {
+    
+    public enum ErrorEnum: Int, Error, RawIntValue {
+        case decodeFailure = 1000
+        case parsingFailure
+        case accessTokenFailure
+    }
+    
+    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
+        case unknownError       = 0
+        case deviceNotFound     = 10001
+        case userOrDeviceEmpty  = 10002
+        
+        public var description: String {
+            switch self {
+            case .unknownError:
+                return "Unknown error"
+            case .deviceNotFound:
+                return "Can't find device provided by wv."
+            case .userOrDeviceEmpty:
+                return "User or device empty."
+            }
+        }
+    }
+    
+    struct AuthorizationDetails: Serializable {
+        var tokenType: String?
+        var accessToken: String?
+        var expiresIn: String?
+        var scope: String?
+        var jti: String?
+        
+        private enum CodingKeys: String, CodingKey {
+            case tokenType = "token_type"
+            case accessToken = "access_token"
+            case expiresIn = "expires_in"
+            case scope
+            case jti
+        }
+    }
+    
+}
+
+
 
