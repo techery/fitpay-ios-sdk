@@ -17,6 +17,19 @@ public class MockPaymentDeviceConnector: NSObject {
     
     let maxPacketSize: Int = 20
     let apduSecsTimeout: Double = 5
+
+    enum apduCommandTypes: String {
+        case SELECT_ISD
+        case GET_CPLC
+        case GET_SEID
+        case GET_ISD_CASD
+        case SELECT_CASD
+        case GET_CASD_P2
+        case GET_CASD_P1
+        case GET_CASD_P3
+        case SELECT_ALA
+        case SELECT_CRS
+    }
     
     required public init(paymentDevice device: PaymentDevice, testingType: TestingType = .fullSimulationMode) {
         self.paymentDevice = device
@@ -31,8 +44,23 @@ public class MockPaymentDeviceConnector: NSObject {
         }
     }
     
-    private func sendAPDUData(string: String, sequenceNumber: UInt16) {
-        let response = "9000"
+    private func sendAPDUData(apduCommand: APDUCommand, sequenceNumber: UInt16) {
+        var response = ""
+        switch apduCommand.type {
+        case apduCommandTypes.GET_CPLC.rawValue:
+            let seId = deviceInfo()?.secureElement?.secureElementId ?? ""
+            response = "9F7F2A"+seId+"9000"
+        case apduCommandTypes.GET_CASD_P1.rawValue:
+            let casdCert = deviceInfo()?.secureElement?.casdCert ?? ""
+            response = casdCert+"9000"
+        case apduCommandTypes.GET_CASD_P3.rawValue:
+            response = "6D00"
+        case apduCommandTypes.SELECT_ALA.rawValue:
+            response = "6A82"
+        default:
+            response = "9000"
+        }
+
         let packet = ApduResultMessage(hexResult: response)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + apduExecuteDelayTime) {
@@ -48,7 +76,7 @@ public class MockPaymentDeviceConnector: NSObject {
         while dateString.count < 12 {
             dateString = "0" + dateString
         }
-        
+
         return String(testingType.rawValue, radix: 16, uppercase: true) +
             "528704504258" +
             dateString +
@@ -82,14 +110,14 @@ extension MockPaymentDeviceConnector: PaymentDeviceConnectable {
     }
     
     public func executeAPDUCommand(_ apduCommand: APDUCommand) {
-        guard let command = apduCommand.command else {
+        guard apduCommand.command != nil else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 completion(nil, nil, NSError(domain: "\(PaymentDeviceConnectable.self)", code: PaymentDevice.ErrorCode.apduDataNotFull.rawValue, userInfo: nil))
             }
             return
         }
-        
-        sendAPDUData(string: command, sequenceNumber: UInt16(apduCommand.sequence))
+
+        sendAPDUData(apduCommand: apduCommand, sequenceNumber: UInt16(apduCommand.sequence))
     }
     
     public func deviceInfo() -> DeviceInfo? {
