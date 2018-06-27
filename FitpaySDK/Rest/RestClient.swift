@@ -388,7 +388,7 @@ extension RestClient {
         let request = self.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
         
         DispatchQueue.global().async {
-            request.responseData { (response: DataResponse<Data>) in
+            request.responseData { (response) in
                 if response.result.error != nil {
                     let error = try? ErrorResponse(response.data)
                     
