@@ -81,7 +81,7 @@ class MockRestClient: NSObject, RestClientInterface {
         return nil
     }
     
-    public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
+    public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(error) }
@@ -99,6 +99,11 @@ class MockRestClient: NSObject, RestClientInterface {
         }
     }
     
+    func getPlatformConfig(completion: @escaping (PlatformConfig?, ErrorResponse?) -> Void) {
+        let platformConfig = PlatformConfig(isUserEventStreamsEnabled: true)
+        completion(platformConfig, nil)
+    }
+    
 }
 
 // MARK: - Confirm package
@@ -110,7 +115,7 @@ extension MockRestClient {
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
+    public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmHandler) {
         guard package.packageId != nil else {
             completion(ErrorResponse(domain: MockRestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
             return
@@ -352,7 +357,7 @@ extension MockRestClient {
 
 // MARK: Sync Statistics
 extension MockRestClient {
-    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }

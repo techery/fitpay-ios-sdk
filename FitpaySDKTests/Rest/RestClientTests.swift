@@ -151,7 +151,7 @@ class RestClientTests: XCTestCase {
     func testUserCreate() {
         let expectation = super.expectation(description: "'user' created")
         
-        let email = TestHelper.randomEmail()
+        let email = TestHelper.getEmail()
         let pin = "1234"
         
         self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil) { (user, error) -> Void in
