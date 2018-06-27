@@ -31,6 +31,8 @@ import Foundation
     /// SDK Version using semantic versioning MAJOR.MINOR.PATCH
     @objc public static let sdkVersion = Bundle(for: FitpayConfig.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     
+    static let platformConfigURL = "http://s3.amazonaws.com/crypto-web-prod/mobile/config.json"
+    
     //MARK: - Functions
     
     /**
@@ -79,6 +81,8 @@ import Foundation
             FitpayConfig.Web.cssURL = configModelWeb.cssURL
             FitpayConfig.Web.baseLanguageURL = configModelWeb.baseLanguageURL
             FitpayConfig.Web.supportCardScanner = configModelWeb.supportCardScanner ?? FitpayConfig.Web.supportCardScanner
+            FitpayConfig.Web.automaticallySubscribeToUserEventStream = configModelWeb.automaticallySubscribeToUserEventStream ?? FitpayConfig.Web.automaticallySubscribeToUserEventStream
+            FitpayConfig.Web.automaticallySyncFromUserEventStream = configModelWeb.automaticallySyncFromUserEventStream ?? FitpayConfig.Web.automaticallySyncFromUserEventStream
         }
         
        finishConfigure()
@@ -123,8 +127,6 @@ import Foundation
         @objc public static var demoMode = false
         
         /// Changes autofill options to include a default and auto-verify version of one card type
-        ///
-        /// `demoMode` must be true for this to work
         @objc public static var demoCardGroup: String?
         
         /// Overrides the default CSS
@@ -139,10 +141,17 @@ import Foundation
          */
         @objc public static var baseLanguageURL: String?
         
-        // TODO: Remove
         /// Turn on when you are ready to implement card scanning methods
         @objc public static var supportCardScanner = false
         
+        /// Turn off SSE connection to reduce overhead if not in use
+        @objc public static var automaticallySubscribeToUserEventStream = true
+        
+        /// Trigger syncs from an SSE connection automatically established
+        ///
+        /// `automaticallySubscribeToUserEventStream` must also be on to sync
+        @objc public static var automaticallySyncFromUserEventStream = true
+
     }
     
 }
@@ -168,6 +177,8 @@ extension FitpayConfig {
         var cssURL: String?
         var baseLanguageURL: String?
         var supportCardScanner: Bool?
+        var automaticallySubscribeToUserEventStream: Bool?
+        var automaticallySyncFromUserEventStream: Bool?
     }
     
 }

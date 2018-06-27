@@ -25,8 +25,6 @@ class TestHelper {
     }
     
     func createUser(_ expectation:XCTestExpectation, email: String, pin: String, completion: @escaping (User?) -> Void) {
-        let currentTime = Date().timeIntervalSince1970
-        
         self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil) { [unowned self] (user, error) in
             
             XCTAssertNil(error)
@@ -40,7 +38,7 @@ class TestHelper {
         
     }
 
-    func createAndLoginUser(_ expectation: XCTestExpectation, email: String = TestHelper.randomEmail(), pin: String = "1234", completion: @escaping (User?) -> Void) {
+    func createAndLoginUser(_ expectation: XCTestExpectation, email: String = TestHelper.getEmail(), pin: String = "1234", completion: @escaping (User?) -> Void) {
         createUser(expectation, email: email, pin: pin) { (user) in
             self.session.login(username: email, password: pin) { (loginError) -> Void in
                 XCTAssertNil(loginError)
@@ -350,9 +348,7 @@ class TestHelper {
         return randomString as String
     }
     
-    class func randomEmail() -> String {
-        let email = (((randomStringWithLength(8) + "@") + randomStringWithLength(5)) + ".") + randomStringWithLength(5)
-        
+    class func getEmail() -> String {
         return "ms7RsgsX@X5pvb.koWBX"
     }
     

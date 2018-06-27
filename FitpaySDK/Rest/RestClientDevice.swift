@@ -51,7 +51,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -74,7 +74,7 @@ extension RestClient {
             }
             let params = deviceInfo.toJSON()
             
-            let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -96,7 +96,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
@@ -128,7 +128,7 @@ extension RestClient {
             }
             
             let params = ["params": paramsArray]
-            let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -153,7 +153,7 @@ extension RestClient {
             }
             
             let params = ["params": paramsArray]
-            let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -181,7 +181,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -203,7 +203,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
@@ -225,7 +225,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 

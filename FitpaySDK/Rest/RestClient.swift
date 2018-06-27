@@ -1,24 +1,9 @@
 import Foundation
 import Alamofire
 
-class CustomJSONArrayEncoding: ParameterEncoding {
-    static var `default`: CustomJSONArrayEncoding { return CustomJSONArrayEncoding() }
-    
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-        var mutableRequest = try urlRequest.asURLRequest()
-        mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let jsonObject = parameters?["params"] {
-            let jsondata = try? JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions(rawValue: 0))
-            if let jsondata = jsondata {
-                mutableRequest.httpBody = jsondata
-            }
-        }
-        return mutableRequest
-    }
-}
-
 open class RestClient: NSObject, RestClientInterface {
-      /**
+    
+    /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
      
      Not all errors map cleanly onto HTTP response codes, however. When a request is valid but does not complete successfully (e.g. a card is declined), we return a 402 error code.
@@ -49,11 +34,10 @@ open class RestClient: NSObject, RestClientInterface {
         "X-FitPay-SDK": "iOS-\(FitpayConfig.sdkVersion)"
     ]
     
-    var _session: RestSession
+    var session: RestSession
     var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
     
-    
-    lazy var _manager: SessionManager = {
+    lazy var manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -70,9 +54,13 @@ open class RestClient: NSObject, RestClientInterface {
         return secret ?? Data()
     }
     
+    // MARK: - Lifecycle
+    
     public init(session: RestSession) {
-        _session = session;
+        self.session = session
     }
+    
+    // MARK: - Functions
     
     func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T? {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -81,7 +69,7 @@ open class RestClient: NSObject, RestClientInterface {
                 return
             }
             
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -104,26 +92,39 @@ open class RestClient: NSObject, RestClientInterface {
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
     public typealias DeleteHandler = (_ error: ErrorResponse?) -> Void
-
+    
     /**
      Completion handler
-
+     
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    public typealias ConfirmCommitHandler = (_ error: ErrorResponse?) -> Void
-
-    public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler) {
+    public typealias ConfirmHandler = (_ error: ErrorResponse?) -> Void
+    
+    public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmHandler) {
         self.prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
-
+            
             let params = ["result": executionResult.description]
-            let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+            let request = self.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
+        }
+    }
+    
+    public func getPlatformConfig(completion: @escaping (_ platform: PlatformConfig?, _ error: ErrorResponse?) -> Void) {
+        let request = manager.request(FitpayConfig.platformConfigURL)
+        self.makeRequest(request: request) { (resultValue, error) in
+            guard let resultValue = resultValue as? [String: Any] else {
+                completion(nil, error)
+                return
+            }
+            
+            let config = try? PlatformConfig(resultValue["ios"])
+            completion(config, error)
         }
     }
     
@@ -132,14 +133,6 @@ open class RestClient: NSObject, RestClientInterface {
 // MARK: - Confirm package
 
 extension RestClient {
-
-    
-    /**
-     Completion handler
-     
-     - parameter ErrorType?:   Provides error object, or nil if no error occurs
-     */
-    public typealias ConfirmAPDUPackageHandler = (_ error: ErrorResponse?) -> Void
     
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -147,7 +140,7 @@ extension RestClient {
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler) {
+    public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmHandler) {
         guard package.packageId != nil else {
             completion(ErrorResponse(domain: RestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
             return
@@ -159,7 +152,7 @@ extension RestClient {
                 return
             }
             
-            let request = self._manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
+            let request = self.manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
@@ -186,7 +179,6 @@ extension RestClient {
      */
     public typealias TransactionHandler = (_ transaction: Transaction?, _ error: ErrorResponse?) -> Void
     
-    
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         self.transactions(url, parameters: parameters, completion: completion)
@@ -199,7 +191,7 @@ extension RestClient {
                 return
             }
             
-            let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            let request = self.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -224,11 +216,11 @@ extension RestClient {
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
- func createEncryptionKey(clientPublicKey: String, completion: @escaping EncryptionKeyHandler) {
+    func createEncryptionKey(clientPublicKey: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let parameters = ["clientPublicKey": clientPublicKey]
         
-        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
         self.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
@@ -254,7 +246,7 @@ extension RestClient {
      */
     func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
-        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+        let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
         self.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
@@ -272,9 +264,9 @@ extension RestClient {
      */
     func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteHandler) {
         let headers = self.defaultHeaders
-        let request = _manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+        let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
         self.makeRequest(request: request) { (response, error) in
-                completion(error)
+            completion(error)
         }
     }
     
@@ -292,7 +284,7 @@ extension RestClient {
             }
         }
     }
-
+    
 }
 
 // MARK: Request Signature Helpers
@@ -301,8 +293,8 @@ extension RestClient {
     typealias AuthHeaderHandler = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
     
     func createAuthHeaders(_ completion: AuthHeaderHandler) {
-        if self._session.isAuthorized {
-            completion(self.defaultHeaders + ["Authorization": "Bearer " + self._session.accessToken!], nil)
+        if self.session.isAuthorized {
+            completion(self.defaultHeaders + ["Authorization": "Bearer " + self.session.accessToken!], nil)
         } else {
             completion(nil, ErrorResponse(domain: RestClient.self, errorCode: ErrorCode.unauthorized.rawValue, errorMessage: "\(ErrorCode.unauthorized)"))
         }
@@ -313,9 +305,7 @@ extension RestClient {
         completion(self.defaultHeaders, nil)
     }
     
-    typealias PrepareAuthAndKeyHeaders = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
-    
-    func prepareAuthAndKeyHeaders(_ completion: @escaping PrepareAuthAndKeyHeaders) {
+    func prepareAuthAndKeyHeaders(_ completion: @escaping AuthHeaderHandler) {
         self.createAuthHeaders { [weak self] (headers, error) in
             if let error = error {
                 completion(nil, error)
@@ -349,8 +339,10 @@ extension RestClient {
     
 }
 
-// MARK: Issuers
+// MARK: - Issuers
+
 extension RestClient {
+    
     public typealias IssuersHandler = (_ issuers: Issuers?, _ error: ErrorResponse?) -> Void
     
     public func issuers(completion: @escaping IssuersHandler) {
@@ -361,11 +353,11 @@ extension RestClient {
                 return
             }
             
-            let request = strongSelf._manager.request(FitpayConfig.apiURL + "/issuers",
-                                                      method: .get,
-                                                      parameters: nil,
-                                                      encoding: JSONEncoding.default,
-                                                      headers: headers)
+            let request = strongSelf.manager.request(FitpayConfig.apiURL + "/issuers",
+                                                     method: .get,
+                                                     parameters: nil,
+                                                     encoding: JSONEncoding.default,
+                                                     headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in                
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -377,9 +369,11 @@ extension RestClient {
             }
         }
     }
+
 }
 
-// MARK: Assets
+// MARK: - Assets
+
 extension RestClient {
     
     /**
@@ -391,7 +385,7 @@ extension RestClient {
     public typealias AssetsHandler = (_ asset: Asset?, _ error: ErrorResponse?) -> Void
     
     func assets(_ url: String, completion: @escaping AssetsHandler) {
-        let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
+        let request = self.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
         
         DispatchQueue.global().async {
             request.responseData { (response) in
@@ -425,23 +419,18 @@ extension RestClient {
     
 }
 
-// MARK: Sync Statistics
+// MARK: - Sync Statistics
+
 extension RestClient {
-    /**
-     Completion handler
-     
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    public typealias SyncHandler = (_ error: ErrorResponse?) -> Void
     
-    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler) {
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
             
-            let request = self?._manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
             DispatchQueue.global().async {
                 request?.response { (response: DefaultDataResponse) in
                     if response.error != nil {
@@ -463,22 +452,23 @@ extension RestClient {
             }
         }
     }
-
+    
 }
 
-// MARK: Reset Device Tasks
-extension RestClient {
+// MARK: - Reset Device Tasks
 
+extension RestClient {
+    
     /**
      Completion handler
-
+     
      - parameter error: Provides error object, or nil if no error occurs
      */
     public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
     
     /**
      Creates a request for resetting a device
-
+     
      - parameter deviceId:  device id
      - parameter userId: user id
      - parameter completion:      ResetHandler closure
@@ -491,7 +481,7 @@ extension RestClient {
                 })
                 return
             }
-            let request = self._manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            let request = self.manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             self.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -501,17 +491,17 @@ extension RestClient {
             }
         }
     }
-
+    
     /**
      Creates a request for getting reset status
-
+     
      - parameter resetId:  reset device task id
      - parameter completion:   ResetHandler closure
      */
     func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
         self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
             if let headers = headers {
-                let request = self._manager.request(resetUrl, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                let request = self.manager.request(resetUrl, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
                 self.makeRequest(request: request) { (resultValue, error) in
                     guard let resultValue = resultValue else {
                         completion(nil, error)
@@ -526,7 +516,7 @@ extension RestClient {
             }
         }
     }
-
+    
 }
 
 extension RestClient {
@@ -568,5 +558,6 @@ extension RestClient {
 public protocol AssetRetrivable {
     
     func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler)
+
 }
 

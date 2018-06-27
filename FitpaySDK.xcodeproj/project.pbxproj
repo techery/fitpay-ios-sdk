@@ -29,6 +29,12 @@
 		272E04362093B3BA000EAA9D /* RTMDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04342093B3BA000EAA9D /* RTMDelegate.swift */; };
 		272E04382093B40A000EAA9D /* WVConfigStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04372093B40A000EAA9D /* WVConfigStorage.swift */; };
 		272E04392093B40A000EAA9D /* WVConfigStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272E04372093B40A000EAA9D /* WVConfigStorage.swift */; };
+		2735863F20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735863E20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift */; };
+		2735864120E07021005EDA9D /* PlatformConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735864020E07021005EDA9D /* PlatformConfig.swift */; };
+		2735864220E07021005EDA9D /* PlatformConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735864020E07021005EDA9D /* PlatformConfig.swift */; };
+		2735864420E127CE005EDA9D /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735864320E127CE005EDA9D /* Payload.swift */; };
+		2735864520E127CE005EDA9D /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735864320E127CE005EDA9D /* Payload.swift */; };
+		2735864620E13437005EDA9D /* CustomJSONArrayEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2735863E20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift */; };
 		2745F3DF20A345B900EF46A4 /* FitpayWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2745F3DE20A345B900EF46A4 /* FitpayWeb.swift */; };
 		276CD25F209A5D1700076648 /* FitpayConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276CD25E209A5D1700076648 /* FitpayConfig.swift */; };
 		276CD260209A65C500076648 /* FitpayConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276CD25E209A5D1700076648 /* FitpayConfig.swift */; };
@@ -439,6 +445,9 @@
 		1FE147A220161F8B005DEA29 /* CommitStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommitStatistic.swift; sourceTree = "<group>"; };
 		272E04342093B3BA000EAA9D /* RTMDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMDelegate.swift; sourceTree = "<group>"; };
 		272E04372093B40A000EAA9D /* WVConfigStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WVConfigStorage.swift; sourceTree = "<group>"; };
+		2735863E20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomJSONArrayEncoding.swift; sourceTree = "<group>"; };
+		2735864020E07021005EDA9D /* PlatformConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformConfig.swift; sourceTree = "<group>"; };
+		2735864320E127CE005EDA9D /* Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payload.swift; sourceTree = "<group>"; };
 		2745F3DE20A345B900EF46A4 /* FitpayWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitpayWeb.swift; sourceTree = "<group>"; };
 		276CD25E209A5D1700076648 /* FitpayConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitpayConfig.swift; sourceTree = "<group>"; };
 		2773CD94207D53A300DFE113 /* IdVerificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdVerificationTests.swift; sourceTree = "<group>"; };
@@ -758,6 +767,14 @@
 				9AB68E431C84A25B00A0E172 /* JWETests.swift */,
 			);
 			path = JWE;
+			sourceTree = "<group>";
+		};
+		2735863D20E03E83005EDA9D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				2735863E20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		276CD25D209A5CF800076648 /* Public */ = {
@@ -1180,6 +1197,8 @@
 				CD038A15D95F318EC41638F6 /* DeviceInfo.swift */,
 				CD038D1774A53D9340CFCFBE /* EncryptionKey.swift */,
 				37B85D591EF29FCB00B7616F /* Issuers.swift */,
+				2735864320E127CE005EDA9D /* Payload.swift */,
+				2735864020E07021005EDA9D /* PlatformConfig.swift */,
 				CD038236D1AEE3AC7A8155E3 /* Relationship.swift */,
 				277C181620B33748003BD78B /* ResetDeviceResult.swift */,
 				CD038EC1AB0F5F167433FC52 /* ResourceLink.swift */,
@@ -1236,6 +1255,7 @@
 				3767B8151ED31BC2007443D2 /* RestClientUser.swift */,
 				CD03892F10B569368C16273E /* RestSession.swift */,
 				CD038466328E4608CC137268 /* Models */,
+				2735863D20E03E83005EDA9D /* Utils */,
 			);
 			path = Rest;
 			sourceTree = "<group>";
@@ -1622,6 +1642,7 @@
 				374D0C9A1F56FD620060A4FC /* IdVerification.swift in Sources */,
 				37B85D5A1EF29FCB00B7616F /* Issuers.swift in Sources */,
 				CD038A4098738EC358AD2751 /* Address.swift in Sources */,
+				2735864420E127CE005EDA9D /* Payload.swift in Sources */,
 				CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */,
 				847264A21CA53D0800DE801D /* BLEPackets.swift in Sources */,
 				272E04352093B3BA000EAA9D /* RTMDelegate.swift in Sources */,
@@ -1651,6 +1672,7 @@
 				371CB2FD1F4449C50019A766 /* SyncFactory.swift in Sources */,
 				CD0386948E879E2106699B3C /* RestClient.swift in Sources */,
 				374B626A1EC9F9EF00A7CE62 /* PaymentDeviceApduExecuter.swift in Sources */,
+				2735863F20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift in Sources */,
 				3786F97F1F1E03BA00693B6A /* RtmMessaging.swift in Sources */,
 				CD0385C5EFAB73A715B73025 /* PaymentDevice.swift in Sources */,
 				91185B7A20615E0C00E5E1CE /* A2AVerificationRequest.swift in Sources */,
@@ -1686,6 +1708,7 @@
 				3701AE581F16180000550890 /* FetchCommitsOperation.swift in Sources */,
 				91185B7820615E0C00E5E1CE /* FitpayA2aVerrificationDelegate.swift in Sources */,
 				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
+				2735864120E07021005EDA9D /* PlatformConfig.swift in Sources */,
 				8456437C1CAD7F7200351C8E /* CommitsApplyer.swift in Sources */,
 				371CB3031F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,
 				37139BDB1F164695001EEE73 /* APDUConfirmOperation.swift in Sources */,
@@ -1805,6 +1828,7 @@
 				3A93A0821DB8CA2C00A9FEB4 /* RtmConfig.swift in Sources */,
 				3A93A0841DB8CA2C00A9FEB4 /* JWEObjectExtensions.swift in Sources */,
 				916CE9C320A18CA300C2F621 /* KeyedEncodingContainerExtension.swift in Sources */,
+				2735864620E13437005EDA9D /* CustomJSONArrayEncoding.swift in Sources */,
 				3A640B4A1DDF110E008AD936 /* RtmMessageResponse.swift in Sources */,
 				27982EBD20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift in Sources */,
 				3A93A0851DB8CA2C00A9FEB4 /* Transaction.swift in Sources */,
@@ -1853,6 +1877,7 @@
 				272C9343207E7FD800166820 /* (null) in Sources */,
 				272E04392093B40A000EAA9D /* WVConfigStorage.swift in Sources */,
 				3A93A09C1DB8CA2C00A9FEB4 /* CreditCard.swift in Sources */,
+				2735864220E07021005EDA9D /* PlatformConfig.swift in Sources */,
 				37D0CFF01EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
 				3A93A09D1DB8CA2C00A9FEB4 /* Address.swift in Sources */,
 				918E26C220B42AA400D9D750 /* ErrorResponse.swift in Sources */,
@@ -1920,6 +1945,7 @@
 				3A93A0B91DB8CA2C00A9FEB4 /* SyncManager.swift in Sources */,
 				3701AE3C1F13BA1B00550890 /* SyncEvent.swift in Sources */,
 				3A93A0BA1DB8CA2C00A9FEB4 /* SecretApplyable.swift in Sources */,
+				2735864520E127CE005EDA9D /* Payload.swift in Sources */,
 				3A93A0BB1DB8CA2C00A9FEB4 /* ApduResultMessage.swift in Sources */,
 				27C34A4420CEC635005EE649 /* CardInfo.swift in Sources */,
 				371CB3041F45DA4F0019A766 /* RtmMessageHandlerV4.swift in Sources */,

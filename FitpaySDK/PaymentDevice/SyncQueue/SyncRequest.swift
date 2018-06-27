@@ -10,9 +10,10 @@ public typealias SyncRequestCompletion = (EventStatus, Error?) -> Void
 
 open class SyncRequest {
     
-    // MARK: - Public
-    
+    static var syncManager: SyncManagerProtocol = SyncManager.sharedInstance
+
     public let requestTime: Date
+    public let syncId: String?
     public private(set) var syncStartTime: Date?
     
     public var syncInitiator: SyncInitiator?
@@ -21,35 +22,6 @@ open class SyncRequest {
             FitpayNotificationsManager.sharedInstance.updateRestClientForNotificationDetail(self.notificationAsc)
         }
     }
-    
-    /// Creates sync request.
-    ///
-    /// - Parameters:
-    ///   - requestTime: time as Date object when request was made. Used for filtering unnecessary syncs. Defaults to Date().
-    ///   - user: User object.
-    ///   - deviceInfo: DeviceInfo object.
-    ///   - paymentDevice: PaymentDevice object.
-    ///   - initiator: syncInitiator Enum object. Defaults to .NotDefined.
-    ///   - notificationAsc: NotificationDetail object.
-    public init(requestTime: Date = Date(), user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice,
-                initiator: SyncInitiator = .notDefined, notificationAsc: NotificationDetail? = nil) {
-        
-        self.requestTime = requestTime
-        self.user = user
-        self.deviceInfo = deviceInfo
-        self.paymentDevice = paymentDevice
-        self.syncInitiator = initiator
-        self.notificationAsc = notificationAsc
-        
-        // capture restClient reference
-        if user.client != nil {
-            self.restClient = user.client
-        } else if deviceInfo.client != nil {
-            self.restClient = deviceInfo.client
-        }
-    }
-    
-    // MARK: - / Private
     
     var isEmptyRequest: Bool {
         return user == nil || deviceInfo == nil || paymentDevice == nil
@@ -65,12 +37,43 @@ open class SyncRequest {
     // we should capture restClient to prevent deallocation
     private var restClient: RestClientInterface?
     
+    // MARK: - Lifecycle
+    
+    /// Creates sync request.
+    ///
+    /// - Parameters:
+    ///   - requestTime: time as Date object when request was made. Used for filtering unnecessary syncs. Defaults to Date().
+    ///   - syncId: sync identifier used for not running duplicates
+    ///   - user: User object.
+    ///   - deviceInfo: DeviceInfo object.
+    ///   - paymentDevice: PaymentDevice object.
+    ///   - initiator: syncInitiator Enum object. Defaults to .NotDefined.
+    ///   - notificationAsc: NotificationDetail object.
+    public init(requestTime: Date = Date(), syncId: String? = nil, user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice, initiator: SyncInitiator = .notDefined, notificationAsc: NotificationDetail? = nil) {
+        
+        self.requestTime = requestTime
+        self.syncId = syncId
+        self.user = user
+        self.deviceInfo = deviceInfo
+        self.paymentDevice = paymentDevice
+        self.syncInitiator = initiator
+        self.notificationAsc = notificationAsc
+        
+        // capture restClient reference
+        if user.client != nil {
+            self.restClient = user.client
+        } else if deviceInfo.client != nil {
+            self.restClient = deviceInfo.client
+        }
+    }
+    
     convenience init() {
         self.init(notificationAsc: nil, initiator: .notDefined)
     }
     
     init(notificationAsc: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
         self.requestTime = Date()
+        self.syncId = notificationAsc?.syncId
         self.user = nil
         self.deviceInfo = nil
         self.paymentDevice = nil
@@ -91,7 +94,7 @@ open class SyncRequest {
         }
     }
     
-    static var syncManager: SyncManagerProtocol = SyncManager.sharedInstance
+    // MARK: - Internal Functions
     
     func update(state: SyncRequestState) {
         if state == .inProgress {
