@@ -29,6 +29,8 @@ class RtmConfig: NSObject, Serializable, RtmConfigProtocol {
     private var customs: [String: Any] = [:]
     
     init(userEmail: String?, deviceInfo: DeviceInfo?, hasAccount: Bool = false) {
+        super.init()
+
         self.clientId = FitpayConfig.clientId
         self.redirectUri = FitpayConfig.redirectURL
         self.demoMode = FitpayConfig.Web.demoMode

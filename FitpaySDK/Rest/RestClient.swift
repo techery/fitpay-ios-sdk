@@ -435,11 +435,10 @@ extension RestClient {
                 request?.response { (response: DefaultDataResponse) in
                     if response.error != nil {
                         DispatchQueue.main.async {
-                            if let _ = response.error {
-                                let error = try? ErrorResponse(response.data)
+                            if let responseError = response.error {
+                                let error = try? ErrorResponse(responseError)
                                 completion(error)
-                            }
-                            else {
+                            } else {
                                 completion(nil)
                             }
                         }

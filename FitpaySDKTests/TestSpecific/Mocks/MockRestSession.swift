@@ -30,7 +30,7 @@ import XCTest
     public typealias LoginHandler = (_ error: NSError?) -> Void
 
     @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
-        self.acquireAccessToken(username: username, password: password) { (details: AuthorizationDetails?, error: NSError?) in
+        self.acquireAccessToken(username: username, password: password) { (details: RestSession.AuthorizationDetails?, error: NSError?) in
 
             DispatchQueue.global().async {
                 if let error = error {
@@ -60,7 +60,7 @@ import XCTest
         }
     }
 
-    typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
+    typealias AcquireAccessTokenHandler = (RestSession.AuthorizationDetails?, NSError?) -> Void
 
     func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
@@ -89,7 +89,7 @@ import XCTest
                     completion(nil, error)
 
                 } else if let resultValue = request.response?.json {
-                    let authorizationDetails = try? AuthorizationDetails(resultValue)
+                    let authorizationDetails = try? RestSession.AuthorizationDetails(resultValue)
                     completion(authorizationDetails, nil)
                 } else {
                     completion(nil, ErrorResponse.unhandledError(domain: MockRestClient.self))
