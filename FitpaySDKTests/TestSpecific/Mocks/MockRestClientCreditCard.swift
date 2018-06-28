@@ -56,7 +56,7 @@ extension MockRestClient {
 
     //MARK - Internal Functions
 
-    func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping RestClientInterface.CreditCardHandler) {
+    func createCreditCard(_ url: String, cardInfo: CardInfo, deviceId: String?, completion: @escaping RestClientInterface.CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -83,8 +83,11 @@ extension MockRestClient {
         }
     }
 
-    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler) {
-        let parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
+    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, deviceId: String?, completion: @escaping CreditCardsHandler) {
+        var parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
+        if let deviceId = deviceId {
+            parameters["deviceId"] = deviceId
+        }
         self.creditCards(url, parameters: parameters, completion: completion)
     }
 

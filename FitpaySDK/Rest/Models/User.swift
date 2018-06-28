@@ -63,21 +63,20 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     
     // MARK: - Public Functions
     
-    /**
-     Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
-     
-     - parameter cardInfo: Credit Card Info including Address and IdVerification info
-     - parameter completion: CreateCreditCardHandler closure
-     */
-    @objc public func createCreditCard(cardInfo: CardInfo, completion: @escaping RestClient.CreditCardHandler) {
+    /// Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
+    ///
+    /// - Parameters:
+    ///   - cardInfo: Credit Card Info including Address and IdVerification info
+    ///   - deviceId: optional device which to add a credential to
+    ///   - completion: CreateCreditCardHandler closure
+    @objc public func createCreditCard(cardInfo: CardInfo, deviceId: String? = nil, completion: @escaping RestClient.CreditCardHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.createCreditCard(url, cardInfo: cardInfo, completion: completion)
+            client.createCreditCard(url, cardInfo: cardInfo, deviceId: deviceId, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
-        
     }
     
     /**
@@ -88,11 +87,11 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CreditCardsHandler closure
      */
-    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, completion: @escaping RestClient.CreditCardsHandler) {
+    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, deviceId: String? = nil, completion: @escaping RestClient.CreditCardsHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, completion: completion)
+            client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, deviceId: deviceId, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }

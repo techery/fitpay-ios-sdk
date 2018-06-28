@@ -340,9 +340,9 @@ protocol RestClientInterface: class {
     //MARK: - RestClientCreditCard
     
     //MARK - Internal Functions
-    func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping CreditCardHandler)
+    func createCreditCard(_ url: String, cardInfo: CardInfo, deviceId: String?, completion: @escaping CreditCardHandler)
     
-    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler)
+    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, deviceId: String?, completion: @escaping CreditCardsHandler)
     
     func creditCards(_ url: String, parameters: [String: Any]?, completion: @escaping CreditCardsHandler)
     

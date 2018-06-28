@@ -57,7 +57,7 @@ extension RestClient {
     
     //MARK - Internal Functions
     
-    func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping CreditCardHandler) {
+    func createCreditCard(_ url: String, cardInfo: CardInfo, deviceId: String?, completion: @escaping CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
@@ -80,8 +80,11 @@ extension RestClient {
                 return
             }
             
-            let parameters: [String: String] =  ["encryptedData": unwrappedEncrypted]
-            
+            var parameters: [String: String] =  ["encryptedData": unwrappedEncrypted]
+            if let deviceId = deviceId {
+                parameters["deviceId"] = deviceId
+            }
+                
             let request = strongSelf.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
@@ -97,8 +100,11 @@ extension RestClient {
         }
     }
     
-    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler) {
-        let parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
+    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, deviceId: String?, completion: @escaping CreditCardsHandler) {
+        var parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
+        if let deviceId = deviceId {
+            parameters["deviceId"] = deviceId
+        }
         self.creditCards(url, parameters: parameters, completion: completion)
     }
     
