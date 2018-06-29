@@ -1248,6 +1248,7 @@
 		CD038511B6DB51958C59E6FC /* Rest */ = {
 			isa = PBXGroup;
 			children = (
+				919431E920D01DEA0086B39B /* RestClientInterface.swift */,
 				CD038E6F65A6788F30C11986 /* RestClient.swift */,
 				3767B81B1ED31EDD007443D2 /* RestClientCreditCard.swift */,
 				3767B8181ED31D48007443D2 /* RestClientDevice.swift */,
@@ -1293,7 +1294,6 @@
 		CD038D2F64FC83449F1AB8F3 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				919431E920D01DEA0086B39B /* RestClientInterface.swift */,
 				CD0385948875F054FFA4153B /* RawIntValue.swift */,
 			);
 			path = Protocols;

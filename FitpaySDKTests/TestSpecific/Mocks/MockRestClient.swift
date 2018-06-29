@@ -2,7 +2,7 @@
 import XCTest
 
 class MockRestClient: NSObject, RestClientInterface {
-    
+
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
      
@@ -122,6 +122,43 @@ class MockRestClient: NSObject, RestClientInterface {
             }
         }
     }
+    
+    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) where T : Decodable, T : Encodable {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async {  completion(nil, error) }
+                return
+            }
+            
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            
+            if url.contains("commit") {
+                response.json = self?.loadDataFromJSONFile(filename: "getCommit")
+            } else if url.contains("creditCards") {
+                response.json = self?.loadDataFromJSONFile(filename: "listCreditCards")
+            } else if url.contains("devices") {
+                response.json = self?.loadDataFromJSONFile(filename: "listDevices")
+            }
+            
+            let request = Request(request: url)
+            request.response = response
+            
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let strongSelf = self else { return }
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let commit = try? ResultCollection<T>(resultValue)
+                commit?.client = self
+                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(commit, error)
+            }
+        }
+        
+    }
+    
 }
 
 // MARK: - Confirm package

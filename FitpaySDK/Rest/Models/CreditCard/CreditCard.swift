@@ -256,7 +256,7 @@ import Foundation
         let resource = CreditCard.acceptTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.acceptTerms(url, completion: completion)
+            client.acceptCall(url, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -271,7 +271,7 @@ import Foundation
         let resource = CreditCard.declineTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.declineTerms(url, completion: completion)
+            client.acceptCall(url, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -288,7 +288,7 @@ import Foundation
         let resource = CreditCard.deactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+            client.activationCall(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -305,7 +305,7 @@ import Foundation
         let resource = CreditCard.reactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+            client.activationCall(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }

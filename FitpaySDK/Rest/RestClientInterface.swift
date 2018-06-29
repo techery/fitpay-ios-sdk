@@ -205,8 +205,6 @@ protocol RestClientInterface: class {
     
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler)
     
-    func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler)
-    
     /**
      Creates a new encryption key pair
      
@@ -244,9 +242,7 @@ protocol RestClientInterface: class {
     func issuers(completion: @escaping IssuersHandler)
     
     func assets(_ url: String, completion: @escaping AssetsHandler)
-    
-    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler)
-    
+
     /**
      Creates a request for resetting a device
      
@@ -309,8 +305,6 @@ protocol RestClientInterface: class {
     
     func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) 
     
-    func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler)
-    
     func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler)
     
     func updateDevice(_ url: String,
@@ -322,33 +316,24 @@ protocol RestClientInterface: class {
     func addDeviceProperty(_ url: String, propertyPath: String, propertyValue: String, completion: @escaping DeviceHandler)
     
     func commits(_ url: String, commitsAfter: String?, limit: Int, offset: Int, completion: @escaping CommitsHandler)
-    
-    func commits(_ url: String, parameters: [String: Any]?,  completion: @escaping CommitsHandler)
-    
+        
     func commit(_ url: String, completion: @escaping CommitHandler)
     
     //MARK: - RestClientCreditCard
     
-    //MARK - Internal Functions
     func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping CreditCardHandler)
     
     func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler)
-    
-    func creditCards(_ url: String, parameters: [String: Any]?, completion: @escaping CreditCardsHandler)
-    
+        
     func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping CreditCardHandler)
     
-    func acceptTerms(_ url: String, completion: @escaping CreditCardTransitionHandler)
-    
-    func declineTerms(_ url: String, completion: @escaping CreditCardTransitionHandler)
+    func acceptCall(_ url: String, completion: @escaping CreditCardTransitionHandler)
     
     func selectVerificationType(_ url: String, completion: @escaping VerifyHandler)
     
     func verify(_ url: String, verificationCode: String, completion: @escaping VerifyHandler)
     
-    func deactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler)
-    
-    func reactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler)
+    func activationCall(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler)
     
     func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler)
     
@@ -376,7 +361,12 @@ protocol RestClientInterface: class {
     func relationship(_ url: String, completion: @escaping RelationshipHandler)
     
     //MARK: - Generic
-    
+    typealias ResultHandler<T> = (_ result: T?, _ error: ErrorResponse?) -> Void
+    typealias ResultCollectionHandler<T:Codable> = (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void
+
     func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler)
 
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler)
+    
+    func makeGetCall<T>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>)
 }

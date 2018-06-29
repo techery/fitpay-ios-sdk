@@ -145,6 +145,28 @@ open class RestClient: NSObject, RestClientInterface {
         }
     }
 
+    func makeGetCall<T:Codable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>) {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async {  completion(nil, error) }
+                return
+            }
+            
+            let request = self?.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let strongSelf = self else { return }
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let result = try? ResultCollection<T>(resultValue)
+                result?.client = self
+                result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                completion(result, error)
+            }
+        }
+    }
+
 }
 
 // MARK: - Confirm package
@@ -198,29 +220,9 @@ extension RestClient {
     
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
-        self.transactions(url, parameters: parameters, completion: completion)
+        makeGetCall(url, parameters: parameters, completion: completion)
     }
-    
-    func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            
-            let request = self.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let transaction = try? ResultCollection<Transaction>(resultValue)
-                transaction?.client = self
-                completion(transaction, error)
-            }
-        }
-    }
-    
+
 }
 
 // MARK: - Encryption
@@ -304,7 +306,8 @@ extension RestClient {
     
 }
 
-// MARK: Request Signature Helpers
+// MARK: - Request Signature Helpers
+
 extension RestClient {
     
     typealias AuthHeaderHandler = (_ headers: [String: String]?, _ error: ErrorResponse?) -> Void
