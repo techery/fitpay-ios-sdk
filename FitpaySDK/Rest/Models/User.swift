@@ -87,11 +87,11 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CreditCardsHandler closure
      */
-    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, deviceId: String? = nil, completion: @escaping RestClient.CreditCardsHandler) {
+    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, completion: @escaping RestClient.CreditCardsHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, deviceId: deviceId, completion: completion)
+            client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
