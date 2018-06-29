@@ -128,6 +128,23 @@ open class RestClient: NSObject, RestClientInterface {
         }
     }
     
+    // MARK: - Internal
+
+    func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler) {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let strongSelf = self else { return }
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(error) }
+                return
+            }
+            
+            let request = strongSelf.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                completion(error)
+            }
+        }
+    }
+
 }
 
 // MARK: - Confirm package

@@ -64,18 +64,4 @@ extension RestClient {
         }
     }
     
-    func deleteRelationship(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                completion(error)
-                return
-            }
-            
-            let request = self.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }
-    }
-    
 }

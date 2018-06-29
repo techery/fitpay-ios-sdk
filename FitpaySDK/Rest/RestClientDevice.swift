@@ -88,21 +88,7 @@ extension RestClient {
             }
         }
     }
-    
-    func deleteDevice(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(error) }
-                return
-            }
-            
-            let request = self?.manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }
-    }
-    
+        
     func updateDevice(_ url: String,
                                firmwareRevision: String?,
                                softwareRevision: String?,

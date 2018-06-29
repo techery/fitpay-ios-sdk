@@ -303,14 +303,6 @@ protocol RestClientInterface: class {
                     birthDate: String?, originAccountCreated: String?, termsAccepted: String?,
                     termsVersion: String?, completion: @escaping UserHandler)
     
-    /**
-     Delete a single user from your organization
-     
-     - parameter id:         user id
-     - parameter completion: DeleteHandler closure
-     */
-    func deleteUser(_ url: String, completion: @escaping DeleteHandler)
-    
     func user(_ url: String, completion: @escaping UserHandler)
     
     //MARK: - RestClientDevice
@@ -320,8 +312,6 @@ protocol RestClientInterface: class {
     func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler)
     
     func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler)
-    
-    func deleteDevice(_ url: String, completion: @escaping DeleteHandler)
     
     func updateDevice(_ url: String,
                       firmwareRevision: String?,
@@ -345,8 +335,6 @@ protocol RestClientInterface: class {
     func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler)
     
     func creditCards(_ url: String, parameters: [String: Any]?, completion: @escaping CreditCardsHandler)
-    
-    func deleteCreditCard(_ url: String, completion: @escaping DeleteHandler)
     
     func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping CreditCardHandler)
     
@@ -387,5 +375,8 @@ protocol RestClientInterface: class {
     
     func relationship(_ url: String, completion: @escaping RelationshipHandler)
     
-    func deleteRelationship(_ url: String, completion: @escaping DeleteHandler)
+    //MARK: - Generic
+    
+    func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler)
+
 }

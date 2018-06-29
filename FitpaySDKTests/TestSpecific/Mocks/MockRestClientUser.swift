@@ -220,31 +220,6 @@ extension MockRestClient {
 
     }
 
-    /**
-     Delete a single user from your organization
-
-     - parameter id:         user id
-     - parameter completion: DeleteHandler closure
-     */
-    @objc public func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
-      /* TODO self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                completion(error)
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "confirmJson")
-            let request = Request(request: url)
-            request.response = response
-            self.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }*/
-        completion(nil)
-    }
-
     // MARK: - Internal Functions
 
     @objc public func user(_ url: String, completion: @escaping UserHandler) {

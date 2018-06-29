@@ -224,7 +224,7 @@ import Foundation
         let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deleteCreditCard(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }

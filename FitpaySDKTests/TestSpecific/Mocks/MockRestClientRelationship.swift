@@ -72,23 +72,4 @@ extension  MockRestClient {
         }
     }
 
-    func deleteRelationship(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                completion(error)
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "")
-            let request = Request(request: url)
-            request.response = response
-
-            self.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }
-    }
-
 }

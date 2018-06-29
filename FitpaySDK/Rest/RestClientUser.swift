@@ -212,27 +212,7 @@ extension RestClient {
         }
         
     }
-    
-    /**
-     Delete a single user from your organization
-     
-     - parameter id:         user id
-     - parameter completion: DeleteHandler closure
-     */
-    @objc public func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                completion(error)
-                return
-            }
             
-            let request = self.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }
-    }
-        
     @objc public func user(_ url: String, completion: @escaping UserHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {

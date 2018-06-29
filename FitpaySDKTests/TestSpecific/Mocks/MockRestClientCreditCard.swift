@@ -115,27 +115,6 @@ extension MockRestClient {
         }
     }
 
-    func deleteCreditCard(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(error) }
-                return
-            }
-            
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "")
-            let request = Request(request: url)
-            request.response = response
-            
-            self?.makeRequest(request: request) { (resultValue, error) in
-                self?.makeRequest(request: request) { (resultValue, error) in
-                    completion(error)
-                }
-            }
-        }
-    }
-
     func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping RestClientInterface.CreditCardHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {

@@ -265,7 +265,7 @@ import Foundation
         let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deleteDevice(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
