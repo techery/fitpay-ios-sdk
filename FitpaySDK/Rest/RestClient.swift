@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 
 open class RestClient: NSObject, RestClientInterface {
-    
+
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
      
@@ -131,7 +131,7 @@ open class RestClient: NSObject, RestClientInterface {
     // MARK: - Internal
 
     func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }
@@ -146,7 +146,7 @@ open class RestClient: NSObject, RestClientInterface {
     }
 
     func makeGetCall<T:Codable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
@@ -166,7 +166,48 @@ open class RestClient: NSObject, RestClientInterface {
             }
         }
     }
-
+    
+    func makeGetCall<T:ClientModel & Serializable>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) {
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                var result = try? T(resultValue)
+                result?.client = self
+                completion(result, error)
+            }
+        }
+    }
+    
+    func makeGetCall<T:Serializable & ClientModel & SecretApplyable>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) {
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let strongSelf = self else { return }
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                var result = try? T(resultValue)
+                result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                result?.client = self
+                completion(result, error)
+            }
+        }
+    }
 }
 
 // MARK: - Confirm package
@@ -185,17 +226,7 @@ extension RestClient {
             return
         }
         
-        self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(error) }
-                return
-            }
-            
-            let request = self.manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }
+        makePostCall(url, parameters: package.responseDictionary, completion: completion)
     }
 }
 
@@ -209,14 +240,6 @@ extension RestClient {
      - parameter error:        Provides error object, or nil if no error occurs
      */
     public typealias TransactionsHandler = (_ result: ResultCollection<Transaction>?, _ error: ErrorResponse?) -> Void
-    
-    /**
-     Completion handler
-     
-     - parameter transaction: Provides Transaction object, or nil if error occurs
-     - parameter error:       Provides error object, or nil if no error occurs
-     */
-    public typealias TransactionHandler = (_ transaction: Transaction?, _ error: ErrorResponse?) -> Void
     
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
@@ -366,28 +389,7 @@ extension RestClient {
     public typealias IssuersHandler = (_ issuers: Issuers?, _ error: ErrorResponse?) -> Void
     
     public func issuers(completion: @escaping IssuersHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let strongSelf = self else { return }
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            
-            let request = strongSelf.manager.request(FitpayConfig.apiURL + "/issuers",
-                                                     method: .get,
-                                                     parameters: nil,
-                                                     encoding: JSONEncoding.default,
-                                                     headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in                
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let issuers = try? Issuers(resultValue)
-                issuers?.client = self
-                completion(issuers, error)
-            }
-        }
+        makeGetCall(FitpayConfig.apiURL + "/issuers", parameters: nil, completion: completion)
     }
 
 }
@@ -529,9 +531,9 @@ extension RestClient {
                     completion(try? ResetDeviceResult(resultValue), error)
                 }
             } else {
-                DispatchQueue.main.async(execute: {
+                DispatchQueue.main.async {
                     completion(nil, error)
-                })
+                }
             }
         }
     }

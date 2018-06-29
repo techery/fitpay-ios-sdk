@@ -7,14 +7,6 @@ extension MockRestClient {
     /**
      Completion handler
 
-     - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
-     */
-    public typealias ListUsersHandler = (ResultCollection<User>?, Error?) -> Void
-
-    /**
-     Completion handler
-
      - parameter user: Provides User object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
@@ -114,32 +106,7 @@ extension MockRestClient {
      - parameter completion: UserHandler closure
      */
     @objc open func user(id: String, completion: @escaping UserHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let strongSelf = self else { return }
-
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            let url = FitpayConfig.apiURL + "/users/" + id
-            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUser")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let user = try? User(resultValue)
-                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                user?.client = self
-                completion(user, error)
-            }
-        }
+        makeGetCall(FitpayConfig.apiURL + "/users/" + id, parameters: nil, completion: completion)
     }
 
     /**
@@ -219,32 +186,5 @@ extension MockRestClient {
         }
 
     }
-
-    // MARK: - Internal Functions
-
-    @objc public func user(_ url: String, completion: @escaping UserHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUser")
-            let request = Request(request: url)
-            request.response = response
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let user = try? User(resultValue)
-                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                user?.client = self
-                completion(user, error)
-            }
-        }
-    }
+    
 }

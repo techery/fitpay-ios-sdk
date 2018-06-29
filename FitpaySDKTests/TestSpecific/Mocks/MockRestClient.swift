@@ -2,7 +2,7 @@
 import XCTest
 
 class MockRestClient: NSObject, RestClientInterface {
-
+    
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
      
@@ -89,7 +89,7 @@ class MockRestClient: NSObject, RestClientInterface {
             }
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "")
+            response.json = self.loadDataFromJSONFile(filename: "") //needed
             let request = Request(request: url)
             request.response = response
             
@@ -105,7 +105,7 @@ class MockRestClient: NSObject, RestClientInterface {
     }
     
     func makeDeleteCall(_ url: String, completion: @escaping RestClientInterface.DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
+        prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(error)
                 return
@@ -114,6 +114,7 @@ class MockRestClient: NSObject, RestClientInterface {
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
             response.json = self.loadDataFromJSONFile(filename: "")
+            
             let request = Request(request: url)
             request.response = response
             
@@ -124,16 +125,16 @@ class MockRestClient: NSObject, RestClientInterface {
     }
     
     func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) where T : Decodable, T : Encodable {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
+                DispatchQueue.main.async { completion(nil, error) }
                 return
             }
             
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
             
-            if url.contains("commit") {
+            if url.contains("commits") {
                 response.json = self?.loadDataFromJSONFile(filename: "getCommit")
             } else if url.contains("creditCards") {
                 response.json = self?.loadDataFromJSONFile(filename: "listCreditCards")
@@ -159,6 +160,71 @@ class MockRestClient: NSObject, RestClientInterface {
         
     }
     
+    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T : ClientModel, T : Serializable {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            
+            if url.contains("commit") {
+                response.json = self?.loadDataFromJSONFile(filename: "getCommit")
+            } else if url.contains("user") {
+                response.json = self?.loadDataFromJSONFile(filename: "getUser")
+            }
+            
+            let request = Request(request: url)
+            request.response = response
+            
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                var result = try? T(resultValue)
+                result?.client = self
+                completion(result, error)
+            }
+        }
+    }
+    
+    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T : ClientModel, T : SecretApplyable, T : Serializable {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            
+            if url.contains("commit") {
+                response.json = self?.loadDataFromJSONFile(filename: "getCommit")
+            } else if url.contains("creditCards") {
+                response.json = self?.loadDataFromJSONFile(filename: "retrieveCreditCard")
+            } else if url.contains("user") {
+                response.json = self?.loadDataFromJSONFile(filename: "getUser")
+            }
+            
+            let request = Request(request: url)
+            request.response = response
+            
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let strongSelf = self else { return }
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                var result = try? T(resultValue)
+                result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
+                result?.client = self
+                completion(result, error)
+            }
+        }
+    }
 }
 
 // MARK: - Confirm package
@@ -412,6 +478,7 @@ extension MockRestClient {
 
 // MARK: Sync Statistics
 extension MockRestClient {
+    
     func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {

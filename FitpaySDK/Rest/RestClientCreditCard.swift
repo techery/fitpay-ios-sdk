@@ -58,7 +58,7 @@ extension RestClient {
     //MARK - Internal Functions
     
     func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping CreditCardHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -103,7 +103,7 @@ extension RestClient {
     }
     
     func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping CreditCardHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -184,44 +184,6 @@ extension RestClient {
         }
     }
 
-    func getVerificationMethods(_ url: String, completion: @escaping VerifyMethodsHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let verificationMethods = try? ResultCollection<VerificationMethod>(resultValue)
-                completion(verificationMethods, error)
-            }
-        }
-    }
-    
-    func getVerificationMethod(_ url: String, completion: @escaping VerifyMethodHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let verificationMethod = try? VerificationMethod(resultValue)
-                completion(verificationMethod, error)
-            }
-        }
-    }
-
     func selectVerificationType(_ url: String, completion: @escaping VerifyHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
@@ -280,30 +242,6 @@ extension RestClient {
                 let card = try? CreditCard(resultValue)
                 card?.client = self
                 completion(false, card, error)
-            }
-        }
-    }
-    
-
-    
-    func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let card = try? CreditCard(resultValue)
-                card?.client = self
-                card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(card, error)
             }
         }
     }

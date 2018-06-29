@@ -144,54 +144,6 @@ extension MockRestClient {
         }
     }
 
-    func getVerificationMethods(_ url: String, completion: @escaping VerifyMethodsHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getVerificationMethods") 
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let verificationMethods = try? ResultCollection<VerificationMethod>(resultValue)
-                completion(verificationMethods, error)
-            }
-        }
-    }
-
-    func getVerificationMethod(_ url: String, completion: @escaping VerifyMethodHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "") //TODO
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let verificationMethod = try? VerificationMethod(resultValue)
-                completion(verificationMethod, error)
-            }
-        }
-    }
-
     func selectVerificationType(_ url: String, completion: @escaping VerifyHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
@@ -271,34 +223,7 @@ extension MockRestClient {
             }
         }
     }
-
-    func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "retrieveCreditCard")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let card = try? CreditCard(resultValue)
-                card?.client = self
-                card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(card, error)
-            }
-        }
-    }
-
+    
     func makeDefault(_ url: String, completion: @escaping CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {

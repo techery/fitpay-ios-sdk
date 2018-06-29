@@ -181,7 +181,7 @@ import Foundation
         let url = self.links?.url(resource)
 
         if let url = url, let client = self.client {
-            client.retrieveCreditCard(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -352,7 +352,7 @@ import Foundation
         let resource = CreditCard.getVerificationMethodsKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.getVerificationMethods(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -367,11 +367,12 @@ import Foundation
         let resource = CreditCard.selectedVerificationKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.getVerificationMethod(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
+
 }
 
 // MARK: - Nested Objects
