@@ -42,7 +42,7 @@ open class Relationship: NSObject, ClientModel, Serializable {
         let resource = Relationship.selfResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.deleteRelationship(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: Relationship.self, client: client, url: url, resource: resource))
         }

@@ -85,55 +85,7 @@ extension MockRestClient {
 
     func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler) {
         let parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
-        self.creditCards(url, parameters: parameters, completion: completion)
-    }
-
-    func creditCards(_ url: String, parameters: [String: Any]?, completion: @escaping CreditCardsHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "listCreditCards")
-            let request = Request(request: url)
-            request.response = response
-            
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let creditCard = try? ResultCollection<CreditCard>(resultValue)
-                creditCard?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                creditCard?.client = self
-                completion(creditCard, error)
-            }
-        }
-    }
-
-    func deleteCreditCard(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(error) }
-                return
-            }
-            
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "")
-            let request = Request(request: url)
-            request.response = response
-            
-            self?.makeRequest(request: request) { (resultValue, error) in
-                self?.makeRequest(request: request) { (resultValue, error) in
-                    completion(error)
-                }
-            }
-        }
+        makeGetCall(url, parameters: parameters, completion: completion)
     }
 
     func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping RestClientInterface.CreditCardHandler) {
@@ -163,19 +115,23 @@ extension MockRestClient {
         }
     }
 
-    func acceptTerms(_ url: String, completion: @escaping CreditCardTransitionHandler) {
+    func acceptCall(_ url: String, completion: @escaping RestClientInterface.CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
                 return
             }
-
+            
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "acceptTermsForCreditCard")
+            if url.contains("accept") {
+                response.json = self?.loadDataFromJSONFile(filename: "acceptTermsForCreditCard")
+            } else {
+                response.json = self?.loadDataFromJSONFile(filename: "declineTerms")
+            }
             let request = Request(request: url)
             request.response = response
-
+            
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
@@ -184,79 +140,6 @@ extension MockRestClient {
                 let card = try? CreditCard(resultValue)
                 card?.client = self
                 completion(false, card, nil)
-            }
-        }
-    }
-
-    func declineTerms(_ url: String, completion: @escaping CreditCardTransitionHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(false, nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "declineTerms")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    self?.handleTransitionResponse(error, completion: completion)
-                    return
-                }
-                let card = try? CreditCard(resultValue)
-                card?.client = self
-                completion(false, card, error)
-            }
-        }
-    }
-
-    func getVerificationMethods(_ url: String, completion: @escaping VerifyMethodsHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getVerificationMethods") 
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let verificationMethods = try? ResultCollection<VerificationMethod>(resultValue)
-                completion(verificationMethods, error)
-            }
-        }
-    }
-
-    func getVerificationMethod(_ url: String, completion: @escaping VerifyMethodHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "") //TODO
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let verificationMethod = try? VerificationMethod(resultValue)
-                completion(verificationMethod, error)
             }
         }
     }
@@ -311,19 +194,24 @@ extension MockRestClient {
         }
     }
 
-    func deactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler) {
+    func activationCall(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping RestClientInterface.CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
                 return
             }
-
+            
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "deactivateCreditCard")
+            if url.contains("de") {
+                response.json = self?.loadDataFromJSONFile(filename: "deactivateCreditCard")
+            } else {
+                response.json = self?.loadDataFromJSONFile(filename: "reactivateCreditCard")
+            }
+            
             let request = Request(request: url)
             request.response = response
-
+            
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
@@ -335,59 +223,7 @@ extension MockRestClient {
             }
         }
     }
-
-    func reactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(false, nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "reactivateCreditCard")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    self?.handleTransitionResponse(error, completion: completion)
-                    return
-                }
-                let card = try? CreditCard(resultValue)
-                card?.client = self
-                completion(false, card, error)
-            }
-        }
-    }
-
-    func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "retrieveCreditCard")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let card = try? CreditCard(resultValue)
-                card?.client = self
-                card?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(card, error)
-            }
-        }
-    }
-
+    
     func makeDefault(_ url: String, completion: @escaping CreditCardTransitionHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
