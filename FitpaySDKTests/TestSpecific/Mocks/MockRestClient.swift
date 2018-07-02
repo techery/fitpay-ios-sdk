@@ -124,7 +124,7 @@ class MockRestClient: NSObject, RestClientInterface {
         }
     }
     
-    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) where T : Decodable, T : Encodable {
+    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) where T: Codable {
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -160,7 +160,7 @@ class MockRestClient: NSObject, RestClientInterface {
         
     }
     
-    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T : ClientModel, T : Serializable {
+    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: ClientModel, T: Serializable {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -170,9 +170,7 @@ class MockRestClient: NSObject, RestClientInterface {
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
             
-            if url.contains("commit") {
-                response.json = self?.loadDataFromJSONFile(filename: "getCommit")
-            } else if url.contains("user") {
+            if url.contains("user") {
                 response.json = self?.loadDataFromJSONFile(filename: "getUser")
             }
             
@@ -191,7 +189,7 @@ class MockRestClient: NSObject, RestClientInterface {
         }
     }
     
-    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T : ClientModel, T : SecretApplyable, T : Serializable {
+    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: ClientModel, T: SecretApplyable, T: Serializable {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -201,9 +199,7 @@ class MockRestClient: NSObject, RestClientInterface {
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
             
-            if url.contains("commit") {
-                response.json = self?.loadDataFromJSONFile(filename: "getCommit")
-            } else if url.contains("creditCards") {
+            if url.contains("creditCards") {
                 response.json = self?.loadDataFromJSONFile(filename: "retrieveCreditCard")
             } else if url.contains("user") {
                 response.json = self?.loadDataFromJSONFile(filename: "getUser")
