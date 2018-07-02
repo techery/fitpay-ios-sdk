@@ -49,6 +49,8 @@
 		277C181820B33749003BD78B /* ResetDeviceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277C181620B33748003BD78B /* ResetDeviceResult.swift */; };
 		2786DB02207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		2786DB03207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
+		2788D7C720EAC443005B923D /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2788D7C620EAC443005B923D /* UserInfo.swift */; };
+		2788D7C820EAC443005B923D /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2788D7C620EAC443005B923D /* UserInfo.swift */; };
 		27982EBC20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27982EBB20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift */; };
 		27982EBD20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27982EBB20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift */; };
 		27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
@@ -279,7 +281,6 @@
 		9194323B20D024700086B39B /* verified.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320720D024430086B39B /* verified.json */; };
 		9194323C20D024700086B39B /* createRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320820D024430086B39B /* createRelationship.json */; };
 		9194323D20D024700086B39B /* getCommit.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320920D024430086B39B /* getCommit.json */; };
-		9194323E20D024700086B39B /* createUserJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320A20D024430086B39B /* createUserJson.json */; };
 		9194323F20D024700086B39B /* mocImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 9194320B20D024430086B39B /* mocImage.png */; };
 		9194324020D024700086B39B /* getRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320C20D024430086B39B /* getRelationship.json */; };
 		9194324120D024700086B39B /* resetDeviceTask.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320D20D024430086B39B /* resetDeviceTask.json */; };
@@ -305,7 +306,6 @@
 		9194325520D024700086B39B /* verified.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320720D024430086B39B /* verified.json */; };
 		9194325620D024700086B39B /* createRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320820D024430086B39B /* createRelationship.json */; };
 		9194325720D024700086B39B /* getCommit.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320920D024430086B39B /* getCommit.json */; };
-		9194325820D024700086B39B /* createUserJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320A20D024430086B39B /* createUserJson.json */; };
 		9194325920D024700086B39B /* mocImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 9194320B20D024430086B39B /* mocImage.png */; };
 		9194325A20D024700086B39B /* getRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320C20D024430086B39B /* getRelationship.json */; };
 		9194325B20D024700086B39B /* resetDeviceTask.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320D20D024430086B39B /* resetDeviceTask.json */; };
@@ -458,6 +458,7 @@
 		2778174D208E704D00FE2770 /* JWTDecode.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JWTDecode.framework; path = Carthage/Build/iOS/JWTDecode.framework; sourceTree = "<group>"; };
 		277C181620B33748003BD78B /* ResetDeviceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetDeviceResult.swift; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
+		2788D7C620EAC443005B923D /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		27982EBB20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnkeyedEncodingContainerExtension.swift; sourceTree = "<group>"; };
 		27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStreamManager.swift; sourceTree = "<group>"; };
 		27B8884C20A4C9DC0027969D /* ImageWithOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageWithOptions.swift; sourceTree = "<group>"; };
@@ -559,7 +560,6 @@
 		9194320720D024430086B39B /* verified.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = verified.json; sourceTree = "<group>"; };
 		9194320820D024430086B39B /* createRelationship.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = createRelationship.json; sourceTree = "<group>"; };
 		9194320920D024430086B39B /* getCommit.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = getCommit.json; sourceTree = "<group>"; };
-		9194320A20D024430086B39B /* createUserJson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = createUserJson.json; sourceTree = "<group>"; };
 		9194320B20D024430086B39B /* mocImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mocImage.png; sourceTree = "<group>"; };
 		9194320C20D024430086B39B /* getRelationship.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = getRelationship.json; sourceTree = "<group>"; };
 		9194320D20D024430086B39B /* resetDeviceTask.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = resetDeviceTask.json; sourceTree = "<group>"; };
@@ -880,6 +880,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		2788D7C520EAC42E005B923D /* User */ = {
+			isa = PBXGroup;
+			children = (
+				CD0387CEBA596BFB51256128 /* User.swift */,
+				2788D7C620EAC443005B923D /* UserInfo.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
 		27B8884B20A4C9BD0027969D /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -1062,7 +1071,6 @@
 				9194321820D024430086B39B /* createCreditCard.json */,
 				9194320E20D024430086B39B /* createDevice.json */,
 				9194320820D024430086B39B /* createRelationship.json */,
-				9194320A20D024430086B39B /* createUserJson.json */,
 				9194321620D024430086B39B /* deactivateCreditCard.json */,
 				9194321B20D024430086B39B /* declineTerms.json */,
 				9194320620D024430086B39B /* Error.json */,
@@ -1207,10 +1215,10 @@
 				27F82A8A20D07CA8005FA54D /* SecureElement.swift */,
 				CD03815EA04C30427064A86B /* Transaction.swift */,
 				8C870F161D00EC630048A1DF /* Transforms.swift */,
-				CD0387CEBA596BFB51256128 /* User.swift */,
 				CD0385770D2621125F59B8DD /* VerificationMethod.swift */,
 				27C34A3E20CEC5C5005EE649 /* CreditCard */,
 				27B8884B20A4C9BD0027969D /* Images */,
+				2788D7C520EAC42E005B923D /* User */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1472,7 +1480,6 @@
 				9194324520D024700086B39B /* issuers.json in Resources */,
 				9194323C20D024700086B39B /* createRelationship.json in Resources */,
 				9194324C20D024700086B39B /* createCreditCard.json in Resources */,
-				9194323E20D024700086B39B /* createUserJson.json in Resources */,
 				9194324D20D024700086B39B /* getUser.json in Resources */,
 				91FD052620D15A5B00092234 /* getVerificationMethods.json in Resources */,
 				9194323B20D024700086B39B /* verified.json in Resources */,
@@ -1506,7 +1513,6 @@
 				9194325F20D024700086B39B /* issuers.json in Resources */,
 				9194325620D024700086B39B /* createRelationship.json in Resources */,
 				9194326620D024700086B39B /* createCreditCard.json in Resources */,
-				9194325820D024700086B39B /* createUserJson.json in Resources */,
 				9194326720D024700086B39B /* getUser.json in Resources */,
 				91FD052720D15A5B00092234 /* getVerificationMethods.json in Resources */,
 				9194325520D024700086B39B /* verified.json in Resources */,
@@ -1593,6 +1599,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A1B6A3D1CDBEBF700EBD014 /* RtmConfig.swift in Sources */,
+				2788D7C720EAC443005B923D /* UserInfo.swift in Sources */,
 				9ABF39421C883AF7002EA8E5 /* JWEObjectExtensions.swift in Sources */,
 				CD03895E2EB9EE7415958B59 /* Transaction.swift in Sources */,
 				CD03806996B162B739B5C3C4 /* User.swift in Sources */,
@@ -1844,6 +1851,7 @@
 				3A93A08A1DB8CA2C00A9FEB4 /* Relationship.swift in Sources */,
 				91185B7E2061694400E5E1CE /* A2AVerificationError.swift in Sources */,
 				27EA81E3208F97CF00FFBB56 /* KeyedDecodingContainerExtension.swift in Sources */,
+				2788D7C820EAC443005B923D /* UserInfo.swift in Sources */,
 				3A93A08B1DB8CA2C00A9FEB4 /* Commit.swift in Sources */,
 				3767B8221ED32AE5007443D2 /* RestClientRelationship.swift in Sources */,
 				91185B7B2061694400E5E1CE /* A2AContext.swift in Sources */,

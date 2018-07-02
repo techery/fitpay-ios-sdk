@@ -167,10 +167,3 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     }
     
 }
-
-struct UserInfo: Serializable {
-    var firstName: String?
-    var lastName: String?
-    var birthDate: String?
-    var email: String?
-}
