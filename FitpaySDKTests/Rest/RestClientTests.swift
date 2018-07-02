@@ -120,7 +120,7 @@ class RestClientTests: XCTestCase {
             
         }
         
-        super.waitForExpectations(timeout: 100, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testResetDeviceTasks() {
@@ -145,7 +145,7 @@ class RestClientTests: XCTestCase {
             }
         }
 
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testUserCreate() {
@@ -167,7 +167,7 @@ class RestClientTests: XCTestCase {
             expectation.fulfill()
         }
         
-        super.waitForExpectations(timeout: 100, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testUserCreateLoginAndDeleteUser() {
@@ -241,7 +241,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardDeleteDeletesCreditCardAfterCreatingIt() {
@@ -261,7 +261,7 @@ class RestClientTests: XCTestCase {
         }
         
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
    func testUpdateUpdatesCreditCard() {
@@ -308,7 +308,7 @@ class RestClientTests: XCTestCase {
             }
         }
     
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testMakeDefaultMakesCreditCardDefault() {
@@ -334,7 +334,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 90, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testDeviceCreateWithMinimum() {
@@ -408,7 +408,7 @@ class RestClientTests: XCTestCase {
         }
         
         
-        super.waitForExpectations(timeout: 65, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardEditAcceptTermsUrl() {
@@ -423,7 +423,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testCreditCardGetVerificationMethods() {
@@ -441,7 +441,7 @@ class RestClientTests: XCTestCase {
             }
         }
 
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardDeclineTerms() {
@@ -480,7 +480,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 35, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testUserListDevisesListsDevices() {
@@ -618,7 +618,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testRelationshipsCreatesAndDeletesRelationship() {
@@ -646,7 +646,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 15, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testAssetsRetrievesAssetWithOptions() {
@@ -670,7 +670,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testAssetsRetrievesAsset() {
@@ -689,7 +689,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testGetIssuers() {
@@ -754,7 +754,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 50, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCompareCreatedEpochToCreatedTS() {
