@@ -59,7 +59,7 @@ open class CardRelationship: NSObject, ClientModel, Serializable, SecretApplyabl
         let resource = CardRelationship.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.relationship(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CardRelationship.self, client: client, url: url, resource: resource))
         }

@@ -40,34 +40,7 @@ extension MockRestClient {
 
     func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
-        self.devices(url, parameters: parameters, completion: completion)
-    }
-
-    func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "listDevices")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let deviceInfo = try? ResultCollection<DeviceInfo>(resultValue)
-                deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(deviceInfo, error)
-            }
-        }
+        makeGetCall(url, parameters: parameters, completion: completion)
     }
 
     func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping RestClientInterface.DeviceHandler) {
@@ -92,25 +65,6 @@ extension MockRestClient {
                 deviceInfo?.client = self
                 deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 completion(deviceInfo, error)
-            }
-        }
-    }
-
-    func deleteDevice(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
             }
         }
     }
@@ -182,84 +136,7 @@ extension MockRestClient {
             parameters["commitsAfter"] = commitsAfter!
         }
 
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getCommit")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let commit = try? ResultCollection<Commit>(resultValue)
-                commit?.client = self
-                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(commit, error)
-            }
-        }
+        makeGetCall(url, parameters: parameters, completion: completion)
     }
 
-    func commits(_ url: String, parameters: [String: Any]?,  completion: @escaping CommitsHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getCommit")
-            let request = Request(request: url)
-            request.response = response
-
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let commit = try? ResultCollection<Commit>(resultValue)
-                commit?.client = self
-                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(commit, error)
-            }
-        }
-    }
-
-    func commit(_ url: String, completion: @escaping CommitHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getCommit")
-            let request = Request(request: url)
-            request.response = response
-            
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let commit = try? Commit(resultValue)
-                commit?.client = self
-                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(commit, error)
-            }
-        }
-    }
 }

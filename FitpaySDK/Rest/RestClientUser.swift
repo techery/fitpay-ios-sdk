@@ -8,14 +8,6 @@ extension RestClient {
     /**
      Completion handler
      
-     - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
-     */
-    public typealias ListUsersHandler = (ResultCollection<User>?, Error?) -> Void
-    
-    /**
-     Completion handler
-     
      - parameter user: Provides User object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
@@ -115,29 +107,7 @@ extension RestClient {
      - parameter completion: UserHandler closure
      */
     @objc open func user(id: String, completion: @escaping UserHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let strongSelf = self else { return }
-            
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            let request = strongSelf.manager.request(FitpayConfig.apiURL + "/users/" + id,
-                                                      method: .get,
-                                                      parameters: nil,
-                                                      encoding: JSONEncoding.default,
-                                                      headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let user = try? User(resultValue)
-                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                user?.client = self
-                completion(user, error)
-            }
-        }
+        makeGetCall(FitpayConfig.apiURL + "/users/" + id, parameters: nil, completion: completion)
     }
     
     /**
@@ -213,46 +183,4 @@ extension RestClient {
         
     }
     
-    /**
-     Delete a single user from your organization
-     
-     - parameter id:         user id
-     - parameter completion: DeleteHandler closure
-     */
-    @objc public func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                completion(error)
-                return
-            }
-            
-            let request = self.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }
-    }
-        
-    @objc public func user(_ url: String, completion: @escaping UserHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }                
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let user = try? User(resultValue)
-                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                user?.client = self
-                completion(user, error)
-            }
-        }
-    }    
-
 }

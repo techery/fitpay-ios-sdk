@@ -120,7 +120,7 @@ class RestClientTests: XCTestCase {
             
         }
         
-        super.waitForExpectations(timeout: 100, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testResetDeviceTasks() {
@@ -145,7 +145,7 @@ class RestClientTests: XCTestCase {
             }
         }
 
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testUserCreate() {
@@ -167,7 +167,7 @@ class RestClientTests: XCTestCase {
             expectation.fulfill()
         }
         
-        super.waitForExpectations(timeout: 100, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testUserCreateLoginAndDeleteUser() {
@@ -241,7 +241,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardDeleteDeletesCreditCardAfterCreatingIt() {
@@ -261,7 +261,7 @@ class RestClientTests: XCTestCase {
         }
         
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
    func testUpdateUpdatesCreditCard() {
@@ -308,7 +308,7 @@ class RestClientTests: XCTestCase {
             }
         }
     
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testMakeDefaultMakesCreditCardDefault() {
@@ -334,7 +334,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 90, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testDeviceCreateWithMinimum() {
@@ -408,7 +408,7 @@ class RestClientTests: XCTestCase {
         }
         
         
-        super.waitForExpectations(timeout: 65, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardEditAcceptTermsUrl() {
@@ -423,7 +423,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testCreditCardGetVerificationMethods() {
@@ -441,7 +441,7 @@ class RestClientTests: XCTestCase {
             }
         }
 
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardDeclineTerms() {
@@ -480,7 +480,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 35, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testUserListDevisesListsDevices() {
@@ -618,34 +618,50 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 20, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
-    func testDeviceCardRelationships() {
-        let expectation = super.expectation(description: "test device card relationships")
+    func testRelationshipsCreatesAndDeletesRelationship() {
+        let expectation = super.expectation(description: "test 'relationships' creates and deletes relationship")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                XCTAssertNotNil( device?.cardRelationships?.first)
-                device?.cardRelationships?.first?.relationship({ (relationship, error) in
-                    XCTAssertNotNil(relationship)
-                    self.testHelper.deleteUser(user, expectation: expectation)
-                })
+                self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
+                    user?.createRelationship(creditCardId: creditCard!.creditCardId!, deviceId: device!.deviceIdentifier!) { (relationship, error) -> Void in
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(device)
+                        XCTAssertNotNil(relationship?.device)
+                        XCTAssertNotNil(relationship?.card)
+                        
+                        relationship?.deleteRelationship { (error) in
+                            XCTAssertNil(error)
+                            
+                            device?.deleteDeviceInfo { (error) -> Void in
+                                XCTAssertNil(error)
+                                self.testHelper.deleteUser(user, expectation: expectation)
+                            }
+                        }
+                    }
+                }
             }
         }
         
-        super.waitForExpectations(timeout: 15, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
-    func testResultCollectionCollectAll() {
+    func testAssetsRetrievesAssetWithOptions() {
         let expectation = super.expectation(description: "'assets' retrieves asset")
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     user?.listCreditCards(excludeState: [], limit: 1, offset: 0) { (collection, error) in
-                        collection?.collectAllAvailable() { (creditCards, error) in
-                            XCTAssertGreaterThan(creditCards?.count ?? 0, 0)
+                        let creditCard: CreditCard = collection!.results![0]
+                        creditCard.cardMetaData?.cardBackgroundCombinedEmbossed?.first?.retrieveAssetWith(options: [.width(600), .height(600), .fontBold(false)]) { (asset, error) in
+                            
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(asset?.image)
+                            
                             self.testHelper.deleteUser(user, expectation: expectation)
                         }
                         
@@ -654,31 +670,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 30, handler: nil)
-    }
-
-    func testAssetsRetrievesAssetWithOptions() {
-        let expectation = super.expectation(description: "'assets' retrieves asset")
-
-        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
-            self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    user?.listCreditCards(excludeState: [], limit: 1, offset: 0) { (collection, error) in
-                        let creditCard: CreditCard = collection!.results![0]
-                        creditCard.cardMetaData?.cardBackgroundCombinedEmbossed?.first?.retrieveAssetWith(options: [.width(600), .height(600), .fontBold(false)]) { (asset, error) in
-
-                            XCTAssertNil(error)
-                            XCTAssertNotNil(asset?.image)
-
-                            self.testHelper.deleteUser(user, expectation: expectation)
-                        }
-
-                    }
-                }
-            }
-        }
-
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testAssetsRetrievesAsset() {
@@ -697,28 +689,8 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 30, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
-
-    func testTermsAssetRetrieveAsset() {
-        let expectation = super.expectation(description: "terms asset 'assets' retrieves asset")
-
-        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
-            self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    creditCard?.termsAssetReferences?.first?.retrieveAsset({ (asset, error) in
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(asset?.image)
-
-                        self.testHelper.deleteUser(user, expectation: expectation)
-                    })
-                }
-            }
-        }
-
-        super.waitForExpectations(timeout: 30, handler: nil)
-    }
-    
     
     func testGetIssuers() {
         let expectation = super.expectation(description: "'testGetIssuers' gets issuers")
@@ -782,7 +754,7 @@ class RestClientTests: XCTestCase {
             }
         }
         
-        super.waitForExpectations(timeout: 50, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCompareCreatedEpochToCreatedTS() {

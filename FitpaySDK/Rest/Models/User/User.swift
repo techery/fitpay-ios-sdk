@@ -144,7 +144,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         let resource = User.selfResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.deleteUser(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
@@ -166,11 +166,4 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
     
-}
-
-struct UserInfo: Serializable {
-    var firstName: String?
-    var lastName: String?
-    var birthDate: String?
-    var email: String?
 }
