@@ -187,6 +187,7 @@ import Foundation
         try? container.encode(pairing, forKey: .pairing)
         try? container.encode(secureElement, forKey: .secureElement)
         try? container.encode(cardRelationships, forKey: .cardRelationships)
+        try? container.encodeIfPresent(metadata, forKey: .metadata)
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {
