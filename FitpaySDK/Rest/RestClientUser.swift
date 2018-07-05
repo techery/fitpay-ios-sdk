@@ -42,43 +42,45 @@ extension RestClient {
                 parameters += ["termsVersion": termsVersion!]
             }
             
-            if (termsAccepted != nil) {
-                parameters += ["termsAcceptedTsEpoch": termsAccepted!]
+            if let termsVersion = termsVersion {
+                parameters["termsVersion"] = termsVersion
             }
             
-            if (origin != nil) {
-                parameters += ["origin": origin!]
+            if let termsAccepted = termsAccepted {
+                parameters["termsAcceptedTsEpoch"] = termsAccepted
             }
             
-            if (termsVersion != nil) {
-                parameters += ["originAccountCreatedTsEpoch": originAccountCreated!]
+            if let origin = origin {
+                parameters["origin"] = origin
             }
             
+            if let originAccountCreated = originAccountCreated {
+                parameters["originAccountCreatedTsEpoch"] = originAccountCreated
+            }
+
             parameters["client_id"] = FitpayConfig.clientId
             
-            var rawUserInfo: [String: Any] = ["email": email, "pin": password ]
+            var rawUserInfo: [String: Any] = ["email": email, "pin": password]
             
-            if (firstName != nil) {
-                rawUserInfo += ["firstName": firstName!]
+            if let firstName = firstName {
+                rawUserInfo["firstName"] = firstName
             }
             
-            if (lastName != nil) {
-                rawUserInfo += ["lastName": lastName!]
+            if let lastName = lastName {
+                rawUserInfo["lastName"] = lastName
             }
             
-            if (birthDate != nil) {
-                rawUserInfo += ["birthDate": birthDate!]
+            if let birthDate = birthDate {
+                rawUserInfo["birthDate"] = birthDate
             }
             
-            if let userInfoJSON = rawUserInfo.JSONString {
-                if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW,
-                                                                  enc: JWEEncryption.A256GCM,
-                                                                  payload: userInfoJSON,
-                                                                  keyId: headers[RestClient.fpKeyIdKey]!) {
-                    if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
-                        parameters["encryptedData"] = encrypted
-                    }
-                }
+            if let userInfoJSON = rawUserInfo.JSONString,
+                let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW,
+                                                               enc: JWEEncryption.A256GCM,
+                                                               payload: userInfoJSON,
+                                                               keyId: headers[RestClient.fpKeyIdKey]!),
+                let encrypted = try? jweObject.encrypt(strongSelf.secret) {
+                parameters["encryptedData"] = encrypted
             }
             
             log.verbose("user creation url: \(FitpayConfig.apiURL)/users")

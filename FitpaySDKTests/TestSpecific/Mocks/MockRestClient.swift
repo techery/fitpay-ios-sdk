@@ -2,19 +2,7 @@
 import XCTest
 
 class MockRestClient: NSObject, RestClientInterface {
-    
-    /**
-     FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
-     
-     Not all errors map cleanly onto HTTP response codes, however. When a request is valid but does not complete successfully (e.g. a card is declined), we return a 402 error code.
-     
-     - OK:               Everything worked as expected
-     - BadRequest:       Often missing a required parameter
-     - Unauthorized:     No valid API key provided
-     - RequestFailed:    Parameters were valid but request failed
-     - NotFound:         The requested item doesn't exist
-     - ServerError[0-3]: Something went wrong on FitPay's end
-     */
+
     public enum ErrorCode: Int, Error, RawIntValue {
         case ok            = 200
         case badRequest    = 400
@@ -52,7 +40,7 @@ class MockRestClient: NSObject, RestClientInterface {
         _session = session;
     }
     
-    func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T? {
+    func collectionItems<T>(_ url: String, completion: @escaping ResultCollectionHandler<T>) -> T? {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -160,6 +148,34 @@ class MockRestClient: NSObject, RestClientInterface {
         
     }
     
+    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: Serializable {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            var response = Response()
+            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            
+            if url.contains("resetDeviceTasks") {
+                response.json = self?.loadDataFromJSONFile(filename: "resetDeviceTask")
+            }
+            
+            let request = Request(request: url)
+            request.response = response
+            
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let result = try? T(resultValue)
+                completion(result, error)
+            }
+        }
+    }
+    
     func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: ClientModel, T: Serializable {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
@@ -172,6 +188,8 @@ class MockRestClient: NSObject, RestClientInterface {
             
             if url.contains("user") {
                 response.json = self?.loadDataFromJSONFile(filename: "getUser")
+            } else if url.contains("issuers") {
+                response.json = self?.loadDataFromJSONFile(filename: "issuers")
             }
             
             let request = Request(request: url)
@@ -189,8 +207,8 @@ class MockRestClient: NSObject, RestClientInterface {
         }
     }
     
-    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: ClientModel, T: SecretApplyable, T: Serializable {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+    func makeGetCall<T>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: Serializable, T: ClientModel, T: SecretApplyable {
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
@@ -221,17 +239,35 @@ class MockRestClient: NSObject, RestClientInterface {
             }
         }
     }
+    
+    func makeRequest(request: Request?, completion: @escaping RequestHandler) {
+        request?.responseJSON() { (request) in
+            
+            DispatchQueue.main.async {
+                if request.response?.error != nil {
+                    let JSON = request.response?.json
+                    var error = try? ErrorResponse(JSON)
+                    if error == nil {
+                        error = ErrorResponse(domain: MockRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
+                    }
+                    completion(nil, error)
+                    
+                } else if let resultValue = request.response?.json {
+                    completion(resultValue, nil)
+                } else {
+                    completion(nil, ErrorResponse.unhandledError(domain: MockRestClient.self))
+                }
+            }
+        }
+    }
+    
+    
 }
 
 // MARK: - Confirm package
 
 extension MockRestClient {
-    /**
-     Endpoint to allow for returning responses to APDU execution
-     
-     - parameter package:    ApduPackage object
-     - parameter completion: ConfirmAPDUPackageHandler closure
-     */
+
     public func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmHandler) {
         guard package.packageId != nil else {
             completion(ErrorResponse(domain: MockRestClient.self, errorCode: ErrorCode.badRequest.rawValue, errorMessage: "packageId should not be nil"))
@@ -255,11 +291,13 @@ extension MockRestClient {
             }
         }
     }
+    
 }
 
 // MARK: - Transactions
 
 extension MockRestClient {
+    
     func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
         let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
         self.transactions(url, parameters: parameters, completion: completion)
@@ -295,12 +333,7 @@ extension MockRestClient {
 // MARK: - Encryption
 
 extension MockRestClient {
-    /**
-     Creates a new encryption key pair
-     
-     - parameter clientPublicKey: client public key
-     - parameter completion:      CreateEncryptionKeyHandler closure
-     */
+
     func createEncryptionKey(clientPublicKey: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         var response = Response()
@@ -318,12 +351,6 @@ extension MockRestClient {
         }
     }
     
-    /**
-     Retrieve and individual key pair
-     
-     - parameter keyId:      key id
-     - parameter completion: EncryptionKeyHandler closure
-     */
     func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         var response = Response()
@@ -345,13 +372,7 @@ extension MockRestClient {
             completion(try? EncryptionKey(resultValue), error)
         }
     }
-    
-    /**
-     Deletes encryption key
-     
-     - parameter keyId:      key id
-     - parameter completion: DeleteHandler
-     */
+
     func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteHandler) {
         let headers = self.defaultHeaders
         var response = Response()
@@ -383,7 +404,8 @@ extension MockRestClient {
     
 }
 
-// MARK: Request Signature Helpers
+// MARK: - Request Signature Helpers
+
 extension MockRestClient {
     
     func createAuthHeaders(_ completion: AuthHeaderHandler) {
@@ -392,11 +414,6 @@ extension MockRestClient {
         } else {
             completion(nil, ErrorResponse(domain: MockRestClient.self, errorCode: ErrorCode.unauthorized.rawValue, errorMessage: "\(ErrorCode.unauthorized)"))
         }
-    }
-    
-    func skipAuthHeaders(_ completion: AuthHeaderHandler) {
-        // do nothing
-        completion(self.defaultHeaders, nil)
     }
     
     func prepareAuthAndKeyHeaders(_ completion: @escaping AuthHeaderHandler) {
@@ -416,63 +433,41 @@ extension MockRestClient {
     }
     
     func preparKeyHeader(_ completion: @escaping AuthHeaderHandler) {
-        self.skipAuthHeaders { [weak self] (headers, error) in
-            if let error = error {
-                completion(nil, error)
+        createKeyIfNeeded { (encryptionKey, keyError) in
+            if let keyError = keyError {
+                completion(nil, keyError)
             } else {
-                self?.createKeyIfNeeded { (encryptionKey, keyError) in
-                    if let keyError = keyError {
-                        completion(nil, keyError)
-                    } else {
-                        completion(headers! + [MockRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
-                    }
-                }
+                completion(self.defaultHeaders + [MockRestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
             }
         }
+        
     }
     
 }
 
-// MARK: Issuers
+// MARK: - Issuers
+
 extension MockRestClient {
     
     public func issuers(completion: @escaping IssuersHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let strongSelf = self else { return }
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            
-            var response = Response()
-            let url = FitpayConfig.apiURL + "/issuers"
-            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "issuers")
-            let request = Request(request: url)
-            request.response = response
-            strongSelf.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let issuers = try? Issuers(resultValue)
-                issuers?.client = self
-                completion(issuers, error)
-            }
-        }
+        makeGetCall(FitpayConfig.apiURL + "/issuers", parameters: nil, completion: completion)
     }
     
 }
 
-// MARK: Assets
+// MARK: - Assets
+
 extension MockRestClient {
+    
     func assets(_ url: String, completion: @escaping AssetsHandler) {
         let asset = Asset(image: UIImage())
         completion(asset, nil)
     }
+    
 }
 
-// MARK: Sync Statistics
+// MARK: - Sync Statistics
+
 extension MockRestClient {
     
     func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
@@ -484,7 +479,9 @@ extension MockRestClient {
             
             var response = Response()
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
+            
             response.json = self?.loadDataFromJSONFile(filename: "")
+            
             let request = Request(request: url)
             request.response = response
             
@@ -496,91 +493,26 @@ extension MockRestClient {
     
 }
 
-// MARK: Reset Device Tasks
+// MARK: - Reset Device Tasks
+
 extension MockRestClient {
-    /**
-     Creates a request for resetting a device
-     
-     - parameter deviceId:  device id
-     - parameter userId: user id
-     - parameter completion:      ResetHandler closure
-     */
-    func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async(execute: {
-                    completion(nil, error)
-                })
-                return
-            }
-            var response = Response()
-            response.data = HTTPURLResponse(url: resetUrl, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "resetDeviceTask")
-            let request = Request(request: resetUrl.absoluteString)
-            request.response = response
-            self.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let resetDeviceResult = try? ResetDeviceResult(resultValue)
-                
-                completion(resetDeviceResult, error)
-            }
-        }
-    }
+
+    typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: ErrorResponse?) -> Void
     
-    /**
-     Creates a request for getting reset status
-     
-     - parameter resetId:  reset device task id
-     - parameter completion:   ResetHandler closure
-     */
-    func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
-            if let headers = headers {
-                var response = Response()
-                response.data = HTTPURLResponse(url: resetUrl, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-                response.json = self.loadDataFromJSONFile(filename: "resetDeviceTask")
-                let request = Request(request: resetUrl.absoluteString)
-                request.response = response
-                self.makeRequest(request: request) { (resultValue, error) in
-                    guard let resultValue = resultValue else {
-                        completion(nil, error)
-                        return
-                    }
-                    let resetDeviceResult = try? ResetDeviceResult(resultValue)
-                    
-                    completion(resetDeviceResult, error)
-                }
-            }
-        }
+    func resetDeviceTasks(_ url: String, completion: @escaping ResetHandler) {
+        makeGetCall(url, parameters: nil, completion: completion)
+    }
+
+    func resetDeviceStatus(_ url: String, completion: @escaping ResetHandler) {
+        makeGetCall(url, parameters: nil, completion: completion)
     }
     
 }
 
+// MARK: - Test Functions
+
 extension MockRestClient {
-    func makeRequest(request: Request?, completion: @escaping RequestHandler) {
-        request?.responseJSON() { (request) in
-            
-            DispatchQueue.main.async {
-                if request.response?.error != nil {
-                    let JSON = request.response?.json
-                    var error = try? ErrorResponse(JSON)
-                    if error == nil {
-                        error = ErrorResponse(domain: MockRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
-                    }
-                    completion(nil, error)
-                    
-                } else if let resultValue = request.response?.json {
-                    completion(resultValue, nil)
-                } else {
-                    completion(nil, ErrorResponse.unhandledError(domain: MockRestClient.self))
-                }
-            }
-        }
-    }
-    
+
     func loadDataFromJSONFile(filename: String) -> String? {
         let bundle = Bundle(for: type(of: self))
         guard let filepath = bundle.path(forResource: filename, ofType: "json") else {
@@ -598,4 +530,5 @@ extension MockRestClient {
         
         return nil
     }
+
 }

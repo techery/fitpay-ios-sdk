@@ -127,16 +127,20 @@ class RestClientTests: XCTestCase {
         let expectation = super.expectation(description: "'resetDeviceTasks' creates key")
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { [unowned self] (user, device) in
-                guard let resetUrlString = device?.deviceResetUrl else { XCTAssert(false, "No url."); return }
-                guard let resetUrl = URL(string: resetUrlString) else { XCTAssert(false, "Bad url."); return }
+                guard let resetUrlString = device?.deviceResetUrl else {
+                    XCTAssert(false, "No url.")
+                    return
+                }
 
-                self.client.resetDeviceTasks(resetUrl) { (resetDeviceResult, error) in
+                self.client.resetDeviceTasks(resetUrlString) { (resetDeviceResult, error) in
                     XCTAssertNil(error)
 
-                    guard let resetUrlString = resetDeviceResult?.deviceResetUrl else { XCTAssert(false, "No url."); return }
-                    guard let resetUrl = URL(string: resetUrlString) else { XCTAssert(false, "Bad url."); return }
+                    guard let resetUrlString = resetDeviceResult?.deviceResetUrl else {
+                        XCTAssert(false, "No url.")
+                        return
+                    }
 
-                    self.client.resetDeviceStatus(resetUrl) { (resetDeviceResult, error) in
+                    self.client.resetDeviceStatus(resetUrlString) { (resetDeviceResult, error) in
                         XCTAssertNil(error)
 
                         self.testHelper.deleteUser(user, expectation: expectation)
@@ -724,7 +728,6 @@ class RestClientTests: XCTestCase {
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                sleep(1)
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
                     self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard) { (card) in
                         self.testHelper.selectVerificationType(expectation, card: card) { (verificationMethod) in

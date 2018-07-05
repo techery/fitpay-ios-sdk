@@ -13,7 +13,7 @@ protocol RestClientInterface: class {
     typealias DeleteHandler = (_ error: ErrorResponse?) -> Void
     
     /**
-     Confirm handler
+     Confirm handlers
      
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
@@ -52,7 +52,7 @@ protocol RestClientInterface: class {
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
+    typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -216,9 +216,7 @@ protocol RestClientInterface: class {
     func createKeyIfNeeded(_ completion: @escaping EncryptionKeyHandler)
     
     func createAuthHeaders(_ completion: AuthHeaderHandler)
-    
-    func skipAuthHeaders(_ completion: AuthHeaderHandler)
-    
+        
     func prepareAuthAndKeyHeaders(_ completion: @escaping AuthHeaderHandler)
     
     func preparKeyHeader(_ completion: @escaping AuthHeaderHandler)
@@ -227,22 +225,19 @@ protocol RestClientInterface: class {
     
     func assets(_ url: String, completion: @escaping AssetsHandler)
 
-    /**
-     Creates a request for resetting a device
-     
-     - parameter deviceId:  device id
-     - parameter userId: user id
-     - parameter completion:      ResetHandler closure
-     */
-    func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler)
+    /// Creates a request for resetting a device
+    ///
+    /// - Parameters:
+    ///   - url: url string
+    ///   - completion: ResetHandler
+    func resetDeviceTasks(_ url: String, completion: @escaping ResetHandler)
     
-    /**
-     Creates a request for getting reset status
-     
-     - parameter resetId:  reset device task id
-     - parameter completion:   ResetHandler closure
-     */
-    func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler)
+    /// Creates a request for getting reset status
+    ///
+    /// - Parameters:
+    ///   - url: url string
+    ///   - completion: Reset Handler
+    func resetDeviceStatus(_ url: String, completion: @escaping ResetHandler)
     
     //MARK: - RestClientUser
     
@@ -303,7 +298,7 @@ protocol RestClientInterface: class {
     
     func createCreditCard(_ url: String, cardInfo: CardInfo, deviceId: String?, completion: @escaping CreditCardHandler)
     
-    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler)
+    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, deviceId: String?, completion: @escaping CreditCardsHandler)
         
     func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping CreditCardHandler)
     
@@ -335,7 +330,7 @@ protocol RestClientInterface: class {
     //MARK: - Generic
     typealias ResultHandler<T> = (_ result: T?, _ error: ErrorResponse?) -> Void
     
-    typealias ResultCollectionHandler<T:Codable> = (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void
+    typealias ResultCollectionHandler<T: Codable> = (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void
 
     func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler)
 
@@ -343,8 +338,10 @@ protocol RestClientInterface: class {
     
     func makeGetCall<T:Codable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>)
     
-    func makeGetCall<T:Serializable & ClientModel & SecretApplyable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
+    func makeGetCall<T: Serializable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
+    
+    func makeGetCall<T: Serializable & ClientModel & SecretApplyable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
 
-    func makeGetCall<T:Serializable & ClientModel>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
+    func makeGetCall<T: Serializable & ClientModel>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
 
 }
