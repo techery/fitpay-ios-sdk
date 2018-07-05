@@ -97,7 +97,7 @@ class FetchCommitsOperation: FetchCommitsOperationProtocol {
                         // anyway continue sync process from beginning
                         observer.onNext("")
                     } else {
-                        observer.onNext(commit?.commit ?? "")
+                        observer.onNext(commit?.commitId ?? "")
                     }
                     
                     observer.onCompleted()

@@ -613,7 +613,7 @@ class RestClientTests: XCTestCase {
                         for commit in commits!.results! {
                             XCTAssertNotNil(commit.commitType)
                             XCTAssertNotNil(commit.payload)
-                            XCTAssertNotNil(commit.commit)
+                            XCTAssertNotNil(commit.commitId)
                         }
                         
                         self.testHelper.deleteUser(user, expectation: expectation)

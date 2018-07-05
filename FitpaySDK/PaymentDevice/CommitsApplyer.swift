@@ -123,7 +123,7 @@ import RxSwift
         }
         
         let commitCompletion = { (error: Error?) -> Void in
-            if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commit {
+            if let deviceId = self.deviceInfo.deviceIdentifier, let commit = commit.commitId {
                 self.saveLastCommitId(deviceIdentifier:  deviceId, commitId: commit)
             } else {
                 log.error("SYNC_DATA: Can't get deviceId or commitId.")
@@ -155,7 +155,7 @@ import RxSwift
     }
     
     private func processAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
-        log.debug("SYNC_DATA: Processing APDU commit: \(commit.commit ?? "").")
+        log.debug("SYNC_DATA: Processing APDU commit: \(commit.commitId ?? "").")
         guard let apduPackage = commit.payload?.apduPackage else {
             log.error("SYNC_DATA: trying to process apdu commit without apdu package.")
             completion(NSError.unhandledError(CommitsApplyer.self))
@@ -166,7 +166,7 @@ import RxSwift
         
         
         if apduPackage.isExpired {
-            log.warning("SYNC_DATA: package ID(\(commit.commit ?? "nil")) expired. ")
+            log.warning("SYNC_DATA: package ID(\(commit.commitId ?? "nil")) expired. ")
             apduPackage.state = APDUPackageResponseState.expired
             apduPackage.executedDuration = 0
             apduPackage.executedEpoch = Date().timeIntervalSince1970
@@ -237,7 +237,7 @@ import RxSwift
                 return
             }
             
-            log.debug("SYNC_DATA: Processed APDU commit (\(commit.commit ?? "nil")) with state: \(apduPackage.state?.rawValue ?? "nil") and error: \(String(describing: realError)).")
+            log.debug("SYNC_DATA: Processed APDU commit (\(commit.commitId ?? "nil")) with state: \(apduPackage.state?.rawValue ?? "nil") and error: \(String(describing: realError)).")
             
             if apduPackage.state == .notProcessed {
                 completion(realError)
@@ -379,7 +379,7 @@ import RxSwift
     
     private func saveCommitStatistic(commit:Commit, error: Error?) {
         guard let commitType = commit.commitType else {
-            let statistic = CommitStatistic(commitId:commit.commit, total:0, average:0, errorDesc:error?.localizedDescription)
+            let statistic = CommitStatistic(commitId:commit.commitId, total:0, average:0, errorDesc:error?.localizedDescription)
             self.commitStatistics.append(statistic)
             return
         }
@@ -389,13 +389,13 @@ import RxSwift
             let total = commit.payload?.apduPackage?.executedDuration ?? 0
             let commandsCount = commit.payload?.apduPackage?.apduCommands?.count ?? 1
             
-            let statistic = CommitStatistic(commitId: commit.commit,
+            let statistic = CommitStatistic(commitId: commit.commitId,
                                             total: total,
                                             average: total/commandsCount,
                                             errorDesc: error?.localizedDescription)
             self.commitStatistics.append(statistic)
         default:
-            let statistic = CommitStatistic(commitId: commit.commit,
+            let statistic = CommitStatistic(commitId: commit.commitId,
                                             total: commit.executedDuration,
                                             average: commit.executedDuration,
                                             errorDesc: error?.localizedDescription)
