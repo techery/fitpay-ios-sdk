@@ -359,27 +359,25 @@ import Foundation
     }
 
     typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: ErrorResponse?) -> Void
+    
     func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
-        if newNotificationToken != "" {
-            if newNotificationToken != self.notificationToken {
-                update(nil, softwareRevision: nil, notifcationToken: newNotificationToken, completion: {
-                    [weak self] (device, error) in
-                    if error == nil && device != nil {
-                        log.debug("NOTIFICATIONS_DATA: NotificationToken updated to - \(device?.notificationToken ?? "null token")")
-                        self?.notificationToken = device?.notificationToken
-                        completion?(true, nil)
-                    } else {
-                        log.error("NOTIFICATIONS_DATA: can't update notification token for device, error: \(String(describing: error))")
-                        completion?(false, error)
-                    }
-                    
-                })
-            } else {
-                completion?(false, nil)
-            }
-        } else {
+        guard !newNotificationToken.isEmpty && newNotificationToken != notificationToken else {
             completion?(false, nil)
+            return
+        }
+        
+        update(nil, softwareRevision: nil, notifcationToken: newNotificationToken) {
+            [weak self] (device, error) in
+            if error == nil && device != nil {
+                log.debug("NOTIFICATIONS_DATA: NotificationToken updated to - \(device?.notificationToken ?? "null token")")
+                self?.notificationToken = device?.notificationToken
+                completion?(true, nil)
+            } else {
+                log.error("NOTIFICATIONS_DATA: can't update notification token for device, error: \(String(describing: error))")
+                completion?(false, error)
+            }
+            
         }
     }
     
