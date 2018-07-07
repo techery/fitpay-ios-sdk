@@ -23,7 +23,7 @@ extension KeyedEncodingContainer {
         try container.encodeJSONArray(value)
     }
     
-    mutating func encodeIfPresent(_ value: Array<Any>?, forKey key: Key) throws {
+    mutating func encodeIfPresent(_ value: Array<Any>?, key: Key) throws {
         if let value = value {
             try encode(value, forKey: key)
         }

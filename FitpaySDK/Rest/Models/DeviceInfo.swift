@@ -187,6 +187,7 @@ import Foundation
         try? container.encode(pairing, forKey: .pairing)
         try? container.encode(secureElement, forKey: .secureElement)
         try? container.encode(cardRelationships, forKey: .cardRelationships)
+        try? container.encodeIfPresent(metadata, forKey: .metadata)
     }
 
     func applySecret(_ secret: Data, expectedKeyId: String?) {
@@ -358,15 +359,14 @@ import Foundation
     }
 
     typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: ErrorResponse?) -> Void
-   
+    
     func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
-        
-        guard newNotificationToken != "" && newNotificationToken != self.notificationToken else {
+        guard !newNotificationToken.isEmpty && newNotificationToken != notificationToken else {
             completion?(false, nil)
             return
         }
-
+        
         update(nil, softwareRevision: nil, notifcationToken: newNotificationToken) {
             [weak self] (device, error) in
             if error == nil && device != nil {

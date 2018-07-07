@@ -50,17 +50,17 @@ import Foundation
         finishConfigure()
     }
     
-    /**
-     Setup FitpaySDK advanced method
-     
-     All variables are customizable via json file
-     
-     Call configure in the AppDelegate `didFinishLaunchingWithOptions:`  before doing anything else with the FItpaySDK
-     
-     - Parameter fileName: name without extension or leading path defaults to `fitpayconfig`
-     */
-    @objc public static func configure(fileName: String = "fitpayconfig") {
-        guard let path = Bundle.main.path(forResource: fileName, ofType: "json") else { return }
+    /// Setup FitpaySDK advanced method
+    ///
+    /// All variables are customizable via json file
+    ///
+    /// Call configure in the AppDelegate `didFinishLaunchingWithOptions:`  before doing anything else with the FItpaySDK
+    ///
+    /// - Parameters:
+    ///   - fileName: name without extension or leading path defaults to `fitpayconfig`
+    ///   - bundle: bundle the json is in, defaults to main. Used primarily for testing.
+    @objc public static func configure(fileName: String = "fitpayconfig", bundle: Bundle = Bundle.main) {
+        guard let path = bundle.path(forResource: fileName, ofType: "json") else { return }
         guard let data = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe) else { return }
         guard let jsonResult = try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves) else { return }
         guard let fitpayConfigModel = try? FitpayConfigModel(jsonResult) else { return }
@@ -156,7 +156,7 @@ import Foundation
     
 }
 
-// MARK: - Structs for json
+// MARK: - Nested Structs for json
 
 extension FitpayConfig {
     
