@@ -9,11 +9,7 @@ open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
     open var continueOnFailure: Bool = false
     
     open var responseData: Data?
-    
-    override init() {
-        super.init()
-    }
-    
+        
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
         case commandId
