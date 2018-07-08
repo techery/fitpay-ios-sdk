@@ -9,7 +9,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
     open var payload: Payload?
     open var created: CLong?
     open var previousCommit: String?
-    open var commit: String?
+    open var commitId: String?
     open var executedDuration: Int?
     
     weak var client: RestClientInterface? {
@@ -29,7 +29,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
         case commitTypeString = "commitType"
         case created = "createdTs"
         case previousCommit
-        case commit = "commitId"
+        case commitId
         case encryptedData
     }
     
@@ -42,7 +42,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
         commitTypeString = try? container.decode(.commitTypeString)
         created = try? container.decode(.created)
         previousCommit = try? container.decode(.previousCommit)
-        commit = try? container.decode(.commit)
+        commitId = try? container.decode(.commitId)
         encryptedData = try? container.decode(.encryptedData)
     }
     
@@ -53,7 +53,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
         try? container.encode(commitTypeString, forKey: .commitTypeString)
         try? container.encode(created, forKey: .created)
         try? container.encode(previousCommit, forKey: .previousCommit)
-        try? container.encode(commit, forKey: .commit)
+        try? container.encode(commitId, forKey: .commitId)
         try? container.encode(encryptedData, forKey: .encryptedData)
     }
     
@@ -65,7 +65,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
     }
     
     func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmHandler) {
-        log.verbose("Confirming commit - \(self.commit ?? "")")
+        log.verbose("Confirming commit - \(commitId ?? "")")
         
         guard self.commitType != CommitType.apduPackage else {
             log.error("Trying send confirm for APDU commit but should be non APDU.")

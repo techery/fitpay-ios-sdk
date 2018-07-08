@@ -14,13 +14,12 @@ public enum DeviceResetStatus: String, Serializable {
     open var seStatus: DeviceResetStatus?
 
     open var deviceResetUrl: String? {
-        return self.links?.first?.href 
+        return self.links?.url(ResetDeviceResult.selfResourceKey)
     }
     
     var links: [ResourceLink]?
 
-
-    private static let deviceResetTasksKey = "resetDeviceTasks"
+    private static let selfResourceKey = "self"
 
     private enum CodingKeys: String, CodingKey {
         case links = "_links"

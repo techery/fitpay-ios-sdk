@@ -22,7 +22,7 @@
     /// The billing address country code in ISO 3166-1 alpha-2 format
     @objc open var countryCode: String?
     
-    /// Initialize class with all variables
+    /// Initialize class with all optional variables
     @objc public init(street1: String?, street2: String?, street3: String?, city: String?, state: String?, postalCode: String?, countryCode: String?) {
         super.init()
         

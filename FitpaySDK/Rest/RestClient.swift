@@ -3,6 +3,7 @@ import Alamofire
 
 open class RestClient: NSObject, RestClientInterface {
 
+
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
      
@@ -129,6 +130,7 @@ open class RestClient: NSObject, RestClientInterface {
     }
     
     // MARK: - Internal
+    typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
 
     func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler) {
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -145,7 +147,7 @@ open class RestClient: NSObject, RestClientInterface {
         }
     }
 
-    func makeGetCall<T:Codable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>) {
+    func makeGetCall<T: Codable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>) {
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
@@ -167,7 +169,26 @@ open class RestClient: NSObject, RestClientInterface {
         }
     }
     
-    func makeGetCall<T:ClientModel & Serializable>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) {
+    func makeGetCall<T: Serializable>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) {
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(nil, error) }
+                return
+            }
+            
+            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+            self?.makeRequest(request: request) { (resultValue, error) in
+                guard let resultValue = resultValue else {
+                    completion(nil, error)
+                    return
+                }
+                let result = try? T(resultValue)
+                completion(result, error)
+            }
+        }
+    }
+    
+    func makeGetCall<T: ClientModel & Serializable>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) {
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -187,7 +208,7 @@ open class RestClient: NSObject, RestClientInterface {
         }
     }
     
-    func makeGetCall<T:Serializable & ClientModel & SecretApplyable>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) {
+    func makeGetCall<T: Serializable & ClientModel & SecretApplyable>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) {
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -208,6 +229,57 @@ open class RestClient: NSObject, RestClientInterface {
             }
         }
     }
+
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
+        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(error) }
+                return
+            }
+            
+            let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
+            DispatchQueue.global().async {
+                request?.response { (response: DefaultDataResponse) in
+                    if response.error != nil {
+                        DispatchQueue.main.async {
+                            if let responseError = response.error {
+                                let error = try? ErrorResponse(responseError)
+                                completion(error)
+                            } else {
+                                completion(nil)
+                            }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            completion(nil)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
+        request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
+            DispatchQueue.main.async {
+                if response.result.error != nil && response.response?.statusCode != 202 {
+                    let JSON = response.data!.UTF8String
+                    var error = try? ErrorResponse(JSON)
+                    if error == nil {
+                        error = ErrorResponse(domain: RestClient.self, errorCode: response.response?.statusCode ?? 0 , errorMessage: response.result.error?.localizedDescription)
+                    }
+                    completion(nil, error)
+                } else if let resultValue = response.result.value {
+                    completion(resultValue, nil)
+                } else if response.response?.statusCode == 202 {
+                    completion(nil, nil)
+                } else {
+                    completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
+                }
+            }
+        }
+    }
+    
 }
 
 // MARK: - Confirm package
@@ -343,11 +415,6 @@ extension RestClient {
         }
     }
     
-    func skipAuthHeaders(_ completion: AuthHeaderHandler) {
-        // do nothing
-        completion(self.defaultHeaders, nil)
-    }
-    
     func prepareAuthAndKeyHeaders(_ completion: @escaping AuthHeaderHandler) {
         self.createAuthHeaders { [weak self] (headers, error) in
             if let error = error {
@@ -365,17 +432,11 @@ extension RestClient {
     }
     
     func preparKeyHeader(_ completion: @escaping AuthHeaderHandler) {
-        self.skipAuthHeaders { [weak self] (headers, error) in
-            if let error = error {
-                completion(nil, error)
+        createKeyIfNeeded { (encryptionKey, keyError) in
+            if let keyError = keyError {
+                completion(nil, keyError)
             } else {
-                self?.createKeyIfNeeded { (encryptionKey, keyError) in
-                    if let keyError = keyError {
-                        completion(nil, keyError)
-                    } else {
-                        completion(headers! + [RestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
-                    }
-                }
+                completion(self.defaultHeaders + [RestClient.fpKeyIdKey: encryptionKey!.keyId!], nil)
             }
         }
     }
@@ -441,41 +502,6 @@ extension RestClient {
     
 }
 
-// MARK: - Sync Statistics
-
-extension RestClient {
-    
-    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(error) }
-                return
-            }
-            
-            let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            DispatchQueue.global().async {
-                request?.response { (response: DefaultDataResponse) in
-                    if response.error != nil {
-                        DispatchQueue.main.async {
-                            if let responseError = response.error {
-                                let error = try? ErrorResponse(responseError)
-                                completion(error)
-                            } else {
-                                completion(nil)
-                            }
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            completion(nil)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-}
-
 // MARK: - Reset Device Tasks
 
 extension RestClient {
@@ -485,7 +511,7 @@ extension RestClient {
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
+    public typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: ErrorResponse?) -> Void
     
     /**
      Creates a request for resetting a device
@@ -494,23 +520,9 @@ extension RestClient {
      - parameter userId: user id
      - parameter completion:      ResetHandler closure
      */
-    func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler) {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async(execute: {
-                    completion(nil, error)
-                })
-                return
-            }
-            let request = self.manager.request(resetUrl, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                completion(try? ResetDeviceResult(resultValue), error)
-            }
-        }
+
+    func resetDeviceTasks(_ url: String, completion: @escaping ResetHandler) {
+        makeGetCall(url, parameters: nil, completion: completion)
     }
     
     /**
@@ -519,56 +531,10 @@ extension RestClient {
      - parameter resetId:  reset device task id
      - parameter completion:   ResetHandler closure
      */
-    func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler) {
-        self.prepareAuthAndKeyHeaders { [unowned self] (headers, error) in
-            if let headers = headers {
-                let request = self.manager.request(resetUrl, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-                self.makeRequest(request: request) { (resultValue, error) in
-                    guard let resultValue = resultValue else {
-                        completion(nil, error)
-                        return
-                    }
-                    completion(try? ResetDeviceResult(resultValue), error)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    completion(nil, error)
-                }
-            }
-        }
+    func resetDeviceStatus(_ url: String, completion: @escaping ResetHandler) {
+        makeGetCall(url, parameters: nil, completion: completion)
     }
     
-}
-
-extension RestClient {
-    /**
-     Completion handler
-     
-     - parameter resultValue: Provides request object, or nil if error occurs
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    public typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
-    
-    func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-            DispatchQueue.main.async {
-                if response.result.error != nil && response.response?.statusCode != 202 {
-                    let JSON = response.data!.UTF8String
-                    var error = try? ErrorResponse(JSON)
-                    if error == nil {
-                        error = ErrorResponse(domain: RestClient.self, errorCode: response.response?.statusCode ?? 0 , errorMessage: response.result.error?.localizedDescription)
-                    }
-                    completion(nil, error)
-                } else if let resultValue = response.result.value {
-                    completion(resultValue, nil)
-                } else if response.response?.statusCode == 202 {
-                    completion(nil, nil)
-                } else {
-                    completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
-                }
-            }
-        }
-    }
 }
 
 /**
