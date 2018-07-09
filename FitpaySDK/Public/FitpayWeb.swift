@@ -4,7 +4,7 @@ import WebKit
 /// Main Object for interacting with Fitpay Web app
 @objc open class FitpayWeb: NSObject {
     
-    /// Use this singleton
+    /// Use this singleton unless you have a reason for multiple webviews
     @objc public static let shared = FitpayWeb()
 
     /// Set the rtmDelegate to receive authorization and other messages from the webview
@@ -92,10 +92,8 @@ import WebKit
         wkWebView.load(wvConfig.getRequest())
     }
     
-    /// Loads a specific page on Fitpay based on user variables
-    ///
-    /// Currently works with `/addCard`, `/privacyPolicy`, and `/terms`
-    @objc open func load(relativePath: String) {
+    /// Loads a specific page on Fitpay based on passed in route
+    open func load(relativePath: RelativeWebPath) {
         guard let encodedConfig = wvConfig.getEncodedConfig() else { return }
         
         let configuredUrl = "\(FitpayConfig.webURL)\(relativePath)?config=\(encodedConfig)"
@@ -120,9 +118,9 @@ import WebKit
         wkWebView.load(request)
     }
     
-    /// Loads any valid url - use with discretion
+    /// Loads the correct url based on the issuers response
     ///
-    /// Can construct URL from `FitpayConfig.WebUrl` and config
+    /// You should still call respondToA2AWith(success:error:)
     @objc open func load(issuerResponse: A2AIssuerResponse) {
         wkWebView.load(wvConfig.getRequest())
         
@@ -155,6 +153,7 @@ import WebKit
          wvConfig.webViewPageLoaded()
     }
  
+    /// Used to tell the webview if A2A completed successfully or not
     open func respondToA2AWith(success: Bool, error: A2AVerificationError?) {
         wvConfig.rtmMessaging.messageHandler?.appToAppVerificationResponse(success: success, reason: error)
     }
