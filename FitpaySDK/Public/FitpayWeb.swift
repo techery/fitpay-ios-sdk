@@ -96,11 +96,11 @@ import WebKit
     ///
     /// Currently works with `/addCard`, `/privacyPolicy`, and `/terms`
     @objc open func load(relativePath: String) {
-        guard let (url, encodedConfig) = wvConfig.getURLAndConfig() else { return }
+        guard let encodedConfig = wvConfig.getEncodedConfig() else { return }
         
-        let configuredUrl = "\(url)\(relativePath)?config=\(encodedConfig)"
+        let configuredUrl = "\(FitpayConfig.webURL)\(relativePath)?config=\(encodedConfig)"
         
-        log.verbose(configuredUrl)
+        log.verbose("WV: loading \(configuredUrl)")
         
         let requestUrl = URL(string: configuredUrl)
         let request = URLRequest(url: requestUrl!)
@@ -115,12 +115,35 @@ import WebKit
         let requestUrl = URL(string: absolutePath)
         let request = URLRequest(url: requestUrl!)
         
+        log.verbose("WV: loading \(absolutePath)")
+        
         wkWebView.load(request)
     }
     
+    /// Loads any valid url - use with discretion
+    ///
+    /// Can construct URL from `FitpayConfig.WebUrl` and config
+    @objc open func load(issuerResponse: A2AIssuerResponse) {
+        wkWebView.load(wvConfig.getRequest())
+        
+        guard let encodedConfig = wvConfig.getEncodedConfig(),
+            let returnLocation = wvConfig.a2aReturnLocation,
+            let encodedIssuerResponse = issuerResponse.getEncodedString() else { return }
+        
+        let configuredUrl = "\(FitpayConfig.webURL)\(returnLocation)?a2a=\(encodedIssuerResponse)&config=\(encodedConfig)"
+        
+        log.verbose("WV: loading \(configuredUrl)")
+        
+        let requestUrl = URL(string: configuredUrl)
+        let request = URLRequest(url: requestUrl!)
+        
+        wkWebView.load(request)
+    }
+    
+    
     /// Get the config to construct a url on your own if needed
     @objc open func getConfig() -> String? {
-        return wvConfig.getURLAndConfig()?.encodedConfig
+        return wvConfig.getEncodedConfig()
     }
     
     /// Should be called once the webview is loaded

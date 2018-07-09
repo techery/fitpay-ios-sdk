@@ -1,6 +1,6 @@
 import Foundation
 
-@objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
+@objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable {
     
     open var deviceIdentifier: String?
    
@@ -41,8 +41,6 @@ import Foundation
     /// by a manufacturer-defined identifier and is unique for each individual instance of the product
     open var systemId: String?
     
-    open var cardRelationships: [CardRelationship]?
-    
     open var licenseKey: String?
     
     /// MAC address for Bluetooth
@@ -67,21 +65,6 @@ import Foundation
         return self.links?.url(DeviceInfo.deviceResetTasksKey)
     }
 
-    var client: RestClientInterface? {
-        get {
-            return self._client
-        }
-        set {
-            self._client = newValue
-
-            if let cardRelationships = self.cardRelationships {
-                for cardRelationship in cardRelationships {
-                    cardRelationship.client = self.client
-                }
-            }
-        }
-    }
-    
     var links: [ResourceLink]?
     
     private static let userResourceKey = "user"
@@ -90,7 +73,7 @@ import Foundation
     private static let lastAckCommitResourceKey = "lastAckCommit"
     private static let deviceResetTasksKey = "deviceResetTasks"
 
-    private weak var _client: RestClientInterface?
+    weak var client: RestClientInterface?
     
     override public init() {
         super.init()
@@ -159,7 +142,6 @@ import Foundation
         bdAddress = try? container.decode(.bdAddress)
         pairing = try? container.decode(.pairing)
         secureElement = try? container.decode(.secureElement)
-        cardRelationships = try? container.decode(.cardRelationships)
         metadata = try? container.decode([String : Any].self)
     }
 
@@ -186,16 +168,7 @@ import Foundation
         try? container.encode(bdAddress, forKey: .bdAddress)
         try? container.encode(pairing, forKey: .pairing)
         try? container.encode(secureElement, forKey: .secureElement)
-        try? container.encode(cardRelationships, forKey: .cardRelationships)
         try? container.encodeIfPresent(metadata, forKey: .metadata)
-    }
-
-    func applySecret(_ secret: Data, expectedKeyId: String?) {
-        if let cardRelationships = self.cardRelationships {
-            for modelObject in cardRelationships {
-                modelObject.applySecret(secret, expectedKeyId: expectedKeyId)
-            }
-        }
     }
 
     var shortRTMRepersentation: String? {

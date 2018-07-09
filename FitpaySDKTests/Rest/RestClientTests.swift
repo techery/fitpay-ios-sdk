@@ -623,35 +623,7 @@ class RestClientTests: XCTestCase {
         }
         
         super.waitForExpectations(timeout: 10, handler: nil)
-    }
-    
-    func testRelationshipsCreatesAndDeletesRelationship() {
-        let expectation = super.expectation(description: "test 'relationships' creates and deletes relationship")
-        
-        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
-            self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    user?.createRelationship(creditCardId: creditCard!.creditCardId!, deviceId: device!.deviceIdentifier!) { (relationship, error) -> Void in
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(device)
-                        XCTAssertNotNil(relationship?.device)
-                        XCTAssertNotNil(relationship?.card)
-                        
-                        relationship?.deleteRelationship { (error) in
-                            XCTAssertNil(error)
-                            
-                            device?.deleteDeviceInfo { (error) -> Void in
-                                XCTAssertNil(error)
-                                self.testHelper.deleteUser(user, expectation: expectation)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        super.waitForExpectations(timeout: 10, handler: nil)
-    }
+    }    
     
     func testAssetsRetrievesAssetWithOptions() {
         let expectation = super.expectation(description: "'assets' retrieves asset")

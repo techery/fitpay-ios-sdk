@@ -4,54 +4,16 @@ extension MockRestClient {
 
     //MARK - Completion Handlers
 
-    /**
-     Completion handler
-
-     - parameter result: Provides collection of credit cards, or nil if error occurs
-     - parameter error:  Provides error object, or nil if no error occurs
-     */
     public typealias CreditCardsHandler = (_ result: ResultCollection<CreditCard>?, _ error: ErrorResponse?) -> Void
 
-    /**
-     Completion handler
-
-     - parameter creditCard: Provides credit card object, or nil if error occurs
-     - parameter error:  Provides error object, or nil if no error occurs
-     */
     public typealias CreditCardHandler = (_ creditCard: CreditCard?, _ error: ErrorResponse?) -> Void
 
-    /**
-     Completion handler
-
-     - parameter pending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter card?:   Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter error?:  Provides error object, or nil if no error occurs
-     */
     public typealias CreditCardTransitionHandler = (_ pending: Bool, _ card: CreditCard?, _ error: ErrorResponse?) -> Void
 
-    /**
-     Completion handler
-
-     - parameter pending:            Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
-     - parameter verificationMethod: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter error:              Provides error object, or nil if no error occurs
-     */
     public typealias VerifyHandler = (_ pending: Bool, _ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
 
-    /**
-     Completion handler
-
-     - parameter verificationMethod: Provides VerificationMethod object, or nil if error occurs
-     - parameter error:              Provides error object, or nil if no error occurs
-     */
     public typealias VerifyMethodHandler = (_ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
 
-    /**
-     Completion handler
-
-     - parameter verificationMethods: Provides VerificationMethods objects, or nil if error occurs
-     - parameter error:              Provides error object, or nil if no error occurs
-     */
     public typealias VerifyMethodsHandler = (_ verificationMethods: ResultCollection<VerificationMethod>?, _ error: ErrorResponse?) -> Void
 
     //MARK - Internal Functions
@@ -249,7 +211,8 @@ extension MockRestClient {
         }
     }
 
-    //MARK: - Private Functions
+    // MARK: - Private Functions
+    
     func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler) {
         guard let statusCode = response?.status else {
             completion(false, nil, ErrorResponse.unhandledError(domain: RestClient.self))

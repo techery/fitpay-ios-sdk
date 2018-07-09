@@ -337,7 +337,7 @@ import Foundation
         let resource = CreditCard.transactionsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.transactions(url, limit: limit, offset: offset, completion: completion)
+            client.makeGetCall(url, limit: limit, offset: offset, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }

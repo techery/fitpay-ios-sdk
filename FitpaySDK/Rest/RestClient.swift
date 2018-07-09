@@ -230,6 +230,11 @@ open class RestClient: NSObject, RestClientInterface {
         }
     }
 
+    func makeGetCall<T: Codable>(_ url: String, limit: Int, offset: Int, completion: @escaping ResultCollectionHandler<T>) {
+        let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
+        makeGetCall(url, parameters: parameters, completion: completion)
+    }
+    
     func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
@@ -312,11 +317,6 @@ extension RestClient {
      - parameter error:        Provides error object, or nil if no error occurs
      */
     public typealias TransactionsHandler = (_ result: ResultCollection<Transaction>?, _ error: ErrorResponse?) -> Void
-    
-    func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
-        let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
-        makeGetCall(url, parameters: parameters, completion: completion)
-    }
 
 }
 
