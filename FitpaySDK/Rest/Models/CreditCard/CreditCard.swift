@@ -205,11 +205,11 @@ import Foundation
 
     /**
       Update acceptTerms url
-     - @param acceptTermsUrl url
+     - param acceptTermsUrl url
      */
     @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
-        guard let link = self.links?.indexOf(CreditCard.acceptTermsResourceKey) else {
-            throw  AcceptTermsError.noTerms("The card is not in a state to accept terms anymore")
+        guard let link = self.links?.elementAt(CreditCard.acceptTermsResourceKey) else {
+            throw AcceptTermsError.noTerms("The card is not in a state to accept terms anymore")
         }
         
         link.href = acceptTermsUrl
