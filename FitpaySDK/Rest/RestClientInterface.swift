@@ -144,34 +144,27 @@ protocol RestClientInterface: class {
     
     /**
      Completion handler
-     
+
      - parameter verificationMethod: Provides VerificationMethod object, or nil if error occurs
      - parameter error:              Provides error object, or nil if no error occurs
      */
     typealias VerifyMethodHandler = (_ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
-    
+
     /**
      Completion handler
-     
+
      - parameter verificationMethods: Provides VerificationMethods objects, or nil if error occurs
      - parameter error:              Provides error object, or nil if no error occurs
      */
     typealias VerifyMethodsHandler = (_ verificationMethods: ResultCollection<VerificationMethod>?, _ error: ErrorResponse?) -> Void
     
-    /**
-     Completion handler
-     
-     - parameter relationship: Provides Relationship object, or nil if error occurs
-     - parameter error:        Provides error object, or nil if no error occurs
-     */
-    typealias RelationshipHandler = (_ relationship: Relationship?, _ error: ErrorResponse?) -> Void
+    // MARK: - Variables
     
-    //MARK: - Variables
     var key: EncryptionKey? { get set }
     
     var secret: Data { get }
     
-    //MARK: - Methods
+    // MARK: - Methods
     
     func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T?
     
@@ -186,9 +179,7 @@ protocol RestClientInterface: class {
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
     func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmHandler)
-    
-    func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler)
-    
+        
     /**
      Creates a new encryption key pair
      
@@ -280,8 +271,6 @@ protocol RestClientInterface: class {
     
     //MARK: - RestClientDevice
     
-    func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) 
-    
     func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler)
     
     func updateDevice(_ url: String,
@@ -316,18 +305,9 @@ protocol RestClientInterface: class {
             
     func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler)
     
-    //MARK: - RestClientRelationship
-    /**
-     Creates a relationship between a device and a creditCard
-     
-     - parameter userId:       user id
-     - parameter creditCardId: credit card id
-     - parameter deviceId:     device id
-     - parameter completion:   CreateRelationshipHandler closure
-     */
-    func createRelationship(_ url: String, creditCardId: String, deviceId: String, completion: @escaping RelationshipHandler)
-        
-    //MARK: - Generic
+
+    // MARK: - Generic
+    
     typealias ResultHandler<T> = (_ result: T?, _ error: ErrorResponse?) -> Void
     
     typealias ResultCollectionHandler<T: Codable> = (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void
@@ -335,6 +315,8 @@ protocol RestClientInterface: class {
     func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler)
 
     func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler)
+    
+    func makeGetCall<T: Codable>(_ url: String, limit: Int, offset: Int, completion: @escaping ResultCollectionHandler<T>)
     
     func makeGetCall<T:Codable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>)
     

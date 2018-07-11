@@ -219,7 +219,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
         return request
     }
     
-    func getURLAndConfig() -> (url: String, encodedConfig: String)? {
+    func getEncodedConfig() -> String? {
         let client = self.configStorage.user?.client as? RestClient
         if let accessToken = client?.session.accessToken {
             self.configStorage.rtmConfig!.accessToken = accessToken
@@ -234,7 +234,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
         
         guard let encodedConfig = utfString?.base64URLencoded() else { return nil}
         
-        return (url, encodedConfig)
+        return encodedConfig
     }
     
     func showStatusMessage(_ status: WVDeviceStatus, message: String? = nil, error: Error? = nil) {

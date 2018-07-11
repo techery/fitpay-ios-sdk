@@ -112,6 +112,11 @@ class MockRestClient: NSObject, RestClientInterface {
         }
     }
     
+    func makeGetCall<T>(_ url: String, limit: Int, offset: Int, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) where T: Decodable, T: Encodable {
+        let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
+        makeGetCall(url, parameters: parameters, completion: completion)
+    }
+
     func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) where T: Codable {
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
@@ -124,6 +129,8 @@ class MockRestClient: NSObject, RestClientInterface {
             
             if url.contains("commits") {
                 response.json = self?.loadDataFromJSONFile(filename: "getCommit")
+            } else if url.contains("transactions") {
+                response.json = self?.loadDataFromJSONFile(filename: "listTransactions")
             } else if url.contains("creditCards") {
                 response.json = self?.loadDataFromJSONFile(filename: "listCreditCards")
             } else if url.contains("devices") {
@@ -288,42 +295,6 @@ extension MockRestClient {
             
             self.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
-            }
-        }
-    }
-    
-}
-
-// MARK: - Transactions
-
-extension MockRestClient {
-    
-    func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler) {
-        let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
-        self.transactions(url, parameters: parameters, completion: completion)
-    }
-    
-    func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-            
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)! , statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "listTransactions")
-            let request = Request(request: url)
-            request.response = response
-            
-            self.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let transaction = try? ResultCollection<Transaction>(resultValue)
-                transaction?.client = self
-                completion(transaction, error)
             }
         }
     }

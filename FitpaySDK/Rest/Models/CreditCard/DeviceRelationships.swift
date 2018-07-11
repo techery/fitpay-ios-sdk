@@ -76,13 +76,4 @@ open class DeviceRelationships: NSObject, ClientModel, Serializable {
         try? container.encode(systemId, forKey: .systemId)
     }
     
-    @objc func relationship(_ completion: @escaping RestClient.RelationshipHandler) {
-        let resource = DeviceRelationships.selfResourceKey
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.makeGetCall(url, parameters: nil, completion: completion)
-        } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: DeviceRelationships.self, client: client, url: url, resource: resource))
-        }
-    }
 }

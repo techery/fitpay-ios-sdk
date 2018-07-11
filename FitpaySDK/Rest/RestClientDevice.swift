@@ -37,12 +37,7 @@ extension RestClient {
      */
     public typealias CommitHandler = (_ commit: Commit?, _ error: ErrorResponse?) -> Void
     
-    //MARK: - Functions
-    
-    func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) {
-        let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
-        makeGetCall(url, parameters: parameters, completion: completion)
-    }
+    // MARK: - Functions
     
     func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -54,14 +49,12 @@ extension RestClient {
             
             let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let deviceInfo = try? DeviceInfo(resultValue)
                 deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 completion(deviceInfo, error)
             }
         }
@@ -94,14 +87,12 @@ extension RestClient {
             let params = ["params": paramsArray]
             let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let deviceInfo = try? DeviceInfo(resultValue)
                 deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])                        
                 completion(deviceInfo, error)
             }
         }
@@ -119,14 +110,12 @@ extension RestClient {
             let params = ["params": paramsArray]
             let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let deviceInfo = try? DeviceInfo(resultValue)
                 deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 completion(deviceInfo, error)
             }
         }
@@ -141,26 +130,4 @@ extension RestClient {
         makeGetCall(url, parameters: parameters, completion: completion)
     }
     
-    func commit(_ url: String, completion: @escaping CommitHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-            
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let commit = try? Commit(resultValue)
-                commit?.client = self
-                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(commit, error)
-            }
-        }
-    }
 }

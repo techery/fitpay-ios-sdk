@@ -108,7 +108,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.devices(url, limit: limit, offset: offset, completion: completion)
+            client.makeGetCall(url, limit: limit, offset: offset, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
@@ -128,17 +128,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
-    
-    @objc public func createRelationship(creditCardId: String, deviceId: String, completion: @escaping RestClient.RelationshipHandler) {
-        let resource = User.selfResourceKey
-        let url = self.links?.url(resource)
-        if  let url = url, let client = self.client {
-            client.createRelationship(url, creditCardId: creditCardId, deviceId: deviceId, completion: completion)
-        } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
-        }
-    }
-    
+  
     @objc public func deleteUser(_ completion: @escaping RestClient.DeleteHandler) {
         let resource = User.selfResourceKey
         let url = self.links?.url(resource)

@@ -4,25 +4,10 @@ extension MockRestClient {
 
     // MARK: - Completion Handlers
 
-    /**
-     Completion handler
-
-     - parameter user: Provides User object, or nil if error occurs
-     - parameter error: Provides error object, or nil if no error occurs
-     */
     public typealias UserHandler = (_ user: User?, _ error: ErrorResponse?) -> Void
 
     //MARK: - Public Functions
 
-    /**
-     Creates a new user within your organization
-
-     - parameter firstName:  first name of the user
-     - parameter lastName:   last name of the user
-     - parameter birthDate:  birth date of the user in date format [YYYY-MM-DD]
-     - parameter email:      email of the user
-     - parameter completion: CreateUserHandler closure
-     */
     @objc public func createUser(_ email: String, password: String, firstName: String?, lastName: String?,
                                  birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?,
                                  originAccountCreated: String?, completion: @escaping UserHandler) {
@@ -98,28 +83,10 @@ extension MockRestClient {
         }
     }
 
-    /**
-     Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
-
-     - parameter id:         user id
-     - parameter completion: UserHandler closure
-     */
     @objc open func user(id: String, completion: @escaping UserHandler) {
         makeGetCall(FitpayConfig.apiURL + "/users/" + id, parameters: nil, completion: completion)
     }
 
-    /**
-     Update the details of an existing user
-
-     - parameter id:                   user id
-     - parameter firstName:            first name or nil if no change is required
-     - parameter lastName:             last name or nil if no change is required
-     - parameter birthDate:            birth date in date format [YYYY-MM-DD] or nil if no change is required
-     - parameter originAccountCreated: origin account created in date format [TODO: specify date format] or nil if no change is required
-     - parameter termsAccepted:        terms accepted in date format [TODO: specify date format] or nil if no change is required
-     - parameter termsVersion:         terms version formatted as [0.0.0]
-     - parameter completion:           UpdateUserHandler closure
-     */
     @objc public func updateUser(_ url: String,  firstName: String?, lastName: String?,
                                  birthDate: String?, originAccountCreated: String?, termsAccepted: String?,
                                  termsVersion: String?, completion: @escaping UserHandler) {
