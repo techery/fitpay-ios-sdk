@@ -105,8 +105,6 @@ class TestHelper {
         XCTAssertNotNil(card?.state)
         XCTAssertNotNil(card?.cardType)
         XCTAssertNotNil(card?.cardMetaData)
-        XCTAssertNotNil(card?.deviceRelationships)
-        XCTAssertNotEqual(card?.deviceRelationships?.count, 0)
         XCTAssertNotNil(card?.encryptedData)
       //TODO  XCTAssertNotNil(card?.info)
       //TODO  XCTAssertNotNil(card?.info?.address)
@@ -202,18 +200,13 @@ class TestHelper {
         let randomText = TestHelper.randomStringWithLength(10)
         
         //update acceptTerms url
-        do {
-            try card?.setAcceptTermsUrl(acceptTermsUrl: randomText)
-            
-            //get acceptTerms url
-            let acceptTermsUrl = card?.getAcceptTermsUrl()
-            XCTAssertEqual(acceptTermsUrl, randomText)
-            
-        } catch CreditCard.AcceptTermsError.noTerms(let errorMessage) {
-            XCTFail(errorMessage)
-        } catch {
-            XCTFail("some error")
-        }
+        card?.setAcceptTermsUrl(acceptTermsUrl: randomText)
+        
+        //get acceptTerms url
+        let acceptTermsUrl = card?.getAcceptTermsUrl()
+        
+        XCTAssertEqual(acceptTermsUrl, randomText)
+        
     }
     
     func selectVerificationType(_ expectation: XCTestExpectation, card: CreditCard?, completion: @escaping (_ verificationMethod: VerificationMethod?) -> Void) {
@@ -221,7 +214,7 @@ class TestHelper {
         
         verificationMethod?.selectVerificationType { (pending, verificationMethod, error) in
             XCTAssertNotNil(verificationMethod)
-            XCTAssertEqual(verificationMethod?.state, .AWAITING_VERIFICATION)
+            XCTAssertEqual(verificationMethod?.state, .awaitingVerification)
             XCTAssertNil(error)
             
             completion(verificationMethod)
@@ -241,7 +234,7 @@ class TestHelper {
         verificationMethod?.verify("12345") { (pending, verificationMethod, error) -> Void in
             XCTAssertNil(error)
             XCTAssertNotNil(verificationMethod)
-            XCTAssertEqual(verificationMethod?.state, .VERIFIED)
+            XCTAssertEqual(verificationMethod?.state, .verified)
             
             verificationMethod?.retrieveCreditCard { (creditCard, error) in
                 self.waitForActive(creditCard!) { (activeCard) in
@@ -263,12 +256,12 @@ class TestHelper {
     func waitForActive(_ pendingCard: CreditCard, retries: Int = 0, completion: @escaping (_ activeCard: CreditCard) -> Void) {
         debugPrint("pending card state is \(String(describing: pendingCard.state))")
         
-        if pendingCard.state == CreditCard.TokenizationState.active {
+        if pendingCard.state == TokenizationState.active {
             completion(pendingCard)
             return
         }
         
-        if pendingCard.state != CreditCard.TokenizationState.pendingActive {
+        if pendingCard.state != TokenizationState.pendingActive {
             XCTFail("Cards that aren't in pending active state will not transition to active")
             return
         }
@@ -317,12 +310,12 @@ class TestHelper {
         debugPrint("deactivateCreditCard")
         creditCard?.deactivate(causedBy: .cardholder, reason: "lost card") { (pending, creditCard, error) in
             XCTAssertNil(error)
-            XCTAssertEqual(creditCard?.state, CreditCard.TokenizationState.deactivated)
+            XCTAssertEqual(creditCard?.state, TokenizationState.deactivated)
             completion(creditCard)
         }
     }
     
-    class func randomStringWithLength (_ len: Int) -> String {
+    class func randomStringWithLength(_ len: Int) -> String {
         let letters: NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         let randomString: NSMutableString = NSMutableString(capacity: len)
         
@@ -335,7 +328,7 @@ class TestHelper {
         return randomString as String
     }
     
-    class func randomNumbers (_ len: Int = 16) -> String {
+    class func randomNumbers(_ len: Int = 16) -> String {
         let letters: NSString = "0123456789"
         let randomString: NSMutableString = NSMutableString(capacity: len)
         

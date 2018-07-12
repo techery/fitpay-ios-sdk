@@ -1,11 +1,4 @@
-
-public enum APDUPackageResponseState: String {
-    case processed    = "PROCESSED"
-    case failed       = "FAILED"
-    case error        = "ERROR"
-    case expired      = "EXPIRED"
-    case notProcessed = "NOT_PROCESSED"
-}
+import Foundation
 
 @objcMembers open class ApduPackage: NSObject, Serializable {
 
@@ -26,27 +19,7 @@ public enum APDUPackageResponseState: String {
     open var apduPackageUrl: String?
     
     var links: [ResourceLink]?
-    
-    @objc open static var APDUPackageResponseStateProcessed: String {
-        return APDUPackageResponseState.processed.rawValue
-    }
-    
-    @objc open static var APDUPackageResponseStateFailed: String {
-        return APDUPackageResponseState.failed.rawValue
-    }
-    
-    @objc open static var APDUPackageResponseStateError: String {
-        return APDUPackageResponseState.error.rawValue
-    }
-    
-    @objc open static var APDUPackageResponseStateExpired: String {
-        return APDUPackageResponseState.expired.rawValue
-    }
-    
-    @objc open static var APDUPackageResponseStateNotProcessed: String {
-        return APDUPackageResponseState.notProcessed.rawValue
-    }
-
+   
     //Date format for date transformation
     private let dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"
 
@@ -96,9 +69,7 @@ public enum APDUPackageResponseState: String {
     }
 
     open var isExpired: Bool {
-        guard let validUntilEpoch = self.validUntilEpoch else {
-            return false
-        }
+        guard let validUntilEpoch = validUntilEpoch else { return false }
         
         return validUntilEpoch <= Date()
     }
@@ -107,19 +78,19 @@ public enum APDUPackageResponseState: String {
         get {
             var dic: [String: Any] = [:]
 
-            if let packageId = self.packageId {
+            if let packageId = packageId {
                 dic["packageId"] = packageId
             }
 
-            if let state = self.state {
+            if let state = state {
                 dic["state"] = state.rawValue
             }
 
-            if let executed = self.executedEpoch {
+            if let executed = executedEpoch {
                 dic["executedTsEpoch"] = Int64(executed * 1000)
             }
 
-            if let executedDuration = self.executedDuration {
+            if let executedDuration = executedDuration {
                 dic["executedDuration"] = executedDuration
             }
 
@@ -128,17 +99,15 @@ public enum APDUPackageResponseState: String {
                 return dic
             }
 
-            if let apduResponses = self.apduCommands {
-                if apduResponses.count > 0 {
-                    var responsesArray: [Any] = []
-                    for resp in apduResponses {
-                        if let _ = resp.responseData {
-                            responsesArray.append(resp.responseDictionary)
-                        }
+            if let apduResponses = apduCommands, apduResponses.count > 0 {
+                var responsesArray: [Any] = []
+                for resp in apduResponses {
+                    if let _ = resp.responseData {
+                        responsesArray.append(resp.responseDictionary)
                     }
-
-                    dic["apduResponses"] = responsesArray
                 }
+                
+                dic["apduResponses"] = responsesArray
             }
 
             return dic

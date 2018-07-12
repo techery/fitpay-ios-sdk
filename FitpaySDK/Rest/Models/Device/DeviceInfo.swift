@@ -115,7 +115,6 @@ import Foundation
         case bdAddress
         case pairing
         case secureElement
-        case cardRelationships
         case metadata
     }
 

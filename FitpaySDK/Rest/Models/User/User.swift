@@ -128,7 +128,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
-  
+    
     @objc public func deleteUser(_ completion: @escaping RestClient.DeleteHandler) {
         let resource = User.selfResourceKey
         let url = self.links?.url(resource)

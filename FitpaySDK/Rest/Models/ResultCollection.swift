@@ -108,34 +108,6 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         }
     }
 
-    private func collectAllAvailable(_ storage: [T], nextUrl: String, completion: @escaping CollectAllAvailableCompletion) {
-        if let client = self.client {
-            let _: T? = client.collectionItems(nextUrl) { (resultCollection, error) -> Void in
-
-                guard error == nil else {
-                    completion(nil, error)
-                    return
-                }
-
-                guard let resultCollection = resultCollection else {
-                    completion(nil, ErrorResponse.unhandledError(domain: ResultCollection.self))
-                    return
-                }
-                
-                let results = resultCollection.results ?? []
-                let newStorage = storage + results
-
-                if let nextUrlItr = resultCollection.links?.url(self.nextResourse) {
-                    self.collectAllAvailable(newStorage, nextUrl: nextUrlItr, completion: completion)
-                } else {
-                    completion(newStorage, nil)
-                }
-            }
-        } else {
-            completion(nil, ErrorResponse.unhandledError(domain: ResultCollection.self))
-        }
-    }
-
     open func next<T>(_ completion: @escaping  (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) {
         let resource = self.nextResourse
         let url = self.links?.url(resource)
@@ -168,4 +140,37 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
             completion(nil, error)
         }
     }
+
+    // MARK: - Private
+    
+    private func collectAllAvailable(_ storage: [T], nextUrl: String, completion: @escaping CollectAllAvailableCompletion) {
+        guard let client = self.client else {
+            completion(nil, ErrorResponse.unhandledError(domain: ResultCollection.self))
+            return
+        }
+        
+        let _: T? = client.collectionItems(nextUrl) { (resultCollection, error) -> Void in
+            
+            guard error == nil else {
+                completion(nil, error)
+                return
+            }
+            
+            guard let resultCollection = resultCollection else {
+                completion(nil, ErrorResponse.unhandledError(domain: ResultCollection.self))
+                return
+            }
+            
+            let results = resultCollection.results ?? []
+            let newStorage = storage + results
+            
+            if let nextUrlItr = resultCollection.links?.url(self.nextResourse) {
+                self.collectAllAvailable(newStorage, nextUrl: nextUrlItr, completion: completion)
+            } else {
+                completion(newStorage, nil)
+            }
+        }
+    }
+
+
 }
