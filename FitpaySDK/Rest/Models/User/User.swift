@@ -87,7 +87,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CreditCardsHandler closure
      */
-    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, deviceId: String? = nil, completion: @escaping RestClient.CreditCardsHandler) {
+    public func getCreditCards(excludeState: [String], limit: Int, offset: Int, deviceId: String? = nil, completion: @escaping RestClient.CreditCardsHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
@@ -104,7 +104,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter offset:     start index position for list of entities returned
      - parameter completion: DevicesHandler closure
      */
-    public func listDevices(limit: Int, offset: Int, completion: @escaping RestClient.DevicesHandler) {
+    public func getDevices(limit: Int, offset: Int, completion: @escaping RestClient.DevicesHandler) {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {

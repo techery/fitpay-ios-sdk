@@ -118,7 +118,7 @@ protocol SyncManagerProtocol {
             return
         }
         
-        user?.listCreditCards(excludeState: [""], limit: 20, offset: 0) { (result, error) in
+        user?.getCreditCards(excludeState: [""], limit: 20, offset: 0) { (result, error) in
             if let error = error {
                 completion(nil, error)
                 return

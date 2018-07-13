@@ -154,7 +154,7 @@ extension MockRestSession {
                 return
             }
 
-            user?.listDevices(limit: 20, offset: 0) { (devicesCollection, error) in
+            user?.getDevices(limit: 20, offset: 0) { (devicesCollection, error) in
                 guard user != nil && error == nil else {
                     completion(nil, nil, error)
                     return

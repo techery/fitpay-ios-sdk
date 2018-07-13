@@ -235,7 +235,7 @@ class RestClientTests: XCTestCase {
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    self.testHelper.listCreditCards(expectation, user: user) { (user, result) in
+                    self.testHelper.getCreditCardsForUser(expectation, user: user) { (user, result) in
                         
                         XCTAssertEqual(creditCard?.creditCardId, result?.results?.first?.creditCardId)
                         
@@ -281,7 +281,7 @@ class RestClientTests: XCTestCase {
                         XCTAssertNil(error)
                         XCTAssertNotNil(updatedCard)
                         
-                        self.testHelper.listCreditCards(expectation, user: user) { (user, result) in
+                        self.testHelper.getCreditCardsForUser(expectation, user: user) { (user, result) in
                             guard let currentCard = result?.results?.first(where: { $0.creditCardId == updatedCard?.creditCardId }) else {
                                 XCTFail("updated card not returned")
                                 return
@@ -493,7 +493,7 @@ class RestClientTests: XCTestCase {
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                user?.listDevices(limit: 10, offset: 0) { (result, error) in
+                user?.getDevices(limit: 10, offset: 0) { (result, error) in
                     XCTAssertNil(error)
                     
                     XCTAssertNotNil(result)
@@ -530,7 +530,7 @@ class RestClientTests: XCTestCase {
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                user?.listDevices(limit: 10, offset: 0) { (result, error) in
+                user?.getDevices(limit: 10, offset: 0) { (result, error) in
                     XCTAssertNil(error)
                     
                     XCTAssertNotNil(result)
@@ -598,7 +598,7 @@ class RestClientTests: XCTestCase {
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                user?.listDevices(limit: 10, offset: 0) { (result, error) in
+                user?.getDevices(limit: 10, offset: 0) { (result, error) in
                     XCTAssertNil(error)
                     
                     result?.results?.first?.listCommits(commitsAfter: nil, limit: 10, offset: 0) { (commits, error) in
@@ -631,7 +631,7 @@ class RestClientTests: XCTestCase {
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
             self.testHelper.createDevice(expectation, user: user) { (user, device) in
                 self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    user?.listCreditCards(excludeState: [], limit: 1, offset: 0) { (collection, error) in
+                    user?.getCreditCards(excludeState: [], limit: 1, offset: 0) { (collection, error) in
                         let creditCard: CreditCard = collection!.results![0]
                         creditCard.cardMetaData?.cardBackgroundCombinedEmbossed?.first?.retrieveAssetWith(options: [.width(600), .height(600), .fontBold(false)]) { (asset, error) in
                             

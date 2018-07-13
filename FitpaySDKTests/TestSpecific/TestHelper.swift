@@ -154,8 +154,8 @@ class TestHelper {
         }
     }
     
-    func listCreditCards(_ expectation: XCTestExpectation, user: User?, completion: @escaping (_ user: User?, _ result: ResultCollection<CreditCard>?) -> Void) {
-        user?.listCreditCards(excludeState:[], limit: 10, offset: 0) { [unowned self] (result, error) -> Void in
+    func getCreditCardsForUser(_ expectation: XCTestExpectation, user: User?, completion: @escaping (_ user: User?, _ result: ResultCollection<CreditCard>?) -> Void) {
+        user?.getCreditCards(excludeState:[], limit: 10, offset: 0) { [unowned self] (result, error) -> Void in
             XCTAssertNil(error)
             XCTAssertNotNil(result)
             XCTAssertNotNil(result?.limit)
