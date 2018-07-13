@@ -36,7 +36,6 @@ class MockPaymentDeviceTests: XCTestCase {
             
             XCTAssertNil(error)
             XCTAssertNotNil(deviceInfo)
-            XCTAssertNotNil(deviceInfo?.secureElement?.secureElementId)
             XCTAssertEqual(deviceInfo!.deviceType, "WATCH")
             XCTAssertEqual(deviceInfo!.manufacturerName, "Fitpay")
             XCTAssertEqual(deviceInfo!.deviceName, "PSPS")
