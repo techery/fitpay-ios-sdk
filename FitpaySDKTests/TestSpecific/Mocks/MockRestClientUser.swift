@@ -4,33 +4,10 @@ extension MockRestClient {
 
     // MARK: - Completion Handlers
 
-    /**
-     Completion handler
-
-     - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
-     */
-    public typealias ListUsersHandler = (ResultCollection<User>?, Error?) -> Void
-
-    /**
-     Completion handler
-
-     - parameter user: Provides User object, or nil if error occurs
-     - parameter error: Provides error object, or nil if no error occurs
-     */
     public typealias UserHandler = (_ user: User?, _ error: ErrorResponse?) -> Void
 
     //MARK: - Public Functions
 
-    /**
-     Creates a new user within your organization
-
-     - parameter firstName:  first name of the user
-     - parameter lastName:   last name of the user
-     - parameter birthDate:  birth date of the user in date format [YYYY-MM-DD]
-     - parameter email:      email of the user
-     - parameter completion: CreateUserHandler closure
-     */
     @objc public func createUser(_ email: String, password: String, firstName: String?, lastName: String?,
                                  birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?,
                                  originAccountCreated: String?, completion: @escaping UserHandler) {
@@ -45,90 +22,54 @@ extension MockRestClient {
 
             log.verbose("got headers: \(headers)")
             var parameters: [String: Any] = [:]
-            if (termsVersion != nil) {
-                parameters += ["termsVersion": termsVersion!]
+            
+            if let termsVersion = termsVersion {
+                parameters["termsVersion"] = termsVersion
             }
 
-            if (termsAccepted != nil) {
-                parameters += ["termsAcceptedTsEpoch": termsAccepted!]
+            if let termsAccepted = termsAccepted {
+                parameters["termsAcceptedTsEpoch"] = termsAccepted
             }
 
-            if (origin != nil) {
-                parameters += ["origin": origin!]
+            if let origin = origin {
+                parameters["origin"] = origin
             }
 
-            if (termsVersion != nil) {
-                parameters += ["originAccountCreatedTsEpoch": originAccountCreated!]
+            if let originAccountCreated = originAccountCreated {
+                parameters["originAccountCreatedTsEpoch"] = originAccountCreated
             }
 
             parameters["client_id"] = FitpayConfig.clientId
 
-            var rawUserInfo: [String: Any] = ["email": email, "pin": password ]
+            var rawUserInfo: [String: Any] = ["email": email, "pin": password]
 
-            if (firstName != nil) {
-                rawUserInfo += ["firstName": firstName!]
+            if let firstName = firstName {
+                rawUserInfo["firstName"] = firstName
             }
 
-            if (lastName != nil) {
-                rawUserInfo += ["lastName": lastName!]
+            if let lastName = lastName {
+                rawUserInfo["lastName"] = lastName
             }
 
-            if (birthDate != nil) {
-                rawUserInfo += ["birthDate": birthDate!]
+            if let birthDate = birthDate {
+                rawUserInfo["birthDate"] = birthDate
             }
-
-            if let userInfoJSON = rawUserInfo.JSONString {
-                if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW,
-                                                                  enc: JWEEncryption.A256GCM,
-                                                                  payload: userInfoJSON,
-                                                                  keyId: headers[RestClient.fpKeyIdKey]!) {
-                    if let encrypted = try? jweObject.encrypt(strongSelf.secret) {
-                        parameters["encryptedData"] = encrypted
-                    }
-                }
+            
+            if let userInfoJSON = rawUserInfo.JSONString,
+                let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW,
+                                                               enc: JWEEncryption.A256GCM,
+                                                               payload: userInfoJSON,
+                                                               keyId: headers[RestClient.fpKeyIdKey]!),
+                let encrypted = try? jweObject.encrypt(strongSelf.secret) {
+                parameters["encryptedData"] = encrypted
             }
 
             var response = Response()
             let url = FitpayConfig.apiURL + "/users"
             response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUser")//?.replacingOccurrences(of: "\"encryptedData\":\"\"", with: "\"encryptedData\":\"\(parameters["encryptedData"] ?? "")\"")
-            let request = Request(request: url)
-            request.response = response
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let user = try? User(resultValue)
-                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                user?.client = self
-                completion(user, error)
-            }
-        }
-    }
-
-    /**
-     Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
-
-     - parameter id:         user id
-     - parameter completion: UserHandler closure
-     */
-    @objc open func user(id: String, completion: @escaping UserHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let strongSelf = self else { return }
-
-            guard let headers = headers  else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            let url = FitpayConfig.apiURL + "/users/" + id
-            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
             response.json = self?.loadDataFromJSONFile(filename: "getUser")
             let request = Request(request: url)
             request.response = response
-
             self?.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -142,18 +83,10 @@ extension MockRestClient {
         }
     }
 
-    /**
-     Update the details of an existing user
+    @objc open func user(id: String, completion: @escaping UserHandler) {
+        makeGetCall(FitpayConfig.apiURL + "/users/" + id, parameters: nil, completion: completion)
+    }
 
-     - parameter id:                   user id
-     - parameter firstName:            first name or nil if no change is required
-     - parameter lastName:             last name or nil if no change is required
-     - parameter birthDate:            birth date in date format [YYYY-MM-DD] or nil if no change is required
-     - parameter originAccountCreated: origin account created in date format [TODO: specify date format] or nil if no change is required
-     - parameter termsAccepted:        terms accepted in date format [TODO: specify date format] or nil if no change is required
-     - parameter termsVersion:         terms version formatted as [0.0.0]
-     - parameter completion:           UpdateUserHandler closure
-     */
     @objc public func updateUser(_ url: String,  firstName: String?, lastName: String?,
                                  birthDate: String?, originAccountCreated: String?, termsAccepted: String?,
                                  termsVersion: String?, completion: @escaping UserHandler) {
@@ -219,57 +152,5 @@ extension MockRestClient {
         }
 
     }
-
-    /**
-     Delete a single user from your organization
-
-     - parameter id:         user id
-     - parameter completion: DeleteHandler closure
-     */
-    @objc public func deleteUser(_ url: String, completion: @escaping DeleteHandler) {
-      /* TODO self.prepareAuthAndKeyHeaders { (headers, error) in
-            guard let headers = headers else {
-                completion(error)
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self.loadDataFromJSONFile(filename: "confirmJson")
-            let request = Request(request: url)
-            request.response = response
-            self.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }*/
-        completion(nil)
-    }
-
-    // MARK: - Internal Functions
-
-    @objc public func user(_ url: String, completion: @escaping UserHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async { completion(nil, error) }
-                return
-            }
-
-            var response = Response()
-            response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
-            response.json = self?.loadDataFromJSONFile(filename: "getUser")
-            let request = Request(request: url)
-            request.response = response
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let user = try? User(resultValue)
-                user?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                user?.client = self
-                completion(user, error)
-            }
-        }
-    }
+    
 }

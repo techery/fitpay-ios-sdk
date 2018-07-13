@@ -11,6 +11,10 @@ class ResultCollectionTests: BaseTestProvider {
         XCTAssertEqual(resultCollection?.offset, 1)
         XCTAssertEqual(resultCollection?.totalResults, 1)
         XCTAssertNotNil(resultCollection?.results)
+        XCTAssertEqual(resultCollection?.nextAvailable, false)
+        XCTAssertEqual(resultCollection?.lastAvailable, true)
+        XCTAssertEqual(resultCollection?.previousAvailable, false)
+        XCTAssertNil(resultCollection?.client)
 
         let json = resultCollection?.toJSON()
         XCTAssertNotNil(json?["_links"])

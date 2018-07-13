@@ -29,16 +29,10 @@ class MockModels {
     }
     
     func getDeviceInfo() -> DeviceInfo? {
-        let cardRelationship = getCardRelationship()?.toJSONString() ?? ""
-        let deviceInfo = try? DeviceInfo ("{ \"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"deviceIdentifier\":\"\(someId)\", \"deviceName\":\"\(someName)\", \"deviceType\":\"\(someType)\", \"manufacturerName\":\"\(someName)\", \"state\":\"12345fsd\", \"serialNumber\":\"987654321\", \"modelNumber\":\"1258PO\", \"hardwareRevision\":\"12345fsd\",  \"firmwareRevision\":\"12345fsd\", \"softwareRevision\":\"12345fsd\", \"notificationToken\":\"12345fsd\", \"createdTsEpoch\":\(timeEpoch), \"createdTs\":\"\(someDate)\", \"osName\":\"\(someName)\", \"systemId\":\"\(someId)\", \"cardRelationships\": [\(cardRelationship)],\"licenseKey\":\"147PLO\", \"bdAddress\":\"someAddress\", \"pairing\":\"pairing\", \"secureElement\": { \"secureElementId\":\"\(someId)\", \"casdCert\":\"casd\" } }")
+        let metadata = getCreditCardMetadata()?.toJSONString() ?? ""
+        let deviceInfo = try? DeviceInfo("{ \"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"deviceIdentifier\":\"\(someId)\", \"deviceName\":\"\(someName)\", \"deviceType\":\"\(someType)\", \"manufacturerName\":\"\(someName)\", \"state\":\"12345fsd\", \"serialNumber\":\"987654321\", \"modelNumber\":\"1258PO\", \"hardwareRevision\":\"12345fsd\",  \"firmwareRevision\":\"12345fsd\", \"softwareRevision\":\"12345fsd\", \"notificationToken\":\"12345fsd\", \"createdTsEpoch\":\(timeEpoch), \"createdTs\":\"\(someDate)\", \"osName\":\"\(someName)\", \"systemId\":\"\(someId)\",\"licenseKey\":\"147PLO\", \"bdAddress\":\"someAddress\", \"pairing\":\"pairing\", \"secureElement\": { \"secureElementId\":\"\(someId)\", \"casdCert\":\"casd\" }, \"metadata\":\(metadata) }")
         XCTAssertNotNil(deviceInfo)
         return deviceInfo
-    }
-    
-    func getCardRelationship() -> CardRelationship? {
-        let cardRelationship = try? CardRelationship ("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"}}, \"creditCardId\": \"\(someId)\", \"pan\":\"1234\", \"expMonth\": 2, \"expYear\": 2018}")
-        XCTAssertNotNil(cardRelationship)
-        return cardRelationship
     }
     
     func getCommit() -> Commit? {
@@ -167,7 +161,7 @@ class MockModels {
     
     func getResultCollection() -> ResultCollection<DeviceInfo>? {
         let info = getDeviceInfo()?.toJSONString() ?? ""
-        let resultCollection = try? ResultCollection<DeviceInfo>("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"limit\":1, \"offset\":1, \"totalResults\":1, \"results\":[\(info)]}")
+        let resultCollection = try? ResultCollection<DeviceInfo>("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}, \"last\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"limit\":1, \"offset\":1, \"totalResults\":1, \"results\":[\(info)]}")
         XCTAssertNotNil(resultCollection)
         return resultCollection
     }
@@ -176,6 +170,37 @@ class MockModels {
         let idVerification = try? IdVerification("{\"oemAccountInfoUpdatedDate\": \"\(someDate2)\", \"oemAccountCreatedDate\": \"\(someDate2)\", \"suspendedCardsInAccount\": 1, \"daysSinceLastAccountActivity\": 6, \"deviceLostMode\": 7, \"deviceWithActiveTokens\": 2, \"activeTokenOnAllDevicesForAccount\": 3, \"accountScore\": 4, \"deviceScore\": 5, \"nfcCapable\": false, \"oemAccountCountryCode\": \"US\", \"deviceCountry\": \"US\", \"oemAccountUserName\": \"\(someName)\", \"devicePairedToOemAccountDate\": \"\(someDate2)\", \"deviceTimeZone\": \"CST\", \"deviceTimeZoneSetBy\": 0, \"deviceIMEI\": \"123456\"}")
         XCTAssertNotNil(idVerification)
         return idVerification
+    }
+
+    func getResetDeviceResult() -> ResetDeviceResult? {
+        let resetDeviceResult = try? ResetDeviceResult(loadDataFromJSONFile(filename: "resetDeviceTask"))
+        XCTAssertNotNil(resetDeviceResult)
+        return resetDeviceResult
+    }
+
+    func getPayload() -> Payload? {
+        let creditCard = getCreditCard()?.toJSONString()
+        let payload = try? Payload(creditCard)
+        XCTAssertNotNil(payload)
+        return payload
+    }
+
+   private func loadDataFromJSONFile(filename: String) -> String? {
+        let bundle = Bundle(for: type(of: self))
+        guard let filepath = bundle.path(forResource: filename, ofType: "json") else {
+            XCTAssert(false, "File not found")
+            return nil
+        }
+
+        do {
+            let contents = try String(contentsOfFile: filepath)
+            XCTAssertNotNil(contents)
+            return contents
+        } catch {
+            XCTAssert(false, "Can't read from file")
+        }
+
+        return nil
     }
     
 }

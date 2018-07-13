@@ -32,7 +32,7 @@ public enum NotificationsEventType: Int, FitpayEventTypeProtocol {
             return "All notification processed"
         }
     }
-
+    
 }
 
 open class FitpayNotificationsManager: NSObject {
@@ -54,7 +54,7 @@ open class FitpayNotificationsManager: NSObject {
      */
     open func handleNotification(_ payload: NotificationsPayload) {
         log.verbose("--- handling notification ---")
-
+        
         let notificationDetail = self.notificationDetailFromNotification(payload)
         notificationDetail?.sendAckSync()
         
@@ -123,7 +123,7 @@ open class FitpayNotificationsManager: NSObject {
             }
         }
     }
-
+    
     // MARK: internal
     var notificationsToken: String = ""
     
@@ -148,29 +148,30 @@ open class FitpayNotificationsManager: NSObject {
         }
         
         self.currentNotification = notificationsQueue.dequeue()
-        if let currentNotification = self.currentNotification {
-            var notificationType = NotificationsType.withoutSync
-
-            if (currentNotification["fpField1"] as? String)?.lowercased() == "sync" {
-                log.debug("NOTIFICATIONS_DATA: notification was of type sync.")
-                notificationType = NotificationsType.withSync
-            }
-            
-            callReceivedCompletion(currentNotification, notificationType: notificationType)
-            switch notificationType {
-            case .withSync:
-                let notificationDetail = self.notificationDetailFromNotification(currentNotification)
-                SyncRequestQueue.sharedInstance.add(request: SyncRequest(notificationAsc: notificationDetail, initiator: SyncInitiator.notification), completion: { (status, error) in
-                    self.currentNotification = nil
-                    self.processNextNotificationIfAvailable()
-                })
-                break
-            case .withoutSync: // just call completion
-                log.debug("NOTIFICATIONS_DATA: notif was non-sync.")
+        guard let currentNotification = self.currentNotification else {
+            return
+        }
+        var notificationType = NotificationsType.withoutSync
+        
+        if (currentNotification["fpField1"] as? String)?.lowercased() == "sync" {
+            log.debug("NOTIFICATIONS_DATA: notification was of type sync.")
+            notificationType = NotificationsType.withSync
+        }
+        
+        callReceivedCompletion(currentNotification, notificationType: notificationType)
+        switch notificationType {
+        case .withSync:
+            let notificationDetail = self.notificationDetailFromNotification(currentNotification)
+            SyncRequestQueue.sharedInstance.add(request: SyncRequest(notificationAsc: notificationDetail, initiator: .notification)) { (status, error) in
                 self.currentNotification = nil
-                processNextNotificationIfAvailable()
-                break
+                self.processNextNotificationIfAvailable()
             }
+            break
+        case .withoutSync: // just call completion
+            log.debug("NOTIFICATIONS_DATA: notif was non-sync.")
+            self.currentNotification = nil
+            processNextNotificationIfAvailable()
+            break
         }
     }
     
@@ -200,5 +201,5 @@ open class FitpayNotificationsManager: NSObject {
         }
         return nil
     }
-
+    
 }

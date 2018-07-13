@@ -110,9 +110,7 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
 
     private func collectAllAvailable(_ storage: [T], nextUrl: String, completion: @escaping CollectAllAvailableCompletion) {
         if let client = self.client {
-            let _: T? = client.collectionItems(nextUrl)
-            {
-                (resultCollection, error) -> Void in
+            let _: T? = client.collectionItems(nextUrl) { (resultCollection, error) -> Void in
 
                 guard error == nil else {
                     completion(nil, error)
@@ -125,7 +123,6 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
                 }
                 
                 let results = resultCollection.results ?? []
-
                 let newStorage = storage + results
 
                 if let nextUrlItr = resultCollection.links?.url(self.nextResourse) {
@@ -139,79 +136,33 @@ open class ResultCollection<T: Codable>: NSObject, ClientModel, Serializable, Se
         }
     }
 
-    open func next(_ completion: @escaping RestClient.CreditCardsHandler) {
+    open func next<T>(_ completion: @escaping  (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) {
         let resource = self.nextResourse
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.creditCards(url, parameters: nil, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
 
-    open func last(_ completion: @escaping RestClient.CreditCardsHandler) {
+    open func last<T>(_ completion: @escaping  (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) {
         let resource = self.lastResourse
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.creditCards(url, parameters: nil, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)
         }
     }
 
-    open func next(_ completion: @escaping RestClient.DevicesHandler) {
-        let resource = self.nextResourse
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.devices(url, parameters: nil, completion: completion)
-        } else {
-            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
-            completion(nil, error)
-        }
-    }
-
-    open func last(_ completion: @escaping RestClient.DevicesHandler) {
-        let resource = self.lastResourse
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.devices(url, parameters: nil, completion: completion)
-        } else {
-            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
-            completion(nil, error)
-        }
-    }
-
-    open func next(_ completion: @escaping RestClient.TransactionsHandler) {
-        let resource = self.nextResourse
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.transactions(url, parameters: nil, completion: completion)
-        } else {
-            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
-            completion(nil, error)
-        }
-    }
-
-    open func last(_ completion: @escaping RestClient.TransactionsHandler)
-    {
-        let resource = self.lastResourse
-        let url = self.links?.url(resource)
-        if let url = url, let client = self.client {
-            client.transactions(url, parameters: nil, completion: completion)
-        } else {
-            let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
-            completion(nil, error)
-        }
-    }
-
-    open func previous(_ completion: @escaping RestClient.CommitsHandler)
-    {
+    open func previous<T>(_ completion: @escaping  (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) {
         let resource = self.previousResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.commits(url, parameters: nil, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             let error = ErrorResponse.clientUrlError(domain: ResultCollection.self, client: client, url: url, resource: resource)
             completion(nil, error)

@@ -37,34 +37,7 @@ extension RestClient {
      */
     public typealias CommitHandler = (_ commit: Commit?, _ error: ErrorResponse?) -> Void
     
-    //MARK: - Functions
-    
-    func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) {
-        let parameters = ["limit": "\(limit)", "offset": "\(offset)"]
-        self.devices(url, parameters: parameters, completion: completion)
-    }
-    
-    func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-            
-            let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let deviceInfo = try? ResultCollection<DeviceInfo>(resultValue)
-                deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(deviceInfo, error)
-            }
-        }
-    }
+    // MARK: - Functions
     
     func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
@@ -74,35 +47,19 @@ extension RestClient {
             }
             let params = deviceInfo.toJSON()
             
-            let request = self?._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let deviceInfo = try? DeviceInfo(resultValue)
                 deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 completion(deviceInfo, error)
             }
         }
     }
-    
-    func deleteDevice(_ url: String, completion: @escaping DeleteHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(error) }
-                return
-            }
-            
-            let request = self?._manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                completion(error)
-            }
-        }
-    }
-    
+        
     func updateDevice(_ url: String,
                                firmwareRevision: String?,
                                softwareRevision: String?,
@@ -128,16 +85,14 @@ extension RestClient {
             }
             
             let params = ["params": paramsArray]
-            let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let deviceInfo = try? DeviceInfo(resultValue)
                 deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])                        
                 completion(deviceInfo, error)
             }
         }
@@ -153,16 +108,14 @@ extension RestClient {
             }
             
             let params = ["params": paramsArray]
-            let request = self?._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
+            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
             self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
                 let deviceInfo = try? DeviceInfo(resultValue)
                 deviceInfo?.client = self
-                deviceInfo?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 completion(deviceInfo, error)
             }
         }
@@ -174,70 +127,7 @@ extension RestClient {
         if (commitsAfter != nil && commitsAfter!.isEmpty == false) {
             parameters["commitsAfter"] = commitsAfter!
         }
-        
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-            
-            let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let commit = try? ResultCollection<Commit>(resultValue)
-                commit?.client = self
-                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(commit, error)
-            }
-        }
+        makeGetCall(url, parameters: parameters, completion: completion)
     }
     
-    func commits(_ url: String, parameters: [String: Any]?,  completion: @escaping CommitsHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-            
-            let request = self?._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let commit = try? ResultCollection<Commit>(resultValue)
-                commit?.client = self
-                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(commit, error)
-            }
-        }
-    }
-    
-    func commit(_ url: String, completion: @escaping CommitHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let headers = headers else {
-                DispatchQueue.main.async {  completion(nil, error) }
-                return
-            }
-            
-            let request = self?._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
-                guard let strongSelf = self else { return }
-                
-                guard let resultValue = resultValue else {
-                    completion(nil, error)
-                    return
-                }
-                let commit = try? Commit(resultValue)
-                commit?.client = self
-                commit?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
-                completion(commit, error)
-            }
-        }
-    }
 }

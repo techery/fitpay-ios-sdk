@@ -1,6 +1,7 @@
 import Foundation
 
 class BindedToDeviceSyncRequestQueue {
+    
     init(deviceInfo: DeviceInfo?, syncManager: SyncManagerProtocol) {
         self.deviceInfo = deviceInfo
         self.syncManager = syncManager
@@ -24,10 +25,7 @@ class BindedToDeviceSyncRequestQueue {
     }
     
     func syncCompletedFor(request: SyncRequest, withStatus status: EventStatus, andError error: Error?) {
-        guard let queuedRequest = self.requestsQueue.dequeue() else {
-            return
-        }
-        
+        guard let queuedRequest = self.requestsQueue.dequeue() else { return }
         guard queuedRequest.isSameUserAndDevice(otherRequest: request) else {
             log.error("Error. Queued sync request is different from completed.")
             return

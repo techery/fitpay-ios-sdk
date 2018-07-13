@@ -2,28 +2,7 @@ import Foundation
 import Alamofire
 import JWTDecode
 
-struct AuthorizationDetails: Serializable {
-    var tokenType: String?
-    var accessToken: String?
-    var expiresIn: String?
-    var scope: String?
-    var jti: String?
-
-    private enum CodingKeys: String, CodingKey {
-        case tokenType = "token_type"
-        case accessToken = "access_token"
-        case expiresIn = "expires_in"
-        case scope
-        case jti 
-    }
-}
-
 @objcMembers open class RestSession: NSObject {
-    public enum ErrorEnum: Int, Error, RawIntValue {
-        case decodeFailure = 1000
-        case parsingFailure
-        case accessTokenFailure
-    }
     
     open var userId: String?
     open var accessToken: String?
@@ -31,17 +10,16 @@ struct AuthorizationDetails: Serializable {
         return self.accessToken != nil
     }
     
-    open func setWebViewAuthorization(_ webViewSessionData: SessionData) {
-        self.accessToken = webViewSessionData.token
-        self.userId = webViewSessionData.userId
-    }
-    
-    lazy private var _manager: SessionManager = {
+    lazy private var manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         return SessionManager(configuration: configuration)
     }()
+    
+    private typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
+
+    // MARK: - Lifecycle
     
     public init(sessionData: SessionData? = nil) {
         if let sessionData = sessionData {
@@ -50,42 +28,68 @@ struct AuthorizationDetails: Serializable {
         }
     }
     
-    public typealias LoginHandler = (_ error: NSError?) -> Void
+    // MARK: - Public Functions
     
-    @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
-        self.acquireAccessToken(username: username, password: password) { (details: AuthorizationDetails?, error: NSError?) in
-            
-            DispatchQueue.global().async {
-                if let error = error {
-                    completion(error)
-                } else {
-                    guard let accessToken = details?.accessToken else {
-                        completion(NSError.error(code: ErrorEnum.accessTokenFailure, domain: RestSession.self, message: "Failed to retrieve access token"))
-                        return
-                    }
-                    guard let jwt = try? decode(jwt: accessToken) else {
-                        completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
-                        return
-                    }
-                    guard let userId = jwt.body["user_id"] as? String else {
-                        completion(NSError.error(code: ErrorEnum.parsingFailure, domain: RestSession.self, message: "Failed to parse user id"))
-                        return
-                    }
-                    
-                    DispatchQueue.main.async { [weak self] in
-                        log.verbose("successful login for user: \(userId)")
-                        self?.userId = userId
-                        self?.accessToken = accessToken
-                        completion(nil)
-                    }
+    @objc open func setWebViewAuthorization(_ webViewSessionData: SessionData) {
+        self.accessToken = webViewSessionData.token
+        self.userId = webViewSessionData.userId
+    }
+    
+    @objc open func login(username: String, password: String, completion: @escaping (_ error: NSError?) -> Void) {
+        self.acquireAccessToken(username: username, password: password) { (details, error) in
+            if let error = error {
+                completion(error)
+            } else {
+                guard let accessToken = details?.accessToken else {
+                    completion(NSError.error(code: ErrorEnum.accessTokenFailure, domain: RestSession.self, message: "Failed to retrieve access token"))
+                    return
                 }
+                guard let jwt = try? decode(jwt: accessToken) else {
+                    completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
+                    return
+                }
+                guard let userId = jwt.body["user_id"] as? String else {
+                    completion(NSError.error(code: ErrorEnum.parsingFailure, domain: RestSession.self, message: "Failed to parse user id"))
+                    return
+                }
+                
+                log.verbose("REST_SESSION: successful login for user: \(userId)")
+                self.userId = userId
+                self.accessToken = accessToken
+                completion(nil)
             }
         }
     }
     
-    typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
+    @objc open func login(firebaseToken: String, completion: @escaping (_ error: NSError?) -> Void) {
+        acquireAccessToken(firebaseToken: firebaseToken) { (details, error) in
+            if let error = error {
+                completion(error)
+            } else {
+                guard let accessToken = details?.accessToken else {
+                    completion(NSError.error(code: ErrorEnum.accessTokenFailure, domain: RestSession.self, message: "Failed to retrieve access token"))
+                    return
+                }
+                guard let jwt = try? decode(jwt: accessToken) else {
+                    completion(NSError.error(code: ErrorEnum.decodeFailure, domain: RestSession.self, message: "Failed to decode access token"))
+                    return
+                }
+                guard let userId = jwt.body["user_id"] as? String else {
+                    completion(NSError.error(code: ErrorEnum.parsingFailure, domain: RestSession.self, message: "Failed to parse user id"))
+                    return
+                }
+                
+                log.verbose("REST_SESSION: successfully acquired token for user: \(userId)")
+                self.userId = userId
+                self.accessToken = accessToken
+                completion(nil)
+            }
+        }
+    }
     
-    func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
+    // MARK: - Private Functions
+    
+    private func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
         let parameters: [String: String] = [
             "response_type": "token",
@@ -94,40 +98,43 @@ struct AuthorizationDetails: Serializable {
             "credentials": ["username": username, "password": password].JSONString!
         ]
 
-        let request = _manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        let request = manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
         request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
-
-            DispatchQueue.main.async {
-                if let resultError = response.result.error {
-                    completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
-                } else if let resultValue = response.result.value {                     
-                    let authorizationDetails = try? AuthorizationDetails(resultValue)
-                    completion(authorizationDetails, nil)
-                } else {
-                    completion(nil, NSError.unhandledError(RestClient.self))
-                }
+            self.handleAuthorizationResponse(response, completion: completion)
+        }
+    }
+    
+    private func acquireAccessToken(firebaseToken: String, completion: @escaping AcquireAccessTokenHandler) {
+        let headers = ["Accept": "application/json"]
+        let parameters: [String: String] = [
+            "response_type": "token",
+            "client_id": FitpayConfig.clientId,
+            "redirect_uri": FitpayConfig.redirectURL,
+            "firebase_token": firebaseToken
+        ]
+        
+        let request = manager.request(FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
+           self.handleAuthorizationResponse(response, completion: completion)
+        }
+    }
+    
+    private func handleAuthorizationResponse(_ response: DataResponse<Any>, completion: @escaping AcquireAccessTokenHandler) {
+        DispatchQueue.main.async {
+            if let resultError = response.result.error {
+                completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
+            } else if let resultValue = response.result.value {
+                let authorizationDetails = try? AuthorizationDetails(resultValue)
+                completion(authorizationDetails, nil)
+            } else {
+                completion(nil, NSError.unhandledError(RestClient.self))
             }
         }
     }
+    
 }
 
 extension RestSession {
-    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
-        case unknownError       = 0
-        case deviceNotFound     = 10001
-        case userOrDeviceEmpty  = 10002
-        
-        public var description : String {
-            switch self {
-            case .unknownError:
-                return "Unknown error"
-            case .deviceNotFound:
-                return "Can't find device provided by wv."
-            case .userOrDeviceEmpty:
-                return "User or device empty."
-            }
-        }
-    }
     
     public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, ErrorResponse?) -> Void
     
@@ -152,13 +159,9 @@ extension RestSession {
                     return
                 }
                 
-                if let devices = devicesCollection?.results {
-                    for device in devices {
-                        if device.deviceIdentifier == deviceId {
-                            completion(user!, device, nil)
-                            return
-                        }
-                    }
+                if let device = devicesCollection?.results?.first(where: { $0.deviceIdentifier == deviceId }) {
+                    completion(user!, device, nil)
+                    return
                 }
                 
                 devicesCollection?.collectAllAvailable { (devices, error) in
@@ -167,11 +170,9 @@ extension RestSession {
                         return
                     }
                     
-                    for device in devices {
-                        if device.deviceIdentifier == deviceId {
-                            completion(user!, device, nil)
-                            return
-                        }
+                    if let device = devices.first(where: { $0.deviceIdentifier == deviceId }) {
+                        completion(user!, device, nil)
+                        return
                     }
                     
                     completion(nil, nil, ErrorResponse(domain: RestSession.self, errorCode: RestSession.ErrorCode.deviceNotFound.rawValue, errorMessage: ""))
@@ -187,4 +188,51 @@ extension RestSession {
     }
     
 }
+
+// MARK: - Nested Objects
+
+extension RestSession {
+    
+    public enum ErrorEnum: Int, Error, RawIntValue {
+        case decodeFailure = 1000
+        case parsingFailure
+        case accessTokenFailure
+    }
+    
+    public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
+        case unknownError       = 0
+        case deviceNotFound     = 10001
+        case userOrDeviceEmpty  = 10002
+        
+        public var description: String {
+            switch self {
+            case .unknownError:
+                return "Unknown error"
+            case .deviceNotFound:
+                return "Can't find device provided by wv."
+            case .userOrDeviceEmpty:
+                return "User or device empty."
+            }
+        }
+    }
+    
+    struct AuthorizationDetails: Serializable {
+        var tokenType: String?
+        var accessToken: String?
+        var expiresIn: String?
+        var scope: String?
+        var jti: String?
+        
+        private enum CodingKeys: String, CodingKey {
+            case tokenType = "token_type"
+            case accessToken = "access_token"
+            case expiresIn = "expires_in"
+            case scope
+            case jti
+        }
+    }
+    
+}
+
+
 

@@ -63,21 +63,20 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     
     // MARK: - Public Functions
     
-    /**
-     Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
-     
-     - parameter cardInfo: Credit Card Info including Address and IdVerification info
-     - parameter completion: CreateCreditCardHandler closure
-     */
-    @objc public func createCreditCard(cardInfo: CardInfo, completion: @escaping RestClient.CreditCardHandler) {
+    /// Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
+    ///
+    /// - Parameters:
+    ///   - cardInfo: Credit Card Info including Address and IdVerification info
+    ///   - deviceId: optional device which to add a credential to
+    ///   - completion: CreateCreditCardHandler closure
+    @objc public func createCreditCard(cardInfo: CardInfo, deviceId: String? = nil, completion: @escaping RestClient.CreditCardHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.createCreditCard(url, cardInfo: cardInfo, completion: completion)
+            client.createCreditCard(url, cardInfo: cardInfo, deviceId: deviceId, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
-        
     }
     
     /**
@@ -88,11 +87,11 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CreditCardsHandler closure
      */
-    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, completion: @escaping RestClient.CreditCardsHandler) {
+    public func listCreditCards(excludeState: [String], limit: Int, offset: Int, deviceId: String? = nil, completion: @escaping RestClient.CreditCardsHandler) {
         let resource = User.creditCardsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, completion: completion)
+            client.creditCards(url, excludeState: excludeState, limit: limit, offset: offset, deviceId: deviceId, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
@@ -109,7 +108,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.devices(url, limit: limit, offset: offset, completion: completion)
+            client.makeGetCall(url, limit: limit, offset: offset, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
@@ -129,22 +128,12 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
             completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
     }
-    
-    @objc public func createRelationship(creditCardId: String, deviceId: String, completion: @escaping RestClient.RelationshipHandler) {
-        let resource = User.selfResourceKey
-        let url = self.links?.url(resource)
-        if  let url = url, let client = self.client {
-            client.createRelationship(url, creditCardId: creditCardId, deviceId: deviceId, completion: completion)
-        } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
-        }
-    }
-    
+  
     @objc public func deleteUser(_ completion: @escaping RestClient.DeleteHandler) {
         let resource = User.selfResourceKey
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client {
-            client.deleteUser(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: User.self, client: client, url: url, resource: resource))
         }
@@ -160,7 +149,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
         }
     }
     
-    //MARK: - Internal Helpers
+    // MARK: - Internal Helpers
     
     func applySecret(_ secret: Data, expectedKeyId: String?) {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
@@ -168,9 +157,3 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     
 }
 
-struct UserInfo: Serializable {
-    var firstName: String?
-    var lastName: String?
-    var birthDate: String?
-    var email: String?
-}

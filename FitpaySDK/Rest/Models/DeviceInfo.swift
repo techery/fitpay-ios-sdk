@@ -1,6 +1,6 @@
 import Foundation
 
-@objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable, SecretApplyable {
+@objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable {
     
     open var deviceIdentifier: String?
    
@@ -41,8 +41,6 @@ import Foundation
     /// by a manufacturer-defined identifier and is unique for each individual instance of the product
     open var systemId: String?
     
-    open var cardRelationships: [CardRelationship]?
-    
     open var licenseKey: String?
     
     /// MAC address for Bluetooth
@@ -67,21 +65,6 @@ import Foundation
         return self.links?.url(DeviceInfo.deviceResetTasksKey)
     }
 
-    var client: RestClientInterface? {
-        get {
-            return self._client
-        }
-        set {
-            self._client = newValue
-
-            if let cardRelationships = self.cardRelationships {
-                for cardRelationship in cardRelationships {
-                    cardRelationship.client = self.client
-                }
-            }
-        }
-    }
-    
     var links: [ResourceLink]?
     
     private static let userResourceKey = "user"
@@ -90,7 +73,7 @@ import Foundation
     private static let lastAckCommitResourceKey = "lastAckCommit"
     private static let deviceResetTasksKey = "deviceResetTasks"
 
-    private weak var _client: RestClientInterface?
+    weak var client: RestClientInterface?
     
     override public init() {
         super.init()
@@ -159,7 +142,6 @@ import Foundation
         bdAddress = try? container.decode(.bdAddress)
         pairing = try? container.decode(.pairing)
         secureElement = try? container.decode(.secureElement)
-        cardRelationships = try? container.decode(.cardRelationships)
         metadata = try? container.decode([String : Any].self)
     }
 
@@ -186,15 +168,7 @@ import Foundation
         try? container.encode(bdAddress, forKey: .bdAddress)
         try? container.encode(pairing, forKey: .pairing)
         try? container.encode(secureElement, forKey: .secureElement)
-        try? container.encode(cardRelationships, forKey: .cardRelationships)
-    }
-
-    func applySecret(_ secret: Data, expectedKeyId: String?) {
-        if let cardRelationships = self.cardRelationships {
-            for modelObject in cardRelationships {
-                modelObject.applySecret(secret, expectedKeyId: expectedKeyId)
-            }
-        }
+        try? container.encodeIfPresent(metadata, forKey: .metadata)
     }
 
     var shortRTMRepersentation: String? {
@@ -265,7 +239,7 @@ import Foundation
         let resource = DeviceInfo.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deleteDevice(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
@@ -329,7 +303,7 @@ import Foundation
         let resource = DeviceInfo.lastAckCommitResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.commit(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
@@ -339,7 +313,7 @@ import Foundation
         let resource = DeviceInfo.userResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.user(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
         }
@@ -358,27 +332,25 @@ import Foundation
     }
 
     typealias NotificationTokenUpdateCompletion = (_ changed: Bool, _ error: ErrorResponse?) -> Void
+    
     func updateNotificationTokenIfNeeded(completion: NotificationTokenUpdateCompletion? = nil) {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
-        if newNotificationToken != "" {
-            if newNotificationToken != self.notificationToken {
-                update(nil, softwareRevision: nil, notifcationToken: newNotificationToken, completion: {
-                    [weak self] (device, error) in
-                    if error == nil && device != nil {
-                        log.debug("NOTIFICATIONS_DATA: NotificationToken updated to - \(device?.notificationToken ?? "null token")")
-                        self?.notificationToken = device?.notificationToken
-                        completion?(true, nil)
-                    } else {
-                        log.error("NOTIFICATIONS_DATA: can't update notification token for device, error: \(String(describing: error))")
-                        completion?(false, error)
-                    }
-                    
-                })
-            } else {
-                completion?(false, nil)
-            }
-        } else {
+        guard !newNotificationToken.isEmpty && newNotificationToken != notificationToken else {
             completion?(false, nil)
+            return
+        }
+        
+        update(nil, softwareRevision: nil, notifcationToken: newNotificationToken) {
+            [weak self] (device, error) in
+            if error == nil && device != nil {
+                log.debug("NOTIFICATIONS_DATA: NotificationToken updated to - \(device?.notificationToken ?? "null token")")
+                self?.notificationToken = device?.notificationToken
+                completion?(true, nil)
+            } else {
+                log.error("NOTIFICATIONS_DATA: can't update notification token for device, error: \(String(describing: error))")
+                completion?(false, error)
+            }
+            
         }
     }
     

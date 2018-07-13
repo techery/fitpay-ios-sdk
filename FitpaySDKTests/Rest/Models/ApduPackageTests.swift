@@ -32,4 +32,12 @@ class ApduPackageTests: BaseTestProvider {
         XCTAssertEqual(json?["validUntil"] as? String, mockModels.someDate)
         XCTAssertEqual(json?["apduPackageUrl"] as? String, "www.example.com")
     }
+
+     func testApduPackageStates() {
+        XCTAssertEqual(ApduPackage.APDUPackageResponseStateProcessed, APDUPackageResponseState.processed.rawValue)
+        XCTAssertEqual(ApduPackage.APDUPackageResponseStateFailed, APDUPackageResponseState.failed.rawValue)
+        XCTAssertEqual(ApduPackage.APDUPackageResponseStateError, APDUPackageResponseState.error.rawValue)
+        XCTAssertEqual(ApduPackage.APDUPackageResponseStateExpired, APDUPackageResponseState.expired.rawValue)
+        XCTAssertEqual(ApduPackage.APDUPackageResponseStateNotProcessed, APDUPackageResponseState.notProcessed.rawValue)
+    }
 }

@@ -13,18 +13,11 @@ protocol RestClientInterface: class {
     typealias DeleteHandler = (_ error: ErrorResponse?) -> Void
     
     /**
-     Completion handler
+     Confirm handlers
      
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    typealias ConfirmCommitHandler = (_ error: ErrorResponse?) -> Void
-    
-    /**
-     Completion handler
-     
-     - parameter ErrorType?:   Provides error object, or nil if no error occurs
-     */
-    typealias ConfirmAPDUPackageHandler = (_ error: ErrorResponse?) -> Void
+    typealias ConfirmHandler = (_ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -33,14 +26,6 @@ protocol RestClientInterface: class {
      - parameter error:        Provides error object, or nil if no error occurs
      */
     typealias TransactionsHandler = (_ result: ResultCollection<Transaction>?, _ error: ErrorResponse?) -> Void
-    
-    /**
-     Completion handler
-     
-     - parameter transaction: Provides Transaction object, or nil if error occurs
-     - parameter error:       Provides error object, or nil if no error occurs
-     */
-    typealias TransactionHandler = (_ transaction: Transaction?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -67,14 +52,7 @@ protocol RestClientInterface: class {
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    typealias SyncHandler = (_ error: ErrorResponse?) -> Void
-    
-    /**
-     Completion handler
-     
-     - parameter error: Provides error object, or nil if no error occurs
-     */
-    typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: NSError?) -> Void
+    typealias ResetHandler = (_ resetDeviceTask: ResetDeviceResult?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -85,14 +63,6 @@ protocol RestClientInterface: class {
     typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
     
     //MARK: - RestClientUser
-    
-    /**
-     Completion handler
-     
-     - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
-     */
-    typealias ListUsersHandler = (ResultCollection<User>?, Error?) -> Void
     
     /**
      Completion handler
@@ -174,38 +144,33 @@ protocol RestClientInterface: class {
     
     /**
      Completion handler
-     
+
      - parameter verificationMethod: Provides VerificationMethod object, or nil if error occurs
      - parameter error:              Provides error object, or nil if no error occurs
      */
     typealias VerifyMethodHandler = (_ verificationMethod: VerificationMethod?, _ error: ErrorResponse?) -> Void
-    
+
     /**
      Completion handler
-     
+
      - parameter verificationMethods: Provides VerificationMethods objects, or nil if error occurs
      - parameter error:              Provides error object, or nil if no error occurs
      */
     typealias VerifyMethodsHandler = (_ verificationMethods: ResultCollection<VerificationMethod>?, _ error: ErrorResponse?) -> Void
     
-    /**
-     Completion handler
-     
-     - parameter relationship: Provides Relationship object, or nil if error occurs
-     - parameter error:        Provides error object, or nil if no error occurs
-     */
-    typealias RelationshipHandler = (_ relationship: Relationship?, _ error: ErrorResponse?) -> Void
+    // MARK: - Variables
     
-    //MARK: - Variables
     var key: EncryptionKey? { get set }
     
     var secret: Data { get }
     
-    //MARK: - Methods
+    // MARK: - Methods
     
     func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T?
     
-    func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmCommitHandler)
+    func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmHandler)
+    
+    func getPlatformConfig(completion: @escaping (_ platform: PlatformConfig?, _ error: ErrorResponse?) -> Void)
     
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -213,12 +178,8 @@ protocol RestClientInterface: class {
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmAPDUPackageHandler)
-    
-    func transactions(_ url: String, limit: Int, offset: Int, completion: @escaping TransactionsHandler)
-    
-    func transactions(_ url: String, parameters: [String: Any]?, completion: @escaping TransactionsHandler)
-    
+    func confirmAPDUPackage(_ url: String, package: ApduPackage, completion: @escaping ConfirmHandler)
+        
     /**
      Creates a new encryption key pair
      
@@ -246,9 +207,7 @@ protocol RestClientInterface: class {
     func createKeyIfNeeded(_ completion: @escaping EncryptionKeyHandler)
     
     func createAuthHeaders(_ completion: AuthHeaderHandler)
-    
-    func skipAuthHeaders(_ completion: AuthHeaderHandler)
-    
+        
     func prepareAuthAndKeyHeaders(_ completion: @escaping AuthHeaderHandler)
     
     func preparKeyHeader(_ completion: @escaping AuthHeaderHandler)
@@ -256,25 +215,20 @@ protocol RestClientInterface: class {
     func issuers(completion: @escaping IssuersHandler)
     
     func assets(_ url: String, completion: @escaping AssetsHandler)
+
+    /// Creates a request for resetting a device
+    ///
+    /// - Parameters:
+    ///   - url: url string
+    ///   - completion: ResetHandler
+    func resetDeviceTasks(_ url: String, completion: @escaping ResetHandler)
     
-    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping SyncHandler)
-    
-    /**
-     Creates a request for resetting a device
-     
-     - parameter deviceId:  device id
-     - parameter userId: user id
-     - parameter completion:      ResetHandler closure
-     */
-    func resetDeviceTasks(_ resetUrl: URL, completion: @escaping ResetHandler)
-    
-    /**
-     Creates a request for getting reset status
-     
-     - parameter resetId:  reset device task id
-     - parameter completion:   ResetHandler closure
-     */
-    func resetDeviceStatus(_ resetUrl: URL, completion: @escaping ResetHandler)
+    /// Creates a request for getting reset status
+    ///
+    /// - Parameters:
+    ///   - url: url string
+    ///   - completion: Reset Handler
+    func resetDeviceStatus(_ url: String, completion: @escaping ResetHandler)
     
     //MARK: - RestClientUser
     
@@ -315,25 +269,9 @@ protocol RestClientInterface: class {
                     birthDate: String?, originAccountCreated: String?, termsAccepted: String?,
                     termsVersion: String?, completion: @escaping UserHandler)
     
-    /**
-     Delete a single user from your organization
-     
-     - parameter id:         user id
-     - parameter completion: DeleteHandler closure
-     */
-    func deleteUser(_ url: String, completion: @escaping DeleteHandler)
-    
-    func user(_ url: String, completion: @escaping UserHandler)
-    
     //MARK: - RestClientDevice
     
-    func devices(_ url: String, limit: Int, offset: Int, completion: @escaping DevicesHandler) 
-    
-    func devices(_ url: String, parameters: [String: Any]?, completion: @escaping DevicesHandler)
-    
     func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler)
-    
-    func deleteDevice(_ url: String, completion: @escaping DeleteHandler)
     
     func updateDevice(_ url: String,
                       firmwareRevision: String?,
@@ -345,59 +283,47 @@ protocol RestClientInterface: class {
     
     func commits(_ url: String, commitsAfter: String?, limit: Int, offset: Int, completion: @escaping CommitsHandler)
     
-    func commits(_ url: String, parameters: [String: Any]?,  completion: @escaping CommitsHandler)
-    
-    func commit(_ url: String, completion: @escaping CommitHandler)
-    
     //MARK: - RestClientCreditCard
     
-    //MARK - Internal Functions
-    func createCreditCard(_ url: String, cardInfo: CardInfo, completion: @escaping CreditCardHandler)
+    func createCreditCard(_ url: String, cardInfo: CardInfo, deviceId: String?, completion: @escaping CreditCardHandler)
     
-    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, completion: @escaping CreditCardsHandler)
-    
-    func creditCards(_ url: String, parameters: [String: Any]?, completion: @escaping CreditCardsHandler)
-    
-    func deleteCreditCard(_ url: String, completion: @escaping DeleteHandler)
-    
+    func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, deviceId: String?, completion: @escaping CreditCardsHandler)
+        
     func updateCreditCard(_ url: String, name: String?, address: Address, completion: @escaping CreditCardHandler)
     
-    func acceptTerms(_ url: String, completion: @escaping CreditCardTransitionHandler)
-    
-    func declineTerms(_ url: String, completion: @escaping CreditCardTransitionHandler)
+    func acceptCall(_ url: String, completion: @escaping CreditCardTransitionHandler)
     
     func selectVerificationType(_ url: String, completion: @escaping VerifyHandler)
     
     func verify(_ url: String, verificationCode: String, completion: @escaping VerifyHandler)
     
-    func deactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler)
-    
-    func reactivate(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler)
-    
-    func retrieveCreditCard(_ url: String, completion: @escaping CreditCardHandler)
-    
+    func activationCall(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler)
+        
     func makeDefault(_ url: String, completion: @escaping CreditCardTransitionHandler)
     
     func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler)
-    
-    func getVerificationMethods(_ url: String, completion: @escaping VerifyMethodsHandler)
-    
-    func getVerificationMethod(_ url: String, completion: @escaping VerifyMethodHandler)
-    
+            
     func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler)
     
-    //MARK: - RestClientRelationship
-    /**
-     Creates a relationship between a device and a creditCard
-     
-     - parameter userId:       user id
-     - parameter creditCardId: credit card id
-     - parameter deviceId:     device id
-     - parameter completion:   CreateRelationshipHandler closure
-     */
-    func createRelationship(_ url: String, creditCardId: String, deviceId: String, completion: @escaping RelationshipHandler)
+
+    // MARK: - Generic
     
-    func relationship(_ url: String, completion: @escaping RelationshipHandler)
+    typealias ResultHandler<T> = (_ result: T?, _ error: ErrorResponse?) -> Void
     
-    func deleteRelationship(_ url: String, completion: @escaping DeleteHandler)
+    typealias ResultCollectionHandler<T: Codable> = (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void
+
+    func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler)
+
+    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler)
+    
+    func makeGetCall<T: Codable>(_ url: String, limit: Int, offset: Int, completion: @escaping ResultCollectionHandler<T>)
+    
+    func makeGetCall<T:Codable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultCollectionHandler<T>)
+    
+    func makeGetCall<T: Serializable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
+    
+    func makeGetCall<T: Serializable & ClientModel & SecretApplyable>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
+
+    func makeGetCall<T: Serializable & ClientModel>(_ url: String, parameters: [String: Any]?, completion: @escaping ResultHandler<T>)
+
 }

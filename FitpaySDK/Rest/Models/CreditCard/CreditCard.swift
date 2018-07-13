@@ -181,7 +181,7 @@ import Foundation
         let url = self.links?.url(resource)
 
         if let url = url, let client = self.client {
-            client.retrieveCreditCard(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -205,11 +205,11 @@ import Foundation
 
     /**
       Update acceptTerms url
-     - @param acceptTermsUrl url
+     - param acceptTermsUrl url
      */
     @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
-        guard let link = self.links?.indexOf(CreditCard.acceptTermsResourceKey) else {
-            throw  AcceptTermsError.noTerms("The card is not in a state to accept terms anymore")
+        guard let link = self.links?.elementAt(CreditCard.acceptTermsResourceKey) else {
+            throw AcceptTermsError.noTerms("The card is not in a state to accept terms anymore")
         }
         
         link.href = acceptTermsUrl
@@ -224,7 +224,7 @@ import Foundation
         let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deleteCreditCard(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -256,7 +256,7 @@ import Foundation
         let resource = CreditCard.acceptTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.acceptTerms(url, completion: completion)
+            client.acceptCall(url, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -271,7 +271,7 @@ import Foundation
         let resource = CreditCard.declineTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.declineTerms(url, completion: completion)
+            client.acceptCall(url, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -288,7 +288,7 @@ import Foundation
         let resource = CreditCard.deactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+            client.activationCall(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -305,7 +305,7 @@ import Foundation
         let resource = CreditCard.reactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+            client.activationCall(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -337,7 +337,7 @@ import Foundation
         let resource = CreditCard.transactionsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.transactions(url, limit: limit, offset: offset, completion: completion)
+            client.makeGetCall(url, limit: limit, offset: offset, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -352,7 +352,7 @@ import Foundation
         let resource = CreditCard.getVerificationMethodsKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.getVerificationMethods(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -367,11 +367,12 @@ import Foundation
         let resource = CreditCard.selectedVerificationKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.getVerificationMethod(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
+
 }
 
 // MARK: - Nested Objects

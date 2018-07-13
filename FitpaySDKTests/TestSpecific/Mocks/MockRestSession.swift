@@ -30,7 +30,7 @@ import XCTest
     public typealias LoginHandler = (_ error: NSError?) -> Void
 
     @objc open func login(username: String, password: String, completion: @escaping LoginHandler) {
-        self.acquireAccessToken(username: username, password: password) { (details: AuthorizationDetails?, error: NSError?) in
+        self.acquireAccessToken(username: username, password: password) { (details: RestSession.AuthorizationDetails?, error: NSError?) in
 
             DispatchQueue.global().async {
                 if let error = error {
@@ -60,11 +60,11 @@ import XCTest
         }
     }
 
-    typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
+    typealias AcquireAccessTokenHandler = (RestSession.AuthorizationDetails?, NSError?) -> Void
 
     func acquireAccessToken(username: String, password: String, completion: @escaping AcquireAccessTokenHandler) {
         let headers = ["Accept": "application/json"]
-
+        
         var response = Response()
         let url = FitpayConfig.authURL + "/oauth/authorize"
         response.data = HTTPURLResponse(url: URL(string: url)!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)
@@ -72,13 +72,13 @@ import XCTest
             response.json = loadDataFromJSONFile(filename: "Error")
             response.error = ErrorResponse.unhandledError(domain: MockRestClient.self)
         } else {
-        response.json = loadDataFromJSONFile(filename: "getAuthorizationDetails")
+            response.json = loadDataFromJSONFile(filename: "getAuthorizationDetails")
         }
         let request = Request(request: url)
         request.response = response
-
+        
         request.responseJSON() { (response) in
-
+            
             DispatchQueue.main.async {
                 if request.response?.error != nil {
                     let JSON = request.response?.json
@@ -87,9 +87,9 @@ import XCTest
                         error = ErrorResponse(domain: MockRestClient.self, errorCode: request.response.data?.statusCode ?? 0 , errorMessage: request.response.error?.localizedDescription)
                     }
                     completion(nil, error)
-
+                    
                 } else if let resultValue = request.response?.json {
-                    let authorizationDetails = try? AuthorizationDetails(resultValue)
+                    let authorizationDetails = try? RestSession.AuthorizationDetails(resultValue)
                     completion(authorizationDetails, nil)
                 } else {
                     completion(nil, ErrorResponse.unhandledError(domain: MockRestClient.self))
@@ -97,32 +97,35 @@ import XCTest
             }
         }
     }
-
-
+    
+    
     func loadDataFromJSONFile(filename: String) -> String? {
         let bundle = Bundle(for: type(of: self))
-        if let filepath = bundle.path(forResource: filename, ofType: "json") {
-            do {
-                let contents = try String(contentsOfFile: filepath)
-                XCTAssertNotNil(contents)
-                return contents
-            } catch {
-                XCTAssert(false, "Can't read from file")
-            }
-        } else {
+        guard let filepath = bundle.path(forResource: filename, ofType: "json") else {
             XCTAssert(false, "File not found")
+            return nil
         }
+        
+        do {
+            let contents = try String(contentsOfFile: filepath)
+            XCTAssertNotNil(contents)
+            return contents
+        } catch {
+            XCTAssert(false, "Can't read from file")
+        }
+        
         return nil
     }
 }
 
 extension MockRestSession {
+    
     public enum ErrorCode: Int, Error, RawIntValue, CustomStringConvertible {
         case unknownError       = 0
         case deviceNotFound     = 10001
         case userOrDeviceEmpty  = 10002
 
-        public var description : String {
+        public var description: String {
             switch self {
             case .unknownError:
                 return "Unknown error"

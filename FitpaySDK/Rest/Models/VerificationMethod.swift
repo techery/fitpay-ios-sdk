@@ -152,7 +152,7 @@ open class VerificationMethod: NSObject, ClientModel, Serializable {
         let resource = VerificationMethod.cardResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.retrieveCreditCard(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: VerificationMethod.self, client: client, url: url, resource: resource))
         }

@@ -10,7 +10,7 @@ class CommitTests: BaseTestProvider {
         XCTAssertEqual(commit?.commitTypeString, mockModels.someType)
         XCTAssertEqual(commit?.created, CLong(mockModels.timeEpoch))
         XCTAssertEqual(commit?.previousCommit, "2")
-        XCTAssertEqual(commit?.commit, mockModels.someId)
+        XCTAssertEqual(commit?.commitId, mockModels.someId)
         XCTAssertEqual(commit?.encryptedData, mockModels.someEncryptionData)
 
         let json = commit?.toJSON()
