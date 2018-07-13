@@ -1,6 +1,39 @@
 import RxSwift
 
-@objcMembers class CommitsApplyer {
+class CommitsApplyer {
+    
+    var apduConfirmOperation: APDUConfirmOperationProtocol
+    var nonApduConfirmOperation: NonAPDUConfirmOperationProtocol
+    
+    var commitStatistics = [CommitStatistic]()
+    
+    private var commits: [Commit]!
+    private let semaphore = DispatchSemaphore(value: 0)
+    private var thread: Thread?
+    private var applyerCompletionHandler: CompletionHandler!
+    private var totalApduCommands = 0
+    private var appliedApduCommands = 0
+    private let maxCommitsRetries = 0
+    private let maxAPDUCommandsRetries = 0
+    private let paymentDevice: PaymentDevice
+    private var syncStorage: SyncStorage
+    private var deviceInfo: DeviceInfo
+
+    // rx
+    private let eventsPublisher: PublishSubject<SyncEvent>
+    private var disposeBag = DisposeBag()
+    
+    var isRunning: Bool {
+        guard let thread = self.thread else {
+            return false
+        }
+        
+        return thread.isExecuting
+    }
+    
+    typealias CompletionHandler = (_ error: Error?) -> Void
+
+    // MARK: - Lifecycle
     
     init(paymentDevice: PaymentDevice,
          deviceInfo: DeviceInfo,
@@ -15,17 +48,9 @@ import RxSwift
         self.nonApduConfirmOperation = syncFactory.nonApduConfirmOperation()
     }
     
-    var isRunning: Bool {
-        guard let thread = self.thread else {
-            return false
-        }
-        
-        return thread.isExecuting
-    }
+    // MARK: - Internal Functions
     
-    typealias ApplyerCompletionHandler = (_ error: Error?) -> Void
-    
-    func apply(_ commits: [Commit], completion: @escaping ApplyerCompletionHandler) -> Bool {
+    func apply(_ commits: [Commit], completion: @escaping CompletionHandler) -> Bool {
         if isRunning {
             log.warning("SYNC_DATA: Cannot apply commints, applying already in progress.")
             return false
@@ -51,26 +76,7 @@ import RxSwift
         return true
     }
     
-    var apduConfirmOperation: APDUConfirmOperationProtocol
-    var nonApduConfirmOperation: NonAPDUConfirmOperationProtocol
-    
-    // private
-    private var commits: [Commit]!
-    private let semaphore = DispatchSemaphore(value: 0)
-    private var thread: Thread?
-    private var applyerCompletionHandler: ApplyerCompletionHandler!
-    private var totalApduCommands = 0
-    private var appliedApduCommands = 0
-    private let maxCommitsRetries = 0
-    private let maxAPDUCommandsRetries = 0
-    private let paymentDevice: PaymentDevice
-    private var syncStorage: SyncStorage
-    private var deviceInfo: DeviceInfo
-    var commitStatistics = [CommitStatistic]()
-    
-    // rx
-    private let eventsPublisher: PublishSubject<SyncEvent>
-    private var disposeBag = DisposeBag()
+    // MARK: - Private Functions
     
     @objc private func processCommits() {
         var commitsApplied = 0
@@ -113,9 +119,8 @@ import RxSwift
         })
     }
     
-    private typealias CommitCompletion = (_ error: Error?) -> Void
     
-    private func processCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
+    private func processCommit(_ commit: Commit, completion: @escaping CompletionHandler) {
         guard let commitType = commit.commitType else {
             log.error("SYNC_DATA: trying to process commit without commitType.")
             completion(NSError.unhandledError(CommitsApplyer.self))
@@ -154,7 +159,7 @@ import RxSwift
         }
     }
     
-    private func processAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
+    private func processAPDUCommit(_ commit: Commit, completion: @escaping CompletionHandler) {
         log.debug("SYNC_DATA: Processing APDU commit: \(commit.commitId ?? "").")
         guard let apduPackage = commit.payload?.apduPackage else {
             log.error("SYNC_DATA: trying to process apdu commit without apdu package.")
@@ -203,7 +208,7 @@ import RxSwift
         }
     }
     
-    private func packageProcessingFinished(commit: Commit, apduPackage: ApduPackage, state: APDUPackageResponseState?, error: Error?, applyingStartDate: TimeInterval, completion: @escaping CommitCompletion) {
+    private func packageProcessingFinished(commit: Commit, apduPackage: ApduPackage, state: APDUPackageResponseState?, error: Error?, applyingStartDate: TimeInterval, completion: @escaping CompletionHandler) {
         let currentTimestamp = Date().timeIntervalSince1970
         
         apduPackage.executedDuration = Int((currentTimestamp - applyingStartDate)*1000)
@@ -259,10 +264,8 @@ import RxSwift
         })
     }
     
-    private func processNonAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
-        guard let commitType = commit.commitType else {
-            return
-        }
+    private func processNonAPDUCommit(_ commit: Commit, completion: @escaping CompletionHandler) {
+        guard let commitType = commit.commitType else { return }
         
         let applyingStartDate = Date().timeIntervalSince1970
         
@@ -377,7 +380,7 @@ import RxSwift
         }
     }
     
-    private func saveCommitStatistic(commit:Commit, error: Error?) {
+    private func saveCommitStatistic(commit: Commit, error: Error?) {
         guard let commitType = commit.commitType else {
             let statistic = CommitStatistic(commitId:commit.commitId, total:0, average:0, errorDesc:error?.localizedDescription)
             self.commitStatistics.append(statistic)
@@ -402,4 +405,5 @@ import RxSwift
             self.commitStatistics.append(statistic)
         }
     }
+
 }

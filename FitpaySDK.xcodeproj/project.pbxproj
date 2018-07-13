@@ -78,6 +78,10 @@
 		2782F84220F6BB28004774E8 /* DeviceResetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84020F6BB28004774E8 /* DeviceResetStatus.swift */; };
 		2782F84A20F6BF56004774E8 /* RestClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84920F6BF56004774E8 /* RestClientInterface.swift */; };
 		2782F84B20F6BF56004774E8 /* RestClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84920F6BF56004774E8 /* RestClientInterface.swift */; };
+		2782F85020F7CDF4004774E8 /* SyncOperationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84F20F7CDF4004774E8 /* SyncOperationError.swift */; };
+		2782F85120F7CDF4004774E8 /* SyncOperationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84F20F7CDF4004774E8 /* SyncOperationError.swift */; };
+		2782F85320F7CE08004774E8 /* SyncOperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F85220F7CE08004774E8 /* SyncOperationState.swift */; };
+		2782F85420F7CE08004774E8 /* SyncOperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F85220F7CE08004774E8 /* SyncOperationState.swift */; };
 		2786DB02207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		2786DB03207512410079ED15 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2786DB01207512410079ED15 /* EventSource.swift */; };
 		27982EBC20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27982EBB20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift */; };
@@ -503,6 +507,8 @@
 		2782F83D20F6BA4F004774E8 /* SyncInitiator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncInitiator.swift; sourceTree = "<group>"; };
 		2782F84020F6BB28004774E8 /* DeviceResetStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceResetStatus.swift; sourceTree = "<group>"; };
 		2782F84920F6BF56004774E8 /* RestClientInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientInterface.swift; sourceTree = "<group>"; };
+		2782F84F20F7CDF4004774E8 /* SyncOperationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperationError.swift; sourceTree = "<group>"; };
+		2782F85220F7CE08004774E8 /* SyncOperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperationState.swift; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		27982EBB20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnkeyedEncodingContainerExtension.swift; sourceTree = "<group>"; };
 		27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventStreamManager.swift; sourceTree = "<group>"; };
@@ -1120,6 +1126,8 @@
 				3701AE571F16180000550890 /* FetchCommitsOperation.swift */,
 				3701AE461F14C29900550890 /* SyncOperation.swift */,
 				3701AE4B1F14F33500550890 /* SyncOperationStateToSyncEventAdapter.swift */,
+				2782F84F20F7CDF4004774E8 /* SyncOperationError.swift */,
+				2782F85220F7CE08004774E8 /* SyncOperationState.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -1740,6 +1748,7 @@
 				9ABF39421C883AF7002EA8E5 /* JWEObjectExtensions.swift in Sources */,
 				CD03895E2EB9EE7415958B59 /* Transaction.swift in Sources */,
 				2782F82520F6B600004774E8 /* VerificationMethodType.swift in Sources */,
+				2782F85020F7CDF4004774E8 /* SyncOperationError.swift in Sources */,
 				8C870F171D00EC630048A1DF /* Transforms.swift in Sources */,
 				9AB68E3F1C84A1EC00A0E172 /* JWEObject.swift in Sources */,
 				27A4AE76206D916A002255A1 /* UserEventStreamManager.swift in Sources */,
@@ -1762,6 +1771,7 @@
 				CD03852C57B1C79751A86197 /* ApduPackage.swift in Sources */,
 				37DB88741F0F844B00B070DA /* ImageAssetOptions.swift in Sources */,
 				8425931D1CAA613E0006FFA6 /* SyncStorage.swift in Sources */,
+				2782F85320F7CE08004774E8 /* SyncOperationState.swift in Sources */,
 				CD0387E96A4CCADE85CAA6B0 /* DeviceInfo.swift in Sources */,
 				2782F83B20F6B8B9004774E8 /* CreditCardInitiator.swift in Sources */,
 				9A7C78811CC77F210097BAB9 /* FitpayEventBinding.swift in Sources */,
@@ -1992,6 +2002,7 @@
 				3A93A0841DB8CA2C00A9FEB4 /* JWEObjectExtensions.swift in Sources */,
 				916CE9C320A18CA300C2F621 /* KeyedEncodingContainerExtension.swift in Sources */,
 				2782F82620F6B600004774E8 /* VerificationMethodType.swift in Sources */,
+				2782F85120F7CDF4004774E8 /* SyncOperationError.swift in Sources */,
 				27F47B9E20EEB1ED0043B388 /* User.swift in Sources */,
 				2735864620E13437005EDA9D /* CustomJSONArrayEncoding.swift in Sources */,
 				3A640B4A1DDF110E008AD936 /* RtmMessageResponse.swift in Sources */,
@@ -2014,6 +2025,7 @@
 				3A93A08C1DB8CA2C00A9FEB4 /* WvConfig.swift in Sources */,
 				3A93A08D1DB8CA2C00A9FEB4 /* ResourceLink.swift in Sources */,
 				3A93A08E1DB8CA2C00A9FEB4 /* FitpayBlockEventListener.swift in Sources */,
+				2782F85420F7CE08004774E8 /* SyncOperationState.swift in Sources */,
 				37DB88771F0F8B7100B070DA /* ImageAssetOptions.swift in Sources */,
 				2782F83C20F6B8B9004774E8 /* CreditCardInitiator.swift in Sources */,
 				3A93A08F1DB8CA2C00A9FEB4 /* ApduPackage.swift in Sources */,
