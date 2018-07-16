@@ -95,7 +95,6 @@ class MockModels {
         creditCard?.termsAssetReferences = [getTermsAssetReferences()!]
         creditCard?.verificationMethods = [getVerificationMethod()!]
         creditCard?.info = getCreditCardInfo()
-        creditCard?.deviceRelationships = [getDeviceRelationship()!]
         XCTAssertNotNil(creditCard)
         return creditCard
     }
@@ -111,13 +110,6 @@ class MockModels {
         let termsAssetReferences = try? TermsAssetReferences("{\"_links\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\", \"encryptedData\": \"\(someEncryptionData)\"},\"mimeType\":\"text/html\"}")
         XCTAssertNotNil(termsAssetReferences)
         return termsAssetReferences
-    }
-    
-    func getDeviceRelationship() -> DeviceRelationships? {
-        let deviceRelationship = try? DeviceRelationships("{\"deviceType\":\"\(someType)\",\"deviceIdentifier\":\"677af018-01b1-47d9-9b08-0c18d89aa2e3\",\"manufacturerName\":\"Pebble\",\"deviceName\":\"Pebble Time\",\"serialNumber\":\"074DCC022E14\",\"modelNumber\":\"FB404\",\"hardwareRevision\":\"1.0.0.0\",\"firmwareRevision\":\"1030.6408.1309.0001\",\"softwareRevision\":\"2.0.242009.6\",\"createdTs\":\"\(someDate)\",\"createdTsEpoch\":\(timeEpoch),\"osName\":\"ANDROID\",\"systemId\":\"\(someId)\"}")
-        XCTAssertNotNil(deviceRelationship)
-        return deviceRelationship
-        
     }
     
     func getAddress() -> Address? {
@@ -143,14 +135,6 @@ class MockModels {
         let rtmMessage = try? RtmMessageResponse("{\"callBackId\":1,\"data\":{\"data\":\"someData\"},\"type\":\"\(someType)\", \"isSuccess\":true}")
         XCTAssertNotNil(rtmMessage)
         return rtmMessage
-    }
-    
-    func getRelationship() -> Relationship? {
-        let deviceInfo = getDeviceInfo()?.toJSONString() ?? ""
-        let cardInfo = getCreditCard()?.info?.toJSONString() ?? ""
-        let relationship = try? Relationship("{\"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"card\":\(cardInfo), \"device\":\(deviceInfo)}")
-        XCTAssertNotNil(relationship)
-        return relationship
     }
     
     func getIssuers() -> Issuers? {

@@ -304,7 +304,6 @@ protocol RestClientInterface: class {
     func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler)
             
     func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler)
-    
 
     // MARK: - Generic
     

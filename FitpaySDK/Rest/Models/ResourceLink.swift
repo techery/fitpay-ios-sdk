@@ -14,5 +14,4 @@ extension ResourceLink: Equatable {
         return lhs.target == rhs.target && lhs.href == rhs.href
     }
     
-    
 }

@@ -1,32 +1,6 @@
+import Foundation
 
-public enum VerificationMethodType: String, Serializable {
-    case TEXT_TO_CARDHOLDER_NUMBER          = "TEXT_TO_CARDHOLDER_NUMBER",
-        EMAIL_TO_CARDHOLDER_ADDRESS         = "EMAIL_TO_CARDHOLDER_ADDRESS",
-        CARDHOLDER_TO_CALL_AUTOMATED_NUMBER = "CARDHOLDER_TO_CALL_AUTOMATED_NUMBER",
-        CARDHOLDER_TO_CALL_MANNED_NUMBER    = "CARDHOLDER_TO_CALL_MANNED_NUMBER",
-        CARDHOLDER_TO_VISIT_WEBSITE         = "CARDHOLDER_TO_VISIT_WEBSITE",
-        CARDHOLDER_TO_USE_MOBILE_APP        = "CARDHOLDER_TO_USE_MOBILE_APP",
-        ISSUER_TO_CALL_CARDHOLDER_NUMBER    = "ISSUER_TO_CALL_CARDHOLDER_NUMBER"
-}
-
-public enum VerificationState: String, Serializable {
-    case AVAILABLE_FOR_SELECTION = "AVAILABLE_FOR_SELECTION",
-        AWAITING_VERIFICATION    = "AWAITING_VERIFICATION",
-        EXPIRED                  = "EXPIRED",
-        VERIFIED                 = "VERIFIED"
-}
-
-public enum VerificationResult: String, Serializable {
-    case SUCCESS                        = "SUCCESS",
-        INCORRECT_CODE                  = "INCORRECT_CODE",
-        INCORRECT_CODE_RETRIES_EXCEEDED = "INCORRECT_CODE_RETRIES_EXCEEDED",
-        EXPIRED_CODE                    = "EXPIRED_CODE",
-        INCORRECT_TAV                   = "INCORRECT_TAV",
-        EXPIRED_SESSION                 = "EXPIRED_SESSION"
-}
-
-@objcMembers
-open class VerificationMethod: NSObject, ClientModel, Serializable {
+@objcMembers open class VerificationMethod: NSObject, ClientModel, Serializable {
     
     open var verificationId: String?
     open var state: VerificationState?
@@ -77,6 +51,8 @@ open class VerificationMethod: NSObject, ClientModel, Serializable {
     private static let verifyResourceKey = "verify"
     private static let cardResourceKey = "card"
 
+    // MARK: - Lifecycle
+    
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -114,7 +90,8 @@ open class VerificationMethod: NSObject, ClientModel, Serializable {
         try? container.encode(appToAppContext, forKey: .appToAppContext)
     }
 
-
+    // MARK: - Public Functions
+    
     /// When an issuer requires additional authentication to verfiy the identity of the cardholder,
     /// this indicates the user has selected the specified verification method by the indicated verificationTypeId
     ///

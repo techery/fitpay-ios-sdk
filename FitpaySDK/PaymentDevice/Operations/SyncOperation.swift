@@ -1,16 +1,27 @@
 import Foundation
 import RxSwift
 
-enum SyncOperationError: Error {
-    case deviceIdentifierIsNil
-    case couldNotConnectToDevice
-    case paymentDeviceDisconnected
-    case cantFetchCommits
-    case alreadySyncing
-    case unk
-}
-
 class SyncOperation {
+
+    var fetchCommitsOperation: FetchCommitsOperationProtocol // Dependency Injection
+    var commitsApplyer: CommitsApplyer
+    
+    private var paymentDevice: PaymentDevice
+    private var connector: PaymentDeviceConnectable
+    private var deviceInfo: DeviceInfo
+    private var user: User
+    private var connectOperation: ConnectDeviceOperationProtocol
+    private var eventsAdapter: SyncOperationStateToSyncEventAdapter
+    private var syncStorage: SyncStorage
+    public var syncRequest: SyncRequest?
+    
+    private var syncEventsPublisher: PublishSubject<SyncEvent>
+    private var state: Variable<SyncOperationState>
+    private var disposeBag = DisposeBag()
+    
+    private var isSyncing = false
+    
+    // MARK: - Lifecycle
     
     init(paymentDevice: PaymentDevice, connector: PaymentDeviceConnectable,
          deviceInfo: DeviceInfo, user: User, syncFactory: SyncFactory,
@@ -38,14 +49,7 @@ class SyncOperation {
         self.syncRequest = request
     }
     
-    enum SyncOperationState {
-        case waiting
-        case started
-        case connecting
-        case connected
-        case commitsReceived(commits: [Commit])
-        case completed(Error?)
-    }
+    // MARK: - Internal Functions
     
     func start() -> Observable<SyncEvent> {
         self.state.asObservable().subscribe(onNext: { [weak self] (state) in
@@ -74,26 +78,7 @@ class SyncOperation {
         return self.eventsAdapter.startAdapting()
     }
     
-    // MARK: internal
-    var fetchCommitsOperation: FetchCommitsOperationProtocol // Dependency Injection
-    var commitsApplyer: CommitsApplyer
-    
-    // MARK: private
-    private var paymentDevice: PaymentDevice
-    private var connector: PaymentDeviceConnectable
-    private var deviceInfo: DeviceInfo
-    private var user: User
-    private var connectOperation: ConnectDeviceOperationProtocol
-    private var eventsAdapter: SyncOperationStateToSyncEventAdapter
-    private var syncStorage: SyncStorage
-    public var syncRequest: SyncRequest?
-    
-    // rx
-    private var syncEventsPublisher: PublishSubject<SyncEvent>
-    private var state: Variable<SyncOperationState>
-    private var disposeBag = DisposeBag()
-    
-    private var isSyncing = false
+    // MARK: - Private Functions
     
     private func startSync() {
         self.connectOperation.start().subscribe() { [weak self] (event) in
@@ -175,4 +160,5 @@ class SyncOperation {
         
         metric.sendCompleteSync()
     }
+
 }

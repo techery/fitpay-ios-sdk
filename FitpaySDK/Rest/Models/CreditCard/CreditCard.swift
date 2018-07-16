@@ -14,7 +14,6 @@ import Foundation
     open var termsAssetReferences: [TermsAssetReferences]?
     open var eligibilityExpiration: String?
     open var eligibilityExpirationEpoch: TimeInterval?
-    open var deviceRelationships: [DeviceRelationships]?
     open var targetDeviceId: String?
     open var targetDeviceType: String?
     open var verificationMethods: [VerificationMethod]?
@@ -54,12 +53,6 @@ import Foundation
             if let termsAssetReferences = self.termsAssetReferences {
                 for termsAssetReference in termsAssetReferences {
                     termsAssetReference.client = self.client
-                }
-            }
-
-            if let deviceRelationships = self.deviceRelationships {
-                for deviceRelationship in deviceRelationships {
-                    deviceRelationship.client = self.client
                 }
             }
 
@@ -131,7 +124,6 @@ import Foundation
         termsAssetReferences =  try? container.decode(.termsAssetReferences)
         eligibilityExpiration = try? container.decode(.eligibilityExpiration)
         eligibilityExpirationEpoch = try container.decode(.eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
-        deviceRelationships = try? container.decode(.deviceRelationships)
         encryptedData = try? container.decode(.encryptedData)
         targetDeviceId = try? container.decode(.targetDeviceId)
         targetDeviceType = try? container.decode(.targetDeviceType)
@@ -157,7 +149,6 @@ import Foundation
         try? container.encode(termsAssetReferences, forKey: .termsAssetReferences)
         try? container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
         try? container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
-        try? container.encode(deviceRelationships, forKey: .deviceRelationships)
         try? container.encode(encryptedData, forKey: .encryptedData)
         try? container.encode(targetDeviceId, forKey: .targetDeviceId)
         try? container.encode(targetDeviceType, forKey: .targetDeviceType)
@@ -200,16 +191,17 @@ import Foundation
      - return acceptTerms url
      */
     @objc open func getAcceptTermsUrl() -> String? {
-     return self.links?.url(CreditCard.acceptTermsResourceKey)
+        return self.links?.url(CreditCard.acceptTermsResourceKey)
     }
 
     /**
       Update acceptTerms url
      - param acceptTermsUrl url
      */
-    @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
+    @objc open func setAcceptTermsUrl(acceptTermsUrl: String) {
         guard let link = self.links?.elementAt(CreditCard.acceptTermsResourceKey) else {
-            throw AcceptTermsError.noTerms("The card is not in a state to accept terms anymore")
+            log.error("CREDIT_CARD: The card is not in a state to accept terms anymore")
+            return
         }
         
         link.href = acceptTermsUrl
@@ -375,37 +367,3 @@ import Foundation
 
 }
 
-// MARK: - Nested Objects
-
-extension CreditCard {
-    
-    public enum TokenizationState: String, Codable {
-        case new = "NEW"
-        case notEligible = "NOT_ELIGIBLE"
-        case eligible = "ELIGIBLE"
-        case declinedTermsAndConditions = "DECLINED_TERMS_AND_CONDITIONS"
-        case pendingActive = "PENDING_ACTIVE"
-        case pendingVerification = "PENDING_VERIFICATION"
-        case deleted = "DELETED"
-        case active = "ACTIVE"
-        case deactivated = "DEACTIVATED"
-        case error = "ERROR"
-        case declined = "DECLINED"
-    }
-    
-    enum AcceptTermsError: Error {
-        case noTerms(String)
-    }
-
-}
-
-/**
- Identifies the party initiating the deactivation/reactivation request
- 
- - CARDHOLDER: card holder
- - ISSUER:     issuer
- */
-public enum CreditCardInitiator: String {
-    case cardholder = "CARDHOLDER"
-    case issuer = "ISSUER"
-}

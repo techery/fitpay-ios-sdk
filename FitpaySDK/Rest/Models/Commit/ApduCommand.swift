@@ -1,6 +1,7 @@
+import Foundation
+
 open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
     
-    var links: [ResourceLink]?
     open var commandId: String?
     open var groupId: Int = 0
     open var sequence: Int = 0
@@ -9,7 +10,9 @@ open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
     open var continueOnFailure: Bool = false
     
     open var responseData: Data?
-        
+    
+    var links: [ResourceLink]?
+
     private enum CodingKeys: String, CodingKey {
         case links = "_links"
         case commandId
@@ -48,15 +51,15 @@ open class APDUCommand: NSObject, Serializable, APDUResponseProtocol {
         get {
             var dic: [String: Any] = [:]
             
-            if let commandId = self.commandId {
+            if let commandId = commandId {
                 dic["commandId"] = commandId
             }
             
-            if let responseCode = self.responseCode {
+            if let responseCode = responseCode {
                 dic["responseCode"] = responseCode.hex
             }
             
-            if let responseData = self.responseData {
+            if let responseData = responseData {
                 dic["responseData"] = responseData.hex
             }
             
