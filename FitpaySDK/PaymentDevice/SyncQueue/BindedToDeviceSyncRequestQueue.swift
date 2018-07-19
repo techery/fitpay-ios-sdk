@@ -2,8 +2,7 @@ import Foundation
 
 class BindedToDeviceSyncRequestQueue {
     
-    init(deviceInfo: DeviceInfo?, syncManager: SyncManagerProtocol) {
-        self.deviceInfo = deviceInfo
+    init(syncManager: SyncManagerProtocol) {
         self.syncManager = syncManager
     }
     
@@ -55,7 +54,6 @@ class BindedToDeviceSyncRequestQueue {
     }
     
     private var requestsQueue: [SyncRequest] = []
-    private var deviceInfo: DeviceInfo?
     private var syncManager: SyncManagerProtocol
     
     private func startSyncFor(request: SyncRequest) -> NSError? {

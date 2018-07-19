@@ -103,9 +103,9 @@ class CommitsApplyer {
             }
             
             if let error = errorItr {
-                DispatchQueue.main.async(execute: {
+                DispatchQueue.main.async() {
                     self.applyerCompletionHandler(error)
-                })
+                }
                 return
             }
             
@@ -114,9 +114,9 @@ class CommitsApplyer {
             eventsPublisher.onNext(SyncEvent(event: .syncProgress, data: ["applied": commitsApplied, "total": commits.count]))
         }
         
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async() {
             self.applyerCompletionHandler(nil)
-        })
+        }
     }
     
     

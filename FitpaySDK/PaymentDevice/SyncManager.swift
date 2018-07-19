@@ -134,7 +134,7 @@ protocol SyncManagerProtocol {
         }
     }
     
-    // MARK: = Private Functions
+    // MARK: - Private Functions
     
     private func startSyncWith(request: SyncRequest) throws {
         guard let paymentDevice = request.paymentDevice,
@@ -159,7 +159,7 @@ protocol SyncManagerProtocol {
                                           user: user,
                                           syncFactory: syncFactory,
                                           syncStorage: syncStorage,
-                                          request: request)
+                                          syncRequest: request)
         
         syncOperations[deviceInfo] = syncOperation
         

@@ -17,9 +17,9 @@ open class SyncRequest {
     public private(set) var syncStartTime: Date?
     
     public var syncInitiator: SyncInitiator?
-    public var notificationAsc: NotificationDetail? {
+    public var notification: NotificationDetail? {
         didSet {
-            FitpayNotificationsManager.sharedInstance.updateRestClientForNotificationDetail(self.notificationAsc)
+            FitpayNotificationsManager.sharedInstance.updateRestClientForNotificationDetail(self.notification)
         }
     }
     
@@ -49,7 +49,7 @@ open class SyncRequest {
     ///   - paymentDevice: PaymentDevice object.
     ///   - initiator: syncInitiator Enum object. Defaults to .NotDefined.
     ///   - notificationAsc: NotificationDetail object.
-    public init(requestTime: Date = Date(), syncId: String? = nil, user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice, initiator: SyncInitiator = .notDefined, notificationAsc: NotificationDetail? = nil) {
+    public init(requestTime: Date = Date(), syncId: String? = nil, user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice, initiator: SyncInitiator = .notDefined, notification: NotificationDetail? = nil) {
         
         self.requestTime = requestTime
         self.syncId = syncId
@@ -57,7 +57,7 @@ open class SyncRequest {
         self.deviceInfo = deviceInfo
         self.paymentDevice = paymentDevice
         self.syncInitiator = initiator
-        self.notificationAsc = notificationAsc
+        self.notification = notification
         
         // capture restClient reference
         if user.client != nil {
@@ -66,19 +66,15 @@ open class SyncRequest {
             self.restClient = deviceInfo.client
         }
     }
-    
-    convenience init() {
-        self.init(notificationAsc: nil, initiator: .notDefined)
-    }
-    
-    init(notificationAsc: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
+
+    init(notification: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
         self.requestTime = Date()
-        self.syncId = notificationAsc?.syncId
+        self.syncId = notification?.syncId
         self.user = nil
         self.deviceInfo = nil
         self.paymentDevice = nil
         self.syncInitiator = initiator
-        self.notificationAsc = notificationAsc
+        self.notification = notification
         
         if SyncRequest.syncManager.synchronousModeOn == false {
             if (user != nil && deviceInfo != nil && paymentDevice != nil) == false {

@@ -13,7 +13,7 @@ open class SyncRequestQueue {
     
     // MARK: - Lifecycle
     
-    init(syncManager: SyncManagerProtocol) {
+    private init(syncManager: SyncManagerProtocol) {
         self.syncManager = syncManager
         self.bind()
     }
@@ -58,7 +58,7 @@ open class SyncRequestQueue {
     }
     
     private func createNewQueueFor(deviceId: DeviceIdentifier, syncRequest: SyncRequest) -> BindedToDeviceSyncRequestQueue? {
-        let queue = BindedToDeviceSyncRequestQueue(deviceInfo: syncRequest.deviceInfo, syncManager: syncManager)
+        let queue = BindedToDeviceSyncRequestQueue(syncManager: syncManager)
         queues[deviceId] = queue
         
         return queue

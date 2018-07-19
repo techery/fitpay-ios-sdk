@@ -117,17 +117,13 @@ open class FitpayNotificationsManager: NSObject {
     }
     
     open func updateRestClientForNotificationDetail(_ notificationDetail: NotificationDetail?) {
-        if let notificationDetail = notificationDetail {
-            if notificationDetail.restClient == nil {
-                notificationDetail.restClient = self.restClient
-            }
+        if let notificationDetail = notificationDetail, notificationDetail.restClient == nil {
+            notificationDetail.restClient = self.restClient
         }
     }
     
-    // MARK: internal
     var notificationsToken: String = ""
     
-    // MARK: private
     private let eventsDispatcher = FitpayEventDispatcher()
     private var syncCompletedBinding: FitpayEventBinding?
     private var syncFailedBinding: FitpayEventBinding?
@@ -162,7 +158,7 @@ open class FitpayNotificationsManager: NSObject {
         switch notificationType {
         case .withSync:
             let notificationDetail = self.notificationDetailFromNotification(currentNotification)
-            SyncRequestQueue.sharedInstance.add(request: SyncRequest(notificationAsc: notificationDetail, initiator: .notification)) { (status, error) in
+            SyncRequestQueue.sharedInstance.add(request: SyncRequest(notification: notificationDetail, initiator: .notification)) { (status, error) in
                 self.currentNotification = nil
                 self.processNextNotificationIfAvailable()
             }

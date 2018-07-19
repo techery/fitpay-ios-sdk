@@ -294,7 +294,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
             self.bindings.append(nonOptionalBinding)
         }
         
-        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted) { [weak self] (event) in
+        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: .syncCompleted) { [weak self] (event) in
             log.debug("WV_DATA: received sync complete from SyncManager.")
             
             self?.resolveSync()
@@ -305,7 +305,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
             self.bindings.append(nonOptionalBinding)
         }
         
-        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed) { [weak self] (event) in
+        binding = SyncManager.sharedInstance.bindToSyncEvent(eventType: .syncFailed) { [weak self] (event) in
             log.error("WV_DATA: received sync FAILED from SyncManager.")
             let error = (event.eventData as? [String:Any])?["error"] as? NSError
             

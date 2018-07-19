@@ -9,10 +9,9 @@ protocol FetchCommitsOperationProtocol {
 
 class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
-    public var deviceInfo: DeviceInfo!
-    private var connector: PaymentDeviceConnectable?
+    var deviceInfo: DeviceInfo!
     
-    // private
+    private var connector: PaymentDeviceConnectable?
     private let syncStorage: SyncStorage
     private let startFromSyncedCommit: Bool
     private let disposeBag = DisposeBag()
