@@ -2,14 +2,19 @@ import Foundation
 
 class BindedToDeviceSyncRequestQueue {
     
+    private var requestsQueue: [SyncRequest] = []
+    private var syncManager: SyncManagerProtocol
+    
+    // MARK - Lifecycle
+    
     init(syncManager: SyncManagerProtocol) {
         self.syncManager = syncManager
     }
     
     func add(request: SyncRequest) {
-        let sizeOfQueue = self.requestsQueue.count
+        let sizeOfQueue = requestsQueue.count
         
-        self.requestsQueue.enqueue(request)
+        requestsQueue.enqueue(request)
         
         var isSyncManagerBusy = false
         if syncManager.synchronousModeOn {
@@ -17,14 +22,14 @@ class BindedToDeviceSyncRequestQueue {
         }
         
         if isSyncManagerBusy == false && sizeOfQueue == 0 {
-            if let error = self.startSyncFor(request: request) {
-                self.syncCompletedFor(request: request, withStatus: .failed, andError: error)
+            if let error = startSyncFor(request: request) {
+                syncCompletedFor(request: request, withStatus: .failed, andError: error)
             }
         }
     }
     
     func syncCompletedFor(request: SyncRequest, withStatus status: EventStatus, andError error: Error?) {
-        guard let queuedRequest = self.requestsQueue.dequeue() else { return }
+        guard let queuedRequest = requestsQueue.dequeue() else { return }
         guard queuedRequest.isSameUserAndDevice(otherRequest: request) else {
             log.error("Error. Queued sync request is different from completed.")
             return
@@ -35,26 +40,26 @@ class BindedToDeviceSyncRequestQueue {
         
         // outdated requests should also become completed, because we already processed their commits
         while let outdateRequest = self.requestsQueue.peekAtQueue() {
-            if outdateRequest.requestTime.timeIntervalSince1970 < request.syncStartTime!.timeIntervalSince1970 &&
-                request.isSameUserAndDevice(otherRequest: outdateRequest) {
-                let _ = self.requestsQueue.dequeue()
-                outdateRequest.update(state: .done)
-                outdateRequest.syncCompleteWith(status: status, error: error)
-            } else {
-                break
+            guard outdateRequest.requestTime.timeIntervalSince1970 < request.syncStartTime!.timeIntervalSince1970 &&
+                request.isSameUserAndDevice(otherRequest: outdateRequest) else {
+                    break
             }
+            
+            let _ = requestsQueue.dequeue()
+            outdateRequest.update(state: .done)
+            outdateRequest.syncCompleteWith(status: status, error: error)
+            
         }
         
         processNext()
-
+        
     }
     
     func dequeue() -> SyncRequest? {
-        return self.requestsQueue.dequeue()
+        return requestsQueue.dequeue()
     }
     
-    private var requestsQueue: [SyncRequest] = []
-    private var syncManager: SyncManagerProtocol
+    // MARK: - Private
     
     private func startSyncFor(request: SyncRequest) -> NSError? {
         request.update(state: .inProgress)
@@ -80,5 +85,5 @@ class BindedToDeviceSyncRequestQueue {
             syncCompletedFor(request: request, withStatus: .failed, andError: error)
         }
     }
-
+    
 }

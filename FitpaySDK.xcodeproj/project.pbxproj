@@ -108,6 +108,10 @@
 		27E0303020ADE58A009120AD /* JSONCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0302F20ADE58A009120AD /* JSONCodingKeys.swift */; };
 		27E5A31320F4118A00A97F33 /* RelativeWebPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E5A31220F4118A00A97F33 /* RelativeWebPath.swift */; };
 		27E5A31420F4118A00A97F33 /* RelativeWebPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E5A31220F4118A00A97F33 /* RelativeWebPath.swift */; };
+		27EA32B521014A8F001EE6F0 /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA32B421014A8F001EE6F0 /* NotificationType.swift */; };
+		27EA32B621014A8F001EE6F0 /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA32B421014A8F001EE6F0 /* NotificationType.swift */; };
+		27EA32B821014AF1001EE6F0 /* NotificationEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA32B721014AF1001EE6F0 /* NotificationEventType.swift */; };
+		27EA32B921014AF1001EE6F0 /* NotificationEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA32B721014AF1001EE6F0 /* NotificationEventType.swift */; };
 		27EA81D6208F8A3400FFBB56 /* PaymentDeviceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81D5208F8A3400FFBB56 /* PaymentDeviceUtils.swift */; };
 		27EA81D7208F8A3400FFBB56 /* PaymentDeviceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81D5208F8A3400FFBB56 /* PaymentDeviceUtils.swift */; };
 		27EA81DD208F96F700FFBB56 /* UserEventStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA81DB208F96F700FFBB56 /* UserEventStream.swift */; };
@@ -523,6 +527,8 @@
 		27E0302C20ADE557009120AD /* UnkeyedDecodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnkeyedDecodingContainerExtension.swift; sourceTree = "<group>"; };
 		27E0302F20ADE58A009120AD /* JSONCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCodingKeys.swift; sourceTree = "<group>"; };
 		27E5A31220F4118A00A97F33 /* RelativeWebPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeWebPath.swift; sourceTree = "<group>"; };
+		27EA32B421014A8F001EE6F0 /* NotificationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationType.swift; sourceTree = "<group>"; };
+		27EA32B721014AF1001EE6F0 /* NotificationEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationEventType.swift; sourceTree = "<group>"; };
 		27EA81D5208F8A3400FFBB56 /* PaymentDeviceUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDeviceUtils.swift; sourceTree = "<group>"; };
 		27EA81D8208F8BF400FFBB56 /* PaymentDeviceUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDeviceUtilsTests.swift; sourceTree = "<group>"; };
 		27EA81DB208F96F700FFBB56 /* UserEventStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEventStream.swift; sourceTree = "<group>"; };
@@ -1170,6 +1176,8 @@
 				2773CD8D207BEDD400DFE113 /* EventStream */,
 				3A61A47E1D66F0710033256C /* FitpayNotificationsManager.swift */,
 				1F5BBD7F2017450200F16B4F /* NotificationDetail.swift */,
+				27EA32B421014A8F001EE6F0 /* NotificationType.swift */,
+				27EA32B721014AF1001EE6F0 /* NotificationEventType.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -1782,6 +1790,7 @@
 				91185B7620615E0C00E5E1CE /* A2AContext.swift in Sources */,
 				27EA81D6208F8A3400FFBB56 /* PaymentDeviceUtils.swift in Sources */,
 				277C181720B33749003BD78B /* ResetDeviceResult.swift in Sources */,
+				27EA32B521014A8F001EE6F0 /* NotificationType.swift in Sources */,
 				847264A11CA53D0800DE801D /* BLEDeviceInfoCollector.swift in Sources */,
 				847264981CA5263400DE801D /* PaymentDeviceConnectable.swift in Sources */,
 				27982EBC20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift in Sources */,
@@ -1807,6 +1816,7 @@
 				37D0CFEF1EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
 				27EA81DD208F96F700FFBB56 /* UserEventStream.swift in Sources */,
 				9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */,
+				27EA32B821014AF1001EE6F0 /* NotificationEventType.swift in Sources */,
 				9A7C78841CC77F210097BAB9 /* FitpayEventTypeProtocol.swift in Sources */,
 				37139BE51F177B8A001EEE73 /* BindedToDeviceSyncRequestQueue.swift in Sources */,
 				3701AE491F14C29900550890 /* SyncOperation.swift in Sources */,
@@ -2036,6 +2046,7 @@
 				27F82A8C20D07CA8005FA54D /* SecureElement.swift in Sources */,
 				1F5BBD812017450200F16B4F /* NotificationDetail.swift in Sources */,
 				3A93A0931DB8CA2C00A9FEB4 /* EncryptionKey.swift in Sources */,
+				27EA32B621014A8F001EE6F0 /* NotificationType.swift in Sources */,
 				3A93A0941DB8CA2C00A9FEB4 /* BLEConstants.swift in Sources */,
 				27A5B65A20AF40260012BFB4 /* ImageWithOptions.swift in Sources */,
 				2786DB03207512410079ED15 /* EventSource.swift in Sources */,
@@ -2061,6 +2072,7 @@
 				37D0CFF01EDD5DA50049B5AA /* RtmMessageHandler.swift in Sources */,
 				3A93A09D1DB8CA2C00A9FEB4 /* Address.swift in Sources */,
 				918E26C220B42AA400D9D750 /* ErrorResponse.swift in Sources */,
+				27EA32B921014AF1001EE6F0 /* NotificationEventType.swift in Sources */,
 				1FE1479F201613CB005DEA29 /* CommitMetrics.swift in Sources */,
 				3A93A09E1DB8CA2C00A9FEB4 /* ResultCollection.swift in Sources */,
 				27FCBE6B20AE1761008EE9DA /* JSONCodingKeys.swift in Sources */,
