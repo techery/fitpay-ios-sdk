@@ -265,19 +265,19 @@ open class RestClient: NSObject, RestClientInterface {
     }
     
     func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        request?.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
+        request?.validate(statusCode: 200..<300).responseJSON(queue: DispatchQueue.global()) { (response) in
             DispatchQueue.main.async {
-                if response.result.error != nil && response.response?.statusCode != 202 {
-                    let JSON = response.data!.UTF8String
-                    var error = try? ErrorResponse(JSON)
-                    if error == nil {
-                        error = ErrorResponse(domain: RestClient.self, errorCode: response.response?.statusCode ?? 0 , errorMessage: response.result.error?.localizedDescription)
-                    }
-                    completion(nil, error)
-                } else if let resultValue = response.result.value {
+                if let resultValue = response.result.value {
                     completion(resultValue, nil)
+                    
                 } else if response.response?.statusCode == 202 {
                     completion(nil, nil)
+                    
+                } else if response.result.error != nil {
+                    let JSON = response.data!.UTF8String
+                    let error = (try? ErrorResponse(JSON)) ?? ErrorResponse(domain: RestClient.self, errorCode: response.response?.statusCode ?? 0 , errorMessage: response.result.error?.localizedDescription)
+                    completion(nil, error)
+                    
                 } else {
                     completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
                 }
