@@ -322,3 +322,21 @@ extension SwCryptTests {
     }
 }
 
+//#MARK: - CCM tests
+extension SwCryptTests {
+    func testCrypt() {
+        let data = Data(bytes: [120, 75, 51, 169, 90, 167, 154, 124, 19, 204, 76, 180, 117, 214, 237, 91, 48, 12, 98, 164, 106, 29, 112, 115, 74, 13, 160, 155, 65, 48, 181, 197, 93, 51, 253, 200, 238, 127, 228, 197, 85, 121, 180, 97, 7, 234, 76, 63])
+        let cipherKey = Data(bytes: [5, 111, 183, 109, 227, 161, 109, 212, 43, 185, 158, 143, 117, 91, 16, 214, 244, 205, 8, 106, 246, 134, 247, 92, 123, 14, 203, 53, 146, 88, 79, 149])
+        let iv = Data(bytes: [94, 210, 246, 96, 253, 214, 202, 143, 236, 147, 96, 82])
+
+        let encryptedData = try? CC.CCM.crypt(.encrypt,
+                                              algorithm: .aes,
+                                              data: data,
+                                              key: cipherKey,
+                                              iv: iv,
+                                              aData: Data(),
+                                              tagLength: JWEObject.AuthenticationTagSize)
+        XCTAssertNotNil(encryptedData)
+    }
+}
+
