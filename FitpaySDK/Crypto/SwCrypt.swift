@@ -153,7 +153,7 @@ class SwKeyConvert {
             }
             return pkcs1DERKey
         }
-        
+
         static func derToPKCS1PEM(_ derKey: Data) -> String {
             return PEM.PublicKey.toPEM(derKey)
         }

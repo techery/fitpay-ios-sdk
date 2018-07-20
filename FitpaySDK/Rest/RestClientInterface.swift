@@ -301,10 +301,6 @@ protocol RestClientInterface: class {
         
     func makeDefault(_ url: String, completion: @escaping CreditCardTransitionHandler)
     
-    func handleVerifyResponse(_ response: ErrorResponse?, completion: @escaping VerifyHandler)
-            
-    func handleTransitionResponse(_ response: ErrorResponse?, completion: @escaping CreditCardTransitionHandler)
-
     // MARK: - Generic
     
     typealias ResultHandler<T> = (_ result: T?, _ error: ErrorResponse?) -> Void

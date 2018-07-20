@@ -99,7 +99,7 @@ import JWTDecode
         ]
 
         let request = manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
+        request.validate(statusCode: 200..<300).responseJSON(queue: DispatchQueue.global()) { (response) in
             self.handleAuthorizationResponse(response, completion: completion)
         }
     }
@@ -114,7 +114,7 @@ import JWTDecode
         ]
         
         let request = manager.request(FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate().responseJSON(queue: DispatchQueue.global()) { (response) in
+        request.validate(statusCode: 200..<300).responseJSON(queue: DispatchQueue.global()) { (response) in
            self.handleAuthorizationResponse(response, completion: completion)
         }
     }
