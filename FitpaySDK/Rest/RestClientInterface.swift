@@ -80,7 +80,7 @@ protocol RestClientInterface: class {
      - parameter result: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    typealias DevicesHandler = (_ result: ResultCollection<DeviceInfo>?, _ error: ErrorResponse?) -> Void
+    typealias DevicesHandler = (_ result: ResultCollection<Device>?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -88,7 +88,7 @@ protocol RestClientInterface: class {
      - parameter device: Provides existing DeviceInfo object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    typealias DeviceHandler = (_ device: DeviceInfo?, _ error: ErrorResponse?) -> Void
+    typealias DeviceHandler = (_ device: Device?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -271,7 +271,7 @@ protocol RestClientInterface: class {
     
     //MARK: - RestClientDevice
     
-    func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler)
+    func createNewDevice(_ url: String, deviceInfo: Device, completion: @escaping DeviceHandler)
     
     func updateDevice(_ url: String,
                       firmwareRevision: String?,

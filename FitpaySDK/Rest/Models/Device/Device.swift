@@ -1,6 +1,6 @@
 import Foundation
 
-@objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable {
+@objcMembers open class Device: NSObject, ClientModel, Serializable {
     
     open var deviceIdentifier: String?
    
@@ -54,15 +54,15 @@ import Foundation
     open var metadata: [String: Any]?
 
     open var userAvailable: Bool {
-        return self.links?.url(DeviceInfo.userResourceKey) != nil
+        return self.links?.url(Device.userResourceKey) != nil
     }
 
     open var listCommitsAvailable: Bool {
-        return self.links?.url(DeviceInfo.commitsResourceKey) != nil
+        return self.links?.url(Device.commitsResourceKey) != nil
     }
 
     open var deviceResetUrl: String? {
-        return self.links?.url(DeviceInfo.deviceResetTasksKey)
+        return self.links?.url(Device.deviceResetTasksKey)
     }
 
     var links: [ResourceLink]?
@@ -235,12 +235,12 @@ import Foundation
      - parameter completion: DeleteDeviceHandler closure
      */
     @objc open func deleteDeviceInfo(_ completion: @escaping RestClient.DeleteHandler) {
-        let resource = DeviceInfo.selfResourceKey
+        let resource = Device.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.makeDeleteCall(url, completion: completion)
         } else {
-            completion(ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
+            completion(ErrorResponse.clientUrlError(domain: Device.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -253,7 +253,7 @@ import Foundation
      - parameter completion:        UpdateDeviceHandler closure
      */
     @objc open func update(_ firmwareRevision: String?, softwareRevision: String?, notifcationToken: String?, completion: @escaping RestClient.DeviceHandler) {
-        let resource = DeviceInfo.selfResourceKey
+        let resource = Device.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             // if notification token not exists on platform then we need to create this field
@@ -271,7 +271,7 @@ import Foundation
                 client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
             }
         } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: Device.self, client: client, url: url, resource: resource))
         }
     }
 
@@ -284,12 +284,12 @@ import Foundation
      - parameter completion:   CommitsHandler closure
      */
     open func listCommits(commitsAfter: String?, limit: Int, offset: Int, completion: @escaping RestClient.CommitsHandler) {
-        let resource = DeviceInfo.commitsResourceKey
+        let resource = Device.commitsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.commits(url, commitsAfter: commitsAfter, limit: limit, offset: offset, completion: completion)
         } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: Device.self, client: client, url: url, resource: resource))
         }
     }
     
@@ -299,34 +299,34 @@ import Foundation
      - parameter completion: CommitHandler closure
      */
     open func lastAckCommit(completion: @escaping RestClient.CommitHandler) {
-        let resource = DeviceInfo.lastAckCommitResourceKey
+        let resource = Device.lastAckCommitResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: Device.self, client: client, url: url, resource: resource))
         }
     }
 
     @objc open func user(_ completion: @escaping RestClient.UserHandler) {
-        let resource = DeviceInfo.userResourceKey
+        let resource = Device.userResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: Device.self, client: client, url: url, resource: resource))
         }
     }
 
     // MARK: - Internal
     
     func addNotificationToken(_ token: String, completion: @escaping RestClient.DeviceHandler) {
-        let resource = DeviceInfo.selfResourceKey
+        let resource = Device.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
             client.addDeviceProperty(url, propertyPath: "/notificationToken", propertyValue: token, completion: completion)
         } else {
-            completion(nil, ErrorResponse.clientUrlError(domain: DeviceInfo.self, client: client, url: url, resource: resource))
+            completion(nil, ErrorResponse.clientUrlError(domain: Device.self, client: client, url: url, resource: resource))
         }
     }
 

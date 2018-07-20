@@ -17,7 +17,7 @@ class MockNonAPDUConfirm: NonAPDUConfirmOperationProtocol {
 }
 
 class MockCommitsFetcher: FetchCommitsOperationProtocol {
-    var deviceInfo: DeviceInfo!
+    var deviceInfo: Device!
     
     var commits: [Commit] = []
     
@@ -59,7 +59,7 @@ class MocksFactory: SyncFactory {
         return MockNonAPDUConfirm()
     }
     
-    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
+    func commitsFetcherOperationWith(deviceInfo: Device, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
         return commitsFetcher
     }
 }
@@ -86,7 +86,7 @@ class SyncOperationTests: XCTestCase {
         connector.apduExecuteDelayTime = 0.01
         _ = paymentDevice.changeDeviceInterface(connector)
         
-        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: DeviceInfo(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory)
+        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: Device(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory, syncRequest: SyncRequest())
     }
     
     override func tearDown() {
@@ -129,7 +129,6 @@ class SyncOperationTests: XCTestCase {
         XCTAssertEqual(events.last?.event, SyncEventType.syncCompleted)
     }
     
-    
     func testSuccessSyncWithAPDUAndNonAPDUCommits() {
         connector.connectDelayTime = 0.001
         guard let commit1 = commitsFetcher.getCreateCardCommit(id: "1"), let commit2 = commitsFetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return  }
@@ -152,7 +151,7 @@ class SyncOperationTests: XCTestCase {
         let secondConnector = MockPaymentDeviceConnector(paymentDevice: paymentDevice)
         _ = paymentDevice.changeDeviceInterface(secondConnector)
         
-        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: DeviceInfo(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory)
+        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: Device(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory, syncRequest: SyncRequest())
         guard let commit1 = commitsFetcher.getCreateCardCommit(id: "1"), let commit2 = commitsFetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return  }
         commitsFetcher.commits = [commit1, commit2]
         

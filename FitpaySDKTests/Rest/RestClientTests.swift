@@ -348,7 +348,7 @@ class RestClientTests: XCTestCase {
         let deviceName = "PSPS"
         
         self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
-            let device = DeviceInfo(deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: nil,
+            let device = Device(deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: nil,
                                     modelNumber: nil, hardwareRevision: nil, firmwareRevision: nil,
                                     softwareRevision: nil, notificationToken: nil, systemId: nil, osName: nil,
                                     secureElement: nil)

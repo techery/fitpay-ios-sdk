@@ -3,7 +3,7 @@ import RxSwift
 @testable import FitpaySDK
 
 class CommitsStorageTests: XCTestCase {
-    var deviceInfo: DeviceInfo!
+    var deviceInfo: Device!
     var paymentDevice: PaymentDevice!
     
     var disposeBag = DisposeBag()
@@ -15,7 +15,7 @@ class CommitsStorageTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        deviceInfo = DeviceInfo()
+        deviceInfo = Device()
         deviceInfo.deviceIdentifier = "222-222-222"
         
         paymentDevice = PaymentDevice()

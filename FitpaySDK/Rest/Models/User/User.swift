@@ -119,7 +119,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      
      - parameter device: DeviceInfo
      */
-    @objc public func createDevice(_ device: DeviceInfo, completion: @escaping RestClient.DeviceHandler) {
+    @objc public func createDevice(_ device: Device, completion: @escaping RestClient.DeviceHandler) {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {

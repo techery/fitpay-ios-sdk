@@ -34,7 +34,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
         }
     }
     
-    var device: DeviceInfo? {
+    var device: Device? {
         get {
             return self.configStorage.device
         }
@@ -136,7 +136,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
                 return
             }
             
-            if let deviceInfo = (event.eventData as? [String: Any])?["deviceInfo"] as? DeviceInfo {
+            if let deviceInfo = (event.eventData as? [String: Any])?["deviceInfo"] as? Device {
                 strongSelf.configStorage.rtmConfig?.deviceInfo = deviceInfo
                 completion(nil)
                 return

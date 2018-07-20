@@ -13,7 +13,8 @@ open class SyncRequestQueue {
     
     // MARK: - Lifecycle
     
-    private init(syncManager: SyncManagerProtocol) {
+    // used for dependency injection
+    init(syncManager: SyncManagerProtocol) {
         self.syncManager = syncManager
         bind()
     }

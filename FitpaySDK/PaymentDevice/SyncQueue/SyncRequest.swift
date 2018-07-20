@@ -28,7 +28,7 @@ open class SyncRequest {
     }
     
     var user: User?
-    var deviceInfo: DeviceInfo?
+    var deviceInfo: Device?
     var paymentDevice: PaymentDevice?
     var completion: SyncRequestCompletion?
     
@@ -49,7 +49,7 @@ open class SyncRequest {
     ///   - paymentDevice: PaymentDevice object.
     ///   - initiator: syncInitiator Enum object. Defaults to .NotDefined.
     ///   - notificationAsc: NotificationDetail object.
-    public init(requestTime: Date = Date(), syncId: String? = nil, user: User, deviceInfo: DeviceInfo, paymentDevice: PaymentDevice, initiator: SyncInitiator = .notDefined, notification: NotificationDetail? = nil) {
+    public init(requestTime: Date = Date(), syncId: String? = nil, user: User, deviceInfo: Device, paymentDevice: PaymentDevice, initiator: SyncInitiator = .notDefined, notification: NotificationDetail? = nil) {
         
         self.requestTime = requestTime
         self.syncId = syncId

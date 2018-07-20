@@ -26,7 +26,7 @@ class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
     let maxPacketSize: Int = 20
     let apduSecsTimeout: Double = 5
     
-    private var _deviceInfo: DeviceInfo?
+    private var _deviceInfo: Device?
     private var _nfcState: PaymentDevice.SecurityNFCState?
     
     required init(paymentDevice device: PaymentDevice) {
@@ -74,7 +74,7 @@ class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
         completion(isConnected(), nil)
     }
     
-    func deviceInfo() -> DeviceInfo? {
+    func deviceInfo() -> Device? {
         return _deviceInfo
     }
     

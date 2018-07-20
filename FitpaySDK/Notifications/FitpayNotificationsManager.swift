@@ -15,6 +15,14 @@ open class FitpayNotificationsManager: NSObject {
     private var currentNotification: NotificationsPayload?
     private var restClient: RestClient?
     
+    /**
+     Completion handler
+     
+     - parameter event: Provides event with payload in eventData property
+     */
+    public typealias NotificationsEventBlockHandler = (_ event: FitpayEvent) -> Void
+    
+    
     // MARK - Public Functions
     
     public func setRestClient(_ client: RestClient?) {
@@ -30,7 +38,7 @@ open class FitpayNotificationsManager: NSObject {
      - parameter payload: payload of notification
      */
     open func handleNotification(_ payload: NotificationsPayload) {
-        log.verbose("--- handling notification ---")
+        log.verbose("NOTIFICATIONS_DATA: handling notification")
         
         let notificationDetail = self.notificationDetailFromNotification(payload)
         notificationDetail?.sendAckSync()
@@ -50,13 +58,6 @@ open class FitpayNotificationsManager: NSObject {
         
         SyncRequestQueue.sharedInstance.lastFullSyncRequest?.deviceInfo?.updateNotificationTokenIfNeeded()
     }
-    
-    /**
-     Completion handler
-     
-     - parameter event: Provides event with payload in eventData property
-     */
-    public typealias NotificationsEventBlockHandler = (_ event: FitpayEvent) -> Void
     
     /**
      Binds to the event using NotificationsEventType and a block as callback.

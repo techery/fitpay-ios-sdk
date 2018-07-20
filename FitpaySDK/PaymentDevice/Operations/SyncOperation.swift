@@ -8,7 +8,7 @@ class SyncOperation {
     
     private var paymentDevice: PaymentDevice
     private var connector: PaymentDeviceConnectable
-    private var deviceInfo: DeviceInfo
+    private var deviceInfo: Device
     private var user: User
     private var connectOperation: ConnectDeviceOperationProtocol
     private var eventsAdapter: SyncOperationStateToSyncEventAdapter
@@ -23,7 +23,7 @@ class SyncOperation {
     
     // MARK: - Lifecycle
     
-    init(paymentDevice: PaymentDevice, connector: PaymentDeviceConnectable, deviceInfo: DeviceInfo, user: User, syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance, syncRequest: SyncRequest) {
+    init(paymentDevice: PaymentDevice, connector: PaymentDeviceConnectable, deviceInfo: Device, user: User, syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance, syncRequest: SyncRequest) {
         
         self.paymentDevice = paymentDevice
         self.connector     = connector

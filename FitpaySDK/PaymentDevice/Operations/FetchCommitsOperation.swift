@@ -2,14 +2,14 @@ import Foundation
 import RxSwift
 
 protocol FetchCommitsOperationProtocol {
-    var deviceInfo: DeviceInfo! { get set }
+    var deviceInfo: Device! { get set }
     
     func startWith(limit: Int, andOffset offset: Int) -> Observable<[Commit]>
 }
 
 class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
-    var deviceInfo: DeviceInfo!
+    var deviceInfo: Device!
     
     private var connector: PaymentDeviceConnectable?
     private let syncStorage: SyncStorage
@@ -18,7 +18,7 @@ class FetchCommitsOperation: FetchCommitsOperationProtocol {
     
     private let publisher = PublishSubject<[Commit]>()
     
-    init(deviceInfo: DeviceInfo, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance, connector: PaymentDeviceConnectable? = nil) {
+    init(deviceInfo: Device, shouldStartFromSyncedCommit: Bool = false, syncStorage: SyncStorage = SyncStorage.sharedInstance, connector: PaymentDeviceConnectable? = nil) {
         self.deviceInfo = deviceInfo
         self.startFromSyncedCommit = shouldStartFromSyncedCommit
         self.syncStorage = syncStorage

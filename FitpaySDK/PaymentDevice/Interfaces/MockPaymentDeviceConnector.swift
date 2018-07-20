@@ -121,8 +121,8 @@ extension MockPaymentDeviceConnector: PaymentDeviceConnectable {
         sendAPDUData(apduCommand: apduCommand, sequenceNumber: UInt16(apduCommand.sequence))
     }
     
-    public func deviceInfo() -> DeviceInfo? {
-        let deviceInfo = DeviceInfo()
+    public func deviceInfo() -> Device? {
+        let deviceInfo = Device()
         
         deviceInfo.deviceType = "WATCH"
         deviceInfo.manufacturerName = "Fitpay"

@@ -31,13 +31,13 @@ protocol SyncManagerProtocol {
     var syncStorage: SyncStorage
     
     var commitFetcherOperationProducer: () -> FetchCommitsOperationProtocol? = {
-        return FetchCommitsOperation(deviceInfo: DeviceInfo())
+        return FetchCommitsOperation(deviceInfo: Device())
     }
     
     let paymentDeviceConnectionTimeoutInSecs = 60
     
     private var syncedIds: [String] = []
-    private var syncOperations = [DeviceInfo:SyncOperation]()
+    private var syncOperations = [Device: SyncOperation]()
     private var disposeBag = DisposeBag()
     private var user: User?
     

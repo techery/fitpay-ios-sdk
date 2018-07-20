@@ -4,9 +4,9 @@ extension MockRestClient {
 
     //MARK: - Completion Handlers
 
-    public typealias DevicesHandler = (_ result: ResultCollection<DeviceInfo>?, _ error: ErrorResponse?) -> Void
+    public typealias DevicesHandler = (_ result: ResultCollection<Device>?, _ error: ErrorResponse?) -> Void
 
-    public typealias DeviceHandler = (_ device: DeviceInfo?, _ error: ErrorResponse?) -> Void
+    public typealias DeviceHandler = (_ device: Device?, _ error: ErrorResponse?) -> Void
 
     public typealias CommitsHandler = (_ result: ResultCollection<Commit>?, _ error: ErrorResponse?) -> Void
 
@@ -14,7 +14,7 @@ extension MockRestClient {
 
     //MARK: - Functions
 
-    func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping RestClientInterface.DeviceHandler) {
+    func createNewDevice(_ url: String, deviceInfo: Device, completion: @escaping RestClientInterface.DeviceHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
@@ -31,7 +31,7 @@ extension MockRestClient {
                     completion(nil, error)
                     return
                 }
-                let deviceInfo = try? DeviceInfo(resultValue)
+                let deviceInfo = try? Device(resultValue)
                 deviceInfo?.client = self
                 completion(deviceInfo, error)
             }
@@ -58,7 +58,7 @@ extension MockRestClient {
                     completion(nil, error)
                     return
                 }
-                let deviceInfo = try? DeviceInfo(resultValue)
+                let deviceInfo = try? Device(resultValue)
                 deviceInfo?.client = self
                 completion(deviceInfo, error)
             }
@@ -83,7 +83,7 @@ extension MockRestClient {
                     completion(nil, error)
                     return
                 }
-                let deviceInfo = try? DeviceInfo(resultValue)
+                let deviceInfo = try? Device(resultValue)
                 deviceInfo?.client = self
                 completion(deviceInfo, error)
             }

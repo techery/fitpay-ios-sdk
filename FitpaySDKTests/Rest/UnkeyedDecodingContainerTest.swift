@@ -5,7 +5,7 @@ fileprivate class MockModel: Serializable {
     var mockBoolArray: [Bool]?
     var mockDoubleArray: [Double]?
     var mockStringArray: [String]?
-    var mockDeviceInfoArray: [DeviceInfo]?
+    var mockDeviceInfoArray: [Device]?
     var mockCreditCardArray: [CreditCard]?
     var mockTransactionArray: [Transaction]?
     var mockCommitArray: [Commit]?
@@ -27,7 +27,7 @@ fileprivate class MockModel: Serializable {
         mockBoolArray = try! container.decode([Bool].self, key: .boolArray)
         mockDoubleArray = try! container.decode([Double].self, key: .doubleArray)
         mockStringArray = try! container.decode([String].self, key: .stringArray)
-        mockDeviceInfoArray = try! container.decode([DeviceInfo].self, key: .deviceInfo)
+        mockDeviceInfoArray = try! container.decode([Device].self, key: .deviceInfo)
         mockCreditCardArray = try! container.decode([CreditCard].self, forKey: .creditCard)
         mockTransactionArray = try! container.decode([Transaction].self, forKey: .transaction)
         mockCommitArray = try! container.decode([Commit].self, forKey: .commit)
