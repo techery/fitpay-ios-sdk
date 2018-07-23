@@ -287,7 +287,6 @@
 		91300F7120ED066200ACD3E6 /* PayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91300F7020ED066200ACD3E6 /* PayloadTests.swift */; };
 		91300F7220ED066200ACD3E6 /* PayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91300F7020ED066200ACD3E6 /* PayloadTests.swift */; };
 		9134BB0120FCA99500368FA2 /* SwCryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9134BB0020FCA99500368FA2 /* SwCryptTests.swift */; };
-		9134BB0220FCA99500368FA2 /* SwCryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9134BB0020FCA99500368FA2 /* SwCryptTests.swift */; };
 		916C8ABE20EA587E00EEAD3A /* DataExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C8ABB20EA368000EEAD3A /* DataExtensionsTests.swift */; };
 		916C8ABF20EA587E00EEAD3A /* DataExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C8ABB20EA368000EEAD3A /* DataExtensionsTests.swift */; };
 		916C8AC120EA7C4900EEAD3A /* UnkeyedDecodingContainerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C8AC020EA7C4900EEAD3A /* UnkeyedDecodingContainerTest.swift */; };
@@ -368,6 +367,10 @@
 		91A4AC4920EBCD39005D057F /* RtmMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A4AC4720EBCD39005D057F /* RtmMessageTests.swift */; };
 		91A4AC4B20EBD5AC005D057F /* APDUResponseTypeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A4AC4A20EBD5AC005D057F /* APDUResponseTypeTest.swift */; };
 		91A4AC4C20EBD5AC005D057F /* APDUResponseTypeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A4AC4A20EBD5AC005D057F /* APDUResponseTypeTest.swift */; };
+		91AD8ECD2105E7FA003E9090 /* APDUPackageCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD8ECC2105E7FA003E9090 /* APDUPackageCategory.swift */; };
+		91AD8ECE2105E7FA003E9090 /* APDUPackageCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD8ECC2105E7FA003E9090 /* APDUPackageCategory.swift */; };
+		91AD8ED02105E913003E9090 /* APDUPackageOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD8ECF2105E913003E9090 /* APDUPackageOperation.swift */; };
+		91AD8ED12105E913003E9090 /* APDUPackageOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD8ECF2105E913003E9090 /* APDUPackageOperation.swift */; };
 		91FD051C20D1116400092234 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
 		91FD051D20D1116400092234 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
 		91FD052120D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */; };
@@ -638,6 +641,8 @@
 		91A4AC4420EBBD46005D057F /* ResetDeviceResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetDeviceResultTests.swift; sourceTree = "<group>"; };
 		91A4AC4720EBCD39005D057F /* RtmMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RtmMessageTests.swift; sourceTree = "<group>"; };
 		91A4AC4A20EBD5AC005D057F /* APDUResponseTypeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APDUResponseTypeTest.swift; sourceTree = "<group>"; };
+		91AD8ECC2105E7FA003E9090 /* APDUPackageCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APDUPackageCategory.swift; sourceTree = "<group>"; };
+		91AD8ECF2105E913003E9090 /* APDUPackageOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APDUPackageOperation.swift; sourceTree = "<group>"; };
 		91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSECP256R1KeyPair.swift; sourceTree = "<group>"; };
 		91FD052520D15A5700092234 /* getVerificationMethods.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = getVerificationMethods.json; sourceTree = "<group>"; };
 		91FD052920D1652A00092234 /* ResultCollectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultCollectionTests.swift; sourceTree = "<group>"; };
@@ -1007,6 +1012,8 @@
 				2782F82E20F6B742004774E8 /* APDUPackageRsponseState.swift */,
 				2782F83220F6B80E004774E8 /* CommitType.swift */,
 				2782F83D20F6BA4F004774E8 /* SyncInitiator.swift */,
+				91AD8ECC2105E7FA003E9090 /* APDUPackageCategory.swift */,
+				91AD8ECF2105E913003E9090 /* APDUPackageOperation.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -1802,6 +1809,7 @@
 				374D0C9A1F56FD620060A4FC /* IdVerification.swift in Sources */,
 				37B85D5A1EF29FCB00B7616F /* Issuers.swift in Sources */,
 				CD038A4098738EC358AD2751 /* Address.swift in Sources */,
+				91AD8ED02105E913003E9090 /* APDUPackageOperation.swift in Sources */,
 				2735864420E127CE005EDA9D /* Payload.swift in Sources */,
 				CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */,
 				27E5A31320F4118A00A97F33 /* RelativeWebPath.swift in Sources */,
@@ -1858,6 +1866,7 @@
 				2714B06F20F417B900321F22 /* ResourceLinkTypeTransform.swift in Sources */,
 				27C34A3C20CEC5B1005EE649 /* CardMetaData.swift in Sources */,
 				27F82A8B20D07CA8005FA54D /* SecureElement.swift in Sources */,
+				91AD8ECD2105E7FA003E9090 /* APDUPackageCategory.swift in Sources */,
 				2773CD8F207BEE0800DFE113 /* (null) in Sources */,
 				3701AE471F14C29900550890 /* ConnectDeviceOperation.swift in Sources */,
 				27EA81DF208F96F700FFBB56 /* StreamEvent.swift in Sources */,
@@ -2057,6 +2066,7 @@
 				37327B9B1E9CC2EF003B8918 /* SwCrypt.swift in Sources */,
 				37B85D5B1EF2B5D900B7616F /* Issuers.swift in Sources */,
 				3A93A09A1DB8CA2C00A9FEB4 /* VerificationMethod.swift in Sources */,
+				91AD8ED12105E913003E9090 /* APDUPackageOperation.swift in Sources */,
 				3A93A09B1DB8CA2C00A9FEB4 /* FitpayEvent.swift in Sources */,
 				272C9343207E7FD800166820 /* (null) in Sources */,
 				27E5A31420F4118A00A97F33 /* RelativeWebPath.swift in Sources */,
@@ -2113,6 +2123,7 @@
 				3A93A0AE1DB8CA2C00A9FEB4 /* NSJSONSerializationExtensions.swift in Sources */,
 				27C34A3D20CEC5B1005EE649 /* CardMetaData.swift in Sources */,
 				27EA81E0208F96F700FFBB56 /* StreamEvent.swift in Sources */,
+				91AD8ECE2105E7FA003E9090 /* APDUPackageCategory.swift in Sources */,
 				37D0CFEC1EDC40860049B5AA /* ScannedCardInfo.swift in Sources */,
 				3701AE481F14C29900550890 /* ConnectDeviceOperation.swift in Sources */,
 				3A93A0AF1DB8CA2C00A9FEB4 /* DictionaryExtensions.swift in Sources */,
