@@ -2,7 +2,40 @@ import XCTest
 @testable import FitpaySDK
 
 class UsersTests: BaseTestProvider {
+    
+    var user: User!
+    var restClient: MockRestClient!
+    var testHelper: TestHelper!
+
+    override func setUp() {
+        let session = MockRestSession()
+        restClient = MockRestClient(session: session)
+        testHelper = TestHelper(session: session, client: restClient)
+    
+        let expectation = self.expectation(description: "setUp")
+
+        testHelper.createAndLoginUser(expectation) { [unowned self] user in
+            self.user = user
+            expectation.fulfill()
+        }
         
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+    
+    override func tearDown() {
+        let expectation = self.expectation(description: "tearDown")
+
+        user.deleteUser { (error) in
+            if error != nil {
+                XCTFail("error deleting user")
+            }
+            
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 20, handler: nil)
+    }
+    
     func testUserParsing() {
         let user = mockModels.getUser()
 
@@ -22,5 +55,17 @@ class UsersTests: BaseTestProvider {
         XCTAssertEqual(json?["lastModifiedTs"] as? String, mockModels.someDate)
         XCTAssertEqual(json?["lastModifiedTsEpoch"] as? Int64, mockModels.timeEpoch)
         XCTAssertEqual(json?["encryptedData"] as? String, "some data")
-    }    
+    }
+    
+    func testGetCreditCards() {
+        let expectation = self.expectation(description: "getCreditCards")
+        
+        user?.getCreditCards(excludeState: [], limit: 10, offset: 0, deviceId: "1234") { (creditCardCollection, error) in
+            XCTAssertEqual(self.restClient.lastCalledParams?["deviceId"] as? String, "1234")
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+    
 }

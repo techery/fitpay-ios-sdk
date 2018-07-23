@@ -46,7 +46,10 @@ extension MockRestClient {
     }
 
     func creditCards(_ url: String, excludeState: [String], limit: Int, offset: Int, deviceId: String?, completion: @escaping CreditCardsHandler) {
-        let parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
+        var parameters: [String: Any] = ["excludeState": excludeState.joined(separator: ","), "limit": limit, "offset": offset]
+        if let deviceId = deviceId {
+            parameters["deviceId"] = deviceId
+        }
         makeGetCall(url, parameters: parameters, completion: completion)
     }
 

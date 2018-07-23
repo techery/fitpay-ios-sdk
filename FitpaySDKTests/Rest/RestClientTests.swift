@@ -37,7 +37,7 @@ class RestClientTests: XCTestCase {
     
     func testCreateEncryptionKeyCreatesKey() {
         let expectation = super.expectation(description: "'encryptionKey' create key")
-        self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!) { (encryptionKey, error) -> Void in
+        self.client.createEncryptionKey(clientPublicKey: client.keyPair.publicKey!) { (encryptionKey, error) -> Void in
 
             XCTAssertNil(error)
             XCTAssertNotNil(encryptionKey)

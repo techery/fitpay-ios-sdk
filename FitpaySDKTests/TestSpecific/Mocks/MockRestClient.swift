@@ -2,6 +2,8 @@
 import XCTest
 
 class MockRestClient: NSObject, RestClientInterface {
+    
+    var lastCalledParams: [String: Any]?
 
     public enum ErrorCode: Int, Error, RawIntValue {
         case ok            = 200
@@ -118,6 +120,7 @@ class MockRestClient: NSObject, RestClientInterface {
     }
 
     func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (ResultCollection<T>?, ErrorResponse?) -> Void) where T: Codable {
+        lastCalledParams = parameters
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -155,7 +158,8 @@ class MockRestClient: NSObject, RestClientInterface {
         
     }
     
-    func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: Serializable {
+    func makeGetCall<T>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: Serializable {
+        lastCalledParams = parameters
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -184,6 +188,7 @@ class MockRestClient: NSObject, RestClientInterface {
     }
     
     func makeGetCall<T>(_ url: String, parameters: [String : Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: ClientModel, T: Serializable {
+        lastCalledParams = parameters
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
@@ -215,6 +220,7 @@ class MockRestClient: NSObject, RestClientInterface {
     }
     
     func makeGetCall<T>(_ url: String, parameters: [String: Any]?, completion: @escaping (T?, ErrorResponse?) -> Void) where T: Serializable, T: ClientModel, T: SecretApplyable {
+        lastCalledParams = parameters
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
