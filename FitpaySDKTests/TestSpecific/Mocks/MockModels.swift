@@ -9,6 +9,7 @@ class MockModels {
     let someDate2 = "2015-11-03T21:47:37+00:00"
     let someName = "someName"
     let someEncryptionData = "some data"
+    let someUUID = UUID()
     
     func getCommitStatistic() -> CommitStatistic? {
         let commitStatistic = try? CommitStatistic("{\"commitId\":\"\(someId)\",\"processingTimeMs\":\(timeEpoch),\"averageTimePerCommand\":3,\"errorReason\":\"bad access\"}")
@@ -30,7 +31,7 @@ class MockModels {
     
     func getDeviceInfo() -> DeviceInfo? {
         let metadata = getCreditCardMetadata()?.toJSONString() ?? ""
-        let deviceInfo = try? DeviceInfo("{ \"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"deviceIdentifier\":\"\(someId)\", \"deviceName\":\"\(someName)\", \"deviceType\":\"\(someType)\", \"manufacturerName\":\"\(someName)\", \"state\":\"12345fsd\", \"serialNumber\":\"987654321\", \"modelNumber\":\"1258PO\", \"hardwareRevision\":\"12345fsd\",  \"firmwareRevision\":\"12345fsd\", \"softwareRevision\":\"12345fsd\", \"notificationToken\":\"12345fsd\", \"createdTsEpoch\":\(timeEpoch), \"createdTs\":\"\(someDate)\", \"osName\":\"\(someName)\", \"systemId\":\"\(someId)\",\"licenseKey\":\"147PLO\", \"bdAddress\":\"someAddress\", \"pairing\":\"pairing\", \"secureElement\": { \"secureElementId\":\"\(someId)\", \"casdCert\":\"casd\" }, \"metadata\":\(metadata) }")
+        let deviceInfo = try? DeviceInfo("{ \"_links\":{\"self\":{\"href\":\"https://api.fit-pay.com/users/9469bfe0-3fa1-4465-9abf-f78cacc740b2/devices/677af018-01b1-47d9-9b08-0c18d89aa2e3/commits/57717bdb6d213e810137ee21adb7e883fe0904e9\"}}, \"deviceIdentifier\":\"\(someId)\", \"deviceName\":\"\(someName)\", \"deviceType\":\"\(someType)\", \"manufacturerName\":\"\(someName)\", \"state\":\"12345fsd\", \"serialNumber\":\"987654321\", \"modelNumber\":\"1258PO\", \"hardwareRevision\":\"12345fsd\",  \"firmwareRevision\":\"12345fsd\", \"softwareRevision\":\"12345fsd\", \"notificationToken\":\"12345fsd\", \"createdTsEpoch\":\(timeEpoch), \"createdTs\":\"\(someDate)\", \"osName\":\"\(someName)\", \"systemId\":\"\(someId)\",\"licenseKey\":\"147PLO\", \"bdAddress\":\"someAddress\", \"pairing\":\"pairing\", \"secureElement\": { \"secureElementId\":\"\(someId)\", \"casdCert\":\"casd\" }, \"metadata\":\(metadata), \"profileId\":\"\(someUUID.uuidString)\"}")
         XCTAssertNotNil(deviceInfo)
         return deviceInfo
     }
