@@ -35,7 +35,7 @@ open class SyncRequest {
     private var state = SyncRequestState.pending
     
     // we should capture restClient to prevent deallocation
-    private var restClient: RestClientInterface?
+    private var restClient: RestClient?
     
     // MARK: - Lifecycle
     

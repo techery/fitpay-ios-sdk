@@ -20,7 +20,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     var encryptedData: String?
     var info: UserInfo?
 
-    weak var client: RestClientInterface?
+    weak var client: RestClient?
     
     private static let creditCardsResourceKey = "creditCards"
     private static let devicesResourceKey = "devices"

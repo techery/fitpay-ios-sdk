@@ -1,5 +1,5 @@
 protocol ClientModel {
-    var client: RestClientInterface? {
+    var client: RestClient? {
         get set
     }
 }

@@ -73,7 +73,7 @@ import Foundation
     private static let lastAckCommitResourceKey = "lastAckCommit"
     private static let deviceResetTasksKey = "deviceResetTasks"
 
-    weak var client: RestClientInterface?
+    weak var client: RestClient?
     
     override public init() {
         super.init()

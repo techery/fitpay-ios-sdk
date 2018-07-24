@@ -34,7 +34,7 @@ class NSErrorExtensionTests: XCTestCase {
     }
 
     func testNoUrlError() {
-        let error = NSError.clientUrlError(domain: self, code: 1, client: RestClient(session: RestSession()), url: nil, resource: "some")
+        let error = NSError.clientUrlError(domain: self, code: 1, client: RestClient(session: RestSession(restRequest: MockRestRequest()), restRequest: MockRestRequest()), url: nil, resource: "some")
         XCTAssertEqual(error?.code, 0)
         XCTAssertEqual(error?.localizedDescription, "Failed to retrieve url for resource \'some\'")
     }

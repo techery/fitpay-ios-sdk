@@ -8,7 +8,7 @@ open class NotificationDetail: Serializable {
     open var userId: String?
     open var clientId: String?
     
-    var restClient: RestClientInterface?
+    var restClient: RestClient?
     var links: [ResourceLink]?
 
     private enum CodingKeys: String, CodingKey {

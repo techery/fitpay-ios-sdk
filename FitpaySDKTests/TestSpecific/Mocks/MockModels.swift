@@ -155,12 +155,12 @@ class MockModels {
         XCTAssertNotNil(idVerification)
         return idVerification
     }
-
-    func getResetDeviceResult() -> ResetDeviceResult? {
-        let resetDeviceResult = try? ResetDeviceResult(loadDataFromJSONFile(filename: "resetDeviceTask"))
-        XCTAssertNotNil(resetDeviceResult)
-        return resetDeviceResult
-    }
+//
+//    func getResetDeviceResult() -> ResetDeviceResult? {
+//        let resetDeviceResult = try? ResetDeviceResult(loadDataFromJSONFile(filename: "resetDeviceTask"))
+//        XCTAssertNotNil(resetDeviceResult)
+//        return resetDeviceResult
+//    }
 
     func getPayload() -> Payload? {
         let creditCard = getCreditCard()?.toJSONString()
@@ -169,22 +169,6 @@ class MockModels {
         return payload
     }
 
-   private func loadDataFromJSONFile(filename: String) -> String? {
-        let bundle = Bundle(for: type(of: self))
-        guard let filepath = bundle.path(forResource: filename, ofType: "json") else {
-            XCTAssert(false, "File not found")
-            return nil
-        }
-
-        do {
-            let contents = try String(contentsOfFile: filepath)
-            XCTAssertNotNil(contents)
-            return contents
-        } catch {
-            XCTAssert(false, "Can't read from file")
-        }
-
-        return nil
-    }
+  
     
 }

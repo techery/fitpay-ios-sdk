@@ -86,7 +86,7 @@ extension RestClient {
             }
                 
             let request = strongSelf.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -156,7 +156,7 @@ extension RestClient {
             }
             
             let request = strongSelf.manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -171,14 +171,14 @@ extension RestClient {
     }
     
     func acceptCall(_ url: String, completion: @escaping CreditCardTransitionHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
                 return
             }
             
             let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
                     return
@@ -191,14 +191,14 @@ extension RestClient {
     }
 
     func selectVerificationType(_ url: String, completion: @escaping VerifyHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(false, nil, error) }
                 return
             }
             
             let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
                     return
@@ -211,7 +211,7 @@ extension RestClient {
     }
     
     func verify(_ url: String, verificationCode: String, completion: @escaping VerifyHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
                 return
@@ -219,7 +219,7 @@ extension RestClient {
             
             let params = ["verificationCode": verificationCode]
             let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
                     return
@@ -232,7 +232,7 @@ extension RestClient {
     }
     
     func activationCall(_ url: String, causedBy: CreditCardInitiator, reason: String, completion: @escaping CreditCardTransitionHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(false, nil, error) }
                 return
@@ -240,7 +240,7 @@ extension RestClient {
             
             let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
             let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
                     return
@@ -260,7 +260,7 @@ extension RestClient {
             }
             
             let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
                     return

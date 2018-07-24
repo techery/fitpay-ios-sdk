@@ -20,10 +20,66 @@
 		1FE147A320161F8C005DEA29 /* CommitStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE147A220161F8B005DEA29 /* CommitStatistic.swift */; };
 		1FE147A420161F8C005DEA29 /* CommitStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE147A220161F8B005DEA29 /* CommitStatistic.swift */; };
 		26B955012D981BCA351BF353 /* Pods_all_FitpaySDKTestsPods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 576F8B977B9F8FB60903CA7D /* Pods_all_FitpaySDKTestsPods.framework */; };
+		2709D5C62107BB8E00E2D6B9 /* AuthorizationDetails.json in Resources */ = {isa = PBXBuildFile; fileRef = 2709D5C52107BB8E00E2D6B9 /* AuthorizationDetails.json */; };
+		2709D5C72107BB8E00E2D6B9 /* AuthorizationDetails.json in Resources */ = {isa = PBXBuildFile; fileRef = 2709D5C52107BB8E00E2D6B9 /* AuthorizationDetails.json */; };
+		2709D5CB2107C4A200E2D6B9 /* fitpayTestNetworkConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 2709D5C82107C29800E2D6B9 /* fitpayTestNetworkConfig.json */; };
+		2709D5CC2107C4A200E2D6B9 /* fitpayTestNetworkConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 2709D5C82107C29800E2D6B9 /* fitpayTestNetworkConfig.json */; };
 		2714B06B20F4174500321F22 /* ArrayExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2714B06A20F4174500321F22 /* ArrayExtensionsTests.swift */; };
 		2714B06C20F4174500321F22 /* ArrayExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2714B06A20F4174500321F22 /* ArrayExtensionsTests.swift */; };
 		2714B06F20F417B900321F22 /* ResourceLinkTypeTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2714B06E20F417B900321F22 /* ResourceLinkTypeTransform.swift */; };
 		2714B07020F417B900321F22 /* ResourceLinkTypeTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2714B06E20F417B900321F22 /* ResourceLinkTypeTransform.swift */; };
+		2716908E2106739E0026B927 /* RestRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2716908D2106739E0026B927 /* RestRequest.swift */; };
+		2716908F2106739E0026B927 /* RestRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2716908D2106739E0026B927 /* RestRequest.swift */; };
+		271690C021068B260026B927 /* acceptTermsForCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321420D024430086B39B /* acceptTermsForCreditCard.json */; };
+		271690C121068B270026B927 /* acceptTermsForCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321420D024430086B39B /* acceptTermsForCreditCard.json */; };
+		271690C221068B6C0026B927 /* createCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321820D024430086B39B /* createCreditCard.json */; };
+		271690C321068B6C0026B927 /* createDevice.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320E20D024430086B39B /* createDevice.json */; };
+		271690C421068B6C0026B927 /* createRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320820D024430086B39B /* createRelationship.json */; };
+		271690C521068B6C0026B927 /* deactivateCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321620D024430086B39B /* deactivateCreditCard.json */; };
+		271690C621068B6C0026B927 /* declineTerms.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321B20D024430086B39B /* declineTerms.json */; };
+		271690C721068B6C0026B927 /* Error.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320620D024430086B39B /* Error.json */; };
+		271690C821068B6C0026B927 /* getAuthorizationDetails.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321520D024430086B39B /* getAuthorizationDetails.json */; };
+		271690C921068B6C0026B927 /* getCommit.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320920D024430086B39B /* getCommit.json */; };
+		271690CA21068B6C0026B927 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
+		271690CB21068B6C0026B927 /* getRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320C20D024430086B39B /* getRelationship.json */; };
+		271690CC21068B6C0026B927 /* getUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321920D024430086B39B /* getUser.json */; };
+		271690CD21068B6C0026B927 /* getVerificationMethods.json in Resources */ = {isa = PBXBuildFile; fileRef = 91FD052520D15A5700092234 /* getVerificationMethods.json */; };
+		271690CE21068B6C0026B927 /* issuers.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321120D024430086B39B /* issuers.json */; };
+		271690CF21068B6C0026B927 /* listCreditCards.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321220D024430086B39B /* listCreditCards.json */; };
+		271690D021068B6C0026B927 /* listDevices.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321720D024430086B39B /* listDevices.json */; };
+		271690D121068B6C0026B927 /* listTransactions.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321D20D024430086B39B /* listTransactions.json */; };
+		271690D221068B6C0026B927 /* makeCreditCardDefault.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321A20D024430086B39B /* makeCreditCardDefault.json */; };
+		271690D321068B6C0026B927 /* reactivateCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321C20D024430086B39B /* reactivateCreditCard.json */; };
+		271690D421068B6C0026B927 /* resetDeviceTask.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320D20D024430086B39B /* resetDeviceTask.json */; };
+		271690D521068B6C0026B927 /* retrieveCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320F20D024430086B39B /* retrieveCreditCard.json */; };
+		271690D621068B6C0026B927 /* selectVerificationType.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320420D024430086B39B /* selectVerificationType.json */; };
+		271690D721068B6C0026B927 /* updateCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320520D024430086B39B /* updateCreditCard.json */; };
+		271690D821068B6C0026B927 /* updateDevice.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321020D024430086B39B /* updateDevice.json */; };
+		271690D921068B6C0026B927 /* verified.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320720D024430086B39B /* verified.json */; };
+		271690DA21068B6C0026B927 /* createCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321820D024430086B39B /* createCreditCard.json */; };
+		271690DB21068B6C0026B927 /* createDevice.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320E20D024430086B39B /* createDevice.json */; };
+		271690DC21068B6C0026B927 /* createRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320820D024430086B39B /* createRelationship.json */; };
+		271690DD21068B6C0026B927 /* deactivateCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321620D024430086B39B /* deactivateCreditCard.json */; };
+		271690DE21068B6C0026B927 /* declineTerms.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321B20D024430086B39B /* declineTerms.json */; };
+		271690DF21068B6C0026B927 /* Error.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320620D024430086B39B /* Error.json */; };
+		271690E021068B6C0026B927 /* getAuthorizationDetails.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321520D024430086B39B /* getAuthorizationDetails.json */; };
+		271690E121068B6C0026B927 /* getCommit.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320920D024430086B39B /* getCommit.json */; };
+		271690E221068B6C0026B927 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
+		271690E321068B6C0026B927 /* getRelationship.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320C20D024430086B39B /* getRelationship.json */; };
+		271690E421068B6C0026B927 /* getUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321920D024430086B39B /* getUser.json */; };
+		271690E521068B6C0026B927 /* getVerificationMethods.json in Resources */ = {isa = PBXBuildFile; fileRef = 91FD052520D15A5700092234 /* getVerificationMethods.json */; };
+		271690E621068B6C0026B927 /* issuers.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321120D024430086B39B /* issuers.json */; };
+		271690E721068B6C0026B927 /* listCreditCards.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321220D024430086B39B /* listCreditCards.json */; };
+		271690E821068B6C0026B927 /* listDevices.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321720D024430086B39B /* listDevices.json */; };
+		271690E921068B6C0026B927 /* listTransactions.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321D20D024430086B39B /* listTransactions.json */; };
+		271690EA21068B6C0026B927 /* makeCreditCardDefault.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321A20D024430086B39B /* makeCreditCardDefault.json */; };
+		271690EB21068B6C0026B927 /* reactivateCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321C20D024430086B39B /* reactivateCreditCard.json */; };
+		271690EC21068B6C0026B927 /* resetDeviceTask.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320D20D024430086B39B /* resetDeviceTask.json */; };
+		271690ED21068B6C0026B927 /* retrieveCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320F20D024430086B39B /* retrieveCreditCard.json */; };
+		271690EE21068B6C0026B927 /* selectVerificationType.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320420D024430086B39B /* selectVerificationType.json */; };
+		271690EF21068B6C0026B927 /* updateCreditCard.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320520D024430086B39B /* updateCreditCard.json */; };
+		271690F021068B6C0026B927 /* updateDevice.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321020D024430086B39B /* updateDevice.json */; };
+		271690F121068B6C0026B927 /* verified.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320720D024430086B39B /* verified.json */; };
 		27198B09206D7E9E00BCBFCD /* (null) in Sources */ = {isa = PBXBuildFile; };
 		27198B0A206D7E9E00BCBFCD /* (null) in Sources */ = {isa = PBXBuildFile; };
 		272C9341207E7F9500166820 /* UserEventStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A4AE75206D916A002255A1 /* UserEventStreamManager.swift */; };
@@ -76,8 +132,6 @@
 		2782F83F20F6BA4F004774E8 /* SyncInitiator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F83D20F6BA4F004774E8 /* SyncInitiator.swift */; };
 		2782F84120F6BB28004774E8 /* DeviceResetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84020F6BB28004774E8 /* DeviceResetStatus.swift */; };
 		2782F84220F6BB28004774E8 /* DeviceResetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84020F6BB28004774E8 /* DeviceResetStatus.swift */; };
-		2782F84A20F6BF56004774E8 /* RestClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84920F6BF56004774E8 /* RestClientInterface.swift */; };
-		2782F84B20F6BF56004774E8 /* RestClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84920F6BF56004774E8 /* RestClientInterface.swift */; };
 		2782F85020F7CDF4004774E8 /* SyncOperationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84F20F7CDF4004774E8 /* SyncOperationError.swift */; };
 		2782F85120F7CDF4004774E8 /* SyncOperationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F84F20F7CDF4004774E8 /* SyncOperationError.swift */; };
 		2782F85320F7CE08004774E8 /* SyncOperationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2782F85220F7CE08004774E8 /* SyncOperationState.swift */; };
@@ -291,7 +345,6 @@
 		91300F7120ED066200ACD3E6 /* PayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91300F7020ED066200ACD3E6 /* PayloadTests.swift */; };
 		91300F7220ED066200ACD3E6 /* PayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91300F7020ED066200ACD3E6 /* PayloadTests.swift */; };
 		9134BB0120FCA99500368FA2 /* SwCryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9134BB0020FCA99500368FA2 /* SwCryptTests.swift */; };
-		9134BB0220FCA99500368FA2 /* SwCryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9134BB0020FCA99500368FA2 /* SwCryptTests.swift */; };
 		916C8ABE20EA587E00EEAD3A /* DataExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C8ABB20EA368000EEAD3A /* DataExtensionsTests.swift */; };
 		916C8ABF20EA587E00EEAD3A /* DataExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C8ABB20EA368000EEAD3A /* DataExtensionsTests.swift */; };
 		916C8AC120EA7C4900EEAD3A /* UnkeyedDecodingContainerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C8AC020EA7C4900EEAD3A /* UnkeyedDecodingContainerTest.swift */; };
@@ -302,18 +355,6 @@
 		916FC0C220A0366A0071B66D /* SerializableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916FC0BA209C44D20071B66D /* SerializableExtension.swift */; };
 		918E26C120B42AA200D9D750 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26C020B42AA100D9D750 /* ErrorResponse.swift */; };
 		918E26C220B42AA400D9D750 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E26C020B42AA100D9D750 /* ErrorResponse.swift */; };
-		919431EE20D01DFE0086B39B /* MockRestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D720D01D870086B39B /* MockRestClient.swift */; };
-		919431EF20D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D520D01D860086B39B /* MockRestClientCreditCard.swift */; };
-		919431F020D01DFE0086B39B /* MockRestClientDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D920D01D880086B39B /* MockRestClientDevice.swift */; };
-		919431F220D01DFE0086B39B /* MockRestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DD20D01D8A0086B39B /* MockRestClientUser.swift */; };
-		919431F320D01DFE0086B39B /* MockRestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DC20D01D890086B39B /* MockRestSession.swift */; };
-		919431F520D01DFE0086B39B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DB20D01D890086B39B /* Request.swift */; };
-		919431F720D01DFE0086B39B /* MockRestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D720D01D870086B39B /* MockRestClient.swift */; };
-		919431F820D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D520D01D860086B39B /* MockRestClientCreditCard.swift */; };
-		919431F920D01DFE0086B39B /* MockRestClientDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431D920D01D880086B39B /* MockRestClientDevice.swift */; };
-		919431FB20D01DFE0086B39B /* MockRestClientUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DD20D01D8A0086B39B /* MockRestClientUser.swift */; };
-		919431FC20D01DFE0086B39B /* MockRestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DC20D01D890086B39B /* MockRestSession.swift */; };
-		919431FE20D01DFE0086B39B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919431DB20D01D890086B39B /* Request.swift */; };
 		9194320120D020480086B39B /* MockPaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */; };
 		9194320220D020490086B39B /* MockPaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */; };
 		9194323820D024700086B39B /* selectVerificationType.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194320420D024430086B39B /* selectVerificationType.json */; };
@@ -372,8 +413,6 @@
 		91A4AC4920EBCD39005D057F /* RtmMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A4AC4720EBCD39005D057F /* RtmMessageTests.swift */; };
 		91A4AC4B20EBD5AC005D057F /* APDUResponseTypeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A4AC4A20EBD5AC005D057F /* APDUResponseTypeTest.swift */; };
 		91A4AC4C20EBD5AC005D057F /* APDUResponseTypeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A4AC4A20EBD5AC005D057F /* APDUResponseTypeTest.swift */; };
-		91FD051C20D1116400092234 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
-		91FD051D20D1116400092234 /* getEncryptionKeyJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 9194321320D024430086B39B /* getEncryptionKeyJson.json */; };
 		91FD052120D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */; };
 		91FD052220D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */; };
 		91FD052620D15A5B00092234 /* getVerificationMethods.json in Resources */ = {isa = PBXBuildFile; fileRef = 91FD052520D15A5700092234 /* getVerificationMethods.json */; };
@@ -484,8 +523,11 @@
 		1F5DE2C41FEA7E3B00BB0531 /* CommitsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitsStorageTests.swift; sourceTree = "<group>"; };
 		1FE1479D201613CB005DEA29 /* CommitMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitMetrics.swift; sourceTree = "<group>"; };
 		1FE147A220161F8B005DEA29 /* CommitStatistic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommitStatistic.swift; sourceTree = "<group>"; };
+		2709D5C52107BB8E00E2D6B9 /* AuthorizationDetails.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AuthorizationDetails.json; sourceTree = "<group>"; };
+		2709D5C82107C29800E2D6B9 /* fitpayTestNetworkConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = fitpayTestNetworkConfig.json; sourceTree = "<group>"; };
 		2714B06A20F4174500321F22 /* ArrayExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensionsTests.swift; sourceTree = "<group>"; };
 		2714B06E20F417B900321F22 /* ResourceLinkTypeTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceLinkTypeTransform.swift; sourceTree = "<group>"; };
+		2716908D2106739E0026B927 /* RestRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestRequest.swift; sourceTree = "<group>"; };
 		272E04342093B3BA000EAA9D /* RTMDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMDelegate.swift; sourceTree = "<group>"; };
 		272E04372093B40A000EAA9D /* WVConfigStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WVConfigStorage.swift; sourceTree = "<group>"; };
 		2735863E20E03E9F005EDA9D /* CustomJSONArrayEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomJSONArrayEncoding.swift; sourceTree = "<group>"; };
@@ -512,7 +554,6 @@
 		2782F83A20F6B8B9004774E8 /* CreditCardInitiator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditCardInitiator.swift; sourceTree = "<group>"; };
 		2782F83D20F6BA4F004774E8 /* SyncInitiator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncInitiator.swift; sourceTree = "<group>"; };
 		2782F84020F6BB28004774E8 /* DeviceResetStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceResetStatus.swift; sourceTree = "<group>"; };
-		2782F84920F6BF56004774E8 /* RestClientInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientInterface.swift; sourceTree = "<group>"; };
 		2782F84F20F7CDF4004774E8 /* SyncOperationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperationError.swift; sourceTree = "<group>"; };
 		2782F85220F7CE08004774E8 /* SyncOperationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperationState.swift; sourceTree = "<group>"; };
 		2786DB01207512410079ED15 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
@@ -610,12 +651,6 @@
 		916CE9C120A18CA100C2F621 /* KeyedEncodingContainerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedEncodingContainerExtension.swift; sourceTree = "<group>"; };
 		916FC0BA209C44D20071B66D /* SerializableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableExtension.swift; sourceTree = "<group>"; };
 		918E26C020B42AA100D9D750 /* ErrorResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
-		919431D520D01D860086B39B /* MockRestClientCreditCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClientCreditCard.swift; sourceTree = "<group>"; };
-		919431D720D01D870086B39B /* MockRestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClient.swift; sourceTree = "<group>"; };
-		919431D920D01D880086B39B /* MockRestClientDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClientDevice.swift; sourceTree = "<group>"; };
-		919431DB20D01D890086B39B /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
-		919431DC20D01D890086B39B /* MockRestSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestSession.swift; sourceTree = "<group>"; };
-		919431DD20D01D8A0086B39B /* MockRestClientUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRestClientUser.swift; sourceTree = "<group>"; };
 		9194320420D024430086B39B /* selectVerificationType.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = selectVerificationType.json; sourceTree = "<group>"; };
 		9194320520D024430086B39B /* updateCreditCard.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = updateCreditCard.json; sourceTree = "<group>"; };
 		9194320620D024430086B39B /* Error.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Error.json; sourceTree = "<group>"; };
@@ -882,7 +917,6 @@
 			children = (
 				9194320B20D024430086B39B /* mocImage.png */,
 				91FD053E20D1653400092234 /* BaseTestProvider.swift */,
-				919431DB20D01D890086B39B /* Request.swift */,
 				0A7EE11A1CFE0A2B00503BC8 /* TestHelper.swift */,
 				91A4AC4A20EBD5AC005D057F /* APDUResponseTypeTest.swift */,
 				91300F6D20ECF15C00ACD3E6 /* NSErrorExtensionTests.swift */,
@@ -939,6 +973,7 @@
 			children = (
 				277380DE20E572CE00B84785 /* fitpayconfig.json */,
 				277380E120E5730600B84785 /* fitpayconfigAlt.json */,
+				2709D5C82107C29800E2D6B9 /* fitpayTestNetworkConfig.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1255,6 +1290,7 @@
 				9194320520D024430086B39B /* updateCreditCard.json */,
 				9194321020D024430086B39B /* updateDevice.json */,
 				9194320720D024430086B39B /* verified.json */,
+				2709D5C52107BB8E00E2D6B9 /* AuthorizationDetails.json */,
 			);
 			path = RestJsons;
 			sourceTree = "<group>";
@@ -1263,11 +1299,6 @@
 			isa = PBXGroup;
 			children = (
 				91FD056E20D1664000092234 /* MockModels.swift */,
-				919431D720D01D870086B39B /* MockRestClient.swift */,
-				919431D520D01D860086B39B /* MockRestClientCreditCard.swift */,
-				919431D920D01D880086B39B /* MockRestClientDevice.swift */,
-				919431DD20D01D8A0086B39B /* MockRestClientUser.swift */,
-				919431DC20D01D890086B39B /* MockRestSession.swift */,
 				91FD051E20D1315000092234 /* MockSECP256R1KeyPair.swift */,
 			);
 			path = Mocks;
@@ -1410,10 +1441,10 @@
 		CD038511B6DB51958C59E6FC /* Rest */ = {
 			isa = PBXGroup;
 			children = (
+				2716908D2106739E0026B927 /* RestRequest.swift */,
 				CD038E6F65A6788F30C11986 /* RestClient.swift */,
 				3767B81B1ED31EDD007443D2 /* RestClientCreditCard.swift */,
 				3767B8181ED31D48007443D2 /* RestClientDevice.swift */,
-				2782F84920F6BF56004774E8 /* RestClientInterface.swift */,
 				3767B8151ED31BC2007443D2 /* RestClientUser.swift */,
 				CD03892F10B569368C16273E /* RestSession.swift */,
 				CD038466328E4608CC137268 /* Models */,
@@ -1603,7 +1634,32 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91FD051C20D1116400092234 /* getEncryptionKeyJson.json in Resources */,
+				271690DD21068B6C0026B927 /* deactivateCreditCard.json in Resources */,
+				271690DB21068B6C0026B927 /* createDevice.json in Resources */,
+				271690EC21068B6C0026B927 /* resetDeviceTask.json in Resources */,
+				271690E921068B6C0026B927 /* listTransactions.json in Resources */,
+				271690DE21068B6C0026B927 /* declineTerms.json in Resources */,
+				271690E421068B6C0026B927 /* getUser.json in Resources */,
+				271690E021068B6C0026B927 /* getAuthorizationDetails.json in Resources */,
+				271690EA21068B6C0026B927 /* makeCreditCardDefault.json in Resources */,
+				271690E121068B6C0026B927 /* getCommit.json in Resources */,
+				2709D5C62107BB8E00E2D6B9 /* AuthorizationDetails.json in Resources */,
+				271690DF21068B6C0026B927 /* Error.json in Resources */,
+				271690E821068B6C0026B927 /* listDevices.json in Resources */,
+				271690DC21068B6C0026B927 /* createRelationship.json in Resources */,
+				271690E221068B6C0026B927 /* getEncryptionKeyJson.json in Resources */,
+				271690EB21068B6C0026B927 /* reactivateCreditCard.json in Resources */,
+				271690EE21068B6C0026B927 /* selectVerificationType.json in Resources */,
+				271690E721068B6C0026B927 /* listCreditCards.json in Resources */,
+				271690E321068B6C0026B927 /* getRelationship.json in Resources */,
+				271690E621068B6C0026B927 /* issuers.json in Resources */,
+				271690ED21068B6C0026B927 /* retrieveCreditCard.json in Resources */,
+				271690DA21068B6C0026B927 /* createCreditCard.json in Resources */,
+				271690F021068B6C0026B927 /* updateDevice.json in Resources */,
+				271690F121068B6C0026B927 /* verified.json in Resources */,
+				271690C021068B260026B927 /* acceptTermsForCreditCard.json in Resources */,
+				271690E521068B6C0026B927 /* getVerificationMethods.json in Resources */,
+				271690EF21068B6C0026B927 /* updateCreditCard.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1631,6 +1687,7 @@
 				9194324E20D024700086B39B /* makeCreditCardDefault.json in Resources */,
 				9194323820D024700086B39B /* selectVerificationType.json in Resources */,
 				9194324620D024700086B39B /* listCreditCards.json in Resources */,
+				2709D5CB2107C4A200E2D6B9 /* fitpayTestNetworkConfig.json in Resources */,
 				9194323920D024700086B39B /* updateCreditCard.json in Resources */,
 				9194324520D024700086B39B /* issuers.json in Resources */,
 				9194323C20D024700086B39B /* createRelationship.json in Resources */,
@@ -1666,6 +1723,7 @@
 				9194326820D024700086B39B /* makeCreditCardDefault.json in Resources */,
 				9194325220D024700086B39B /* selectVerificationType.json in Resources */,
 				9194326020D024700086B39B /* listCreditCards.json in Resources */,
+				2709D5CC2107C4A200E2D6B9 /* fitpayTestNetworkConfig.json in Resources */,
 				9194325320D024700086B39B /* updateCreditCard.json in Resources */,
 				9194325F20D024700086B39B /* issuers.json in Resources */,
 				9194325620D024700086B39B /* createRelationship.json in Resources */,
@@ -1681,7 +1739,32 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91FD051D20D1116400092234 /* getEncryptionKeyJson.json in Resources */,
+				271690C521068B6C0026B927 /* deactivateCreditCard.json in Resources */,
+				271690C321068B6C0026B927 /* createDevice.json in Resources */,
+				271690D421068B6C0026B927 /* resetDeviceTask.json in Resources */,
+				271690D121068B6C0026B927 /* listTransactions.json in Resources */,
+				271690C621068B6C0026B927 /* declineTerms.json in Resources */,
+				271690CC21068B6C0026B927 /* getUser.json in Resources */,
+				271690C821068B6C0026B927 /* getAuthorizationDetails.json in Resources */,
+				271690D221068B6C0026B927 /* makeCreditCardDefault.json in Resources */,
+				271690C921068B6C0026B927 /* getCommit.json in Resources */,
+				2709D5C72107BB8E00E2D6B9 /* AuthorizationDetails.json in Resources */,
+				271690C721068B6C0026B927 /* Error.json in Resources */,
+				271690D021068B6C0026B927 /* listDevices.json in Resources */,
+				271690C421068B6C0026B927 /* createRelationship.json in Resources */,
+				271690CA21068B6C0026B927 /* getEncryptionKeyJson.json in Resources */,
+				271690D321068B6C0026B927 /* reactivateCreditCard.json in Resources */,
+				271690D621068B6C0026B927 /* selectVerificationType.json in Resources */,
+				271690CF21068B6C0026B927 /* listCreditCards.json in Resources */,
+				271690CB21068B6C0026B927 /* getRelationship.json in Resources */,
+				271690CE21068B6C0026B927 /* issuers.json in Resources */,
+				271690D521068B6C0026B927 /* retrieveCreditCard.json in Resources */,
+				271690C221068B6C0026B927 /* createCreditCard.json in Resources */,
+				271690D821068B6C0026B927 /* updateDevice.json in Resources */,
+				271690D921068B6C0026B927 /* verified.json in Resources */,
+				271690C121068B270026B927 /* acceptTermsForCreditCard.json in Resources */,
+				271690CD21068B6C0026B927 /* getVerificationMethods.json in Resources */,
+				271690D721068B6C0026B927 /* updateCreditCard.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1800,7 +1883,6 @@
 				27982EBC20D020C4000EED70 /* UnkeyedEncodingContainerExtension.swift in Sources */,
 				916FC0BB209C44D20071B66D /* SerializableExtension.swift in Sources */,
 				9A7C78821CC77F210097BAB9 /* FitpayEventDispatcher.swift in Sources */,
-				2782F84A20F6BF56004774E8 /* RestClientInterface.swift in Sources */,
 				847264A31CA53D0800DE801D /* BluetoothPaymentDeviceConnector.swift in Sources */,
 				918E26C120B42AA200D9D750 /* ErrorResponse.swift in Sources */,
 				27C34A4320CEC635005EE649 /* CardInfo.swift in Sources */,
@@ -1877,6 +1959,7 @@
 				37D0CFF51EDDA27E0049B5AA /* RtmMessageHandlerV3.swift in Sources */,
 				3A640B471DDF110E008AD936 /* RtmMessage.swift in Sources */,
 				9A7C78831CC77F210097BAB9 /* FitpayEventListener.swift in Sources */,
+				2716908E2106739E0026B927 /* RestRequest.swift in Sources */,
 				3701AE581F16180000550890 /* FetchCommitsOperation.swift in Sources */,
 				91185B7820615E0C00E5E1CE /* FitpayA2aVerrificationDelegate.swift in Sources */,
 				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
@@ -1907,20 +1990,16 @@
 				91300F6E20ECF15C00ACD3E6 /* NSErrorExtensionTests.swift in Sources */,
 				91A4AC4820EBCD39005D057F /* RtmMessageTests.swift in Sources */,
 				916C8ABE20EA587E00EEAD3A /* DataExtensionsTests.swift in Sources */,
-				919431F320D01DFE0086B39B /* MockRestSession.swift in Sources */,
 				91FD055820D1653500092234 /* ImageTests.swift in Sources */,
 				91FD055020D1653400092234 /* A2AIssuerResponseTests.swift in Sources */,
-				919431F520D01DFE0086B39B /* Request.swift in Sources */,
 				9194320120D020480086B39B /* MockPaymentDeviceTests.swift in Sources */,
 				91FD055620D1653400092234 /* ApduPackageTests.swift in Sources */,
 				2773CD96207D546400DFE113 /* IdVerificationTests.swift in Sources */,
-				919431F220D01DFE0086B39B /* MockRestClientUser.swift in Sources */,
 				91FD054A20D1653400092234 /* CommitStatisticTests.swift in Sources */,
 				1F5DE2C51FEA7E3B00BB0531 /* CommitsStorageTests.swift in Sources */,
 				91A4AC4B20EBD5AC005D057F /* APDUResponseTypeTest.swift in Sources */,
 				91FD055A20D1653500092234 /* EncryptionKeyTests.swift in Sources */,
 				91FD056C20D1653500092234 /* DeviceInfoTests.swift in Sources */,
-				919431EE20D01DFE0086B39B /* MockRestClient.swift in Sources */,
 				91A4AC4520EBBD46005D057F /* ResetDeviceResultTests.swift in Sources */,
 				91FD054C20D1653400092234 /* IssuersTests.swift in Sources */,
 				91FD052120D1315000092234 /* MockSECP256R1KeyPair.swift in Sources */,
@@ -1935,7 +2014,6 @@
 				27B8885120A4FBA40027969D /* A2AContextTests.swift in Sources */,
 				91FD056F20D1664000092234 /* MockModels.swift in Sources */,
 				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
-				919431EF20D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */,
 				37330EB620289E2000948BC6 /* TransactionTests.swift in Sources */,
 				277380DA20E5716E00B84785 /* FitpayConfigTests.swift in Sources */,
 				91FD054E20D1653400092234 /* AddressTests.swift in Sources */,
@@ -1946,7 +2024,6 @@
 				91FD056420D1653500092234 /* CreditCardTests.swift in Sources */,
 				91FD054220D1653400092234 /* CommitMetricsTests.swift in Sources */,
 				91FD054820D1653400092234 /* RtmConfigTests.swift in Sources */,
-				919431F020D01DFE0086B39B /* MockRestClientDevice.swift in Sources */,
 				916C8AC120EA7C4900EEAD3A /* UnkeyedDecodingContainerTest.swift in Sources */,
 				3701AE551F1613B200550890 /* SyncOperationTests.swift in Sources */,
 				91FD054420D1653400092234 /* APDUCommandTests.swift in Sources */,
@@ -1968,7 +2045,6 @@
 				37D908231F1E546700AA9F86 /* RtmMessagingTests.swift in Sources */,
 				91FD055920D1653500092234 /* ImageTests.swift in Sources */,
 				91FD056D20D1653500092234 /* DeviceInfoTests.swift in Sources */,
-				919431FC20D01DFE0086B39B /* MockRestSession.swift in Sources */,
 				3A46E14A1DF023F9002D0270 /* RestSessionTests.swift in Sources */,
 				27B8885220A4FBA40027969D /* A2AContextTests.swift in Sources */,
 				91FD054F20D1653400092234 /* AddressTests.swift in Sources */,
@@ -1979,15 +2055,11 @@
 				91A4AC4920EBCD39005D057F /* RtmMessageTests.swift in Sources */,
 				91300F7220ED066200ACD3E6 /* PayloadTests.swift in Sources */,
 				91FD054920D1653400092234 /* RtmConfigTests.swift in Sources */,
-				919431FE20D01DFE0086B39B /* Request.swift in Sources */,
-				919431FB20D01DFE0086B39B /* MockRestClientUser.swift in Sources */,
 				9194320220D020490086B39B /* MockPaymentDeviceTests.swift in Sources */,
 				37330EB720289E2100948BC6 /* TransactionTests.swift in Sources */,
 				91FD054320D1653400092234 /* CommitMetricsTests.swift in Sources */,
 				91FD056920D1653500092234 /* UsersTests.swift in Sources */,
-				919431F820D01DFE0086B39B /* MockRestClientCreditCard.swift in Sources */,
 				2714B06C20F4174500321F22 /* ArrayExtensionsTests.swift in Sources */,
-				919431F720D01DFE0086B39B /* MockRestClient.swift in Sources */,
 				91FD056320D1653500092234 /* CommitTests.swift in Sources */,
 				91A4AC4C20EBD5AC005D057F /* APDUResponseTypeTest.swift in Sources */,
 				37C94AAF1FE15E96009C0FE7 /* SyncManagerTests.swift in Sources */,
@@ -1996,7 +2068,6 @@
 				91FD054D20D1653400092234 /* IssuersTests.swift in Sources */,
 				91FD055B20D1653500092234 /* EncryptionKeyTests.swift in Sources */,
 				3A46E14E1DF023F9002D0270 /* RestClientTests.swift in Sources */,
-				919431F920D01DFE0086B39B /* MockRestClientDevice.swift in Sources */,
 				91A4AC4620EBBD46005D057F /* ResetDeviceResultTests.swift in Sources */,
 				91FD055720D1653400092234 /* ApduPackageTests.swift in Sources */,
 				3A46E14F1DF023F9002D0270 /* TestHelper.swift in Sources */,
@@ -2057,7 +2128,6 @@
 				2786DB03207512410079ED15 /* EventSource.swift in Sources */,
 				3A93A0951DB8CA2C00A9FEB4 /* StringExtensions.swift in Sources */,
 				3A93A0961DB8CA2C00A9FEB4 /* BLEDeviceInfoCollector.swift in Sources */,
-				2782F84B20F6BF56004774E8 /* RestClientInterface.swift in Sources */,
 				91185B7C2061694400E5E1CE /* A2AIssuerResponse.swift in Sources */,
 				3A93A0971DB8CA2C00A9FEB4 /* PaymentDeviceConnectable.swift in Sources */,
 				27D94AF120B4810B001DD434 /* WVDeviceStatus.swift in Sources */,
@@ -2134,6 +2204,7 @@
 				3A93A0B21DB8CA2C00A9FEB4 /* NSErrorExtensions.swift in Sources */,
 				3701AE591F16180000550890 /* FetchCommitsOperation.swift in Sources */,
 				3A93A0B31DB8CA2C00A9FEB4 /* RawIntValue.swift in Sources */,
+				2716908F2106739E0026B927 /* RestRequest.swift in Sources */,
 				3A93A0B41DB8CA2C00A9FEB4 /* FitpayEventListener.swift in Sources */,
 				37139BDC1F164695001EEE73 /* APDUConfirmOperation.swift in Sources */,
 				272C9342207E7FA600166820 /* (null) in Sources */,

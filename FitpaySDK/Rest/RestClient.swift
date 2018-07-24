@@ -1,7 +1,9 @@
 import Foundation
 import Alamofire
 
-open class RestClient: NSObject, RestClientInterface {
+open class RestClient: NSObject {
+    
+    typealias ResultCollectionHandler<T: Codable> = (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void
 
 
     /**
@@ -55,23 +57,29 @@ open class RestClient: NSObject, RestClientInterface {
         return secret ?? Data()
     }
     
+    var restRequest: RestRequestable = RestRequest()
+    
     // MARK: - Lifecycle
     
-    public init(session: RestSession) {
+    public init(session: RestSession, restRequest: RestRequestable? = nil) {
         self.session = session
+        
+        if let restRequest = restRequest {
+            self.restRequest = restRequest
+        }
     }
     
     // MARK: - Functions
     
     func collectionItems<T>(_ url: String, completion: @escaping (_ resultCollection: ResultCollection<T>?, _ error: ErrorResponse?) -> Void) -> T? {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
             
             let request = self?.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -102,15 +110,15 @@ open class RestClient: NSObject, RestClientInterface {
     public typealias ConfirmHandler = (_ error: ErrorResponse?) -> Void
     
     public func confirm(_ url: String, executionResult: NonAPDUCommitState, completion: @escaping ConfirmHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers  else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
             
             let params = ["result": executionResult.description]
-            let request = self.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
+            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
         }
@@ -118,7 +126,7 @@ open class RestClient: NSObject, RestClientInterface {
     
     public func getPlatformConfig(completion: @escaping (_ platform: PlatformConfig?, _ error: ErrorResponse?) -> Void) {
         let request = manager.request(FitpayConfig.platformConfigURL)
-        self.makeRequest(request: request) { (resultValue, error) in
+        restRequest.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue as? [String: Any] else {
                 completion(nil, error)
                 return
@@ -141,7 +149,7 @@ open class RestClient: NSObject, RestClientInterface {
             }
             
             let request = strongSelf.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
         }
@@ -155,7 +163,7 @@ open class RestClient: NSObject, RestClientInterface {
             }
             
             let request = self?.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -177,7 +185,7 @@ open class RestClient: NSObject, RestClientInterface {
             }
             
             let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -196,7 +204,7 @@ open class RestClient: NSObject, RestClientInterface {
             }
             
             let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -216,12 +224,13 @@ open class RestClient: NSObject, RestClientInterface {
             }
             
             let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
+                print(resultValue)
                 var result = try? T(resultValue)
                 result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 result?.client = self
@@ -259,27 +268,6 @@ open class RestClient: NSObject, RestClientInterface {
                             completion(nil)
                         }
                     }
-                }
-            }
-        }
-    }
-    
-    func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        request?.validate(statusCode: 200..<300).responseJSON(queue: DispatchQueue.global()) { (response) in
-            DispatchQueue.main.async {
-                if let resultValue = response.result.value {
-                    completion(resultValue, nil)
-                    
-                } else if response.response?.statusCode == 202 {
-                    completion(nil, nil)
-                    
-                } else if response.result.error != nil {
-                    let JSON = response.data!.UTF8String
-                    let error = (try? ErrorResponse(JSON)) ?? ErrorResponse(domain: RestClient.self, errorCode: response.response?.statusCode ?? 0 , errorMessage: response.result.error?.localizedDescription)
-                    completion(nil, error)
-                    
-                } else {
-                    completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
                 }
             }
         }
@@ -335,7 +323,10 @@ extension RestClient {
         let parameters = ["clientPublicKey": clientPublicKey]
         
         let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-        self.makeRequest(request: request) { (resultValue, error) in
+        print(FitpayConfig.apiURL)
+        print(request.request?.url?.absoluteString)
+        print(request.request?.allHTTPHeaderFields)
+        restRequest.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
                 return
@@ -361,7 +352,7 @@ extension RestClient {
     func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
         let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        self.makeRequest(request: request) { (resultValue, error) in
+        restRequest.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
                 return
@@ -379,7 +370,7 @@ extension RestClient {
     func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteHandler) {
         let headers = self.defaultHeaders
         let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        self.makeRequest(request: request) { (response, error) in
+        restRequest.makeRequest(request: request) { (response, error) in
             completion(error)
         }
     }

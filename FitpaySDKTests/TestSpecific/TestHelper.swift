@@ -3,29 +3,23 @@ import XCTest
 
 class TestHelper {
     
-    let clientId: String!
-    let redirectUri: String!
-    var session: MockRestSession!
-    var client: MockRestClient!
+    var session: RestSession!
+    var client: RestClient!
     
-    init(session: MockRestSession, client: MockRestClient) {
-        self.clientId = FitpayConfig.clientId
-        self.redirectUri = FitpayConfig.redirectURL
+    init(session: RestSession, client: RestClient) {
         self.session = session
         self.client = client
     }
     
     func userValid(_ user: User) {
-        XCTAssertNotNil(user.info)
-        XCTAssertNotNil(user.info?.email)
         XCTAssertNotNil(user.created)
         XCTAssertNotNil(user.links)
         XCTAssertNotNil(user.createdEpoch)
         XCTAssertNotNil(user.encryptedData)
     }
     
-    func createUser(_ expectation:XCTestExpectation, email: String, pin: String, completion: @escaping (User?) -> Void) {
-        self.client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil) { [unowned self] (user, error) in
+    func createUser(_ expectation: XCTestExpectation, email: String, pin: String, completion: @escaping (User?) -> Void) {
+        client.createUser(email, password: pin, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil, termsAccepted: nil, origin: nil, originAccountCreated: nil) { [unowned self] (user, error) in
             
             XCTAssertNil(error)
             XCTAssertNotNil(user)
@@ -51,7 +45,6 @@ class TestHelper {
                     
                     self.userValid(user!)
                     
-                    XCTAssertEqual(user?.info?.email, email, "Want emails to match up after logging in")
                     XCTAssertNil(userError)
                     
                     completion(user)

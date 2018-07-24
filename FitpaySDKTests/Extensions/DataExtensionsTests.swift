@@ -1,11 +1,3 @@
-//
-//  TestKeyedDecodingContainer.swift
-//  FitpaySDK
-//
-//  Created by Illya Kyznetsov on 7/2/18.
-//  Copyright © 2018 Fitpay. All rights reserved.
-//
-
 import XCTest
 @testable import FitpaySDK
 
