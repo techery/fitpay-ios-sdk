@@ -3,7 +3,7 @@ import Foundation
 @objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable {
 
     // Unique identifier to platform asset that contains details about the embedded secure element for the device.
-    open var profileId: UUID?
+    open var profileId: String?
 
     open var deviceIdentifier: String?
    
@@ -82,7 +82,7 @@ import Foundation
         super.init()
     }
 
-    init(profileId: UUID? = nil, deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElement: SecureElement?) {
+    init(profileId: String? = nil, deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElement: SecureElement?) {
         self.profileId = profileId
         self.deviceType = deviceType
         self.manufacturerName = manufacturerName
