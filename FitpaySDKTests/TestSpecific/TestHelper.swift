@@ -24,7 +24,6 @@ class TestHelper {
             XCTAssertNil(error)
             XCTAssertNotNil(user)
             
-            debugPrint("created user: \(String(describing: user?.info?.email))")
             self.userValid(user!)
             
             completion(user)
@@ -36,7 +35,6 @@ class TestHelper {
         createUser(expectation, email: email, pin: pin) { (user) in
             self.session.login(username: email, password: pin) { (loginError) -> Void in
                 XCTAssertNil(loginError)
-                debugPrint("user isAuthorized: \(self.session.isAuthorized)")
                 XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
                 
                 self.client.user(id: self.session.userId!) { (user, userError) in
@@ -112,8 +110,6 @@ class TestHelper {
         let cardInfo = CardInfo(pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", address: address, riskData: nil)
 
         user?.createCreditCard(cardInfo: cardInfo) { [unowned self](card, error) -> Void in
-            
-            debugPrint("creating credit card with \(pan)")
             self.assertCreditCard(card)
             
             XCTAssertNil(error)
@@ -167,7 +163,6 @@ class TestHelper {
     }
     
     func acceptTermsForCreditCard(_ expectation: XCTestExpectation, card: CreditCard?, completion:@escaping (_ card: CreditCard?) -> Void) {
-        debugPrint("acceptingTerms for card: \(String(describing: card))")
         card?.acceptTerms { (pending, acceptedCard, error) in
             
             XCTAssertNil(error)
@@ -176,8 +171,6 @@ class TestHelper {
             if acceptedCard?.state != .pendingVerification && acceptedCard?.state != .pendingActive {
                 XCTFail("Need to have a pending verification or active after accepting terms")
             }
-            
-            debugPrint("acceptingTerms done")
             
             if acceptedCard?.state == .pendingActive {
                 self.waitForActive(acceptedCard!) { (activeCard) in
@@ -246,9 +239,7 @@ class TestHelper {
         }
     }
     
-    func waitForActive(_ pendingCard: CreditCard, retries: Int = 0, completion: @escaping (_ activeCard: CreditCard) -> Void) {
-        debugPrint("pending card state is \(String(describing: pendingCard.state))")
-        
+    func waitForActive(_ pendingCard: CreditCard, retries: Int = 0, completion: @escaping (_ activeCard: CreditCard) -> Void) {        
         if pendingCard.state == TokenizationState.active {
             completion(pendingCard)
             return
@@ -300,7 +291,6 @@ class TestHelper {
     }
     
     func deactivateCreditCard(_ expectation: XCTestExpectation, creditCard: CreditCard?, completion: @escaping (_ deactivatedCard: CreditCard?) -> Void) {
-        debugPrint("deactivateCreditCard")
         creditCard?.deactivate(causedBy: .cardholder, reason: "lost card") { (pending, creditCard, error) in
             XCTAssertNil(error)
             XCTAssertEqual(creditCard?.state, TokenizationState.deactivated)

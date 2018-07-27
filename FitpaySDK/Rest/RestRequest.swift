@@ -40,9 +40,6 @@ class MockRestRequest: RestRequestable {
         
         var data: Any? = nil
         
-        print("xxx")
-        print(urlString)
-        
         if urlString.contains("commits") {
             data = loadDataFromJSONFile(filename: "getCommit")
             
@@ -51,6 +48,12 @@ class MockRestRequest: RestRequestable {
             
         } else if urlString.contains("select") {
             data = loadDataFromJSONFile(filename: "selectVerificationType")
+            
+        } else if urlString.contains("deactivate") {
+            data = loadDataFromJSONFile(filename: "deactivateCreditCard")
+            
+        } else if urlString.contains("reactivate") {
+            data = loadDataFromJSONFile(filename: "reactivateCreditCard")
             
         } else if urlString.contains("verify") {
             data = loadDataFromJSONFile(filename: "verified")
@@ -94,10 +97,7 @@ class MockRestRequest: RestRequestable {
         } else if urlString.contains("resetDeviceTasks") {
             data = loadDataFromJSONFile(filename: "resetDeviceTask")
 
-        } else {
-            print("here")
-        }
-        
+        } 
 
         if let data = data {
             completion(data, nil)

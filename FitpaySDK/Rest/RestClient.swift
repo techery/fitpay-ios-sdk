@@ -43,7 +43,6 @@ open class RestClient: NSObject {
     lazy var manager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
-        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         return SessionManager(configuration: configuration)
     }()
     
@@ -230,7 +229,7 @@ open class RestClient: NSObject {
                     completion(nil, error)
                     return
                 }
-                print(resultValue)
+
                 var result = try? T(resultValue)
                 result?.applySecret(strongSelf.secret, expectedKeyId: headers[RestClient.fpKeyIdKey])
                 result?.client = self
@@ -299,7 +298,7 @@ extension RestClient {
             }
             
             let request = self.manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request) { (resultValue, error) in
+            self.restRequest.makeRequest(request: request) { (resultValue, error) in
                 completion(error)
             }
         }
@@ -334,9 +333,6 @@ extension RestClient {
         let parameters = ["clientPublicKey": clientPublicKey]
         
         let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-        print(FitpayConfig.apiURL)
-        print(request.request?.url?.absoluteString)
-        print(request.request?.allHTTPHeaderFields)
         restRequest.makeRequest(request: request) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)

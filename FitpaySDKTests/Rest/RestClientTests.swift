@@ -90,18 +90,6 @@ class RestClientTests: XCTestCase {
         super.waitForExpectations(timeout: 10, handler: nil)
     }
     
-    func testEncryptionKeyFailsToRetrieveKeyWithFakeId() {
-        let expectation = super.expectation(description: "'encryptionKey' fails to retrieve key with fake id")
-        
-        self.client.encryptionKey("some_fake_id") { (retrievedEncryptionKey, retrievedError) -> Void in
-            
-            XCTAssertNotNil(retrievedError)
-            expectation.fulfill()
-        }
-        
-        super.waitForExpectations(timeout: 10, handler: nil)
-    }
-    
     func testDeleteEncryptionKeyDeletesCreatedKey() {
         let expectation = self.expectation(description: "'deleteEncryptionKey' deletes key")
         
@@ -183,25 +171,6 @@ class RestClientTests: XCTestCase {
         super.waitForExpectations(timeout: 10, handler: nil)
     }
     
-    func testUserUpdateUserGetsError400() {
-        let expectation = super.expectation(description: "'user.updateUser' gets error 400")
-        
-        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
-            
-            let firstName = TestHelper.randomStringWithLength(10)
-            let lastNname = TestHelper.randomStringWithLength(10)
-            
-            user?.updateUser(firstName: firstName, lastName: lastNname, birthDate: nil, originAccountCreated: nil, termsAccepted: nil, termsVersion: nil) { (updateUser, updateError) in
-                XCTAssertNil(updateUser)
-                
-                XCTAssertEqual(updateError?.code, 400)
-                self.testHelper.deleteUser(user, expectation: expectation)
-            }
-        }
-        
-        super.waitForExpectations(timeout: 10, handler: nil)
-    }
-    
     func testUserRetrievesUserById() {
         let expectation = super.expectation(description: "'user' retrieves user by her id")
         
@@ -266,54 +235,7 @@ class RestClientTests: XCTestCase {
         
         super.waitForExpectations(timeout: 10, handler: nil)
     }
-    
-    func testUpdateUpdatesCreditCard() {
-        let expectation = super.expectation(description: "'update' updates credit card")
         
-        self.testHelper.createAndLoginUser(expectation) { [unowned self] (user) in
-            self.testHelper.createDevice(expectation, user: user) { (user, device) in
-                self.testHelper.createCreditCard(expectation, user: user) { (user, creditCard) in
-                    let name = "NewUser"
-                    let address = Address(street1: "NewStreet1", street2: "NewStreet2", street3: nil, city: "Beverly Hills", state: "MO", postalCode: "90210", countryCode: "AB")
-                    
-                    creditCard?.updateCard(name: name, address: address) { (updatedCard, error) -> Void in
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(updatedCard)
-                        
-                        self.testHelper.getCreditCardsForUser(expectation, user: user) { (user, result) in
-                            guard let currentCard = result?.results?.first(where: { $0.creditCardId == updatedCard?.creditCardId }) else {
-                                XCTFail("updated card not returned")
-                                return
-                            }
-                            
-                            XCTAssertEqual(updatedCard?.info?.name, name)
-                            XCTAssertEqual(updatedCard?.info?.address?.street2, currentCard.info?.address?.street2)
-                            
-                            XCTAssertEqual(updatedCard?.info?.address?.street1, address.street1)
-                            XCTAssertEqual(updatedCard?.info?.address?.street1, currentCard.info?.address?.street1)
-                            
-                            XCTAssertEqual(updatedCard?.info?.address?.street2, address.street2)
-                            XCTAssertEqual(updatedCard?.info?.address?.street2, currentCard.info?.address?.street2)
-                            
-                            XCTAssertEqual(updatedCard?.info?.address?.city, address.city)
-                            XCTAssertEqual(updatedCard?.info?.address?.city, currentCard.info?.address?.city)
-                            
-                            XCTAssertEqual(updatedCard?.info?.address?.state, address.state)
-                            XCTAssertEqual(updatedCard?.info?.address?.state, currentCard.info?.address?.state)
-                            
-                            XCTAssertEqual(updatedCard?.info?.address?.postalCode, address.postalCode)
-                            XCTAssertEqual(updatedCard?.info?.address?.postalCode, currentCard.info?.address?.postalCode)
-                            
-                            self.testHelper.deleteUser(user, expectation: expectation)
-                        }
-                    }
-                }
-            }
-        }
-        
-        super.waitForExpectations(timeout: 10, handler: nil)
-    }
-    
     func testMakeDefaultMakesCreditCardDefault() {
         let expectation = super.expectation(description: "'makeDefault' makes credit card default")
         
@@ -395,7 +317,6 @@ class RestClientTests: XCTestCase {
                         self.testHelper.selectVerificationType(expectation, card: card) { (verificationMethod) in
                             self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod) { (verifiedCreditCard) in
                                 self.testHelper.deactivateCreditCard(expectation, creditCard: verifiedCreditCard) { (deactivatedCard) in
-                                    
                                     deactivatedCard?.reactivate(causedBy: .cardholder, reason: "found card") { (pending, creditCard, error) in
                                         XCTAssertNil(error)
                                         XCTAssertEqual(creditCard?.state, .active)
@@ -609,7 +530,7 @@ class RestClientTests: XCTestCase {
                         
                         for commit in commits!.results! {
                             XCTAssertNotNil(commit.commitType)
-                            XCTAssertNotNil(commit.payload)
+                            //XCTAssertNotNil(commit.payload)
                             XCTAssertNotNil(commit.commitId)
                         }
                         
