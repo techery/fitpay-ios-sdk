@@ -17,6 +17,9 @@ import Foundation
     open var validUntil: String?
     open var validUntilEpoch: Date?
     open var apduPackageUrl: String?
+    open var category: APDUPackageCategory?
+    open var operation: APDUPackageOperation?
+    open var metadata: [String: Any]?
     
     var links: [ResourceLink]?
    
@@ -33,6 +36,9 @@ import Foundation
         case apduCommands = "commandApdus"
         case validUntil
         case apduPackageUrl
+        case category
+        case operation
+        case metadata
     }
     
     override init() {
@@ -52,6 +58,9 @@ import Foundation
         validUntil = try? container.decode(.validUntil)
         validUntilEpoch = try container.decode(.validUntil, transformer: CustomDateFormatTransform(formatString: dateFormat))
         apduPackageUrl = try? container.decode(.apduPackageUrl)
+        category = try? container.decode(.category)
+        operation = try? container.decode(.operation)
+        metadata = try? container.decode([String : Any].self)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -66,6 +75,9 @@ import Foundation
         try? container.encode(apduCommands, forKey: .apduCommands)
         try? container.encode(validUntil, forKey: .validUntil)
         try? container.encode(apduPackageUrl, forKey: .apduPackageUrl)
+        try? container.encode(category, forKey: .category)
+        try? container.encode(operation, forKey: .operation)
+        try? container.encodeIfPresent(metadata, forKey: .metadata)
     }
 
     open var isExpired: Bool {

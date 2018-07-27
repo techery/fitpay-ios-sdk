@@ -291,7 +291,18 @@ extension RestClient {
             return
         }
         
-        makePostCall(url, parameters: package.responseDictionary, completion: completion)
+        // encoding is different than standard post
+        self.prepareAuthAndKeyHeaders { (headers, error) in
+            guard let headers = headers else {
+                DispatchQueue.main.async { completion(error) }
+                return
+            }
+            
+            let request = self.manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
+            self.makeRequest(request: request) { (resultValue, error) in
+                completion(error)
+            }
+        }
     }
 }
 
