@@ -5,7 +5,6 @@ open class RestClient: NSObject {
     
     typealias ResultCollectionHandler<T: Codable> = (_ result: ResultCollection<T>?, _ error: ErrorResponse?) -> Void
 
-
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
      
@@ -40,12 +39,6 @@ open class RestClient: NSObject {
     var session: RestSession
     var keyPair: SECP256R1KeyPair = SECP256R1KeyPair()
     
-    lazy var manager: SessionManager = {
-        let configuration = URLSessionConfiguration.default
-        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
-        return SessionManager(configuration: configuration)
-    }()
-    
     var key: EncryptionKey?
     
     var secret: Data {
@@ -77,8 +70,7 @@ open class RestClient: NSObject {
                 return
             }
             
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -116,16 +108,14 @@ open class RestClient: NSObject {
             }
             
             let params = ["result": executionResult.description]
-            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 completion(error)
             }
         }
     }
     
     public func getPlatformConfig(completion: @escaping (_ platform: PlatformConfig?, _ error: ErrorResponse?) -> Void) {
-        let request = manager.request(FitpayConfig.platformConfigURL)
-        restRequest.makeRequest(request: request) { (resultValue, error) in
+        restRequest.makeRequest(url: FitpayConfig.platformConfigURL, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) { (resultValue, error) in
             guard let resultValue = resultValue as? [String: Any] else {
                 completion(nil, error)
                 return
@@ -141,14 +131,12 @@ open class RestClient: NSObject {
 
     func makeDeleteCall(_ url: String, completion: @escaping DeleteHandler) {
         prepareAuthAndKeyHeaders { [weak self] (headers, error) in
-            guard let strongSelf = self else { return }
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
             
-            let request = strongSelf.manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
                 completion(error)
             }
         }
@@ -161,8 +149,7 @@ open class RestClient: NSObject {
                 return
             }
             
-            let request = self?.manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -183,8 +170,7 @@ open class RestClient: NSObject {
                 return
             }
             
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -202,8 +188,7 @@ open class RestClient: NSObject {
                 return
             }
             
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -222,8 +207,7 @@ open class RestClient: NSObject {
                 return
             }
             
-            let request = self?.manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -250,28 +234,12 @@ open class RestClient: NSObject {
                 return
             }
             
-            let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            DispatchQueue.global().async {
-                request?.response { (response: DefaultDataResponse) in
-                    if response.error != nil {
-                        DispatchQueue.main.async {
-                            if let responseError = response.error {
-                                let error = try? ErrorResponse(responseError)
-                                completion(error)
-                            } else {
-                                completion(nil)
-                            }
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            completion(nil)
-                        }
-                    }
-                }
+            self?.restRequest.makeRequest(url:url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers) { (resultValue, error) in
+                completion(error)
             }
         }
     }
-    
+
 }
 
 // MARK: - Confirm package
@@ -297,8 +265,7 @@ extension RestClient {
                 return
             }
             
-            let request = self.manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
-            self.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self.restRequest.makeRequest(url: url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 completion(error)
             }
         }
@@ -332,8 +299,7 @@ extension RestClient {
         let headers = self.defaultHeaders
         let parameters = ["clientPublicKey": clientPublicKey]
         
-        let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-        restRequest.makeRequest(request: request) { (resultValue, error) in
+        restRequest.makeRequest(url: FitpayConfig.apiURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
                 return
@@ -358,8 +324,7 @@ extension RestClient {
      */
     func encryptionKey(_ keyId: String, completion: @escaping EncryptionKeyHandler) {
         let headers = self.defaultHeaders
-        let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        restRequest.makeRequest(request: request) { (resultValue, error) in
+        restRequest.makeRequest(url: FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
             guard let resultValue = resultValue else {
                 completion(nil, error)
                 return
@@ -376,8 +341,7 @@ extension RestClient {
      */
     func deleteEncryptionKey(_ keyId: String, completion: @escaping DeleteHandler) {
         let headers = self.defaultHeaders
-        let request = manager.request(FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-        restRequest.makeRequest(request: request) { (response, error) in
+        restRequest.makeRequest(url: FitpayConfig.apiURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers) { (response, error) in
             completion(error)
         }
     }
@@ -466,35 +430,23 @@ extension RestClient {
     public typealias AssetsHandler = (_ asset: Asset?, _ error: ErrorResponse?) -> Void
     
     func assets(_ url: String, completion: @escaping AssetsHandler) {
-        let request = self.manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
         
-        DispatchQueue.global().async {
-            request.responseData { (response) in
-                if response.result.error != nil {
-                    let error = try? ErrorResponse(response.data)
-                    
-                    DispatchQueue.main.async {
-                        completion(nil, error)
-                    }
-                } else if let resultValue = response.result.value {
-                    var asset: Asset?
-                    if let image = UIImage(data: resultValue) {
-                        asset = Asset(image: image)
-                    } else if let string = resultValue.UTF8String {
-                        asset = Asset(text: string)
-                    } else {
-                        asset = Asset(data: resultValue)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        completion(asset, nil)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
-                    }
-                }
+        self.restRequest.makeRequest(url: url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) { (resultValue, error) in
+            guard let resultValue = resultValue as? Data else {
+                completion(nil, error)
+                return
             }
+            
+            var asset: Asset?
+            if let image = UIImage(data: resultValue) {
+                asset = Asset(image: image)
+            } else if let string = resultValue.UTF8String {
+                asset = Asset(text: string)
+            } else {
+                asset = Asset(data: resultValue)
+            }
+            
+            completion(asset, nil)
         }
     }
     

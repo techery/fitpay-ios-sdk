@@ -4,13 +4,20 @@ import Alamofire
 public protocol RestRequestable {
     typealias RequestHandler = (_ resultValue: Any?, _ error: ErrorResponse?) -> Void
 
-    func makeRequest(request: DataRequest?, completion: @escaping RequestHandler)
+    func makeRequest(url: URLConvertible, method: HTTPMethod, parameters: Parameters?, encoding: ParameterEncoding, headers: HTTPHeaders?, completion: @escaping RequestHandler)
 }
 
 class RestRequest: RestRequestable {
     
-    func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        request?.validate(statusCode: 200..<300).responseJSON() { (response) in
+    lazy var manager: SessionManager = {
+        let configuration = URLSessionConfiguration.default
+        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+        return SessionManager(configuration: configuration)
+    }()
+    
+    func makeRequest(url: URLConvertible, method: HTTPMethod, parameters: Parameters? = nil, encoding: ParameterEncoding = JSONEncoding.default, headers: HTTPHeaders? = nil, completion: @escaping RequestHandler) {
+        let request = self.manager.request(url, method: method, parameters: parameters, encoding: encoding, headers: headers)
+        request.validate(statusCode: 200..<300).responseJSON() { (response) in
             if let resultValue = response.result.value {
                 completion(resultValue, nil)
                 
@@ -28,93 +35,4 @@ class RestRequest: RestRequestable {
         }
     }
     
-}
-
-class MockRestRequest: RestRequestable {
-    
-    func makeRequest(request: DataRequest?, completion: @escaping RequestHandler) {
-        guard let urlString = request?.request?.url?.absoluteString else {
-            completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
-            return
-        }
-        
-        var data: Any? = nil
-        
-        if urlString.contains("commits") {
-            data = loadDataFromJSONFile(filename: "getCommit")
-            
-        } else if urlString.contains("transactions") {
-            data = loadDataFromJSONFile(filename: "listTransactions")
-            
-        } else if urlString.contains("select") {
-            data = loadDataFromJSONFile(filename: "selectVerificationType")
-            
-        } else if urlString.contains("deactivate") {
-            data = loadDataFromJSONFile(filename: "deactivateCreditCard")
-            
-        } else if urlString.contains("reactivate") {
-            data = loadDataFromJSONFile(filename: "reactivateCreditCard")
-            
-        } else if urlString.contains("verify") {
-            data = loadDataFromJSONFile(filename: "verified")
-
-        } else if urlString.contains("acceptTerms") {
-            data = loadDataFromJSONFile(filename: "acceptTermsForCreditCard")
-            
-        } else if urlString.contains("declineTerms") {
-            data = loadDataFromJSONFile(filename: "declineTerms")
-            
-        }  else if urlString.contains("creditCards") && request?.request?.httpMethod == "POST"  {
-            data = loadDataFromJSONFile(filename: "createCreditCard")
-            
-        }  else if urlString.contains("creditCards?") && request?.request?.httpMethod == "GET" {
-            data = loadDataFromJSONFile(filename: "listCreditCards")
-            
-        }  else if urlString.contains("creditCards") && request?.request?.httpMethod == "GET" {
-            data = loadDataFromJSONFile(filename: "retrieveCreditCard")
-            
-        } else if urlString.contains("devices") && request?.request?.httpMethod == "POST" {
-            data = loadDataFromJSONFile(filename: "createDevice")
-            
-        } else if urlString.contains("devices") && request?.request?.httpMethod == "GET" {
-            data = loadDataFromJSONFile(filename: "listDevices")
-            
-        } else if urlString.contains("/config/encryptionKeys") {
-            data = loadDataFromJSONFile(filename: "getEncryptionKeyJson")
-
-        } else if urlString.contains("users") {
-            data = loadDataFromJSONFile(filename: "getUser")
-            
-        } else if urlString.contains("issuers") {
-            data = loadDataFromJSONFile(filename: "issuers")
-            
-        } else if urlString.contains("/oauth/authorize") {
-            data = loadDataFromJSONFile(filename: "AuthorizationDetails")
-            
-        } else if urlString.contains("transactions") {
-            data = loadDataFromJSONFile(filename: "listTransactions")
-            
-        } else if urlString.contains("resetDeviceTasks") {
-            data = loadDataFromJSONFile(filename: "resetDeviceTask")
-
-        } 
-
-        if let data = data {
-            completion(data, nil)
-        } else {
-            completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
-        }
-
-    }
-    
-    private func loadDataFromJSONFile(filename: String) -> String? {
-        let bundle = Bundle(for: type(of: self))
-        guard let filepath = bundle.path(forResource: filename, ofType: "json") else {
-            return nil
-        }
-        
-        let contents = try? String(contentsOfFile: filepath)
-        return contents
-        
-    }
 }

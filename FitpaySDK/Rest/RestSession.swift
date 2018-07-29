@@ -10,12 +10,6 @@ import JWTDecode
         return self.accessToken != nil
     }
     
-    lazy private var manager: SessionManager = {
-        let configuration = URLSessionConfiguration.default
-        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
-        return SessionManager(configuration: configuration)
-    }()
-    
     private var restRequest: RestRequestable = RestRequest()
     
     private typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
@@ -103,8 +97,7 @@ import JWTDecode
             "credentials": ["username": username, "password": password].JSONString!
         ]
 
-        let request = manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        restRequest.makeRequest(request: request) { (resultValue, error) in
+        restRequest.makeRequest(url: FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
             if let error = error {
                 completion(nil, error)
                 return
@@ -124,8 +117,7 @@ import JWTDecode
             "firebase_token": firebaseToken
         ]
         
-        let request = manager.request(FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        restRequest.makeRequest(request: request) { (resultValue, error) in
+        restRequest.makeRequest(url: FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
             if let error = error {
                 completion(nil, error)
                 return

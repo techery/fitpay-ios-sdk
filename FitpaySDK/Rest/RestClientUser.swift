@@ -86,9 +86,7 @@ extension RestClient {
             log.verbose("REST_CLIENT: Headers: \(headers)")
             log.verbose("REST_CLIENT: user creation json: \(parameters)")
             
-            let request = strongSelf.manager.request(FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -164,8 +162,7 @@ extension RestClient {
                 parameters["encryptedData"] = encrypted
             }
             
-            let request = self.manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self.restRequest.makeRequest(request: request) { [weak self] (resultValue, error) in
+            self.restRequest.makeRequest(url: url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { [weak self] (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)

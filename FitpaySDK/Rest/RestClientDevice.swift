@@ -47,8 +47,7 @@ extension RestClient {
             }
             let params = deviceInfo.toJSON()
             
-            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -85,8 +84,7 @@ extension RestClient {
             }
             
             let params = ["params": paramsArray]
-            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -108,8 +106,7 @@ extension RestClient {
             }
             
             let params = ["params": paramsArray]
-            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return

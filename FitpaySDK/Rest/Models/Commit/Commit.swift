@@ -65,10 +65,10 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
     }
     
     func confirmNonAPDUCommitWith(result: NonAPDUCommitState, completion: @escaping RestClient.ConfirmHandler) {
-        log.verbose("Confirming commit - \(commitId ?? "")")
+        log.verbose("COMMIT: Confirming commit - \(commitId ?? "")")
         
         guard self.commitType != CommitType.apduPackage else {
-            log.error("Trying send confirm for APDU commit but should be non APDU.")
+            log.error("COMMIT: Trying send confirm for APDU commit but should be non APDU.")
             completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
         }
@@ -88,7 +88,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
     }
     
     func confirmAPDU(_ completion: @escaping RestClient.ConfirmHandler) {
-        log.verbose("in the confirmAPDU method")
+        log.verbose("COMMIT: in the confirmAPDU method")
         guard self.commitType == CommitType.apduPackage else {
             completion(ErrorResponse.unhandledError(domain: Commit.self))
             return
@@ -110,7 +110,7 @@ open class Commit: NSObject, ClientModel, Serializable, SecretApplyable {
             return
         }
         
-        log.verbose("apdu package \(apduPackage)")
+        log.verbose("COMMIT: apdu package \(apduPackage)")
         client.confirmAPDUPackage(url, package: apduPackage, completion: completion)
     }
     

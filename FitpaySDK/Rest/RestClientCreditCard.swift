@@ -85,8 +85,7 @@ extension RestClient {
                 parameters["deviceId"] = deviceId
             }
                 
-            let request = strongSelf.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -155,8 +154,7 @@ extension RestClient {
                 }
             }
             
-            let request = strongSelf.manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)
@@ -177,8 +175,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
                     return
@@ -197,8 +194,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
                     return
@@ -218,8 +214,7 @@ extension RestClient {
             }
             
             let params = ["verificationCode": verificationCode]
-            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleVerifyResponse(error, completion: completion)
                     return
@@ -239,8 +234,7 @@ extension RestClient {
             }
             
             let parameters = ["causedBy": causedBy.rawValue, "reason": reason]
-            let request = self?.manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
                     return
@@ -259,8 +253,7 @@ extension RestClient {
                 return
             }
             
-            let request = self?.manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
-            self?.restRequest.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     self?.handleTransitionResponse(error, completion: completion)
                     return
