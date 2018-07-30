@@ -1,7 +1,10 @@
 import Foundation
 
 @objcMembers open class DeviceInfo: NSObject, ClientModel, Serializable {
-    
+
+    // Unique identifier to platform asset that contains details about the embedded secure element for the device.
+    open var profileId: String?
+
     open var deviceIdentifier: String?
    
     /// The name of the device model
@@ -79,7 +82,8 @@ import Foundation
         super.init()
     }
 
-    init(deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElement: SecureElement?) {
+    init(profileId: String? = nil, deviceType: String, manufacturerName: String, deviceName: String, serialNumber: String?, modelNumber: String?, hardwareRevision: String?, firmwareRevision: String?, softwareRevision: String?, notificationToken: String?, systemId: String?, osName: String?, secureElement: SecureElement?) {
+        self.profileId = profileId
         self.deviceType = deviceType
         self.manufacturerName = manufacturerName
         self.deviceName = deviceName
@@ -116,11 +120,11 @@ import Foundation
         case pairing
         case secureElement
         case metadata
+        case profileId
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
         links = try container.decode(.links, transformer: ResourceLinkTypeTransform())
         created = try? container.decode(.created)
         createdEpoch = try container.decode(.createdEpoch, transformer: NSTimeIntervalTypeTransform())
@@ -142,6 +146,7 @@ import Foundation
         pairing = try? container.decode(.pairing)
         secureElement = try? container.decode(.secureElement)
         metadata = try? container.decode([String : Any].self)
+        profileId = try? container.decode(.profileId)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -168,6 +173,7 @@ import Foundation
         try? container.encode(pairing, forKey: .pairing)
         try? container.encode(secureElement, forKey: .secureElement)
         try? container.encodeIfPresent(metadata, forKey: .metadata)
+        try? container.encode(profileId, forKey: .profileId)
     }
 
     var shortRTMRepersentation: String? {
@@ -220,6 +226,10 @@ import Foundation
 
         if let secureElementId = self.secureElement?.secureElementId {
             dic["secureElement"] = ["secureElementId": secureElementId]
+        }
+
+        if let profileId = self.profileId {
+            dic["profileId"] = ["profileId": profileId]
         }
 
         guard let jsonData = try? JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0)) else {
