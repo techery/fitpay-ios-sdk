@@ -198,7 +198,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
      This returns the request object clients will require in order to open a WKWebView
      */
     func getRequest() -> URLRequest {
-        let client = self.configStorage.user?.client as? RestClient
+        let client = self.configStorage.user?.client
         if let accessToken = client?.session.accessToken {
             self.configStorage.rtmConfig!.accessToken = accessToken
         }
@@ -220,7 +220,7 @@ class WvConfig: NSObject, WKScriptMessageHandler {
     }
     
     func getEncodedConfig() -> String? {
-        let client = self.configStorage.user?.client as? RestClient
+        let client = self.configStorage.user?.client
         if let accessToken = client?.session.accessToken {
             self.configStorage.rtmConfig!.accessToken = accessToken
         }

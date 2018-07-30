@@ -50,7 +50,7 @@ class DeviceInfoTests: BaseTestProvider {
         XCTAssertEqual(json?["licenseKey"] as? String, "147PLO")
         XCTAssertEqual(json?["bdAddress"] as? String, "someAddress")
         XCTAssertEqual(json?["pairing"] as? String, "pairing")
-        XCTAssertEqual(json?["profileId"] as? String,  mockModels.someId)
+        XCTAssertEqual(json?["profileId"] as? String, mockModels.someId)
         XCTAssertEqual((json?["secureElement"] as? [String: Any])?["secureElementId"] as? String, mockModels.someId)
         XCTAssertEqual((json?["secureElement"] as? [String: Any])?["casdCert"] as? String, "casd")
     }
