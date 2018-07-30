@@ -20,7 +20,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
     var encryptedData: String?
     var info: UserInfo?
 
-    weak var client: RestClientInterface?
+    weak var client: RestClient?
     
     private static let creditCardsResourceKey = "creditCards"
     private static let devicesResourceKey = "devices"
@@ -119,7 +119,7 @@ open class User: NSObject, ClientModel, Serializable, SecretApplyable {
      
      - parameter device: DeviceInfo
      */
-    @objc public func createDevice(_ device: DeviceInfo, completion: @escaping RestClient.DeviceHandler) {
+    @objc public func createDevice(_ device: Device, completion: @escaping RestClient.DeviceHandler) {
         let resource = User.devicesResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {

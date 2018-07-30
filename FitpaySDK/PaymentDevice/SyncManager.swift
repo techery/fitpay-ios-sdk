@@ -31,13 +31,13 @@ protocol SyncManagerProtocol {
     var syncStorage: SyncStorage
     
     var commitFetcherOperationProducer: () -> FetchCommitsOperationProtocol? = {
-        return FetchCommitsOperation(deviceInfo: DeviceInfo())
+        return FetchCommitsOperation(deviceInfo: Device())
     }
     
     let paymentDeviceConnectionTimeoutInSecs = 60
     
     private var syncedIds: [String] = []
-    private var syncOperations = [DeviceInfo:SyncOperation]()
+    private var syncOperations = [Device: SyncOperation]()
     private var disposeBag = DisposeBag()
     private var user: User?
     
@@ -134,7 +134,7 @@ protocol SyncManagerProtocol {
         }
     }
     
-    // MARK: = Private Functions
+    // MARK: - Private Functions
     
     private func startSyncWith(request: SyncRequest) throws {
         guard let paymentDevice = request.paymentDevice,
@@ -159,7 +159,7 @@ protocol SyncManagerProtocol {
                                           user: user,
                                           syncFactory: syncFactory,
                                           syncStorage: syncStorage,
-                                          request: request)
+                                          syncRequest: request)
         
         syncOperations[deviceInfo] = syncOperation
         

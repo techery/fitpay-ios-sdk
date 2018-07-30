@@ -1,3 +1,4 @@
+import Foundation
 
 open class NotificationDetail: Serializable {
     
@@ -7,7 +8,7 @@ open class NotificationDetail: Serializable {
     open var userId: String?
     open var clientId: String?
     
-    var restClient: RestClientInterface?
+    var restClient: RestClient?
     var links: [ResourceLink]?
 
     private enum CodingKeys: String, CodingKey {
@@ -18,6 +19,8 @@ open class NotificationDetail: Serializable {
         case userId
         case clientId
     }
+    
+    // MARK: - Lifecycle
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -40,8 +43,9 @@ open class NotificationDetail: Serializable {
         try? container.encode(userId, forKey: .userId)
         try? container.encode(clientId, forKey: .clientId)
     }
-
     
+    // MARK: - Public Functions
+
     open func sendAckSync() {
         guard let ackSync = self.links?.url("ackSync") else {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send ackSync without URL.")
@@ -53,7 +57,7 @@ open class NotificationDetail: Serializable {
             return
         }
 
-        client.makePostCall(ackSync, parameters:nil) { (error) in
+        client.makePostCall(ackSync, parameters: nil) { (error) in
             if let error = error {
                 log.error("SYNC_ACKNOWLEDGMENT: ackSync failed to send. Error: \(error)")
             } else {

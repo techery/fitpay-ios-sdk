@@ -10,21 +10,20 @@ import JWTDecode
         return self.accessToken != nil
     }
     
-    lazy private var manager: SessionManager = {
-        let configuration = URLSessionConfiguration.default
-        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
-        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
-        return SessionManager(configuration: configuration)
-    }()
+    private var restRequest: RestRequestable = RestRequest()
     
     private typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?) -> Void
 
     // MARK: - Lifecycle
     
-    public init(sessionData: SessionData? = nil) {
+    public init(sessionData: SessionData? = nil, restRequest: RestRequestable? = nil) {
         if let sessionData = sessionData {
             self.accessToken = sessionData.token
             self.userId = sessionData.userId
+        }
+        
+        if let restRequest = restRequest {
+            self.restRequest = restRequest
         }
     }
     
@@ -98,9 +97,14 @@ import JWTDecode
             "credentials": ["username": username, "password": password].JSONString!
         ]
 
-        let request = manager.request(FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate(statusCode: 200..<300).responseJSON(queue: DispatchQueue.global()) { (response) in
-            self.handleAuthorizationResponse(response, completion: completion)
+        restRequest.makeRequest(url: FitpayConfig.authURL + "/oauth/authorize", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
+            if let error = error {
+                completion(nil, error)
+                return
+            }
+            
+            let authorizationDetails = try? AuthorizationDetails(resultValue)
+            completion(authorizationDetails, nil)
         }
     }
     
@@ -113,30 +117,22 @@ import JWTDecode
             "firebase_token": firebaseToken
         ]
         
-        let request = manager.request(FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
-        request.validate(statusCode: 200..<300).responseJSON(queue: DispatchQueue.global()) { (response) in
-           self.handleAuthorizationResponse(response, completion: completion)
-        }
-    }
-    
-    private func handleAuthorizationResponse(_ response: DataResponse<Any>, completion: @escaping AcquireAccessTokenHandler) {
-        DispatchQueue.main.async {
-            if let resultError = response.result.error {
-                completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
-            } else if let resultValue = response.result.value {
-                let authorizationDetails = try? AuthorizationDetails(resultValue)
-                completion(authorizationDetails, nil)
-            } else {
-                completion(nil, NSError.unhandledError(RestClient.self))
+        restRequest.makeRequest(url: FitpayConfig.authURL + "/oauth/token", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers) { (resultValue, error) in
+            if let error = error {
+                completion(nil, error)
+                return
             }
+            
+            let authorizationDetails = try? AuthorizationDetails(resultValue)
+            completion(authorizationDetails, nil)
         }
     }
-    
+
 }
 
 extension RestSession {
     
-    public typealias GetUserAndDeviceCompletion = (User?, DeviceInfo?, ErrorResponse?) -> Void
+    public typealias GetUserAndDeviceCompletion = (User?, Device?, ErrorResponse?) -> Void
     
     class func GetUserAndDeviceWith(sessionData: SessionData, completion: @escaping GetUserAndDeviceCompletion) -> RestClient? {
         guard let userId = sessionData.userId, let deviceId = sessionData.deviceId else {

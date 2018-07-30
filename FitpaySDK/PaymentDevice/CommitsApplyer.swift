@@ -14,10 +14,9 @@ class CommitsApplyer {
     private var totalApduCommands = 0
     private var appliedApduCommands = 0
     private let maxCommitsRetries = 0
-    private let maxAPDUCommandsRetries = 0
     private let paymentDevice: PaymentDevice
     private var syncStorage: SyncStorage
-    private var deviceInfo: DeviceInfo
+    private var deviceInfo: Device
 
     // rx
     private let eventsPublisher: PublishSubject<SyncEvent>
@@ -35,11 +34,7 @@ class CommitsApplyer {
 
     // MARK: - Lifecycle
     
-    init(paymentDevice: PaymentDevice,
-         deviceInfo: DeviceInfo,
-         eventsPublisher: PublishSubject<SyncEvent>,
-         syncFactory: SyncFactory,
-         syncStorage: SyncStorage) {
+    init(paymentDevice: PaymentDevice, deviceInfo: Device, eventsPublisher: PublishSubject<SyncEvent>, syncFactory: SyncFactory, syncStorage: SyncStorage) {
         self.paymentDevice           = paymentDevice
         self.eventsPublisher         = eventsPublisher
         self.syncStorage             = syncStorage
@@ -86,12 +81,12 @@ class CommitsApplyer {
             
             // retry if error occurred
             for _ in 0 ..< maxCommitsRetries + 1 {
-                DispatchQueue.global().async(execute: {
+                DispatchQueue.global().async() {
                     self.processCommit(commit) { (error) -> Void in
                         errorItr = error
                         self.semaphore.signal()
                     }
-                })
+                }
                 
                 let _ = self.semaphore.wait(timeout: DispatchTime.distantFuture)
                 self.saveCommitStatistic(commit:commit, error: errorItr)
@@ -103,9 +98,9 @@ class CommitsApplyer {
             }
             
             if let error = errorItr {
-                DispatchQueue.main.async(execute: {
+                DispatchQueue.main.async() {
                     self.applyerCompletionHandler(error)
-                })
+                }
                 return
             }
             
@@ -114,11 +109,10 @@ class CommitsApplyer {
             eventsPublisher.onNext(SyncEvent(event: .syncProgress, data: ["applied": commitsApplied, "total": commits.count]))
         }
         
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async() {
             self.applyerCompletionHandler(nil)
-        })
+        }
     }
-    
     
     private func processCommit(_ commit: Commit, completion: @escaping CompletionHandler) {
         guard let commitType = commit.commitType else {
@@ -344,10 +338,7 @@ class CommitsApplyer {
         }
     }
     
-    private func applyAPDUPackage(_ apduPackage: ApduPackage,
-                                  apduCommandIndex: Int,
-                                  retryCount: Int,
-                                  completion: @escaping (_ state: APDUPackageResponseState?, _ error: Error?) -> Void) {
+    private func applyAPDUPackage(_ apduPackage: ApduPackage, apduCommandIndex: Int, retryCount: Int, completion: @escaping (_ state: APDUPackageResponseState?, _ error: Error?) -> Void) {
         let isFinished = (apduPackage.apduCommands?.count)! <= apduCommandIndex
         
         guard !isFinished else {
@@ -364,11 +355,8 @@ class CommitsApplyer {
             }
             
             if let error = error {
-                if retryCount >= self?.maxAPDUCommandsRetries ?? 1 {
-                    completion(state, error)
-                } else {
-                    self?.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex, retryCount: retryCount + 1, completion: completion)
-                }
+                completion(state, error)
+
             } else {
                 self?.appliedApduCommands += 1
                 log.info("SYNC_DATA: PROCESSED \(self?.appliedApduCommands ?? 0)/\(self?.totalApduCommands ?? 0) COMMANDS")

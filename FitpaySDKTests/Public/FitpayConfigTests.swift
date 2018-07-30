@@ -3,6 +3,10 @@ import XCTest
 @testable import FitpaySDK
 
 class FitpayConfigTests: XCTestCase {
+    
+    override func tearDown() {
+        FitpayConfig.configure(clientId: "fp_webapp_pJkVp2Rl")
+    }
 
     func testConfigByClientId() {
         XCTAssertNil(FitpayConfig.clientId)

@@ -10,9 +10,9 @@ open class CommitMetrics: Serializable {
     public var totalProcessingTimeMs: Int?
     public var commitStatistics: [CommitStatistic]?
     
-    open var notificationAsc: NotificationDetail? {
+    open var notification: NotificationDetail? {
         didSet {
-            self.syncId = self.notificationAsc?.syncId
+            self.syncId = self.notification?.syncId
         }
     }
     
@@ -33,12 +33,12 @@ open class CommitMetrics: Serializable {
     }
 
     open func sendCompleteSync() {
-        guard let completeSync = self.notificationAsc?.links?.url("completeSync") else {
+        guard let completeSync = notification?.links?.url("completeSync") else {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send completeSync without URL.")
             return
         }
         
-        guard let client = self.notificationAsc?.restClient else {
+        guard let client = notification?.restClient else {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send completeSync without rest client.")
             return
         }

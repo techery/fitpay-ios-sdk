@@ -120,7 +120,7 @@
     /**
      Returns DeviceInfo if phone already connected to payment device.
      */
-    @objc open var deviceInfo: DeviceInfo? {
+    @objc open var deviceInfo: Device? {
         return self.deviceInterface.deviceInfo()
     }
     

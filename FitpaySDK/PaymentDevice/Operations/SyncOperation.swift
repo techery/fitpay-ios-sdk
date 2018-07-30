@@ -8,12 +8,12 @@ class SyncOperation {
     
     private var paymentDevice: PaymentDevice
     private var connector: PaymentDeviceConnectable
-    private var deviceInfo: DeviceInfo
+    private var deviceInfo: Device
     private var user: User
     private var connectOperation: ConnectDeviceOperationProtocol
     private var eventsAdapter: SyncOperationStateToSyncEventAdapter
     private var syncStorage: SyncStorage
-    public var syncRequest: SyncRequest?
+    private var syncRequest: SyncRequest?
     
     private var syncEventsPublisher: PublishSubject<SyncEvent>
     private var state: Variable<SyncOperationState>
@@ -23,9 +23,7 @@ class SyncOperation {
     
     // MARK: - Lifecycle
     
-    init(paymentDevice: PaymentDevice, connector: PaymentDeviceConnectable,
-         deviceInfo: DeviceInfo, user: User, syncFactory: SyncFactory,
-         syncStorage: SyncStorage = SyncStorage.sharedInstance, request: SyncRequest? = nil) {
+    init(paymentDevice: PaymentDevice, connector: PaymentDeviceConnectable, deviceInfo: Device, user: User, syncFactory: SyncFactory, syncStorage: SyncStorage = SyncStorage.sharedInstance, syncRequest: SyncRequest) {
         
         self.paymentDevice = paymentDevice
         self.connector     = connector
@@ -46,7 +44,7 @@ class SyncOperation {
         self.fetchCommitsOperation = syncFactory.commitsFetcherOperationWith(deviceInfo: deviceInfo, connector: connector)
         
         self.syncStorage = syncStorage
-        self.syncRequest = request
+        self.syncRequest = syncRequest
     }
     
     // MARK: - Internal Functions
@@ -66,8 +64,8 @@ class SyncOperation {
         }).disposed(by: disposeBag)
         
         guard self.isSyncing == false else {
-            self.state.value = .completed(SyncOperationError.alreadySyncing)
-            return self.eventsAdapter.startAdapting()
+            state.value = .completed(SyncOperationError.alreadySyncing)
+            return eventsAdapter.startAdapting()
         }
         
         // we need to update notification token first, because during sync we can receive push notifications
@@ -75,7 +73,7 @@ class SyncOperation {
             self?.startSync()
         }
         
-        return self.eventsAdapter.startAdapting()
+        return eventsAdapter.startAdapting()
     }
     
     // MARK: - Private Functions
@@ -146,17 +144,17 @@ class SyncOperation {
     }
     
     private func sendCommitsMetric() {
-        guard (self.syncRequest?.notificationAsc) != nil else { return }
+        guard (self.syncRequest?.notification) != nil else { return }
         
         let currentTimestamp = Date().timeIntervalSince1970
         
         let metric = CommitMetrics()
-        metric.commitStatistics = self.commitsApplyer.commitStatistics
+        metric.commitStatistics = commitsApplyer.commitStatistics
         metric.deviceId = deviceInfo.deviceIdentifier
         metric.userId = user.id
-        metric.initiator = self.syncRequest?.syncInitiator
-        metric.notificationAsc = self.syncRequest?.notificationAsc
-        metric.totalProcessingTimeMs = Int((currentTimestamp - (self.syncRequest?.syncStartTime?.timeIntervalSince1970)!)*1000)
+        metric.initiator = syncRequest?.syncInitiator
+        metric.notification = syncRequest?.notification
+        metric.totalProcessingTimeMs = Int((currentTimestamp - (syncRequest?.syncStartTime?.timeIntervalSince1970)!)*1000)
         
         metric.sendCompleteSync()
     }

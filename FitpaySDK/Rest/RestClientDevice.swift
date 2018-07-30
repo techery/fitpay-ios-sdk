@@ -11,7 +11,7 @@ extension RestClient {
      - parameter result: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DevicesHandler = (_ result: ResultCollection<DeviceInfo>?, _ error: ErrorResponse?) -> Void
+    public typealias DevicesHandler = (_ result: ResultCollection<Device>?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -19,7 +19,7 @@ extension RestClient {
      - parameter device: Provides existing DeviceInfo object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeviceHandler = (_ device: DeviceInfo?, _ error: ErrorResponse?) -> Void
+    public typealias DeviceHandler = (_ device: Device?, _ error: ErrorResponse?) -> Void
     
     /**
      Completion handler
@@ -39,21 +39,20 @@ extension RestClient {
     
     // MARK: - Functions
     
-    func createNewDevice(_ url: String, deviceInfo: DeviceInfo, completion: @escaping DeviceHandler) {
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+    func createNewDevice(_ url: String, deviceInfo: Device, completion: @escaping DeviceHandler) {
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
             let params = deviceInfo.toJSON()
             
-            let request = self?.manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
-                let deviceInfo = try? DeviceInfo(resultValue)
+                let deviceInfo = try? Device(resultValue)
                 deviceInfo?.client = self
                 completion(deviceInfo, error)
             }
@@ -78,20 +77,19 @@ extension RestClient {
             paramsArray.append(["op": "replace", "path": "/notificationToken", "value": notificationToken])
         }
         
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
             
             let params = ["params": paramsArray]
-            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
-                let deviceInfo = try? DeviceInfo(resultValue)
+                let deviceInfo = try? Device(resultValue)
                 deviceInfo?.client = self
                 completion(deviceInfo, error)
             }
@@ -101,20 +99,19 @@ extension RestClient {
     func addDeviceProperty(_ url: String, propertyPath: String, propertyValue: String, completion: @escaping DeviceHandler) {
         var paramsArray = [Any]()
         paramsArray.append(["op": "add", "path": propertyPath, "value": propertyValue])
-        self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async {  completion(nil, error) }
                 return
             }
             
             let params = ["params": paramsArray]
-            let request = self?.manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
                 }
-                let deviceInfo = try? DeviceInfo(resultValue)
+                let deviceInfo = try? Device(resultValue)
                 deviceInfo?.client = self
                 completion(deviceInfo, error)
             }

@@ -15,7 +15,7 @@ import Foundation
     open var verifiedEpoch: TimeInterval?
     open var appToAppContext: A2AContext?
 
-    weak var client: RestClientInterface?
+    weak var client: RestClient?
     
     var links: [ResourceLink]?
 

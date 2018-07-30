@@ -24,19 +24,18 @@ extension RestClient {
      - parameter email:      email of the user
      - parameter completion: CreateUserHandler closure
      */
-    @objc public func createUser(_ email: String, password: String, firstName: String?, lastName: String?,
-                                 birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?,
-                                 originAccountCreated: String?, completion: @escaping UserHandler) {
-        log.verbose("request create user: \(email)")
+    @objc public func createUser(_ email: String, password: String, firstName: String?, lastName: String?, birthDate: String?, termsVersion: String?, termsAccepted: String?, origin: String?, originAccountCreated: String?, completion: @escaping UserHandler) {
+        log.verbose("REST_CLIENT: request create user: \(email)")
         
-        self.preparKeyHeader { [weak self] (headers, error) in
+        preparKeyHeader { [weak self] (headers, error) in
             guard let strongSelf = self else { return }
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(nil, error) }
                 return
             }
             
-            log.verbose("got headers: \(headers)")
+            log.verbose("REST_CLIENT: got headers: \(headers)")
+            
             var parameters: [String: Any] = [:]
             if (termsVersion != nil) {
                 parameters += ["termsVersion": termsVersion!]
@@ -57,7 +56,7 @@ extension RestClient {
             if let originAccountCreated = originAccountCreated {
                 parameters["originAccountCreatedTsEpoch"] = originAccountCreated
             }
-
+            
             parameters["client_id"] = FitpayConfig.clientId
             
             var rawUserInfo: [String: Any] = ["email": email, "pin": password]
@@ -83,13 +82,11 @@ extension RestClient {
                 parameters["encryptedData"] = encrypted
             }
             
-            log.verbose("user creation url: \(FitpayConfig.apiURL)/users")
-            log.verbose("Headers: \(headers)")
-            log.verbose("user creation json: \(parameters)")
+            log.verbose("REST_CLIENT: user creation url: \(FitpayConfig.apiURL)/users")
+            log.verbose("REST_CLIENT: Headers: \(headers)")
+            log.verbose("REST_CLIENT: user creation json: \(parameters)")
             
-            let request = strongSelf.manager.request(FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            
-            self?.makeRequest(request: request) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: FitpayConfig.apiURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
                 guard let resultValue = resultValue else {
                     completion(nil, error)
                     return
@@ -124,10 +121,8 @@ extension RestClient {
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    @objc public func updateUser(_ url: String,  firstName: String?, lastName: String?,
-                                 birthDate: String?, originAccountCreated: String?, termsAccepted: String?,
-                                 termsVersion: String?, completion: @escaping UserHandler) {
-        self.prepareAuthAndKeyHeaders { (headers, error) in
+    @objc public func updateUser(_ url: String,  firstName: String?, lastName: String?, birthDate: String?, originAccountCreated: String?, termsAccepted: String?, termsVersion: String?, completion: @escaping UserHandler) {
+        prepareAuthAndKeyHeaders { (headers, error) in
             guard let headers = headers else {
                 completion(nil, error)
                 return
@@ -161,16 +156,13 @@ extension RestClient {
             
             var parameters = [String: Any]()
             
-            if let updateJSON = operations.JSONString {
-                if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId: headers[RestClient.fpKeyIdKey]!) {
-                    if let encrypted = try? jweObject.encrypt(self.secret)! {
-                        parameters["encryptedData"] = encrypted
-                    }
-                }
+            if let updateJSON = operations.JSONString,
+                let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId: headers[RestClient.fpKeyIdKey]!),
+                let encrypted = try? jweObject.encrypt(self.secret)! {
+                parameters["encryptedData"] = encrypted
             }
             
-            let request = self.manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            self.makeRequest(request: request) { [weak self] (resultValue, error) in
+            self.restRequest.makeRequest(url: url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers) { [weak self] (resultValue, error) in
                 guard let strongSelf = self else { return }
                 guard let resultValue = resultValue else {
                     completion(nil, error)

@@ -31,7 +31,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
     
     var wvConfigStorage: WvConfigStorage!
     var webViewSessionData: SessionData?
-    var restClient: RestClientInterface?
+    var restClient: RestClient?
 
     var syncCallBacks = [RtmMessage]()
     
@@ -150,7 +150,7 @@ class RtmMessageHandlerV2: NSObject, RtmMessageHandler {
                                                              success: true), retries: 3)
             }
         }
-        FitpayNotificationsManager.sharedInstance.setRestClient(self.restClient as? RestClient)
+        FitpayNotificationsManager.sharedInstance.setRestClient(restClient)
     }
 
     func logoutResponseMessage() -> RtmMessageResponse? {
