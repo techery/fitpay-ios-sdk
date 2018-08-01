@@ -1,5 +1,8 @@
 import XCTest
+
 @testable import FitpaySDK
+
+import Alamofire
 
 class UsersTests: BaseTestProvider {
     
@@ -60,11 +63,31 @@ class UsersTests: BaseTestProvider {
         XCTAssertEqual(json?["encryptedData"] as? String, "some data")
     }
     
-    func testGetCreditCards() {
+    func testGetCreditCardsWithDeviceId() {
         let expectation = self.expectation(description: "getCreditCards")
 
         user?.getCreditCards(excludeState: [], limit: 10, offset: 0, deviceId: "1234") { (creditCardCollection, error) in
-            XCTAssertEqual(self.mockRestRequest.lastCalledParams?["deviceId"] as? String, "1234")
+            XCTAssertEqual(self.mockRestRequest.lastParams?["deviceId"] as? String, "1234")
+            let lastEncodingAsURL = self.mockRestRequest.lastEncoding as? URLEncoding
+            XCTAssertNotNil(lastEncodingAsURL)
+            
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 2, handler: nil)
+    }
+    
+    func testCreateCreditCardsWithDeviceId() {
+        let expectation = self.expectation(description: "createCreditCard")
+        
+        let address = Address(street1: "123 Lane", street2: nil, street3: nil, city: "Boulder", state: "Colorado", postalCode: "80401", countryCode: nil)
+        let creditCardInfo = CardInfo(pan: "123456", expMonth: 12, expYear: 2020, cvv: "123", name: "Jeremiah Harris", address: address, riskData: nil)
+        
+        user.createCreditCard(cardInfo: creditCardInfo, deviceId: "1234") { (creditCard, error) in
+            XCTAssertEqual(self.mockRestRequest.lastParams?["deviceId"] as? String, "1234")
+            let lastEncodingAsJson = self.mockRestRequest.lastEncoding as? JSONEncoding
+            XCTAssertNotNil(lastEncodingAsJson)
+            
             expectation.fulfill()
         }
         
