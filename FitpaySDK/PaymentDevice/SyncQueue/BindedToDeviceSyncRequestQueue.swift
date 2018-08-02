@@ -21,7 +21,7 @@ class BindedToDeviceSyncRequestQueue {
             isSyncManagerBusy = syncManager.isSyncing
         }
         
-        if isSyncManagerBusy == false && sizeOfQueue == 0 {
+        if !isSyncManagerBusy && sizeOfQueue == 0 {
             if let error = startSyncFor(request: request) {
                 syncCompletedFor(request: request, withStatus: .failed, andError: error)
             }
@@ -52,7 +52,6 @@ class BindedToDeviceSyncRequestQueue {
         }
         
         processNext()
-        
     }
     
     func dequeue() -> SyncRequest? {

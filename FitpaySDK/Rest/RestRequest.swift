@@ -16,6 +16,8 @@ class RestRequest: RestRequestable {
     }()
     
     func makeRequest(url: URLConvertible, method: HTTPMethod, parameters: Parameters? = nil, encoding: ParameterEncoding = JSONEncoding.default, headers: HTTPHeaders? = nil, completion: @escaping RequestHandler) {
+        log.verbose("API_REQUEST: url=\(url), method=\(method)")
+
         let request = self.manager.request(url, method: method, parameters: parameters, encoding: encoding, headers: headers)
         request.validate(statusCode: 200..<300).responseJSON() { (response) in
             if let resultValue = response.result.value {

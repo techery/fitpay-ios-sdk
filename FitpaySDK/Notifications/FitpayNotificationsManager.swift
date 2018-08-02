@@ -137,7 +137,7 @@ open class FitpayNotificationsManager: NSObject {
             }
             break
         case .withoutSync: // just call completion
-            log.debug("NOTIFICATIONS_DATA: notif was non-sync.")
+            log.debug("NOTIFICATIONS_DATA: notification was non-sync.")
             self.currentNotification = nil
             processNextNotificationIfAvailable()
             break
