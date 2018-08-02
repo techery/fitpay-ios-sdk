@@ -49,7 +49,7 @@ open class SyncRequestQueue {
     // MARK: - Private Functins
     
     private func queueFor(syncRequest: SyncRequest) -> BindedToDeviceSyncRequestQueue? {
-        guard let deviceId = syncRequest.deviceInfo?.deviceIdentifier ?? syncRequest.notification?.deviceId else {
+        guard let deviceId = syncRequest.deviceInfo?.deviceIdentifier else { //TODO: should really check for user / device
             log.warning("Searching queue for SyncRequest without deviceIdentifier (empty SyncRequests is deprecated)... ")
             return queueForDeviceWithoutDeviceIdentifier(syncRequest: syncRequest)
         }

@@ -1,5 +1,7 @@
 import Foundation
 
+import Alamofire
+
 open class NotificationDetail: Serializable {
     
     open var type: String?
@@ -47,7 +49,7 @@ open class NotificationDetail: Serializable {
     // MARK: - Public Functions
 
     open func sendAckSync() {
-        guard let ackSync = self.links?.url("ackSync") else {
+        guard let ackSyncUrl = self.links?.url("ackSync") else {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send ackSync without URL.")
             return
         }
@@ -56,12 +58,13 @@ open class NotificationDetail: Serializable {
             log.error("SYNC_ACKNOWLEDGMENT: trying to send ackSync without rest client.")
             return
         }
-
-        client.makePostCall(ackSync, parameters: nil) { (error) in
+        
+        client.acknowledge(ackSyncUrl) { error in
             if let error = error {
                 log.error("SYNC_ACKNOWLEDGMENT: ackSync failed to send. Error: \(error)")
-            } else {
-                log.debug("SYNC_ACKNOWLEDGMENT: ackSync has been sent successfully.")
+                
+            } else if let syncId = self.syncId {
+                log.debug("SYNC_ACKNOWLEDGMENT: ackSync has been sent successfully. syncId: \(syncId)")
             }
         }
     }

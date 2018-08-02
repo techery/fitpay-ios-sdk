@@ -1,5 +1,7 @@
 import Foundation
 
+import Alamofire
+
 open class CommitMetrics: Serializable {
     public var syncId: String?
     public var deviceId: String?
@@ -44,11 +46,11 @@ open class CommitMetrics: Serializable {
         }
         
         let params: [String: Any]? = self.toJSON() != nil ? ["params": self.toJSON()!] : nil
-        client.makePostCall(completeSync, parameters: params) { (error) in
+         client.makePostCall(completeSync, parameters: params, encoding: JSONEncoding.default) { (error) in
             if let error = error {
                 log.error("SYNC_ACKNOWLEDGMENT: completeSync failed to send. Error: \(error)")
-            } else {
-                log.debug("SYNC_ACKNOWLEDGMENT: completeSync has been sent successfully.")
+            } else if let syncId = self.syncId {
+                log.debug("SYNC_ACKNOWLEDGMENT: completeSync has been sent successfully. \(syncId)")
             }
         }
     }

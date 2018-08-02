@@ -114,13 +114,27 @@ open class RestClient: NSObject {
         }
     }
     
+    public func acknowledge(_ url: String, completion: @escaping ConfirmHandler) {
+        prepareAuthAndKeyHeaders { [weak self] (headers, error) in
+            guard let headers = headers  else {
+                DispatchQueue.main.async { completion(error) }
+                return
+            }
+            
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers) { (resultValue, error) in
+                completion(error)
+            }
+        }
+    }
+    
+    
     public func getPlatformConfig(completion: @escaping (_ platform: PlatformConfig?, _ error: ErrorResponse?) -> Void) {
         restRequest.makeRequest(url: FitpayConfig.platformConfigURL, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) { (resultValue, error) in
             guard let resultValue = resultValue as? [String: Any] else {
                 completion(nil, error)
                 return
             }
-            
+
             let config = try? PlatformConfig(resultValue["ios"])
             completion(config, error)
         }
@@ -227,18 +241,19 @@ open class RestClient: NSObject {
         makeGetCall(url, parameters: parameters, completion: completion)
     }
     
-    func makePostCall(_ url: String, parameters: [String: Any]?, completion: @escaping ConfirmHandler) {
+    func makePostCall(_ url: String, parameters: [String: Any]?, encoding: ParameterEncoding = CustomJSONArrayEncoding.default, completion: @escaping ConfirmHandler) {
         self.prepareAuthAndKeyHeaders { [weak self] (headers, error) in
             guard let headers = headers else {
                 DispatchQueue.main.async { completion(error) }
                 return
             }
             
-            self?.restRequest.makeRequest(url:url, method: .post, parameters: parameters, encoding: CustomJSONArrayEncoding.default, headers: headers) { (resultValue, error) in
+            self?.restRequest.makeRequest(url: url, method: .post, parameters: parameters, encoding: encoding, headers: headers) { (resultValue, error) in
                 completion(error)
             }
         }
     }
+    
 
 }
 

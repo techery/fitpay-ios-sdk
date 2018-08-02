@@ -67,7 +67,7 @@ open class SyncRequest {
         }
     }
 
-    init(notification: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
+    public init(notification: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
         self.requestTime = Date()
         self.syncId = notification?.syncId
         self.user = nil
@@ -77,17 +77,11 @@ open class SyncRequest {
         self.notification = notification
         
         if SyncRequest.syncManager.synchronousModeOn == false {
-            if (user != nil && deviceInfo != nil && paymentDevice != nil) == false {
+            if (user == nil || deviceInfo == nil || paymentDevice == nil) {
                 assert(false, "You should pass all params to SyncRequest in parallel sync mode.")
             }
         }
         
-        // capture restClient reference
-        if user?.client != nil {
-            self.restClient = user?.client
-        } else if deviceInfo?.client != nil {
-            self.restClient = deviceInfo?.client
-        }
     }
     
     // MARK: - Internal Functions
