@@ -67,7 +67,7 @@ open class SyncRequest {
         }
     }
 
-    init(notification: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
+    public init(notification: NotificationDetail? = nil, initiator: SyncInitiator = .notDefined) {
         self.requestTime = Date()
         self.syncId = notification?.syncId
         self.user = nil
