@@ -14,6 +14,9 @@ before_install:
 script:
 - ./bin/test
 
+after_success:
+- bash < (curl -s https://codecov.io/bash)
+
 env:
   global:
   - secure: "LUCCvTMZt/Dlq9mSAYl1DD0LATYcQPmyq0YQeqy7eB9+D3380hR7qTW8iHVsn56lmnxa1389OutCRdaUC18tY9KkJENrUmupf99Aab20IuvR+PRV+dpOK726MpaJARRZ7tO35iBPMZ10dmWMr6MwJDPictpu4c8yPz76q/3REWLN0NoLOzhpT44Lw3hgMpI/wlnFgk2IxgxPrO455cyBIcSpsPJrUm5b05JnmxUQe3eicnIKb28rsnB+q1/E3wvMN+gIkZgBzhqQcuP/2XG99uhdthZyKb8oyCsdig041PWQoQleDw3JnrtCJg/rGKg9dm7E2uMI5kyfHTWJ/82rGwOUtlUfjXOAaNm1appvmPtYxpbE5iFUI1ioZAezf9ZyYy2lSApBR765QJoiq5P3zj/ACtyu8jfSoe7+FOnrKhb7Y5PeGNON2VTK53KoLDApSYcPPiH/JwpBYQ/Une+VqJRYqyXA6XJLqYHsfPgyVTv95/A6ZvM58iPz8SCsex7GC6sBWr3hfRwK5aThv47hgdkM+Ba3IkV3cHUjL2Qe3SOlt4L2ZG9uWNTzAzcjGoZfAlZDVnirHBf6685fpDj3WupzOuwpo3N4SwI5rmTr6IeL2rKngMr8tDqI3o2TamNPBsBdCDotX2O1ZsUdGqb7Sk4tYurM7qo3hsiNInSwzJQ="
