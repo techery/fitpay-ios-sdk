@@ -445,8 +445,7 @@ extension RestClient {
     public typealias AssetsHandler = (_ asset: Asset?, _ error: ErrorResponse?) -> Void
     
     func assets(_ url: String, completion: @escaping AssetsHandler) {
-        
-        self.restRequest.makeRequest(url: url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) { (resultValue, error) in
+        self.restRequest.makeDataRequest(url: url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) { (resultValue, error) in
             guard let resultValue = resultValue as? Data else {
                 completion(nil, error)
                 return
