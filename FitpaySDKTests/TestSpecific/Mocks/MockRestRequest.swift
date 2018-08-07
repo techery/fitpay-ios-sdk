@@ -87,14 +87,14 @@ class MockRestRequest: RestRequestable {
         
     }
     
-    func makeDataRequest(url: URLConvertible, method: HTTPMethod, parameters: Parameters?, encoding: ParameterEncoding, headers: HTTPHeaders?, completion: @escaping RestRequestable.RequestHandler) {
+    func makeDataRequest(url: URLConvertible, completion: @escaping RestRequestable.RequestHandler) {
         guard let urlString = try? url.asURL().absoluteString else {
             completion(nil, ErrorResponse.unhandledError(domain: RestClient.self))
             return
         }
         
-        lastParams = parameters
-        lastEncoding = encoding
+        lastParams = nil
+        lastEncoding = URLEncoding.default
         
         if urlString.contains("assets") {
             let imagePath =  Bundle(for: type(of: self)).path(forResource: "mocImage", ofType: "png")!
