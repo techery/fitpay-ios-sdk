@@ -10,7 +10,7 @@ open class ResourceLink: CustomStringConvertible {
 }
 
 extension ResourceLink: Equatable {
-    static func == (lhs: ResourceLink, rhs: ResourceLink) -> Bool {
+    public static func == (lhs: ResourceLink, rhs: ResourceLink) -> Bool {
         return lhs.target == rhs.target && lhs.href == rhs.href
     }
     
