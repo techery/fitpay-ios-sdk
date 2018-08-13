@@ -97,12 +97,12 @@ class TestHelper {
         XCTAssertNotNil(card?.cardType)
         XCTAssertNotNil(card?.cardMetaData)
         XCTAssertNotNil(card?.encryptedData)
-      //TODO  XCTAssertNotNil(card?.info)
-      //TODO  XCTAssertNotNil(card?.info?.address)
-      //TODO  XCTAssertNotNil(card?.info?.cvv)
-      //TODO  XCTAssertNotNil(card?.info?.expMonth)
-      //TODO  XCTAssertNotNil(card?.info?.expYear)
-      //TODO  XCTAssertNotNil(card?.info?.pan)
+        XCTAssertNotNil(card?.info)
+        XCTAssertNotNil(card?.info?.address)
+        XCTAssertNotNil(card?.info?.cvv)
+        XCTAssertNotNil(card?.info?.expMonth)
+        XCTAssertNotNil(card?.info?.expYear)
+        XCTAssertNotNil(card?.info?.pan)
     }
     
     func createEricCard(_ expectation: XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:@escaping (_ user: User?, _ creditCard: CreditCard?) -> Void) {
