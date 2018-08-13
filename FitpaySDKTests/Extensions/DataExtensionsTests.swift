@@ -58,6 +58,6 @@ class DataExtensionsTests: BaseTestProvider {
             return
         }
         let hexString = data.hexadecimalString()
-        XCTAssertEqual(hexString, "87A3FCE7DAF0FD7E57AD53128DD25820448835DB13507B1388F0CF0BF6BB8F4D")
+        XCTAssertEqual(hexString, "D9EA91F550D6C462FB25CC364D3069E84E72E44E9F64351161E30012D450E527")
     }
 }
