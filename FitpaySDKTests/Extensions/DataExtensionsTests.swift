@@ -53,7 +53,7 @@ class DataExtensionsTests: BaseTestProvider {
 
     func testHexadecimalString() {
         let keyPair = MockSECP256R1KeyPair()
-        guard let data = keyPair.generateSecretForPublicKey(keyPair.publicKey!) else {
+        guard let data = keyPair.generateSecretForPublicKey(keyPair.mocPublicKey!) else {
             XCTAssert(false, "bad secret")
             return
         }
