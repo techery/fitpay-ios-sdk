@@ -2,7 +2,7 @@ import RxSwift
 
 class SyncOperationStateToSyncEventAdapter {
     
-    init(stateObservable: Observable<SyncOperation.SyncOperationState>,
+    init(stateObservable: Observable<SyncOperationState>,
          publisher: PublishSubject<SyncEvent>) {
         self.stateObservable = stateObservable
         self.syncEventsPublisher = publisher
@@ -50,7 +50,7 @@ class SyncOperationStateToSyncEventAdapter {
         return syncEventsPublisher
     }
     
-    private var stateObservable: Observable<SyncOperation.SyncOperationState>
+    private var stateObservable: Observable<SyncOperationState>
     private var syncEventsPublisher: PublishSubject<SyncEvent>
     private var disposeBag = DisposeBag()
 }

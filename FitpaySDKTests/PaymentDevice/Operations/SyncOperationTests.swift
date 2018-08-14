@@ -17,7 +17,7 @@ class MockNonAPDUConfirm: NonAPDUConfirmOperationProtocol {
 }
 
 class MockCommitsFetcher: FetchCommitsOperationProtocol {
-    var deviceInfo: DeviceInfo!
+    var deviceInfo: Device!
     
     var commits: [Commit] = []
     
@@ -37,7 +37,7 @@ class MockCommitsFetcher: FetchCommitsOperationProtocol {
         let payload = try? Payload("{\"seIdType\":\"cplc\",\"targetDeviceType\":\"fitpay.gandd.model.Device\",\"targetDeviceId\":\"74534d29-d23d-4f6e-a306-679edc080915\",\"packageId\":\"baff97fb-0b73-5019-8877-7c490a43dc64\",\"seId\":\"274689f09352405792e9493356ac880c4444444\",\"targetAid\":\"8050200008CF0AFB2A88611AD51C\",\"commandApdus\":[{\"commandId\":\"e69e3bc6-bf36-4432-9db0-1f9e19b9d513\",\"groupId\":0,\"sequence\":0,\"command\":\"00DA1234567890\",\"type\":\"PUT_DATA\"},{\"commandId\":\"239ec5db-a19a-4813-ab4c-471dacc726ee\",\"groupId\":1,\"sequence\":1,\"command\":\"8050200008CF0AFB2A88611AD51C\",\"type\":\"UNKNOWN\"},{\"commandId\":\"445c3aec-22c7-41fe-a0ef-eee48bf8801c\",\"groupId\":1,\"sequence\":2,\"command\":\"84820300106BBC29E6A224522E83A9B26FD456111500\",\"type\":\"UNKNOWN\"},{\"commandId\":\"3abec35d-ed88-4d2c-ae09-442aee51ffac\",\"groupId\":1,\"sequence\":3,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"},{\"commandId\":\"c8246e40-98df-45da-9906-78cb87ae6253\",\"groupId\":2,\"sequence\":4,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"},{\"commandId\":\"2fc6b4eb-9fdb-4df6-a7f8-d4d9d407d673\",\"groupId\":3,\"sequence\":5,\"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\"type\":\"UNKNOWN\"}],\"validUntil\":\"2030-12-11T21:22:58.691Z\",\"packageType\":\"NORMAL\",\"apduPackageUrl\":\"http://localhost:9103/transportservice/v1/apdupackages/baff97fb-0b73-5019-8877-7c490a43dc64\"}")
         XCTAssertNotNil(payload)
         commit?.payload = payload
-        commit?.commit = "21321312"
+        commit?.commitId = "21321312"
         return commit
     }
     
@@ -59,7 +59,7 @@ class MocksFactory: SyncFactory {
         return MockNonAPDUConfirm()
     }
     
-    func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
+    func commitsFetcherOperationWith(deviceInfo: Device, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
         return commitsFetcher
     }
 }
@@ -86,7 +86,7 @@ class SyncOperationTests: XCTestCase {
         connector.apduExecuteDelayTime = 0.01
         _ = paymentDevice.changeDeviceInterface(connector)
         
-        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: DeviceInfo(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory)
+        syncOperation = SyncOperation(paymentDevice: paymentDevice, connector: connector, deviceInfo: Device(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory, syncRequest: SyncRequest())
     }
     
     override func tearDown() {
@@ -129,7 +129,6 @@ class SyncOperationTests: XCTestCase {
         XCTAssertEqual(events.last?.event, SyncEventType.syncCompleted)
     }
     
-    
     func testSuccessSyncWithAPDUAndNonAPDUCommits() {
         connector.connectDelayTime = 0.001
         guard let commit1 = commitsFetcher.getCreateCardCommit(id: "1"), let commit2 = commitsFetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return  }
@@ -152,7 +151,7 @@ class SyncOperationTests: XCTestCase {
         let secondConnector = MockPaymentDeviceConnector(paymentDevice: paymentDevice)
         _ = paymentDevice.changeDeviceInterface(secondConnector)
         
-        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: DeviceInfo(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory)
+        let secondSyncOperation = SyncOperation(paymentDevice: paymentDevice, connector: secondConnector, deviceInfo: Device(), user: try! User("{\"id\":\"1\"}"), syncFactory: mocksFactory, syncRequest: SyncRequest())
         guard let commit1 = commitsFetcher.getCreateCardCommit(id: "1"), let commit2 = commitsFetcher.getAPDUCommit() else { XCTAssert(false, "Bad parsing."); return  }
         commitsFetcher.commits = [commit1, commit2]
         

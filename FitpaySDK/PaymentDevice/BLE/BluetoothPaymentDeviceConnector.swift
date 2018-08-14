@@ -5,7 +5,7 @@ class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
     
     var centralManager: CBCentralManager?
     var wearablePeripheral: CBPeripheral?
-    var lastState: CBCentralManagerState = CBCentralManagerState.poweredOff
+    var lastState: CBManagerState = .poweredOff
     
     var continuationCharacteristicControl: CBCharacteristic?
     var continuationCharacteristicPacket: CBCharacteristic?
@@ -26,7 +26,7 @@ class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
     let maxPacketSize: Int = 20
     let apduSecsTimeout: Double = 5
     
-    private var _deviceInfo: DeviceInfo?
+    private var _deviceInfo: Device?
     private var _nfcState: PaymentDevice.SecurityNFCState?
     
     required init(paymentDevice device: PaymentDevice) {
@@ -35,7 +35,7 @@ class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
     
     func connect() {
         self.centralManager = CBCentralManager(delegate: self, queue: nil)
-        if lastState == CBCentralManagerState.poweredOn {
+        if lastState == CBManagerState.poweredOn {
             self.centralManager?.scanForPeripherals(withServices: nil, options: nil)
         }
     }
@@ -74,7 +74,7 @@ class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
         completion(isConnected(), nil)
     }
     
-    func deviceInfo() -> DeviceInfo? {
+    func deviceInfo() -> Device? {
         return _deviceInfo
     }
     
@@ -284,14 +284,14 @@ class BluetoothPaymentDeviceConnector: NSObject, PaymentDeviceConnectable {
 extension BluetoothPaymentDeviceConnector: CBCentralManagerDelegate {
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state.rawValue == CBCentralManagerState.poweredOn.rawValue {
+        if central.state == .poweredOn {
             self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.initialized
             central.scanForPeripherals(withServices: nil, options: nil)
         } else {
             central.delegate = nil
             self.centralManager = nil
             
-            if lastState == CBCentralManagerState.poweredOn {
+            if lastState == .poweredOn {
                 resetToDefaultState()
                 self.paymentDevice.callCompletionForEvent(PaymentDevice.PaymentDeviceEventTypes.onDeviceDisconnected)
                 self.paymentDevice?.connectionState = PaymentDevice.ConnectionState.disconnected
@@ -301,7 +301,7 @@ extension BluetoothPaymentDeviceConnector: CBCentralManagerDelegate {
             }
         }
         
-        self.lastState = CBCentralManagerState(rawValue: central.state.rawValue)!
+        self.lastState = CBManagerState(rawValue: central.state.rawValue)!
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {

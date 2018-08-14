@@ -242,7 +242,7 @@ class SyncManagerTests: XCTestCase {
 // Helpers
 extension SyncManagerTests {
     func getSyncRequest1(device passedDevice: PaymentDevice? = nil) -> SyncRequest {
-        let deviceInfo = DeviceInfo()
+        let deviceInfo = Device()
         deviceInfo.deviceIdentifier = "111-111-111"
         let device: PaymentDevice
         if passedDevice == nil {
@@ -276,7 +276,7 @@ extension SyncManagerTests {
             return MockNonAPDUConfirm()
         }
         
-        func commitsFetcherOperationWith(deviceInfo: DeviceInfo, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
+        func commitsFetcherOperationWith(deviceInfo: Device, connector: PaymentDeviceConnectable?) -> FetchCommitsOperationProtocol {
             return commitsFetcher
         }
     }
