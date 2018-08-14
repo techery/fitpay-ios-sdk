@@ -16,6 +16,12 @@ class TestHelper {
         XCTAssertNotNil(user.links)
         XCTAssertNotNil(user.createdEpoch)
         XCTAssertNotNil(user.encryptedData)
+        XCTAssertNotNil(user.info)
+        XCTAssertNotNil(user.info?.username)
+        XCTAssertNotNil(user.info?.firstName)
+        XCTAssertNotNil(user.info?.lastName)
+        XCTAssertNotNil(user.info?.birthDate)
+        XCTAssertNotNil(user.info?.email)
     }
     
     func createUser(_ expectation: XCTestExpectation, email: String, pin: String, completion: @escaping (User?) -> Void) {
@@ -38,7 +44,6 @@ class TestHelper {
                 XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
                 
                 self.client.user(id: self.session.userId!) { (user, userError) in
-                    
                     XCTAssertNotNil(user, "user should not be nuil")
                     
                     self.userValid(user!)
