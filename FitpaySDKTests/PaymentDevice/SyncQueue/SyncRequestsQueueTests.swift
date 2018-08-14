@@ -85,7 +85,7 @@ class SyncRequestsQueueTests: XCTestCase {
     }
     
     func getSyncRequest1() -> SyncRequest {
-        let deviceInfo = DeviceInfo()
+        let deviceInfo = Device()
         deviceInfo.deviceIdentifier = "111-111-111"
         let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
         SyncRequest.syncManager = self.mockSyncManager
@@ -93,7 +93,7 @@ class SyncRequestsQueueTests: XCTestCase {
     }
     
     func getSyncRequest2() -> SyncRequest {
-        let deviceInfo = DeviceInfo()
+        let deviceInfo = Device()
         deviceInfo.deviceIdentifier = "123-123-123"
         let request = SyncRequest(user: try! User("{\"id\":\"1\"}"), deviceInfo: deviceInfo, paymentDevice: PaymentDevice())
         SyncRequest.syncManager = self.mockSyncManager

@@ -14,7 +14,6 @@ import Foundation
     open var termsAssetReferences: [TermsAssetReferences]?
     open var eligibilityExpiration: String?
     open var eligibilityExpirationEpoch: TimeInterval?
-    open var deviceRelationships: [DeviceRelationships]?
     open var targetDeviceId: String?
     open var targetDeviceType: String?
     open var verificationMethods: [VerificationMethod]?
@@ -22,6 +21,12 @@ import Foundation
     open var info: CardInfo?
     open var topOfWalletAPDUCommands: [APDUCommand]?
     open var tokenLastFour: String?
+    
+    /// The credit card expiration month - placed directly on card in creditCardCreated Events (otherwise in CardInfo)
+    open var expMonth: Int?
+    
+    /// The credit card expiration year in 4 digits - placed directly on card in creditCardCreated Events (otherwise in CardInfo)
+    open var expYear: Int?
     
     var links: [ResourceLink]?
     var encryptedData: String?
@@ -36,9 +41,9 @@ import Foundation
     private static let getVerificationMethodsKey    = "verificationMethods"
     private static let selectedVerificationKey      = "selectedVerification"
 
-    private weak var _client: RestClientInterface?
+    private weak var _client: RestClient?
 
-    var client: RestClientInterface? {
+    var client: RestClient? {
         get {
             return self._client
         }
@@ -54,12 +59,6 @@ import Foundation
             if let termsAssetReferences = self.termsAssetReferences {
                 for termsAssetReference in termsAssetReferences {
                     termsAssetReference.client = self.client
-                }
-            }
-
-            if let deviceRelationships = self.deviceRelationships {
-                for deviceRelationship in deviceRelationships {
-                    deviceRelationship.client = self.client
                 }
             }
 
@@ -113,6 +112,8 @@ import Foundation
         case externalTokenReference
         case topOfWalletAPDUCommands = "offlineSeActions.topOfWallet.apduCommands"
         case tokenLastFour
+        case expMonth
+        case expYear
     }
 
     public required init(from decoder: Decoder) throws {
@@ -131,7 +132,6 @@ import Foundation
         termsAssetReferences =  try? container.decode(.termsAssetReferences)
         eligibilityExpiration = try? container.decode(.eligibilityExpiration)
         eligibilityExpirationEpoch = try container.decode(.eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
-        deviceRelationships = try? container.decode(.deviceRelationships)
         encryptedData = try? container.decode(.encryptedData)
         targetDeviceId = try? container.decode(.targetDeviceId)
         targetDeviceType = try? container.decode(.targetDeviceType)
@@ -139,6 +139,8 @@ import Foundation
         externalTokenReference = try? container.decode(.externalTokenReference)
         topOfWalletAPDUCommands = try? container.decode(.topOfWalletAPDUCommands)
         tokenLastFour = try? container.decode(.tokenLastFour)
+        expMonth = try? container.decode(.expMonth)
+        expYear = try? container.decode(.expYear)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -157,7 +159,6 @@ import Foundation
         try? container.encode(termsAssetReferences, forKey: .termsAssetReferences)
         try? container.encode(eligibilityExpiration, forKey: .eligibilityExpiration)
         try? container.encode(eligibilityExpirationEpoch, forKey: .eligibilityExpirationEpoch, transformer: NSTimeIntervalTypeTransform())
-        try? container.encode(deviceRelationships, forKey: .deviceRelationships)
         try? container.encode(encryptedData, forKey: .encryptedData)
         try? container.encode(targetDeviceId, forKey: .targetDeviceId)
         try? container.encode(targetDeviceType, forKey: .targetDeviceType)
@@ -165,6 +166,8 @@ import Foundation
         try? container.encode(externalTokenReference, forKey: .externalTokenReference)
         try? container.encode(topOfWalletAPDUCommands, forKey: .topOfWalletAPDUCommands)
         try? container.encode(tokenLastFour, forKey: .tokenLastFour)
+        try? container.encode(expMonth, forKey: .expMonth)
+        try? container.encode(expYear, forKey: .expYear)
     }
     
     func applySecret(_ secret: Foundation.Data, expectedKeyId: String?) {
@@ -181,7 +184,7 @@ import Foundation
         let url = self.links?.url(resource)
 
         if let url = url, let client = self.client {
-            client.retrieveCreditCard(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -200,16 +203,17 @@ import Foundation
      - return acceptTerms url
      */
     @objc open func getAcceptTermsUrl() -> String? {
-     return self.links?.url(CreditCard.acceptTermsResourceKey)
+        return self.links?.url(CreditCard.acceptTermsResourceKey)
     }
 
     /**
       Update acceptTerms url
-     - @param acceptTermsUrl url
+     - param acceptTermsUrl url
      */
-    @objc open func setAcceptTermsUrl(acceptTermsUrl: String) throws {
-        guard let link = self.links?.indexOf(CreditCard.acceptTermsResourceKey) else {
-            throw  AcceptTermsError.noTerms("The card is not in a state to accept terms anymore")
+    @objc open func setAcceptTermsUrl(acceptTermsUrl: String) {
+        guard let link = self.links?.elementAt(CreditCard.acceptTermsResourceKey) else {
+            log.error("CREDIT_CARD: The card is not in a state to accept terms anymore")
+            return
         }
         
         link.href = acceptTermsUrl
@@ -224,7 +228,7 @@ import Foundation
         let resource = CreditCard.selfResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deleteCreditCard(url, completion: completion)
+            client.makeDeleteCall(url, completion: completion)
         } else {
             completion(ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -256,7 +260,7 @@ import Foundation
         let resource = CreditCard.acceptTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.acceptTerms(url, completion: completion)
+            client.acceptCall(url, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -271,7 +275,7 @@ import Foundation
         let resource = CreditCard.declineTermsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.declineTerms(url, completion: completion)
+            client.acceptCall(url, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -288,7 +292,7 @@ import Foundation
         let resource = CreditCard.deactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+            client.activationCall(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -305,7 +309,7 @@ import Foundation
         let resource = CreditCard.reactivateResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+            client.activationCall(url, causedBy: causedBy, reason: reason, completion: completion)
         } else {
             completion(false, nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -337,7 +341,7 @@ import Foundation
         let resource = CreditCard.transactionsResourceKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.transactions(url, limit: limit, offset: offset, completion: completion)
+            client.makeGetCall(url, limit: limit, offset: offset, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -352,7 +356,7 @@ import Foundation
         let resource = CreditCard.getVerificationMethodsKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.getVerificationMethods(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
@@ -367,44 +371,11 @@ import Foundation
         let resource = CreditCard.selectedVerificationKey
         let url = self.links?.url(resource)
         if let url = url, let client = self.client {
-            client.getVerificationMethod(url, completion: completion)
+            client.makeGetCall(url, parameters: nil, completion: completion)
         } else {
             completion(nil, ErrorResponse.clientUrlError(domain: CreditCard.self, client: client, url: url, resource: resource))
         }
     }
-}
-
-// MARK: - Nested Objects
-
-extension CreditCard {
-    
-    public enum TokenizationState: String, Codable {
-        case new = "NEW"
-        case notEligible = "NOT_ELIGIBLE"
-        case eligible = "ELIGIBLE"
-        case declinedTermsAndConditions = "DECLINED_TERMS_AND_CONDITIONS"
-        case pendingActive = "PENDING_ACTIVE"
-        case pendingVerification = "PENDING_VERIFICATION"
-        case deleted = "DELETED"
-        case active = "ACTIVE"
-        case deactivated = "DEACTIVATED"
-        case error = "ERROR"
-        case declined = "DECLINED"
-    }
-    
-    enum AcceptTermsError: Error {
-        case noTerms(String)
-    }
 
 }
 
-/**
- Identifies the party initiating the deactivation/reactivation request
- 
- - CARDHOLDER: card holder
- - ISSUER:     issuer
- */
-public enum CreditCardInitiator: String {
-    case cardholder = "CARDHOLDER"
-    case issuer = "ISSUER"
-}

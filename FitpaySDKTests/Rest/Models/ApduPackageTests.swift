@@ -32,4 +32,5 @@ class ApduPackageTests: BaseTestProvider {
         XCTAssertEqual(json?["validUntil"] as? String, mockModels.someDate)
         XCTAssertEqual(json?["apduPackageUrl"] as? String, "www.example.com")
     }
+
 }
