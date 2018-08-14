@@ -1,10 +1,10 @@
 import Foundation
 
-class ResourceLink: CustomStringConvertible {
-    var target: String?
-    var href: String?
+open class ResourceLink: CustomStringConvertible {
+    open var target: String?
+    open var href: String?
     
-    var description: String {
+    open var description: String {
         return "\(ResourceLink.self)(\(target ?? "target nil"):\(href ?? "href nil"))"
     }
 }
