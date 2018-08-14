@@ -113,7 +113,7 @@ class RestClientTests: XCTestCase {
         
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
+   
     func testResetDeviceTasks() {
         let expectation = self.expectation(description: "'resetDeviceTasks' creates key")
         
@@ -185,19 +185,6 @@ class RestClientTests: XCTestCase {
         
         super.waitForExpectations(timeout: 10, handler: nil)
     }
-    
-  
-    /// The billing address city
-    @objc open var city: String?
-    
-    /// The billing address state 2 letter code
-    @objc open var state: String?
-    
-    /// The billing address five-digit zip code
-    @objc open var postalCode: String?
-    
-    /// The billing address country code in ISO 3166-1 alpha-2 format
-    @objc open var countryCode: String?    
     
     func testCreateCreditCard() {
         let expectation = super.expectation(description: "'creditCards' retrieves credit cards for user")
